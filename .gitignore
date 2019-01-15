@@ -21,3 +21,39 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+.idea/
+composer.lock
+thinkphp
+
+# Log file
+logs/
+*.log
+*.log.*
+
+# Package Files #
+*.zip
+
+*.rar
+
+*.git
+.project
+.classpath
+*.prefs
+*.bat
+target
+runtime
+bin
+.DS_Store
+*.iml
+
+# apache rewrite
+.htaccess
+
+# 项目独有目录
+
+WeChatLog/
+Updata/
+SAUpload/
+Certificate/
+Runtime/
