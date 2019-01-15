@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/guideappstyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/template-native.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>导购店铺排行榜</title>
+</head>
+
+<body>
+	<!-- 下拉等待刷新效果层 begin -->
+	<div class="loading f14" id="refreshWait" style="display:none;">
+	    <div class="loadicon">
+	        <span class="blockG" id="rotateG_01"></span>
+	        <span class="blockG" id="rotateG_02"></span>
+	        <span class="blockG" id="rotateG_03"></span>
+	        <span class="blockG" id="rotateG_04"></span>
+	        <span class="blockG" id="rotateG_05"></span>
+	        <span class="blockG" id="rotateG_06"></span>
+	        <span class="blockG" id="rotateG_07"></span>
+	        <span class="blockG" id="rotateG_08"></span>
+	    </div>
+	    正在加载...
+	</div>
+	<!-- 下拉等待刷新效果层 end -->
+	
+	<!-- 导购/店铺排行榜 begin -->
+	<div class="wrap">
+		<div class="rank-tab">
+        	<ul>
+            	<li class="g-list li-on">导购业绩排行榜</li>
+                <li class="s-list">店铺业绩排行榜</li>
+            </ul>
+            <div class="clear"></div>
+        </div>
+    	<div class="rank-header">本月店铺排行榜</div>
+        <div class="rank-list">
+        	<ul>
+            	<li>
+               		<div class="infobox">
+            			<i class="iconSuccess cf cFont db"></i>
+            			<p>正在努力加载...</p>
+        			</div>
+               	</li>
+            </ul>
+        </div>
+    </div>
+    <!-- 导购/店铺排行榜 end -->
+    
+    <div class="deco"></div>
+    <!-- 上推瀑布流刷新下一页效果层与现实全部信息层 begin -->
+    <div class="loading f14" id="loadNext" style="display:none;">
+        <div class="loadicon">
+            <span class="blockG" id="rotateG_01"></span>
+            <span class="blockG" id="rotateG_02"></span>
+            <span class="blockG" id="rotateG_03"></span>
+            <span class="blockG" id="rotateG_04"></span>
+            <span class="blockG" id="rotateG_05"></span>
+            <span class="blockG" id="rotateG_06"></span>
+            <span class="blockG" id="rotateG_07"></span>
+            <span class="blockG" id="rotateG_08"></span>
+        </div>
+	正在加载...
+    </div>
+	<div id='loadNextPos'></div>
+   	<div class="loading" id="showAll" style="display:none;">已显示全部<br />下拉顶部刷新</div>
+    
+<!-- 导购排行榜js模板 begin -->
+<script type="text/html" id="guideranktpl">
+<% for (var i in ranklist) {%>
+	<li data-gid="<%=ranklist[i].guide_id%>">
+		<% if (ranklist[i].is_mine == 0) { %>
+			<div class="rank-box">
+		<% } else if (ranklist[i].is_mine == 1) { %>
+			<div class="rank-box rank-self">
+		<% } %>
+			<div class="shop-logo">
+				<% if (ranklist[i].rank == 1) { %>
+					<span class="rank-order rank-first"><%=ranklist[i].rank%></span>
+				<% } else if (ranklist[i].rank == 2) { %>
+					<span class="rank-order rank-second"><%=ranklist[i].rank%></span>
+				<% } else if (ranklist[i].rank == 3) { %>
+					<span class="rank-order rank-third"><%=ranklist[i].rank%></span>
+				<% } else if (ranklist[i].rank > 3) { %>
+					<span class="rank-order"><%=ranklist[i].rank%></span>
+				<% } %>
+				<img class="shop-img" src="<%=ranklist[i].headimg%>" alt="" />
+			</div>
+			<div class="performance">
+				本月业绩：<span class="sale-price"><%=ranklist[i].total_price%></span> 元
+			</div>
+			<div class="shop-info">
+				<div class="basic-info">所属店铺：<span class="shop-name"><%=ranklist[i].subbranch_name%></span></div>
+				<div class="basic-info">姓名：<span class="shop-manager"><%=ranklist[i].guide_name%></span>电话：<span class="shop-number"><%=ranklist[i].cellphone%></span></div>
+				<div class="basic-info">旗下粉丝数：<span class="shop-manager"><%=ranklist[i].fans_num%></span>本月订单数：<span class="shop-number"><%=ranklist[i].order_num%></span></div>
+			</div>
+			<div class="clear"></div>
+		</div>
+	</li>
+<% } %>
+</script>
+<!-- 导购排行榜js模板 end -->
+
+<!-- 分店排行榜js模板 begin -->
+<script type="text/html" id="shopranktpl">
+<% for (var i in ranklist) {%>
+	<li data-eid="<%=ranklist[i].e_id%>" data-sid="<%=ranklist[i].subbranch_id%>" data-mine="<%=ranklist[i].is_mine%>">
+		<% if (ranklist[i].is_mine == 0) { %>
+			<div class="rank-box">
+		<% } else if (ranklist[i].is_mine == 1) { %>
+			<div class="rank-box rank-self">
+		<% } %>
+			<div class="shop-logo">
+				<% if (ranklist[i].rank == 1) { %>
+					<span class="rank-order rank-first"><%=ranklist[i].rank%></span>
+				<% } else if (ranklist[i].rank == 2) { %>
+					<span class="rank-order rank-second"><%=ranklist[i].rank%></span>
+				<% } else if (ranklist[i].rank == 3) { %>
+					<span class="rank-order rank-third"><%=ranklist[i].rank%></span>
+				<% } else if (ranklist[i].rank > 3) { %>
+					<span class="rank-order"><%=ranklist[i].rank%></span>
+				<% } %>
+				<img class="shop-img" src="<%=ranklist[i].image_path%>" alt="" />
+			</div>
+			<div class="performance">
+				本月销售额：<span class="sale-price"><%=ranklist[i].total_price%></span> 元
+			</div>
+			<div class="shop-info">
+				<div class="basic-info">店名：<span class="shop-name"><%=ranklist[i].subbranch_name%></span>粉丝数：<span class="fans-number"><%=ranklist[i].fans_num%></span></div>
+				<div class="basic-info">店长：<span class="shop-manager"><%=ranklist[i].manager%></span>电话：<span class="shop-number"><%=ranklist[i].contact_number%></span></div>
+				<div class="basic-info">地址：<span class="shop-address"><%=ranklist[i].subbranch_address%></span></div>
+			</div>
+			<div class="clear"></div>
+		</div>
+	</li>
+<% } %>
+</script>
+<!-- 分店排行榜js模板 end -->
+
+<!-- 页面ready的js部分 begin -->
+<script type="text/javascript">
+var jsonData = "{$rankjson}"; // 要查询的json数据
+var hasMoreData = true; // 本js模块全局变量：后续是否还有数据
+var isLoadingData = false; // 本js模块全局变量：本模块正在请求数据标记
+var nextStart = 0; // 默认下一页开始是0
+var querytype = {$querytype}; // querytype代表查询的类型，默认1查询店铺内部导购的业绩排行
+
+var eid = "{$eid}", // 当前商家编号
+	sid = "{$sid}", // 当前分店编号
+	gid = "{$gid}", // 当前导购编号
+	requestRankURL = "{:U('GuideApp/PerformanceIndicator/queryPerformanceInfo', '', '')}"; // 请求排名的URL地址
+	
+// 页面初始化函数
+$(function(){
+	// 为DOM元素生成事件
+	$(".wrap").on("click", ".rank-tab ul li", function (e) {
+		// 切换tabli标签js begin
+		var obj = $(this);
+		var container = obj.parent();
+		if (!obj.hasClass("li-on")) {
+			var queryclass = obj.attr("class"); // 得到当前tab页卡的样式（获得查询类型）
+			if (queryclass.indexOf("g-list") >= 0) {
+				querytype = 1; 					// 当前查询的是导购业绩
+				$(".rank-header").html("导购业绩排行榜");
+			} else if (queryclass.indexOf("s-list") >= 0) {
+				querytype = 2; 					// 当前查询的是店铺业绩
+				$(".rank-header").html("店铺业绩排行榜");
+			}
+			container.children("li").removeClass("li-on"); // 切换tab 高亮
+			obj.addClass("li-on"); 				// 切换tab 高亮
+			// to do query here
+			getRankList('pull', 0);				// 由本模块内的init方法来调用getRankList方法模拟下拉刷新
+		} 
+	});
+	
+	// 看查询类型切换页面显示的排行榜字
+	if (querytype == 1) {
+		$(".rank-header").html("导购业绩排行榜"); // 当前查询的是导购业绩
+	} else if (querytype == 2) {
+		$(".rank-header").html("店铺业绩排行榜"); // 当前查询的是店铺业绩
+	}
+	
+	// 第一次直出渲染模板
+	var jsonData = $.parseJSON(window.jsonData); // 解析页面的json数据（不管是带了反斜杠，还是没有反斜杠，都可以解析json数据）
+	var tplname = "guideranktpl"; 						// 默认是渲染导购排名
+    if (querytype == 2) {
+    	tplname = "shopranktpl"; 						// 如果查询类型是2，默认是渲染店铺排名
+    }
+	var tmpl = template(tplname, jsonData.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+	var allRankListObj = $(".rank-list ul"); // 抓取class为rank-list的ul，定义为allRankListObj对象
+	if (tmpl == '{Template Error}') {
+		allRankListObj.find('.infobox i').removeClass('iconSuccess').addClass('iconPrompt');	// 如果渲染模板出错，更换样式
+		allRankListObj.find('.infobox p').html('好像出了点问题，请联系管理员');							// 显示出错信息
+	} else {
+		allRankListObj.html(tmpl);																// 渲染成功就把模板渲染的信息写入
+	}
+	window.nextStart = jsonData.nextStart;
+	
+	// 安卓4.0版本灵敏度兼容
+    var level = /Android 4.0/.test(window.navigator.userAgent) ? -10 : -100;
+    if (/MQQBrowser/.test(window.navigator.userAgent)) {
+        level = -10; // QQ浏览器灵敏度兼容
+    } 
+    
+    var loadingObj = $('#loadNext'); // 底部正在加载
+    var loadingPos = $('#loadNextPos'); // 紧挨着上边div的div对象
+    
+    // 触摸整个$(window)对象！！！ 2015/03/17 21:15:00注，这里不能绑定body或子元素
+    var x, y , endX, endY, offsetY, loadingAction;
+    $(window).on('touchstart', function(e) {
+        x = endX = e.originalEvent.touches[0].pageX;
+        y = endY = e.originalEvent.touches[0].pageY;
+    }).on('touchmove', function(e) {
+        endX = e.originalEvent.touches[0].pageX;
+        endY = e.originalEvent.touches[0].pageY;
+        offsetY = endY - y;
+		
+        // 向下拉手势刷新
+        if (offsetY > 10 && !isLoadingData && document.body.scrollTop <= 1) {
+            isLoadingData = true;
+            $('#refreshWait').stop(true, true).show();
+            getRankList('pull', 0);			// 由本模块内的init方法来调用getOrderList方法下拉刷新
+        }
+    });
+	
+	// 向上推（到底部才加载）
+	$(window).scroll(function() {
+		var scrollh = document.body.scrollHeight; // 网页正文全文高
+		var clienth = document.documentElement.clientHeight; // 网页可见区域高度
+		var scrollt = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop; // 网页被卷去的高
+		var limitheight = 20; // 触碰屏幕的距离底部
+		if (scrollt + clienth + limitheight >= scrollh && !isLoadingData && hasMoreData) {
+			isLoadingData = true;
+            $('#loadNext').stop(true, true).slideDown('fast');
+            getRankList('drag');
+		}
+		scrollPosition = $(window).scrollTop();
+	});
+	
+});
+</script>
+<!-- 页面ready的js部分 end -->
+
+<!-- 分页请求rank排名数据js begin -->
+<script type="text/javascript">
+function getRankList(action, nextStart) {
+    var start = 0;							// 定义起始页为0
+    if (typeof nextStart == 'undefined') {
+        start = window.nextStart;			// 如果没有定义nextStart下一页数据，就用window.nextStart这个值
+    }
+    
+    isLoadingData = true; // 模块设置为正在请求数据
+    
+    var url = requestRankURL+"?nextStart=" + start + "&eid=" + eid + "&sid=" + sid + "&gid=" + gid + "&querytype=" + querytype; // 分页请求数据的地址
+    
+    // 开始定义本次操作方法options，然后交给ajax或ajaxForm执行
+    var opts = {
+    	// 发送前执行：
+        'beforeSend': function() {
+            switch(action) {
+                case 'pull':									// 如果是下拉刷新操作，默认不出现加载狂（因为有提示部分）
+                    $('#showAll').hide();						// 默认已显示全部的div隐藏
+                    break;
+                case 'drag':									// 如果是上推操作
+                	MLoading.show('加载中');
+                    break;
+                default:
+                	MLoading.show('加载中');
+                    break;
+            }
+            hasMoreData = true;					// 模块开始请求新数据的标记置为true
+        },
+        // 完成后执行：
+        'complete': function() {
+            $('#waitForLoad').hide();							// 等待加载div隐藏
+            $('#refreshWait').slideUp();						// 顶部正在加载div下滑
+            $('#loadNext').slideUp();							// 底部正在加载div也下滑
+        },
+        // 被响应后执行：
+        'success': function(re) {
+            var status = parseInt(re.errCode);					// 将服务器返回错误码转整
+            if (status !== 0) {
+                isLoadingData = false;							// 模块不在请求数据中
+                return false;									// errCode不为0，有错误码，表示请求数据失败
+            }
+            
+            var allRankListObj = $(".rank-list ul"); 			// 抓取class为rank-list的ul，定义为allRankListObj对象
+            var tplname = "guideranktpl"; 						// 默认是渲染导购排名
+            if (querytype == 2) {
+            	tplname = "shopranktpl"; 						// 如果查询类型是2，默认是渲染店铺排名
+            }
+            
+            if (action == 'pull') {
+            	// 如果加载数据的动作是下拉，则有新微博可能已经更新，需要清空原来的
+                // 先把内容清空，否则主题已经存在就不渲染模板
+                allRankListObj.html('');
+                var tmpl = template(tplname, re.data);						// 使用re的data数据渲染art模板引擎得到渲染后的html结构
+                allRankListObj.html(tmpl);									// 写入新html数据
+                $('.deco').show();
+            } else {
+                var tmpl = template(tplname, re.data);						// 使用新数据渲染art模板引擎
+                if (tmpl == '{Template Error}') {
+                    tmpl = '';												// 如果渲染失败，则html置空
+                }
+                $('.infobox').hide();										// 隐藏正在努力加载div
+                allRankListObj.append(tmpl);								// 在文档尾追加新html数据
+                // 如果返回的json数据的data字段的ranklist字段里无数据，就不再加载任何数据
+                if (re.data.ranklist.length == 0) {
+                    hasMoreData = false;									// 模块不在加载数据中
+                    $('#loadNext').stop(true, true).hide();					// 正在加载停止，并隐藏（关于stop(true, true)的解释请见项目收藏夹）
+                    $('#showAll').show();									// 出现已经显示全部数据的div
+                    $('.deco').hide();
+                }
+            }
+            window.nextStart = nextStart = re.nextStart;					// 将下一页数据给到nextStart，同时给到window.nextStart
+            
+            // 至此，一次pull或者drag操作所有DOM元素与结构、特效变更结束
+            isLoadingData = false;											// 本模块正在loading数据的状态变为false
+            $('#refreshWait').hide();										// 隐藏刷新等待提示框
+        },
+        // 请求url错误或未响应时执行：
+        error: function() {
+            isLoadingData = false;											// 本模块正在loading数据的状态变为false
+        }
+    };
+    // 所有事情ajax的操作opts都定义完了，才开始调用global.js中定义的DIC的ajax方法静态请求数据
+    ajaxRequest(url, '', opts);
+}
+</script>
+<!-- 分页请求rank排名数据js end -->
+
+<!-- ajax通信js begin -->
+<script>
+function ajaxRequest(url, data, opts) {
+	var opts = opts || {};
+    var loadingTimer = '';
+    url = url.indexOf('?') === -1 ? url + '?' : url + '&';
+    url = url.replace(/\&resType\=[^\&]+/g, '') + 'resType=json';
+    url = url.replace(/\&isAjax\=1/g, '') + '&isAjax=1';
+    
+    var ajaxOpts = {
+        url: url,
+        data: data,
+        cache: opts.cache || false,			// false不缓存请求
+        processData: opts.isUpload,
+        contentType: opts.isUpload ? false : 'application/x-www-form-urlencoded',
+        type: data ? 'POST' : 'GET',		//如果没有data数据，就是get；如果有data数据就是post
+        dataType: opts.dataType || 'json',	//opts中没有指定dataType就默认使用json
+        timeout: opts.timeout || 30000,
+        jsonp: opts.dataType === 'jsonp' ? 'callback' : null,
+        jsonpCallback: opts.dataType === 'jsonp' ? opts.success : null,
+        beforeSend: function(XHR, option) {
+            if (opts.requestIndex) {
+                if (opts.requestMode == 'block') {
+                    if (jQuery.ajax._requestCache[opts.requestIndex]) {
+                        return false;
+                    }
+                } else if (opts.requestMode == 'abort') {
+                    if (jQuery.ajax._requestCache[opts.requestIndex]) {
+                        jQuery.ajax._requestCache[opts.requestIndex].abort();
+                    }
+                }
+            }
+
+            var result = true;
+            if (typeof opts.beforeSend == 'function') {
+                result = opts.beforeSend(XHR, option);
+            }
+
+            if (result) {
+                jQuery.ajax._requestCache[opts.requestIndex] = XHR;
+                if (!opts.noShowLoading) {
+                    loadingTimer = setTimeout(function() {
+                        jQuery.DIC.showLoading();
+                    }, 100);
+                }
+            }
+
+            return result;
+        },
+        // 整个请求完整之后的回调
+        complete: function(XHR, status) {
+            /* if (jQuery.ajax._requestCache[opts.requestIndex]) {
+                jQuery.ajax._requestCache[opts.requestIndex] = null;
+            } */
+            if (typeof opts.complete == 'function') {
+                opts.complete(XHR, status);
+            }
+        },
+        // 请求成功回调
+        success: function(result, textStatus, c) {
+            clearTimeout(loadingTimer);
+            MLoading.hide();
+
+            if (result == null && !opts.noMsg) {
+                //jQuery.DIC.dialog({content:'您的网络有些问题，请稍后再试 [code:1]', autoClose:true});
+            }
+
+            if (typeof result !== 'object') {
+                result = jQuery.parseJSON(result);
+            }
+
+            if (typeof opts.success == 'function') {
+                opts.success(result, textStatus, opts);
+            }
+
+            if (result.errCode == 0) {
+                if (!opts.noMsg) {
+                    //jQuery.DIC.dialog({content:result.message, icon:'success', autoClose:true});
+                }
+
+                if (!opts.noJump && result.jumpURL) {
+                    var locationTime = result.locationTime || 2000;
+                    //jQuery.DIC.reload(result.jumpURL, locationTime);
+                }
+            } else if (result.errCode) {
+                if (!opts.noMsg) {
+                    var msg = result.message + '<span style="display:none;">' + result.errCode + '</span>';
+                    //jQuery.DIC.dialog({content:msg, autoClose:true});
+                }
+            } else {
+                if (!opts.noMsg) {
+                    //jQuery.DIC.dialog({content:'数据解析失败，请稍后再试 [code:2]', autoClose:true});
+                }
+            }
+        },
+        // 出错的调用
+        error: function(XHR, info, errorThrown) {
+            clearTimeout(loadingTimer);
+            //jQuery.DIC.showLoading('none');
+
+            if (XHR.readyState == 0 || XHR.status == 0) {
+                if (!opts.noMsg) {
+                    var msg = '您的网络有些问题，请稍后再试[code:4]';
+                    //jQuery.DIC.dialog({content: msg, autoClose:true});
+                }
+            } else if (info != 'abort' && !opts.noMsg) {
+                if (!opts.noMsg) {
+                    var msg = '';
+                    switch (info) {
+                        case 'timeout':
+                            msg = '对不起，请求服务器网络超时';
+                            break;
+                        case 'error':
+                            msg = '网络出现异常，请求服务器错误';
+                            break;
+                        case 'parsererror':
+                            msg = '网络出现异常，服务器返回错误';
+                            break;
+                        case 'notmodified':
+                        default:
+                            msg = '您的网络有些问题，请稍后再试[code:3]';
+                    }
+                    //jQuery.DIC.dialog({content: msg, autoClose:true});
+                }
+            }
+            if (typeof opts.error == 'function') {
+                opts.error();
+            }
+        }
+    };
+    jQuery.ajax(ajaxOpts);
+    
+    return false;
+}
+</script>
+<!-- ajax通信js end -->
+</body>
+</html>

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>导入优惠券使用情况</title>
+</head>
+
+<body>
+	<form action="{:U('Interface/ImportExcelData/couponUserHandle','','')}" method="post" enctype="multipart/form-data">
+		<input name="excelfile" type="file" />
+		<input type="submit" value="提交" />
+	</form>
+</body>
+</html>

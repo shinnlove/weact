@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/MobileCommonStyle.min.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>领取优惠券</title>
+</head>
+
+<body style="background:#efefef;">
+	<div id="wrap" class="wrap">
+		<div class="head">{$einfo.brand}</div>
+		<div class="content">
+			<div class="main">
+				<div class="p_mod o_address">
+					<h2 class="p_mod_title" style="font-size: 18px;">优惠券领取</h2>
+					<div id="city">
+						<foreach name="coupon" item="data">
+							<input type="hidden" name="e_id" value="{$e_id}" id="e_id"/>
+					        <input type="hidden" name="coupon_id" value="{$data.coupon_id}" id="coupon_id"/>
+					        <input type="hidden" name="coupon_name" value="{$data.coupon_name}" id="coupon_name"/>
+							<ul style="font-size: 18px;">
+								<li>优惠券：<label style=" color: #0066CC; font-family: Arial;">
+								{$data.coupon_name}</label>
+								</li>
+								<li>使用条件：<label style=" color: #0066CC; font-family: Arial;">
+								满{$data.lowest_consume}元立减{$data.denomination}元</label></li>
+								<li>开始时间：<label style="color: #0066CC; font-family: Arial;">
+								{$data.start_time}</label></li>
+								<li>结束时间：<label style="color: #0066CC; font-family: Arial;">
+								{$data.end_time}</label></li>
+								<li>
+								   说明：<label style=" color: #0066CC; font-family: Arial;">
+								{$data.remark}</label>
+								</li>
+							</ul>
+						</foreach>
+					</div>
+				</div>
+				<div class="o_btn clearfix">
+					<input type="button" class="o_btn_submit ts1" value="领取优惠券" onClick="getCoupon()" style="margin-bottom: 10px;"/>
+						 <input type="button"
+						class="o_btn_back ts1" onclick="_system._guide(true)" value="分享优惠券"/>
+				</div>
+			</div>
+			<div class="bottom">
+            	<div class="weActName">微信公众名称：{$einfo.e_name}</div>
+                <div class="weActNumber">微信号：{$einfo.wechat_account}</div>
+                <div class="weActProducer">Powered by <a href="#">WeAct</a></div>
+                <div class="weact-deco"></div>
+            </div>
+		</div>
+		<!--content-->
+		{:W('Footer', array('e_id' => $e_id))}<!--footer-->
+	</div>
+	<!--wrap-->
+	<div id="cover"></div>
+	<div id="loading">
+		<img src="__PUBLIC__/images/loading.gif" alt="" />
+		<div id="loading_text"></div>
+	</div>
+	<div id="guide">
+		<img src="__PUBLIC__/images/guide.png" />
+	</div>
+	<div id="toast"></div>
+	
+<script type="text/javascript">
+	var enterprise_name = "{$enterprise[0]['account']}";
+	var coupon_name = "{$coupon[0]['coupon_name']}";
+	var remark = "{$coupon[0]['remark']}";
+	var e_id = "{$coupon[0]['e_id']}";
+	var coupon_id = "{$coupon[0]['coupon_id']}";
+	var pathFinal = "{$Think.server.SERVER_ADDR}{:U('Home/Coupon/getMyCoupon','','')}?e_id="+e_id+"&coupon_id="+coupon_id;
+	var dataForWeixin = {
+			appId : "",
+			MsgImg : "images/share_msg.png",
+			TLImg : "images/share.png",
+			path : pathFinal,
+			title : coupon_name,
+			desc : remark,
+			fakeid : "",
+			callback : function(rec) {
+				_$("http://mp.weixin.qq.com/mp/appmsg/", "", "");
+			}
+		};
+	  
+	function getCoupon(){
+		var coupon_name = $("#coupon_name").val();
+		var e_id = $("#e_id").val();
+		var coupon_id = $("#coupon_id").val();
+		var url = "{:U('Home/Coupon/addCoupon','','')}";
+		$.post(url,{e_id:e_id,coupon_id:coupon_id,coupon_name:coupon_name},function(data){
+			if(data.status==0){
+				alert("还未登录,无法领取优惠券,快去登陆吧");
+			}else if(data.status == 1){
+				alert("您已经领取过了,分享还有惊喜哦");
+			}else if(data.status == 2){
+				alert("恭喜您,领取成功,去购物使用优惠券吧");
+			}else if(data.status == 4){
+				alert("优惠券已经过期了,请关注下次活动");
+			}else if(data.status == 5){
+				alert("Sorry优惠券已经领完了,请关注下次活动")
+			}else{
+				alert("Sorry领取失败,刷新试试");
+			}
+		});
+	}
+</script>
+</body>
+</html>

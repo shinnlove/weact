@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/indexFourStyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/MobileCommonStyle2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto3.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>{$einfo.brand}</title>
+</head>
+
+<body>
+    <div class="lay_header">
+        <!--上边这一段是IOS内核的头部-->
+        <div class="lay_toptab mod_tab fixed" id="lay_head">
+            <a class="tab_item" href="javascript:history.go(-1);"><i class="qb_icon icon_goback"></i></a>
+            <a class="tab_item tab_item_logo" href="javascript:location.reload();">
+            	<if condition="($einfo['e_rect_logo'] neq null) and ($einfo['e_rect_logo'] neq '')">
+                <img src="{$einfo.e_rect_logo}" style="width: 132px; margin-top: 8px;" />
+                </if>
+                <if condition="($einfo['e_rect_logo'] eq null) or ($einfo['e_rect_logo'] eq '')">
+                <span style="color:#FFFFFF; font-size: 27px;">{$einfo.brand}</span>
+                </if>
+            </a>
+            <a class="tab_item" href='{:U("Home/MemberHandle/customerCenter","","")}?e_id={$e_id}'><i class="qb_icon icon_icenter"></i></a>
+            <a class="tab_item" href='{:U("Home/CartView/shoppingCart","","")}?e_id={$e_id}'><i class="qb_icon icon_cart"></i><i class="qb_icon icon_number_bubble qb_none"></i></a>
+        </div>
+        <!--以下这一段是安卓内核的头部，区分点在于qu_none这个class-->
+        <div class="lay_toptab mod_tab fixed qb_none" id="lay_head_fixed">
+        	<!--以下4句话用在需要显示logo的地方-->
+            <a class="tab_item" href="javascript:history.go(-1);"><i class="qb_icon icon_goback"></i></a>
+            <a class="tab_item tab_item_logo" href="javascript:location.reload();">
+            	<if condition="($einfo['e_rect_logo'] neq null) and ($einfo['e_rect_logo'] neq '')">
+                <img src="{$einfo.e_rect_logo}" style="width: 132px; margin-top: 8px;" />
+                </if>
+                <if condition="($einfo['e_rect_logo'] eq null) or ($einfo['e_rect_logo'] eq '')">
+                <span style="color:#FFFFFF; font-size: 27px;">{$einfo.brand}</span>
+                </if>
+            </a>
+            <a class="tab_item" href='{:U("Home/MemberHandle/customerCenter","","")}?e_id={$e_id}'><i class="qb_icon icon_icenter"></i></a>
+            <a class="tab_item" href='{:U("Home/CartView/shoppingCart","","")}?e_id={$e_id}'><i class="qb_icon icon_cart"></i><i class="qb_icon icon_number_bubble qb_none"></i></a>
+        </div>
+    </div>
+
+    <div class="lay_page">
+        <div class="lay_page_wrap">
+            <div class="fn_indexad">
+                <div class="mod_clipimg" tag="indexad">
+                	<!--特别注意，这里的图片要延时加载zepto.js-->
+                    <img class="ui_fluid default" lazy="{$pageinfo [sliders] [0] [image_path]}" />
+                </div>
+                <!--要加上加class .animate才有效果-->
+                <div class="indexad_banner animate">
+                    <ul class="banner_list">
+                    <foreach name="pageinfo [navigation] [center]" item="pinc">
+                    	<li class="list_item"><a href="{$pinc.url}">{$pinc.nav_name}</a></li>
+                    </foreach>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer">
+            	<ul>
+            	<if condition="$pageinfo [navigation] [foot] neq null">
+	            	<for start="0" end="3" step="1"><!-- 只打印前3个底部导航菜单 -->
+	                	<li class="list_item"><a href="{$pageinfo [navigation] [foot] [$i] [url]}">{$pageinfo [navigation] [foot] [$i] [nav_name]}</a></li>
+	           		</for>
+	            </if>
+	            </ul>
+            </div>
+		</div>
+	</div>
+
+<script type="text/javascript"> 
+!
+function() {
+	var b, a = function() {
+		var a = window.navigator.userAgent;
+		return this.isAndroid = a.match(/(Android)\s+([\d.]+)/) || a.match(/Silk-Accelerated/) ? !0 : !1, this.isiPad = a.match(/iPad/) ? !0 : !1, this.isiPod = a.match(/(iPod).*OS\s([\d_]+)/) ? !0 : !1, this.isiPhone = !this.isiPad && a.match(/(iPhone\sOS)\s([\d_]+)/) ? !0 : !1, this.isios = this.isiPhone || this.isiPad || this.isiPod, this
+	}();
+	window.setShareListener = function(a) {
+		b = a
+	}
+}();
+
+var itemArray = { "1": [] }, lz = true;
+var topicType = 5;
+mobile.o2ocn.topic.init();
+
+var e_id = '{$einfo.e_id}';				//要分享的商家编号
+//分享的信息
+var shareData = {
+	appid: "{$pageinfo [shareinfo] [appid]}", // 分享的商家编号
+    img_url: "{$pageinfo [shareinfo] [img_url]}", // 分享的图片
+    img_width: "160", // 宽度
+    img_height: "160", // 高度
+    title: "{$pageinfo [shareinfo] [title]}", // 分享的标题
+    desc: "{$pageinfo [shareinfo] [desc]}", // 分享的描述
+    link: "{$pageinfo [shareinfo] [link]}", // 分享的超链接
+    fakeid : "{$openid}",																		//分享用户的id
+    callback:function(result){
+    	if(result != 'send_app_msg:cancel' && result != 'share_timeline:cancel' && result != 'share_weibo:cancel' && result != 'share_fb:cancel'){
+    		$.post("{:U('Home/MobileCommon/shareRecord','','')}",
+    				{ e_id : e_id, link : shareData.link, openid : shareData.fakeid },			//分享的时候传3个参数：1、商家编号；2、链接地址（区分授权和不授权两种）；3、分享的微信号（只有开启授权登录才有）
+    				function(data){
+    					if(data.status == 1){
+    						scscms_alert("谢谢您的分享!", "ok", "", 2);//定时关闭窗口
+    					}else{
+    						scscms_alert("服务器繁忙，请稍后再试!"+data.msg, "warning", "", 2);//定时关闭窗口
+    					}
+    				},
+    				'json');
+    	}else{
+    		scscms_alert("下次记得分享噢!", "ok", "", 2);//定时关闭窗口
+    	}
+    }	/*分享后的回调函数，发送给朋友的类型分为send_app_msg:confirm或send_app_msg:cancel；对应发送给朋友、分享到朋友圈、分享到腾讯微博、分享到facebook都有4种类型*/
+};
+</script>
+</body>
+</html>

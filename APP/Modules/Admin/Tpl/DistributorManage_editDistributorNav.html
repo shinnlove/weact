@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uploadstyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/select2.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/webuploader.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/diywebuploader.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/plugins/select2/select2.min.js"></script>
+<title>编辑分销导航</title>
+</head>
+
+<body>
+	<form name="distributor-nav" class="form-horizontal uniform" method="post" action="#">
+		<input type="hidden" name="nav_id" id="nav_id" value="{$navinfo.nav_id}" />
+        <div class="control-group">
+            <div class="controls controls-row"><h2>编辑分销导航</h2></div>
+			<div class="controls controls-row">
+                <font style="font-size:1.17em; font-weight:bold; color:highlight;">说明：建立导航并设定分销额度，再将商品分拨到分销导航下。</font>
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="control-group">
+			<label class="control-label">
+            	中文名<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mytimeinput" id="nav-name" name="nav-name" placeholder="请填写分销导航名称" required value="" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	英文名：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mytimeinput" id="english-name" name="english-name" placeholder="可填写分销导航英文名" value="" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label"> 
+            	导航图标<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="hidden" id="CSRFtoken" name="CSRFtoken" value="123456" /><!-- （可选参数）图片防注入提交 -->
+                <input type="hidden" id="imgPath2" name="imgPath2" value="" />
+            	
+                <!-- 一个webuploader begin -->
+                <div class="webUploaderWrap ui-sortable" id="uploadWrap">
+                    <div id="previewnavimg" class="webuploader-container">
+                        <div class="webuploader-pick">点击上传</div>
+                    </div>
+                </div>
+                <!-- 一个webuploader end -->
+            </div>
+            <div class="controls controls-row" style="margin-top:10px;">
+            	<img id="nav-img" name="nav-img" src="" alt="" style="width:260px;" />
+            </div>
+            <div class="controls controls-row" style="margin-top:10px;">
+                温馨提示：推荐最佳封面尺寸（比例）：600px × 300px，jpeg、png格式。
+            </div>
+        </div>
+  		
+        <div class="control-group">
+			<label class="control-label">
+            	一级分销利率：<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myamountinput" id="first-rate" name="first-rate" placeholder="百分比" required value="" />&nbsp;%
+            </div>
+            <div class="controls controls-row">
+            	顾客购买所在分销店直属分销商能获得的利率。
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	上级分销利率：<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myamountinput" id="second-rate" name="second-rate" placeholder="百分比" required value="" />&nbsp;%
+            </div>
+            <div class="controls controls-row">
+            	顾客购买所在分销店直属分销商上级能获得的利率。
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	上上级分销利率：<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myamountinput" id="third-rate" name="third-rate" placeholder="百分比" required value="" />&nbsp;%
+            </div>
+            <div class="controls controls-row">
+            	顾客购买所在分销店直属分销商上上级能获得的利率。
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	四级分销利率：<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myamountinput" id="fourth-rate" name="fourth-rate" placeholder="百分比" required value="" />&nbsp;%
+            </div>
+            <div class="controls controls-row">
+            	产生分销交易后，店铺或者商家（电商部）能获得的利率。
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	代理导航顺序<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myamountinput" id="nav-order" name="nav-order" placeholder="序列" required value="1" />
+            </div>
+            <div class="controls controls-row">
+            	分销导航排列的顺序（不小于0），数字越小越排在前。
+            </div>
+        </div>
+        
+        <div class="control-group">
+        	<label class="control-label">
+            	可见级别<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row" style="padding-top:2px;">
+            	<select name="visible-level" id="visible-level" class="normal-select2">
+                    <option value="-2">请选择可见级别...</option>
+                    <option value="-1">sncode验证</option>
+                    <option value="0">所有分销商</option>
+                    <option value="1">一级分销商</option>
+                    <option value="2">二级分销商</option>
+                    <option value="3">三级分销商</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="control-group" id="sncode-group" style="display:none;">
+			<label class="control-label">
+            	sncode验证<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mytimeinput" id="sncode-code" name="sncode-code" placeholder="请输入sncode" required value="" />
+            </div>
+            <div class="controls controls-row">
+            	请填写sncode码，代理商只有输入正确的sncode才能找到该分销导航。
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">
+            	是否开启导航
+            </label>
+            <div class="controls controls-row" style="padding-top:6px;">
+                <input type="checkbox" class="uniform" id="agent-open" name="agent-open" />只有开启后，代理商才能代理该导航下商品
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="handle-action">
+            <a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">提交</a>
+            &nbsp;&nbsp;
+            <a id="resetbtn" class="large ui-color-button blue" href="javascript:void(0)">重置</a>
+            <a href="javascript:history.go(-1);">
+                <img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/images/goback.png" />
+            </a>
+        </div>
+	</form>
+    
+<script type="text/javascript">
+var serverhandleimg = '{:U("Admin/DistributorManageRequest/singleUploadHandle", "", "")}'; // 上传导航图标的地址
+var cname = '{$navinfo.chinese_name}', // 导航名称
+	ename = '{$navinfo.english_name}', // 英文名
+	imgpath = '{$navinfo.image_path}', // 图片地址
+	first = '{$navinfo.first_benefit_rate}', // 一级利率
+	second = '{$navinfo.second_benefit_rate}', // 二级利率
+	third = '{$navinfo.third_benefit_rate}', // 三级利率
+	fourth = '{$navinfo.fourth_benefit_rate}', // 四级利率
+	order = '{$navinfo.sibling_order}', // 导航顺序
+	level = '{$navinfo.visible_level}', // 导航可见级别
+	sncode = '{$navinfo.sn_code}', // sncode
+	open = '{$navinfo.agent_open}'; // 代理是否开启
+	
+$(function(){
+	
+	$(".uniform").uniform(); // 初始化uniforms
+	
+	$("#visible-level").select2(); // 初始化选择框
+	
+	// 初始化导航图片上传
+	$("#previewnavimg").singleImgUploader({
+		width : 300,
+		height : 300, 
+		limitSizeLarger : true, 
+		imgPathInput : $("#imgPath2"), 
+		imgPreview : $("#nav-img"), 
+	});
+	
+	// 初始化编辑导航的信息
+	$("#nav-name").val(cname);
+	$("#english-name").val(ename);
+	$("#imgPath2").val(imgpath); // 提交框
+	$("#previewnavimg").css("background-image", "url("+imgpath+")"); // 控件预览框
+	$("#nav-img").attr("src", imgpath); // img图片预览路径
+	$("#first-rate").val(first);
+	$("#second-rate").val(second);
+	$("#third-rate").val(third);
+	$("#fourth-rate").val(fourth);
+	$("#nav-order").val(order); // 导航的排序
+	$("#visible-level").val(level); // 对select2写值
+	$("#visible-level").change(); // 变更select2的值
+	$("#sncode-code").val(sncode); // 写入sncode（如果有的话）
+	if (open) {
+		$("#agent-open").parent().addClass("checked"); // 父级选中
+		$("#agent-open").prop("checked", "checked"); // 自身也勾中
+	}
+	
+	// 绑定事件
+	$("body").on("change", "#visible-level", function(e){
+		// select2 选择框变化 
+		e.stopPropagation();
+		var _t = $(this), level = _t.val(), sngroup = $("#sncode-group");
+		//console.log(level);
+		if(level == -1){
+			sngroup.css("display", "block");
+		}else{
+			sngroup.css("display", "none");
+		}
+	}).on("click", "#submitbtn", function(e){
+		e.preventDefault();
+		var firstrate = $("#first-rate").val().trim(); 		// 一级分销利率
+		var secondrate = $("#second-rate").val().trim(); 	// 二级分销利率
+		var thirdrate = $("#third-rate").val().trim(); 		// 三级分销利率
+		var fourthrate = $("#fourth-rate").val().trim(); 	// 四级分销利率
+		// 导航名称
+		if($("#nav-name").val().trim() == ""){
+	  		$.messager.alert('温馨提示', '请输入分销导航名称！','warning', function(){
+	  			$("#nav-name").focus(); 
+	  		});
+	  		return false
+	  	}
+		// 导航图标
+		if ($("#imgPath2").val().trim() == "") {
+			$.messager.alert('温馨提示', '请上传分销导航的图标！','warning', function(){
+	  			$("#imgPath2").focus(); 
+	  		});
+	  		return false
+		}
+		// 一级利率
+		if (firstrate == "") {
+			$.messager.alert('温馨提示', '请输入一级分销商获得的利率！','warning', function(){
+	  			$("#first-rate").focus(); 
+	  		});
+	  		return false
+		} else {
+			if (! isPositiveFloat(firstrate)) {
+				$.messager.alert('温馨提示', '请正确输入一级分销商获得的利率！','warning', function(){
+		  			$("#first-rate").focus(); 
+		  		});
+		  		return false
+			}
+		}
+		// 二级利率
+		if (secondrate == "") {
+			$.messager.alert('温馨提示', '请输入二级分销商获得的利率！','warning', function(){
+	  			$("#second-rate").focus(); 
+	  		});
+	  		return false
+		} else {
+			if (! isPositiveFloat(secondrate)) {
+				$.messager.alert('温馨提示', '请正确输入二级分销商获得的利率！','warning', function(){
+		  			$("#second-rate").focus(); 
+		  		});
+		  		return false
+			}
+		}
+		// 三级利率
+		if (thirdrate == "") {
+			$.messager.alert('温馨提示', '请输入三级分销商获得的利率！','warning', function(){
+	  			$("#third-rate").focus(); 
+	  		});
+	  		return false
+		} else {
+			if (! isPositiveFloat(thirdrate)) {
+				$.messager.alert('温馨提示', '请正确输入三级分销商获得的利率！','warning', function(){
+		  			$("#third-rate").focus(); 
+		  		});
+		  		return false
+			}
+		}
+		// 四级利率
+		if (fourthrate == "") {
+			$.messager.alert('温馨提示', '请输入四级分销商获得的利率！','warning', function(){
+	  			$("#fourth-rate").focus(); 
+	  		});
+	  		return false
+		} else {
+			if (! isPositiveFloat(fourthrate)) {
+				$.messager.alert('温馨提示', '请正确输入四级分销商获得的利率！','warning', function(){
+		  			$("#fourth-rate").focus(); 
+		  		});
+		  		return false
+			}
+		}
+		// 判断四级分销利率之和不得超过70%
+		if (parseFloat(firstrate)+parseFloat(secondrate)+parseFloat(thirdrate)+parseFloat(fourthrate)>70) {
+			$.messager.alert('温馨提示', '四级分销利率之和不得超过70%，请合理调整各级收益！', 'warning');
+	  		return false
+		}
+		// 代理导航顺序
+		if ($("#nav-order").val().trim() == "") {
+			$.messager.alert('温馨提示', '请输入分销导航的顺序！','warning', function(){
+	  			$("#nav-order").focus(); 
+	  		});
+	  		return false
+		} else {
+			if (! isPositiveFloat($("#nav-order").val().trim())) {
+				$.messager.alert('温馨提示', '请正确输入分销导航的顺序！','warning', function(){
+		  			$("#nav-order").focus(); 
+		  		});
+		  		return false
+			}
+		}
+		// 验证分销导航可见级别
+		var optval = $("#visible-level").val(); 
+		if(optval == -2) {
+			$.messager.alert('温馨提示', '请选择分销导航的可见级别！','warning', function(){
+	  			$("#visible-level").focus(); 
+	  		});
+	  		return false
+		} else if(optval == -1) {
+			// sncode可见，判断sncode的输入状况
+			if ($("#sncode-code").val().trim() == "") {
+				$.messager.alert('温馨提示', '请输入导航sncode，8位字母与数字的组合！','warning', function(){
+					$("#sncode-code").focus(); 
+		  		});
+		  		return false
+			} else {
+				if ($("#sncode-code").val().length > 8) {
+					$.messager.alert('温馨提示', '导航sncode不要超过8位！','warning', function(){
+						$("#sncode-code").focus(); 
+			  		});
+			  		return false
+				} 
+			}
+		}
+		// 开启分销开关
+		var agentopen = 0;
+		if ($("#agent-open").parent().hasClass("checked")) {
+			agentopen = 1;
+		}
+		
+		// 准备参数异步提交
+		var params = {
+				nid:$("#nav_id").val(), // 所编辑的导航编号
+				cname:$("#nav-name").val(), 
+				ename:$("#english-name").val(), 
+				navimg:$("#imgPath2").val(), 
+				firstrate:parseFloat(firstrate), // 利率精确到2位小数
+				secondrate:parseFloat(secondrate), // 利率精确到2位小数
+				thirdrate:parseFloat(thirdrate), // 利率精确到2位小数
+				fourthrate:parseFloat(fourthrate), // 利率精确到2位小数
+				navorder:$("#nav-order").val(), 
+				visible:$("#visible-level").val(), 
+				sncode:$("#sncode-code").val(), 
+				agentopen:agentopen 
+		}
+		$.post("{:U('Admin/DistributorManageRequest/editNavConfirm', '', '')}", params, function(result){
+			if (result.errCode == 0) {
+				$.messager.alert("温馨提示", "分销导航编辑信息提交成功。", "info");
+				setTimeout(function(){
+					location.href = "{:U('Admin/DistributorManage/distributorNav', '', '')}"; // 跳转分销导航一览
+				}, 500);
+			} else {
+				$.messager.alert("温馨提示", result.errMsg, "error");
+			}
+		}, "json");
+	});
+	
+});
+
+// 判断str是否大于0或等于0的整数
+function isPositiveNum(str){
+	var reg=/^\d+$/; // 正整数
+	return reg.test(str);
+}
+
+// 判断str是否大于0或等于0的浮点数
+function isPositiveFloat(str){
+	var reg = /^\d+(\.\d+)?$/; // 非负浮点数
+	return reg.test(str);
+}
+</script>
+</body>
+</html>

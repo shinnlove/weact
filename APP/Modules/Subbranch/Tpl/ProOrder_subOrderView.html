@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" /><!-- 魔幻表单 -->
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiColorButtonStyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactAdminStyle.css" /><!-- 控制easyUI每一行按钮等样式 -->
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/myUniformStyle.css" /><!-- 魔幻表单样式自控 -->
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/select2.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/template-native.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script><!-- 魔幻表单必须js -->
+<script type="text/javascript" src="__PUBLIC__/lhgcalendar/lhgcore.min.js"></script><!-- 日历核心js -->
+<script type="text/javascript" src="__PUBLIC__/lhgcalendar/lhgcalendar.min.js"></script><!-- 日历核心js -->
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script><!-- 页脚中文包支持 -->
+<script type='text/javascript' src="__PUBLIC__/js/plugins/select2/select2.min.js"></script>
+<title>订单信息管理</title>
+<style type="text/css">
+/*重写 bootstrap对control的样式*/
+.control-label { width:100px !important; }
+.controls { margin-left:120px !important; }
+</style>
+</head>
+
+<body class="easyui-layout">
+	<div data-options="region:'center',border:false">
+		<table id="dg" title="订单信息   — — 温馨提示：接收与提醒支持多选。" toolbar="#toolbar"></table>
+	</div>
+	
+	<!-- easyUI的工具条，单工具条25px高，加搜索框60px高 -->
+	<div id="toolbar" style="height:60px;">
+		<div class="uptool">
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-reload" plain="true" onclick="newOrder()">新订单<span id="neworder"></span></a>
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-redo" plain="true" onclick="receiveOrder();">确认接收</a>
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-ok" plain="true" onclick="allRecievedOrder();">已接收订单</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editOrder();">查看/编辑</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delOrder();">删除订单</a>
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="allOrder();">所有订单</a>
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="markSend();">标注发货</a>
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-print" plain="true" onclick="exportOrder();">导出对账</a>
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-no" plain="true" onclick="closeTip();">关闭新单提醒</a>
+		</div>
+		
+		<div class="search-tool">
+			<div class="diy-search">
+				<div style="float:left;">
+					<select id="search_condition" class="uniform diy-select">
+						<option value="visual_number" selected="selected">订单编号</option>
+						<option value="express_id">快递单号</option>
+						<option value="customer_id">顾客编号</option>
+						<option value="customer_tel">下单人电话</option>
+						<option value="receive_tel">收货人电话</option>
+					</select>
+				</div>
+				<div style="float:left;">
+					<input type="text" class="uniform mysearchinput" id="search_content" name="search_content" placeholder="可选择一个条件查询" value="" required />
+					<span id="composite-search" class="searchbox-button searchbox-button-hover uni-search"></span>
+				</div>
+			</div>
+			
+			<div class="diy-search">
+				<span class="left-label">日期范围：</span>
+				<input type="text" class="uniform mysearchinput" id="search-starttime" name="search-starttime" placeholder="请选择日期" value="" />
+				<span class="middle-label">到</span>
+				<input type="text" class="uniform mysearchinput" id="search-endtime" name="search-endtime" placeholder="请选择日期" value="" />
+				<span id="period-search" class="searchbox-button searchbox-button-hover uni-search"></span>
+			</div>
+			
+			<div class="diy-search">
+				<span class="left-label">筛选条件：</span>
+				<select id="status_search" name="status_search" class="uniform diy-select">
+					<option value="-1" selected="selected">全部</option>
+					<option value="0">未接收</option>
+					<option value="1">已接收</option>
+					<option value="2">未付款</option>
+					<option value="3">已付款</option>
+					<option value="4">未发货</option>
+					<option value="5">已发货</option>
+					<option value="6">今天</option>
+					<option value="7">昨天</option>
+					<option value="8">最近7天</option>
+					<option value="9">最近30天</option>
+				</select>
+			</div>
+		</div>
+	</div>
+	
+	<div id="remarkdialog" class="easyui-window" title="备注订单" data-options="modal:true,closed:true">
+		<input type="hidden" name="oid" id="oid" value="" /><!-- 所备注订单编号的隐藏框 -->
+		<form name="remark-form" class="form-horizontal uniform" method="post" action="#" >
+	        <div class="control-group">
+	            <div class="controls controls-row">
+	               <h5>备注订单 （带<span class="text-error"> * </span>为必填项）</h5>
+	            </div> 
+	        </div>
+	        
+	        <div class="control-group">
+				<label class="control-label">订单编号<span class="text-error">(*)</span>:</label>
+	            <div class="controls controls-row">
+	                <input type="text" class="uniform mybriefinput" id="order_number" name="order_number" value="" required readonly />
+	            </div>
+	        </div>
+	        
+	        <div class="control-group">
+	            <label class="control-label">备注内容<span class="text-error">(*)</span>:</label>
+	            <div class="controls controls-row">
+	                <textarea id="remarkcontent" name="remarkcontent" class="uniform minitextarea" placeholder="请在此输入对该笔订单的备注" required ></textarea>
+	            </div>
+	        </div>
+	        
+	        <div class="control-group">
+	        	<div class="controls controls-row">
+	            	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="markOrderConfirm()">确定</a>
+	            	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#remarkdialog').dialog('close')">取消</a>
+				</div>
+	        </div>
+	    </form>
+	</div><!-- replywindow回复窗口结束div -->
+	
+<!-- 展开easyUI上加号，订单详情js模板 begin -->
+<script type="text/html" id="detailinfotpl">
+<table>
+    <tbody>
+        <tr>
+            <td style="border:0; width:150px;">
+                <p style="font-weight:bold;">本订单商品信息：</p>
+            </td>
+        </tr>
+        <tr style="border:0;height:30px;">
+            <td style="font-weight:bold; border:0; width:70px; text-align:center;">序号</td>
+            <td style="font-weight:bold; border:0; width:100px; text-align:center;">缩略图</td>
+			<td style="font-weight:bold; border:0; width:150px; text-align:center;">商品编号</td>
+            <td style="font-weight:bold; border:0; width:150px; text-align:center;">商品名称</td>
+			<td style="font-weight:bold; border:0; width:120px; text-align:center;">属性规格</td>
+            <td style="font-weight:bold; border:0; width:100px; text-align:center;">单价</td>
+            <td style="font-weight:bold; border:0; width:100px; text-align:center;">数量</td>
+            <td style="font-weight:bold; border:0; width:100px; text-align:center;">小计</td>
+        </tr>
+		<% for (var i in detaillist) {%>
+			<tr>
+            	<td style="border:0; width:70px; text-align:center;"><%=i*1+1%></td>
+            	<td style="border:0; width:100px; text-align:center;"><img src="<%=detaillist[i].micro_path%>" style="width:60px;" alt=""></td>
+				<td style="border:0; width:150px; text-align:center;"><%=detaillist[i].product_number%></td>
+            	<td style="border:0; width:150px; text-align:center;"><%=detaillist[i].product_name%></td>
+				<td style="border:0; width:120px; text-align:center;"><%=detaillist[i].pro_size%> <%=detaillist[i].pro_color%></td>
+            	<td style="border:0; width:100px; text-align:center;"><%=detaillist[i].unit_price%></td>
+            	<td style="border:0; width:100px; text-align:center;"><%=detaillist[i].amount%></td>
+            	<td style="border:0; width:100px; text-align:center;"><%=detaillist[i].unit_price*detaillist[i].amount%></td>
+        	</tr>
+		<% } %>
+		<tr style="border:0;height:20px;"></tr>
+    </tbody>
+</table>
+</script>
+<!-- 展开easyUI上加号，订单详情js模板 end -->
+
+<!-- easyUI上对单笔订单操作的按钮区，js模板 begin -->
+<script type="text/html" id="handlebtntpl">
+<table class="handlebtntable">
+    <tr>
+		<td>
+			<a href="javascript:void(0)" class="btn btn-mini" title="备注该笔订单" onclick="remarkOrder('<%=order_id%>', '<%=visual_number%>', '<%=remark%>')">备注</a>
+			<a href="javascript:void(0)" class="btn btn-mini" title="为该笔订单添加快递信息" onclick="editExpInfo('<%=order_id%>', '<%=visual_number%>', '<%=express_id%>')">快递</a>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<a href="javascript:void(0)" class="btn btn-mini" title="与顾客协商撤销该笔订单" onclick="negotiateCancel('<%=order_id%>', '<%=openid%>')">撤销</a>
+			<a href="javascript:void(0)" class="btn btn-mini" title="买卖双方达成共识退款退货" onclick="refund('<%=order_id%>')">退款</a>
+		</td>
+	</tr>
+</table>
+</script>
+<!-- easyUI上对单笔订单操作的按钮区，js模板 end -->
+
+<!-- 页面全局变量与easyUI表结构（不含字段初始化函数） begin -->
+<script type="text/javascript">
+window.tipnew = true; 	// 初始化的时候，默认开启页面新订单提醒
+var dg = $('#dg'); 		// 抓取页面DOM对象
+
+$(function() {
+	$(".uniform").uniform(); 			// 魔幻表单初始化
+	$("#search-select").select2();		// 带搜索的选择框初始化
+	
+	/*活动日期的日历呼出*/
+	J(function(){
+		J('#send-time').calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+		$("#lhgcalendar").css("z-index", 9999); // 要更改其css，否则被easyUI挡住了
+		// 搜索框日期查询
+		J('#search-starttime').calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+		J('#search-endtime').calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+	});
+	
+	$('#dg').datagrid({
+		url: "{:U('Subbranch/ProOrder/getAllSubOrder','','')}",
+		singleSelect: false,
+		collapsible: true,
+		method: 'post',
+		fitColumns: true,
+		fit: true,
+		pagination: true,
+		pageSize: 10,
+		pageList: [5, 10, 15],
+		rownumbers: true,
+		idField: 'order_id',
+		columns: [[
+					{ field : 'ck', checkbox : 'true', width : 100 },
+					{ field: 'order_time', title: '下单时间', width : 135, align:'left', sortable: true }, 
+					{ field: 'visual_number', title: '订单编号', width : 110, align:'left'}, 
+					{ field: 'customer_id', title: '顾客编号', width : 140, align:'left', sortable: true }, 
+					{ field: 'customer_name', title: '下单用户', width : 80, align:'left' }, 
+					{ field: 'customer_tel', title: '联系电话', width : 100, align:'left' }, 
+					{ field: 'total_price', title: '总价(元)', width : 80, align:'right', sortable: true }, 
+					{ field: 'pay_method', title: '支付方式', width : 80, align:'center', sortable: true, formatter: payMethodInit },
+					{ field: 'pay_indeed', title: '实付款(元)', width : 80, align:'right', sortable: true, formatter: payIndeedInit },
+					{ field: 'receive_status', title: '店铺受理', width : 80, align:'center', sortable: true, formatter: receiveStatusInit },
+					{ field: 'is_payed', title: '订单状态', width : 110, align:'center', formatter: payStatusInit },
+					{ field: 'express_number', title: '快递单号', width : 110 },
+					{ field: 'order_id', title: '操作', width : 100, align:'center', formatter: handleBtnInit } 
+				]],
+		view: detailview,
+		detailFormatter: function(index, row) {
+			return '<div class="ddv" id="' + row.order_id + '">' + '</div>';
+		},
+		onExpandRow: function(index, row){
+			$.post('{:U("Subbranch/ProOrder/getSubOrderDetail", "", "")}',
+					{ oid : row.order_id },
+					function(result){
+						if(result.errCode == 0){
+							var detailinfo = template( 'detailinfotpl', result.data ); 			// artTemplate渲染模板引擎
+							if (detailinfo == '{Template Error}') {
+								detailinfo = ''; 												// 如果渲染失败，则detailinfo置空
+								$.messager.alert('温馨提示', '网络繁忙，接收订单详情数据错误！', 'error'); 	// 提示用户出错了
+	                        }
+							$('#'+row.order_id).html(detailinfo); 								// 写入展开详情中
+							$('#dg').datagrid("fixDetailRowHeight", index); 					// 该行的详情框高度自适应（非常重要，以前没处理好）
+						} else {
+							$.messager.alert('温馨提示', '没有查询到该订单详细信息！', 'warning');
+						}
+					},'json');	//post
+            $('#dg').datagrid('fixDetailRowHeight', index);
+	    }	// onExpandRow
+	}); // datagrid
+	
+	// 根据订单状态搜索事件
+	$("#status_search").change(function() {
+		// 定义要查询的参数
+		var params = {
+				searchcondition : '',
+				searchcontent : '',
+				type : 0
+		}; 
+		var status = $(this).val(); // 获取当前下拉选择状态码
+		if(status == -1) {
+			// 查全部
+			params.searchcondition = 'is_del';
+			params.searchcontent = 0;
+		} else if(status == 0) {
+			// 查未接收
+			params.searchcondition = 'receive_status';
+			params.searchcontent = 0;
+		} else if(status == 1) {
+			// 查已接收
+			params.searchcondition = 'receive_status';
+			params.searchcontent = 1;
+		} else if(status == 2) {
+			// 查未付款
+			params.searchcondition = 'is_payed';
+			params.searchcontent = 0;
+		} else if(status == 3) {
+			// 查已付款
+			params.searchcondition = 'is_payed';
+			params.searchcontent = 1;
+		} else if(status == 4) {
+			// 查未发货
+			params.searchcondition = 'is_send';
+			params.searchcontent = 0;
+		} else if(status == 5) {
+			// 查已发货
+			params.searchcondition = 'is_send';
+			params.searchcontent = 1;
+		} else if(status == 6) {
+			params.searchcondition = 'order_time';
+			params.searchcontent = 'today';
+		} else if(status == 7) {
+			params.searchcondition = 'order_time';
+			params.searchcontent = 'yesterday';
+		} else if(status == 8) {
+			params.searchcondition = 'order_time';
+			params.searchcontent = 'lastweek';
+		} else if(status == 9) {
+			params.searchcondition = 'order_time';
+			params.searchcontent = 'lastmonth';
+		}
+		// 进行订单状态查询
+		dg.datagrid({
+			url:"{:U('Subbranch/ProOrder/conditionSearchOrder', '', '')}",
+			queryParams : params
+		},'load');
+		clearSelect(); // 清除一些潜在所选择的行
+	});
+	
+	//根据下单时间段查询
+	$("#period-search").click(function() {
+		var sst = $("#search-starttime");
+		var set = $("#search-endtime");
+		if(sst.val() == '' && set.val() == '' ){
+			$.messager.alert('温馨提示', '请输入订单日期查询范围！','warning', function(){
+				sst.focus();												//注意聚焦和return的顺序！
+			});
+			return;
+		}else if(sst.val() != '' && set.val() != '' && sst.val() > set.val()){
+			$.messager.alert('温馨提示', '订单日期查询中起始时间不能大于截止时间！','warning', function(){
+				sst.focus();												//注意聚焦和return的顺序！
+			});
+			return;
+		}
+		var params = {
+				searchcondition : 'order_time',
+				startsearchcontent : sst.val(),
+				endsearchcontent : set.val(),
+				type : 1
+		}; // 定义查询参数
+		dg.datagrid({
+			url:"{:U('Subbranch/ProOrder/conditionSearchOrder', '', '')}",
+			queryParams : params
+		},'load');
+		clearSelect(); // 清除一些潜在所选择的行
+	});
+	
+	// 指定条件查询
+	$("#composite-search").click(function() {
+		var params = {
+				searchcondition : $("#search_condition").val().trim(),
+				searchcontent : $("#search_content").val()
+		}; // 定义查询参数
+		dg.datagrid({
+			url:"{:U('Subbranch/ProOrder/conditionSearchOrder', '', '')}",
+			queryParams : params
+		},'load');
+		clearSelect(); // 清除一些潜在所选择的行
+	});
+	
+	// 页面新订单检测计时器
+	//setInterval( checkNewOrder, 10000 );		// 开启10秒1次检查订单
+});
+</script>
+<!-- 页面全局变量与easyUI表结构（不含字段初始化函数） end -->
+
+<!-- easyUI栏目初始化函数js begin -->
+<script type="text/javascript">
+//订单状态初始化
+function payStatusInit(val, row) {
+	if (row.timeout_cancel == 1 || row.is_refund == 1 || row.consult_cancel != 0) {
+		// 如果订单被超时取消、已经退完款了或者正在协商撤销中，就属于作废订单状态
+		if (row.timeout_cancel == 1) {
+			return "<span class='red' style='color:#d00224;'>交易超时</span>";
+		} else if (row.is_refund == 1) {
+			return "<span class='red' style='color:#d00224;'>已退款  交易关闭</span>";
+	    } else if (row.consult_cancel == 1) {
+	    	return "<span class='red' style='color:#d00224;'>申请退单中</span>";
+	    } else if (row.consult_cancel == 2) {
+	    	return "<span class='red' style='color:#d00224;'>退单处理中</span>";
+	    } else if (row.consult_cancel == 3) {
+	    	return "<span class='red' style='color:#d00224;'>商家拒绝退单</span>";
+	    }
+	} else {
+		// 正常订单状态
+		if(row.is_payed == 0) {
+			return "<span class='red' style='color:#d00224;'>待付款</span>";
+		}else if(row.is_payed == 1 && row.is_send == 0) {
+			return "<span class='green' style='color:#39b868;'>等待卖家发货</span>";
+		}else if(row.is_payed == 1 && row.is_send == 1 && row.is_signed == 0) {
+			return "<span class='green' style='color:#39b868;'>等待收货</span>";
+		} else if (row.is_payed == 1 && row.is_send == 1 && row.is_signed == 1 && row.is_appraised == 0) {
+			return "<span class='green' style='color:#39b868;'>交易成功  待评价</span>";
+		} else if (row.is_payed == 1 && row.is_send == 1 && row.is_signed == 1 && row.is_appraised == 1) {
+			return "<span class='green' style='color:#39b868;'>交易成功  已评价</span>";
+		}else {
+			return "<span class='red' style='color:#d00224;'>暂时无法获取状态</span>";
+		}
+	}
+}
+
+// 订单支付方式初始化（主要是未支付就显示/）
+function payMethodInit(val, row) {
+	if(row.is_payed == 1){
+		if(row.pay_method == 0){
+			return "<span class='red' style='color:#d00224;'>未选择</span>";
+		} else if(row.pay_method == 1){
+			return "<span class='green' style='color:#39b868;'>现金支付</span>";
+		} else if(row.pay_method == 2){
+			return "<span class='green' style='color:#39b868;'>微信支付</span>";
+		} else if(row.pay_method == 3){
+			return "<span class='green' style='color:#39b868;'>刷卡支付</span>";
+		} else {
+			return "<span class='gray' style='color:#666;'>不明方式</span>";
+		}
+	} else{
+		return "<span class='gray' style='color:#9e9e9e;'>/</span>";
+	}
+}
+
+// 订单实际支付金额初始化（主要是未支付就显示/）
+function payIndeedInit(val, row) {
+	if(row.is_payed == 1){
+		return row.pay_indeed;
+	} else{
+		return "<span class='gray' style='color:#9e9e9e;'>/</span>";
+	}
+}
+
+// 店铺接收状态初始化
+function receiveStatusInit(val, row) {
+	if(row.receive_status == 0){
+		return "<span class='gray' style='color:#d00224;'>未接收</span>";
+	}else{
+		return "<span class='green' style='color:#39b868;'>已接收</span>";
+	}
+}
+
+// 订单操作区域的按钮初始化
+function handleBtnInit(val, row) {
+	var handlebtntmpl = template("handlebtntpl", row); // 渲染模板
+	return handlebtntmpl;
+}
+</script>
+<!-- easyUI栏目初始化函数js end -->
+
+<!-- easyUI工具栏按钮功能函数js begin -->
+<script type="text/javascript">
+//共用警示函数：有些调用后不使用此函数可能会存在隐藏错误
+function clearSelect() {
+	dg.datagrid("clearSelections"); // 清楚所有选中的行
+}
+
+// 查看新提交的未被商家接收受理的订单
+function newOrder(){
+	dg.datagrid({
+		url:"{:U('Subbranch/ProOrder/conditionSearchOrder', '', '')}",
+		queryParams:{ 
+			searchcondition:'receive_status', 							// 接收状态
+			searchcontent:0 											// 没有被商家接收的订单
+		}
+	},'load');
+	clearSelect(); 														// 默认未选取任何一行记录
+}
+
+//确认接收订单receiveOrder
+function receiveOrder() {
+	var rows = dg.datagrid('getSelections'); 							// 获取easyUI选中的行数
+	var num = rows.length; 												// 选中订单数量
+	if (num == 0) {
+		$.messager.alert('温馨提示', '至少选择一条订单接收！', 'warning');
+	} else if (num > 10) {
+		$.messager.alert('温馨提示', '一次批量最多选择10条订单接收！', 'warning');
+	} else if (num >= 1 && num <=10) {
+		// 1~10条，满足条件，进行接收
+		var orderidlist = []; 											// 订单id数组
+		for(var i = 0; i < num; i ++) {
+			if (rows[i].receive_status == 1) {
+				$.messager.alert('温馨提示', '只能接收未接收过的订单！', 'warning');
+				return false;
+			}
+			orderidlist.push(rows[i].order_id); 						// js压栈
+		}
+		
+		// 通过验证，准备打包参数
+		var params = {
+				'receivelist' : orderidlist.join()
+		}
+		$.messager.confirm('温馨提示', '是否确定接收选中的订单？', function(cf){
+			if(cf){
+				$.post("{:U('Subbranch/ProOrder/receiveOrder', '', '')}", params, function(result){
+					if(result.errCode == 0){
+						$.messager.alert('温馨提示', '已成功接收订单！', 'info', function(){
+							dg.datagrid('reload'); 						// 无刷新重载订单数据
+							clearSelect(); 								// 清空可能潜在选择的订单
+						})
+					}else{
+						$.messager.alert('温馨提示', '网络繁忙，请稍后再试！'+result.errMsg, 'error');
+					}
+				},'json');
+			}
+		});	
+	} 
+}
+
+// 查看所有已被商家接收受理的订单
+function allRecievedOrder() {
+	dg.datagrid({
+		url:"{:U('Subbranch/ProOrder/conditionSearchOrder', '', '')}",
+		queryParams:{ 
+			searchcondition:'receive_status', 							// 接收状态
+			searchcontent:1  											// 已经被商家接收的订单
+		}
+	},'load');
+	clearSelect(); 														// 默认未选取任何一行记录
+}
+
+//查看订单详情，并编辑当中的部分信息：收货人信息、付款信息
+function editOrder() {
+	var rows = $("#dg").datagrid('getSelections');       				// 获取选中的行（已经绑定过主键cate_id列）
+	if (rows.length == 0) {
+		$.messager.alert('温馨提示','请选择一条订单信息进行编辑');				
+	}else if (rows.length > 1) {
+		$.messager.alert('警告','一次只能编辑一条订单信息');			
+	}else if(rows.length == 1){
+		var oid = rows[0].order_id;
+		if(oid){
+			window.location.href = "{:U('Subbranch/ProOrder/subOrderDetail')}?orderid="+oid;
+		}
+	}
+}
+
+//删除所选订单信息
+function delOrder(){
+	var rows = $("#dg").datagrid('getSelections');
+	var rowdata = [];
+	if (rows.length == 0) {
+		$.messager.alert('温馨提示','至少需要选择一条订单信息进行删除！');				
+	}else{
+		$.messager.confirm('温馨提示','确定删除选中的订单吗？',function(cf){
+			if(cf){
+				for(var i=0;i<rows.length;i++){
+					rowdata.push(rows[i].order_id);
+				}
+				MLoading.show('提交中...'); // 显示友好度提示
+				$.post( "{:U('Subbranch/ProOrder/delSubOrder')}",
+					{
+						rowdata:rowdata.join(',')
+					},
+					function(result){
+						MLoading.hide(); // 取消友好度提示
+						if(result.errCode == 0){
+							$("#dg").datagrid('reload'); // 无刷新重载页面数据
+							clearSelect(); // 清空可能潜在选择的商品
+						}else{
+							$.messager.alert('温馨提示', '删除订单失败！'+result.errMsg, 'error');
+						}
+				});
+			}
+		});
+	}
+}
+
+// 查看所有订单allOrder
+function allOrder() {
+	dg.datagrid({
+		url: "/weact/Subbranch/ProOrder/getAllSubOrder"
+	});
+	clearSelect(); 														// 默认未选取任何一行记录
+}
+
+// 店家标注发货
+function markSend() {
+	var rows = dg.datagrid('getSelections'); 		// 获取easyUI选中的行数
+	var num = rows.length; 							// 选中订单数量
+	if (num == 0) {
+		$.messager.alert('温馨提示', '至少选择一条订单标注已发货！', 'warning');
+	} else if (num > 10) {
+		$.messager.alert('温馨提示', '一次批量最多选择10条订单标注已发货！', 'warning');
+	} else if (num >= 1 && num <=10) {
+		// 1~10条，满足条件，进行标注已发货
+		var orderidlist = []; 						// 订单id数组
+		var customerlist = [];						// 顾客id数组
+		for(var i = 0; i < num; i ++) {
+			if (rows[i].receive_status == 0) {
+				$.messager.alert('温馨提示', '不能对未接收的订单进行标注发货，请先确认订单已被店铺接收！', 'warning');
+				return false;
+			}else if (rows[i].is_payed == 0) {
+				$.messager.alert('温馨提示', '不能对未付款的订单进行标注发货，请先确认订单是否已被顾客支付！', 'warning');
+				return false;
+			}
+			if (rows[i].is_send == 1) {
+				$.messager.alert('温馨提示', '不能重复标注已发货订单！', 'warning');
+				return false;
+			}
+			orderidlist.push(rows[i].order_id); 	// js压栈
+			customerlist.push(rows[i].openid);
+		}
+		
+		// 通过验证，准备打包参数
+		var params = {
+				'sendlist' : orderidlist.join(),
+				'customerlist' : customerlist.join()
+		}
+		$.messager.confirm('温馨提示', '确认已真实发货，并标记选中的订单？', function(cf){
+			if(cf){
+				$.post("{:U('Subbranch/ProOrder/markSend', '', '')}", params, function(result){
+					if(result.errCode == 0){
+						$.messager.alert('温馨提示', '已成功对选中的订单标注发货并向顾客发送提醒消息，请及时完善快递信息！', 'info', function(){
+							dg.datagrid('reload');	// 无刷新重载订单数据
+							clearSelect(); 			// 清空可能潜在选择的订单
+						})
+					}else{
+						$.messager.alert('温馨提示', '网络繁忙，请稍后再试！'+result.errMsg, 'error');
+					}
+				},'json');
+			}
+		});	
+	} 
+}
+
+// 关闭新进订单提醒closeTip
+function closeTip() {
+	if(window.tipnew == true) {
+		$.messager.confirm('确认', '关闭新订单提醒，将不再显示新单数量、不再弹出提示框提醒，是否继续关闭？', function(cf) {
+			if (cf) {
+				window.tipnew = false; 				// 关闭全局提醒开关
+				$.messager.alert('温馨提示', '新订单提醒已关闭，如要重新开启，请F5刷新页面！', 'info');
+			}
+		});
+	} else {
+		$.messager.alert('温馨提示', '新订单提醒处于关闭中，如要重新开启，请F5刷新页面！', 'warning');
+	}
+}
+
+// 导出订单记录exportOrder
+function exportOrder() {
+	$.messager.confirm('温馨提示', '确定要导出所有订单的数据吗?', function(result){
+		if(result) {
+			window.location.href = "{:U('Subbranch/ProOrder/exportOrder', '', '')}";
+		}
+	});
+}
+</script>
+<!-- easyUI工具栏按钮功能函数js end -->
+
+<!-- 每一条订单上单独操作按钮的功能js begin -->
+<script type="text/javascript">
+// 编辑快递信息editExpInfo
+function editExpInfo(oid, vid, expid) {
+	clearSelect(); 										// 默认未选取任何一行记录
+	window.location.href = "{:U('Subbranch/ProOrder/deliverProduct')}?oid="+oid+"&vid="+vid;
+}
+
+//备注订单信息remarkOrder
+function remarkOrder(oid,vnum,remark) {
+	clearSelect(); 										// 默认未选取任何一行记录
+	// 满足条件，选择了一条订单进行备注
+	$.messager.confirm('温馨提示', '是否确定编辑选中订单的备注信息？', function(cf){
+		if(cf){
+			$('#remarkdialog').window('open'); 			// 打开对话框
+			$('#oid').val(oid); 						// 写入订单编号
+			$('#order_number').val(vnum); 				// 写入订单可视化序号
+			$('#remarkcontent').val(remark); 			// 写入订单备注内容
+		}
+	});
+}
+
+// 确认提交订单备注
+function markOrderConfirm() {
+	var oid = $('#oid').val(); 							// 订单编号
+	var remark = $('#remarkcontent').val().trim(); 		// 获取内容
+	var param = {
+			'oid' : oid,
+			'remark' : remark
+	}
+	$.post("{:U('Subbranch/ProOrder/remarkOrderConfirm')}", param, function(result) {
+		if(result.errCode == 0) {
+			// 为了防止啰嗦，就不要弹窗提示成功了，或许要备注很多订单呢
+			$('#remarkdialog').window('close'); 	// 关闭对话框
+			dg.datagrid('reload'); 					// 数据刷新
+			clearSelect(); 							// 清除一些潜在所选择的行
+		} else {
+			$.messager.alert('温馨提示', '添加备注失败！'+result.errMsg, 'error'); // 错误提醒
+		}
+	});
+}
+
+// 协商撤销订单negotiateCancel
+function negotiateCancel(oid,cid) {
+	clearSelect(); 													// 默认未选取任何一行记录
+	// 准备数据
+	var param = {
+			nego : oid, 											// 要撤销的订单编号
+			cid : cid
+	}
+	$.messager.confirm('温馨提示', '是否跟顾客联系过，经双方协商妥当，郑重决定撤销该笔订单？', function(cf) {
+		if (cf) {
+			$.messager.confirm('温馨提示', '如要撤销的订单已付款，已支付现金将退回顾客账户！确认无误要撤销请确定，否则请谨慎取消！', function(cf2) {
+				if (cf2) {
+					$.post("{:U('Subbranch/ProOrder/negotiateCancelOrder', '', '')}", param, function(result) {
+						if (result.errCode == 0) {
+							$.messager.alert('温馨提示', '已成功撤销该笔订单，所协商下单顾客将会收到消息提醒！', 'info', function(){
+								dg.datagrid('reload'); 				// 数据刷新
+								clearSelect(); 						// 清除一些潜在所选择的行
+							});
+						} else {
+							$.messager.alert('温馨提示', '网络繁忙，请稍后再试！'+result.errMsg, 'error');
+						}
+					});
+				}
+			});
+		}
+	});
+}
+
+// 退货退款refund
+function refund(oid) {
+	clearSelect(); // 默认未选取任何一行记录
+	//alert(oid);
+	$.messager.alert('温馨提示', '不满足退货退款的条件！', 'warning');
+}
+</script>
+<!-- 每一条订单上单独操作按钮的功能js end -->
+
+<!-- 页面上一些公共的函数和搜索功能函数js begin -->
+<script type="text/javascript">
+
+// 定时检查新订单
+function checkNewOrder() {
+	if(window.tipnew == true) {
+		$.post("{:U('Subbranch/ProOrder/checkNewOrder')}", params, function(result){
+			if(result.errCode == 0){
+				var n = result.newordernumber;
+				if(n == 0) {
+					$("#neworder").html('(' + n + ')').hide();
+				} else {
+					$("#neworder").html('(' + n + ')').show();
+					Msgslide('您有新的订单，请注意查收！');
+				}
+			}
+		},'json');
+	}
+}
+
+//消息直接弹出
+function Msgshow(msg) {
+	$.messager.show({
+		title: '温馨提示',
+		msg: msg,
+		showType: 'show'
+	});
+}
+
+// 消息上下滑动
+function Msgslide(msg) {
+	$.messager.show({
+		title: '温馨提示',
+		msg: msg,
+		timeout: 3000,
+		showType: 'slide'
+	});
+}
+
+// 消息淡进淡出
+function Msgfade(msg) {
+	$.messager.show({
+		title: '温馨提示',
+		msg: msg,
+		timeout: 3000,
+		showType: 'fade'
+	});
+}
+</script>
+<!-- 页面上一些公共的函数和搜索功能函数js end -->
+</body>
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css?v=1.6.1" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/ui-dialog.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/select2.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artdialog/dialog-min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonutil.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type='text/javascript' src="__PUBLIC__/js/plugins/select2/select2.min.js"></script>
+<title>微动IPOS刷卡系统</title>
+</head>
+
+<body>
+	<div class="wrap">
+    	<div class="search-bar">
+        	<span class="order-head">找货方式</span>
+        	<div class="query-type">
+            	<span class="order-label">货号查询</span>
+                <span class="order-sec label-select">
+                    <select class="search-select" id="number-select">
+                        <option value="-1">请选择商品货号</option>
+                        <foreach name="productlist" item="pl">
+                        	<option value="{$pl.product_id}">{$pl.product_number}</option>
+                        </foreach>
+                    </select>
+                </span>
+                <button class="btn btn-default btn-sm search-btn" id="number-search">查询</button>
+                <div class="clear"></div>
+            </div>
+            <div class="query-type">
+            	<span class="order-label">品名查询</span>
+                <span class="order-sec label-select">
+                    <select class="search-select" id="name-select">
+                        <option value="-1">请选择商品名称</option>
+                        <foreach name="productlist" item="pl">
+                        	<option value="{$pl.product_id}">{$pl.product_name}</option>
+                        </foreach>
+                    </select>
+                </span>
+                <button class="btn btn-default btn-sm search-btn" id="name-search">查询</button>
+                <div class="clear"></div>
+            </div>
+            <div class="query-type">
+            	<span class="order-label">条码查询</span>
+                <span class="order-sec label-select">
+                    <select class="search-select" id="code-select">
+                        <option value="-1">请选择条形码</option>
+                        <foreach name="barcodelist" item="bl">
+                        	<option value="{$bl.product_id}">{$bl.bar_code}</option>
+                        </foreach>
+                    </select>
+                </span>
+                <button class="btn btn-default btn-sm search-btn" id="code-search">查询</button>
+                <div class="clear"></div>
+            </div>
+        </div>
+        
+        <div class="handle-bar sku-pro-handle">
+        	<span class="order-head">货源信息</span>
+        	<div class="query-product">
+            	<table class="sku-pro-table">
+            		<tr>
+						<td style="width:150px;">
+							<p style="font-weight:bold;">请按条件查询商品：</p>
+						</td>
+					</tr>
+					<tr class="pro-title-tr">
+						<td>序号</td>
+						<td>商品LOGO</td>
+						<td>商品编号</td>
+						<td>商品名称</td>
+						<td>颜色</td>
+						<td>尺码</td>
+						<td>当前价格</td>
+						<td>库存量</td>
+						<td>操作</td>
+					</tr>
+            		<!-- 在此搜索出商品SKU信息 -->
+                </table>
+            </div>
+        </div>
+        
+        <div class="handle-bar">
+        	<span class="order-head">订单信息</span>
+        	<div class="order-product">
+            	<table class="order-pro-table">
+                    <tr>
+                        <td style="width:150px;">
+                            <p style="font-weight:bold;">本订单选购如下商品：</p>
+                        </td>
+                    </tr>
+                    <tr class="pro-title-tr">
+                        <td><!-- 序号 --></td>
+                        <td>商品LOGO</td>
+                        <td>商品编号</td>
+                        <td>商品名称</td>
+                        <td>颜色</td>
+                        <td>尺码</td>
+                        <td>当前价格</td>
+                        <td>购买数量</td>
+                        <td>操作</td>
+                    </tr>
+                    <!-- 在此追加订单商品信息 -->
+                </table>
+            </div>
+        </div>
+        
+        <div class="handle-bar customer-bar">
+        	<span class="order-head">顾客信息</span>
+        	<div class="order-customer">
+                <div class="query-type">
+                	<div class="">
+                    	<span class="customer-info">
+                        	收货人姓名<span class="text-error">(*)</span>
+                        	<input type="text" class="uniform mytimeinput customer-input" name="receive_person" id="receive_person" placeholder="请输入收货人姓名" required value=""/>
+                        </span>
+                        <span class="customer-info">
+                        	收货人电话<span class="text-error">(*)</span>
+                        	<input type="text" class="uniform mytimeinput customer-input" name="receive_tel" id="receive_tel" placeholder="请输入收货人联系电话" required value=""/>
+                        </span>
+                    </div>
+                    <div class="">
+                    	<span class="customer-info">
+                        	刷卡付款码<span class="text-error">(*)</span>
+                        	<input type="text" class="uniform myaddressinput customer-input" name="auth_code" id="auth_code" placeholder="请点中文本框后扫描条形码" required value=""/>
+                        </span>
+                    	<span class="customer-info">
+                        	<button class="btn btn-default btn-sm" id="order-confirm">提交订单</button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+<!-- 商品sku js arttemplate begin -->
+<script type="text/html" id="skutpl">
+<tr>
+	<td style="width:150px;">
+		<p style="font-weight:bold;">该商品有如下SKU：</p>
+	</td>
+</tr>
+<tr class="pro-title-tr">
+	<td>序号</td>
+	<td>商品LOGO</td>
+	<td>商品编号</td>
+	<td>商品名称</td>
+	<td>颜色</td>
+	<td>尺码</td>
+	<td>当前价格</td>
+	<td>库存量</td>
+	<td>操作</td>
+</tr>
+{{each skulist as e i}}
+<tr class="sku-info-tr" data-skuid="{{e.sizecolor_id}}" data-pid="{{e.product_id}}" data-pno="{{e.product_number}}" data-pname="{{e.product_name}}" data-price="{{e.current_price}}" data-color="{{e.product_color}}" data-size="{{e.product_size}}" data-simg="{{e.micro_path}}" data-bimg="{{e.macro_path}}">
+	<td>{{i+1}}</td>
+	<td><img src="{{e.micro_path}}" style="width:35px;border-radius:5px;" alt=""></td>
+	<td>{{e.product_number}}</td>
+	<td>{{e.product_name}}</td>
+	<td>{{e.product_color}}</td>
+	<td>{{e.product_size}}</td>
+	<td>{{e.current_price}}</td>
+	<td>{{e.sku_storage_left}}</td>
+	<td><button class="btn btn-default btn-xs order-sku">选购</button></td>
+</tr>
+{{/each}}
+</script>
+<!-- 商品sku js arttemplate end -->
+
+<!-- 顾客订单 js arttemplate begin -->
+<script type="text/html" id="orderprotpl">
+<tr class="order-info-tr" data-skuid="{{skuid}}" data-pid="{{pid}}" data-pno="{{pno}}" data-pname="{{pname}}" data-color="{{color}}" data-size="{{size}}" data-price="{{price}}">
+	<td><!--{{no}}--></td>
+	<td><img src="{{simg}}" style="width:35px;border-radius:5px;" alt=""></td>
+	<td>{{pno}}</td>
+	<td>{{pname}}</td>
+	<td>{{color}}</td>
+	<td>{{size}}</td>
+	<td>{{price}}</td>
+	<td><input type="text" name="buy-amount" class="uniform myamountinput" placeholder="购买量" value="1" style="margin-top:8px;"></td>
+	<td><button class="btn btn-default btn-xs delete-sku">删除</button></td>
+</tr>
+</script>
+<!-- 顾客订单 js arttemplate end -->
+
+<script type="text/javascript">
+$(function(){
+	
+	$(".uniform").uniform(); // uniform表单初始化
+	
+	// 带搜索的select2选择框初始化
+	$("#number-select").select2(); 
+	$("#name-select").select2(); 
+	$("#code-select").select2(); 
+	
+	// 绑定DOM结构事件
+	$(".wrap").on("click", "#number-search, #name-search, #code-search", function(){
+		// 商品编号搜索
+		var _t = $(this), pid = _t.closest(".query-type").find("select[class='search-select']").val();
+		var params = {
+				pid : pid
+		}
+		MLoading.show("查询商品信息中...");
+		$.post("{:U('Admin/WechatMicropayRequest/querySkuInfo', '', '')}", params, function(result){
+			MLoading.hide();
+			if (result.errCode == 0) {
+				var tmpl = template("skutpl", result.data); // 渲染商品SKU模板
+				if (tmpl == "{Template Error}") {
+					tmpl = "";
+				}
+				$(".sku-pro-table").html(tmpl); // 写入模板消息
+				// 重新绑定DOM结构选购商品的事件
+				$(".order-sku").click(function(e){
+					e.stopPropagation();
+					var _t = $(this), infosec = _t.closest(".sku-info-tr");
+					//var no = $(".order-pro-table tr").length;
+					// 准备追加到订单的商品信息
+					var selectedinfo = {
+							//no: no-1,
+							skuid : infosec.data('skuid'),
+							pid : infosec.data('pid'),
+							pno : infosec.data('pno'),
+							pname : infosec.data('pname'),
+							color : infosec.data('color'),
+							size : infosec.data('size'),
+							price : infosec.data('price'),
+							simg : infosec.data('simg'),
+							bimg : infosec.data('bimg'),
+					}
+					//console.log(selectedinfo);
+					var selectedtmpl = template("orderprotpl", selectedinfo); // 渲染订单模板
+					if (selectedtmpl == "{Template Error}") {
+						selectedtmpl = "";
+					}
+					$(".order-pro-table").append(selectedtmpl); // 追加到订单中
+					$(".order-pro-table").find(".uniform").uniform(); // 初始化uniform
+				});
+			} else {
+				util.alert(result.errMsg); // 查询失败
+			}
+		}, "json");
+	}).on("click", ".delete-sku", function(e){
+		// 从订单中删除商品
+		e.stopPropagation();
+		var _t = $(this);
+		_t.closest(".order-info-tr").remove(); // 从订单中移除商品
+	}).on("click", "#order-confirm", function(){
+		// 下单刷卡
+		var _t = $(this);
+		if (_t.hasClass("btn-disabled")) {
+			return false; // 防误点
+		}
+		// Step1:检测订单中是否有商品
+		var listlen = $(".order-pro-table .order-info-tr").length;
+		if (listlen <= 0) {
+			util.alert("至少选购一件商品再下订单！");
+			return false;
+		}
+		// Step2：提取收货人及刷卡信息
+		var receive_person = $("#receive_person").val().trim();
+		var receive_tel = $("#receive_tel").val().trim();
+		var auth_code = $("#auth_code").val().trim();
+		if (receive_person == "") {
+			util.alert("请填写订单收货人姓名！");
+			$("#receive_person").focus();
+			return false;
+		}
+		if (receive_tel == "") {
+			util.alert("请填写订单收货人电话！");
+			$("#receive_tel").focus();
+			return false;
+		}
+		if (auth_code == "") {
+			util.alert("请扫描顾客手机上的刷卡条码或二维码！");
+			$("#auth_code").focus(); // 聚焦条形码
+			return false;
+		}
+		// Step3：验证通过，压栈订单参数并打包
+		var orderlist = [];
+		$(".order-pro-table .order-info-tr").each(function(e){
+			var _obj = $(this), currentamount = _obj.children().find("input[name=buy-amount]").val();
+			// Step3-1：检验购买数量是否整数
+			// Step3-2：检验购买数量是否大于0
+			if (~~currentamount <= 0) {
+				util.alert("购买数量不能小于0"); // 防止购买数量不正确
+				return false;
+			}
+			// Step3-2：检验购买数量是否超过库存（渲染模板的时候就带入最大库存）
+			var _prosku = {
+					pid : _obj.data("pid"),
+					pname : _obj.data("pname"),
+					skuid : _obj.data("skuid"),
+					size : _obj.data("size"),
+					color : _obj.data("color"),
+					price : _obj.data("price"),
+					amount : currentamount
+			};
+			orderlist.push(JSON.stringify(_prosku));
+		});
+		var params = {
+				person : receive_person,
+				tel : receive_tel,
+				authcode : auth_code, 
+				orderlist : JSON.stringify(orderlist)
+		}
+		//console.log(JSON.stringify(params));
+		// Step4：提交后台下单并刷卡
+		//_t.addClass("btn-disabled"); // 防止等待过程中重复点
+		MLoading.show("用户支付中，请等待..."); // 增加友好度体验
+		$.post("{:U('Admin/WechatMicropayRequest/micropayConfirm', '', '')}", params, function(result){
+			//_t.removeClass("btn-disabled"); // 移除防止重复点
+			MLoading.hide(); // 移除等待框
+			if (result.errCode == 0) {
+				util.alert("下单并支付成功，您可以在订单中心找到刷卡支付的订单");
+				setTimeout(function(){
+					location.href = "{:U('Admin/OrderManage/orderView', '', '')}"; // 延时2秒跳转订单中心
+				}, 2000);
+			} else {
+				util.alert(result.errMsg);
+				return false;
+			}
+		}, "json");
+	});
+	
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>新品信息管理</title>
+</head>
+
+<body class="easyui-layout">
+	<!-- easyUI的内容 -->
+	<!-- easyUI的表格 -->
+	<div data-options="region:'center',border:false">
+		<table id="dg" title="新品信息列表 ————提示：移除商品时可以多选，若需要编辑商品请到商品管理中修改。" toolbar="#toolbar"
+			style="width: 100%; height: 100%;">
+		</table>
+	</div>
+	<!-- easyUI的工具条 -->
+	<div id="toolbar">
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addNewProduct();">添加新品</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="deleteNewProduct();">移除</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="cancelSelect();">取消选择</a>
+	</div>
+
+<script type="text/javascript">
+$(function() {
+	$('#dg').datagrid({
+		url: "{:U('Admin/NewProductManage/getAllNewProduct','','')}",
+		singleSelect: false,
+		collapsible: true,
+		method: 'post',
+		fitColumns: true,
+		fit: true,
+		pagination: true,
+		pageSize: 10,
+		pageList: [5, 10, 20],
+		rownumbers: true,
+		idField: 'newproduct_id',
+		columns: [
+			[{
+				field: 'nav_id',
+				title: 'nav_id',
+				width: 100,
+				hidden: true
+			}, {
+				field: 'ck',
+				checkbox: 'true',
+				width: 100
+			}, {
+				field: 'product_number',
+				title: '编号',
+				sortable: true,
+				width: 100
+			}, {
+				field: 'nav_name',
+				title: '分类',
+				sortable: true,
+				width: 100
+			}, {
+				field: 'product_name',
+				title: '名称',
+				sortable: true,
+				width: 100
+			}, {
+				field: 'current_price',
+				title: '单价',
+				sortable: true,
+				width: 100
+			}, {
+				field: 'storage_amount',
+				title: '库存量',
+				sortable: true,
+				width: 100
+			}, {
+				field: 'sell_amount',
+				title: '卖出量',
+				sortable: true,
+				width: 100
+			}, {
+				field: 'onshelf_time',
+				title: '上架时间',
+				sortable: true,
+				width: 100
+			}, {
+				field: 'newproduct_id',
+				title: '操作',
+				width: 100,
+				formatter: function(val, row) {
+					return '<span><a href="javascript:void(0)" onclick="lookDetail(\'' + val + '\')">查看详情</a>&nbsp;&nbsp;<a href="javascript:void(0)" onclick="modifyData(\'' + val + '\')">修改</a></span>';
+				}
+			}]
+		],
+	}); //end easyui
+});
+</script>
+<script type="text/javascript">
+	//查看商品详情  
+	function lookDetail(product_id){
+		window.location.href = "{:U('Admin/ProductManage/lookProductDetail','','')}?product_id="+product_id;
+	}
+	
+	//修改商品信息
+	function modifyData(product_id){
+		window.location.href = "{:U('Admin/ProductManage/editProduct','','')}?product_id="+product_id;
+	}
+
+	//添加新品 
+	function addNewProduct(){
+		window.location.href = "{:U('Admin/NewProductManage/addNewProduct','','')}";
+	}
+	
+	//取消选择 
+	function cancelSelect() {
+		$('#dg').datagrid('unselectAll');
+	}
+	
+	//删除新品 
+	function deleteNewProduct(){
+		var rows = $("#dg").datagrid('getSelections');
+		var rowdata = [];
+		if (rows.length == 0) {
+			$.messager.alert('警告','至少需要选择一件商品！');				
+		}else{
+			$.messager.confirm('警告','确定移除商品？',function(cf){
+				if(cf){
+					for(var i=0;i<rows.length;i++){
+						rowdata.push(rows[i].newproduct_id);
+					}
+					$.post('{:U("Admin/NewProductManage/deleteNewPro","","")}',
+							{rowdata:rowdata.join(',')},
+							function(data){
+								if(data.status == '1'){
+									window.location.reload();
+								}else{
+									$.messager.alert('警告','移除时发生错误，请重试！');
+								}
+							});
+				}
+			});
+				
+			}
+	}
+</script>
+</body>
+</html>

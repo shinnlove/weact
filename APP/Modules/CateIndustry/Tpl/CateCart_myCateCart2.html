@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+<meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57GMT" />
+<meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/template2/css/style.css" />
+<script type="text/javascript" src="__PUBLIC__/template2/js/jquery.js"></script>
+<title>我的餐车</title>
+</head>
+
+<body>
+	<div class="title">
+		<a href="#"><img src="__PUBLIC__/template2/images/back.png" width="20" /></a>
+		我的餐车
+	</div>
+	<div class="content buyCar">
+		<div class="conTop"></div>
+	    <div class="conCenter">
+			<h3>餐车内目前消费总额为￥28.00元</h3>
+	        <table cellpadding="0" cellspacing="0" width="100%">
+	          <tr>
+	            <th scope="col">商品名称</th>
+	            <th scope="col">单价</th>
+	            <th scope="col">购买数量</th>
+	          </tr>
+	          <tr>
+	            <td>港式迷你堡</td>
+	            <td class="danjia">￥28.00/份</td>
+	            <td><div class="fixed"><em class="jian"><img src="__PUBLIC__/template2/images/jia2.png" width="22" alt="" /></em><input type="text" value="10" /><em class="jia"><img src="__PUBLIC__/template2/images/jia.png" width="22" /></em></div></td>
+	          </tr>
+	          <tr>
+	            <td>港式迷你堡</td>
+	            <td class="danjia">￥28.00/份</td>
+	            <td><div class="fixed"><em class="jian"><img src="__PUBLIC__/template2/images/jia2.png" width="22" alt="" /></em><input type="text" value="2" /><em class="jia"><img src="__PUBLIC__/template2/images/jia.png" width="22" /></em></div></td>
+	          </tr>
+	           <tr>
+	            <td>港式迷你堡</td>
+	            <td class="danjia">￥28.00/份</td>
+	            <td><div class="fixed"><em class="jian"><img src="__PUBLIC__/template2/images/jia2.png" width="22" alt="" /></em><input type="text" value="3" /><em class="jia"><img src="__PUBLIC__/template2/images/jia.png" width="22" /></em></div></td>
+	          </tr>
+	           <tr>
+	            <td>港式迷你堡</td>
+	            <td class="danjia">￥28.00/份</td>
+	            <td><div class="fixed"><em class="jian"><img src="__PUBLIC__/template2/images/jia2.png" width="22" alt="" /></em><input type="text" value="4" /><em class="jia"><img src="__PUBLIC__/template2/images/jia.png" width="22" /></em></div></td>
+	          </tr>
+	        </table>
+			<p class="more">买的不够吃？再挑一些吧！<br />单笔消费满199元赠送价值20元抵用券哦~</p>
+	        <a href="{:U('CateIndustry/CateOrder/orderInfo', array(e_id => $e_id), '')}" class="redBtn">提交订单</a>
+	        <a href="onlinePay.html" class="blueBtn">继续点餐</a>
+	    </div>
+	    <div class="conBottom"></div>
+	</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+	$('em.jian').click(function() {
+		var val = parseInt($(this).parents('td').find('input').val());
+		if (val <= 2) {
+			$(this).parents('td').find('input').val(1);
+			$(this).find('img').attr({
+				'src': 'images/jia3.png'
+			});
+		} else {
+			$(this).parents('td').find('input').val(val - 1);
+		}
+	});
+	$('em.jia').click(function() {
+		var val = parseInt($(this).parents('td').find('input').val());
+		if (val < 2) {
+			$(this).parents('td').find('.jian img').attr({
+				'src': 'images/jia2.png'
+			});
+			$(this).parents('td').find('input').val(val + 1);
+		} else {
+			$(this).parents('td').find('input').val(val + 1);
+		}
+	});
+});
+</script>
+</body>
+</html>

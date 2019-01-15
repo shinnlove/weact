@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactAdminStyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/template-native.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>店铺优惠券</title>
+</head>
+
+<body class="easyui-layout" fit="true">
+	<input type="hidden" id="eid" value="{$_SESSION['curEnterprise']['e_id']}" />
+	<div data-options="region:'center',border:false">
+		<table id="mycoupon" title="所有优惠券信息一览" toolbar="#toolbar"
+			style="width: 100%; height: 100%;">
+		</table>
+	</div>
+	
+	<!-- easyUI的工具条 -->
+	<div id="toolbar">
+		<span>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addMyCoupon();">添加优惠券</a> 
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="getshareurl();">领券链接</a>
+			<a href="javascript:location.reload();" class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
+		</span>
+	</div>
+	<!-- 复制优惠券链接对话框 begin -->
+	<div id="copy-dialog" class="easyui-window clipwindow" title="我的分享链接" iconCls="icon-edit" closed="true" minimizable="false" maximizable="false">
+		<div class="easyui-layout" fit="true">
+			<div region="center" border="false" class="link-region">
+				<div class="handle-panel">
+					优惠券地址： <input name="outaddress" id="shareurl" size="50" value="" />
+					<a href="javascript:;" id="clip_button" class="easyui-linkbutton" iconCls="icon-redo" data-clipboard-target="shareurl">复制链接</a>
+				</div>
+				<h6 class="tit-sm">优惠券链接答疑</h6>
+				<div class="question-list">
+					<div class="question">
+						<span class="badge red-answer">Q</span>
+						<span class="badge-list">该优惠券链接适用于什么地方？</span>
+					</div>
+					<div class="answer">
+						<span class="badge blue">A</span>
+						<span class="badge-list">顾客可以通过该链接领取优惠券</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 复制优惠券链接对话框end -->
+
+<script type="text/javascript">
+var sid = "{$sid}"; // 该商家的一张门店
+$(function() {
+	mycoupon = $('#mycoupon').datagrid({
+		url : "{:U('Admin/CouponRequest/readMyCoupon')}",
+		singleSelect: true,
+		collapsible: true,
+		method: 'post',
+		fitColumns: true,
+		fit: true,
+		pagination: true,
+		pageSize: 10,
+		pageList: [5, 10, 15],
+		rownumbers: true,
+		idField : 'coupon_id',
+		columns : [ [ 
+		              { field : 'coupon_name', title : '券名称', width : 100 },
+		              { field : 'coupon_type', title : '券种类', width : 60, formatter : couponTypeInit },
+		              { field : 'denomination', title : '券面额|折扣数', sortable : true, width : 100, formatter : discountInit }, 
+		              { field : 'lowest_consume', title : '最低消费(元)', sortable : true, width : 60 }, 
+		              { field : 'publish_amount', title : '发行数量(张)', sortable : true, width : 60 }, 
+		              { field : 'start_time', title : '生效时间', sortable : true, width : 100 }, 
+		              { field : 'end_time', title : '失效时间', sortable : true, width : 100 }, 
+		              { field : 'add_time', title : '添加券时间', sortable : true, width : 100 }, 
+		              { field : 'is_del', title : '当前状态', sortable : true, width : 100, formatter : formatdel }, 
+		              { field : 'coupon_id', title : '操作', width : 60, formatter : formatopt } 
+		          ] ],
+		view : detailview,
+		detailFormatter : function(rowIndex, rowData) {
+			var instruction = rowData.instruction == null ? '' : rowData.instruction;
+			var detailcontent = '<table>'
+								+	'<tr>'
+								+		'<td>'
+								+			'<font style="color:#F20">规则说明：</font>' + instruction
+								+		'</td>'
+								+	'</tr>'
+								+'</table>'
+			return detailcontent;
+		}
+	});
+});
+
+//初始化优惠券种类
+function couponTypeInit(val, row){
+	var ctype = row.coupon_type;
+	if(ctype == 1){
+		return '<font style="color:#482cf1">抵用券</font>';
+	}else if(ctype == 2){
+		return '<font style="color:#ccaf27">折扣券</font>';
+	}
+}
+
+//根据优惠券种类初始化优惠券面额或折扣数
+function discountInit(val, row){
+	var ctype = row.coupon_type;
+	if(ctype == 1){
+		return '面额：'+row.denomination;
+	}else if(ctype == 2){
+		return '折扣：'+row.discount+'%';
+	}
+}
+
+//判断是否删除
+function formatdel(val, row) {
+	if (val == 0) {
+		return '正在进行中';
+	}else if (val == 1) {
+		return '已删除或已过期'
+	}
+}
+
+//在easyUI中生成删除按钮
+function formatopt(val, row) {
+	var url = "{:U('Admin/CouponRequest/delMyCoupon','','')}?coupon_id="+ row.coupon_id;
+	if (row.is_del == 1) { return "不可操作"; }
+	else if (row.is_del == 0) { return "<a href='"+url+"'><font color='red'>删除</font></a>"; }
+}
+
+//添加新增按钮
+/* function addmyshare(){
+	window.location.href = "{:U('preaddCoupon','','')}";
+} */
+
+function addMyCoupon(){
+	window.location.href = "{:U('Admin/Coupon/addBriefCoupon','','')}";
+}
+
+//推广我的分享
+function getshareurl() {
+	var row = mycoupon.datagrid('getSelected');
+	if (!row) {
+		$.messager.alert('温馨提示', '请先选择一张优惠券。', 'warning');
+	} else {
+		if (row.is_del == 1) {
+			$.messager.alert('温馨提示', '请选择一张有效优惠券。', 'warning');
+		} else {
+			if (typeof window.sid == "undefined" || window.sid == "") {
+				$.messager.alert('温馨提示', '请先添加一个分店店铺，然后才能领券。', 'warning', function(){
+					return false;
+				});
+			} else {
+				$('#copy-dialog').window('open');
+				var surl = "{:U('WeMall/Coupon/sendCoupon','','','',true)}/sid/"+window.sid+"/coupon_id/"+ row.coupon_id;
+				$("#shareurl").val(surl);
+			}
+		}
+	}
+	
+	// 复制到剪贴板：鼠标点击时，全选文本框内容
+	$('#shareurl').on('click', function(){
+		this.setSelectionRange(0, $(this).val().length);
+	});
+	
+	// 点击复制按钮
+	$("#clip_button").zclip({
+	    path: "__PUBLIC__/js/ZeroClipboard.swf",
+	    copy: function(){
+	    	return $('#shareurl').val();
+	    },
+	    setCSSEffects:false,
+	    beforeCopy:function(){
+	    	/* 复制成功前干嘛 */
+			//$(this).css('background','#449d44');
+		},
+	    afterCopy:function(){
+	    	/* 复制成功后的操作 */
+	    	//$(this).html('复制成功');
+	    	var $copysuc = $("<div class='copy-tips'><div class='copy-tips-wrap'>复制成功</div></div>");
+			$("body").find(".copy-tips").remove().end().append($copysuc);
+			$(".copy-tips").fadeOut(3000);
+	    }
+	});
+}
+</script>
+</body>
+</html>

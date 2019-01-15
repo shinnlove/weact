@@ -1,0 +1,549 @@
+@charset "utf-8";
+/* CSS Document */
+
+/*---------------------↓漂亮的button的css样式↓----------------------*/
+
+.ui-color-button, .ui-color-button:visited {
+    background: #222 url(../images/overlay.png) repeat-x;
+    display: inline-block;
+    padding: 5px 10px 6px;
+    color: #fff;
+    text-decoration: none;
+    -moz-border-radius: 6px;
+    -webkit-border-radius: 6px;
+    -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+    text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+	/*border-top:1px solid #BBB;*/
+    border-bottom: 1px solid rgba(0,0,0,0.25);
+    position: relative;
+    cursor: pointer;
+	font-size: 12px;
+    line-height: 1;
+    text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+}
+
+.small.ui-color-button, .small.ui-color-button:visited{
+	/*-----  定义大按钮，用法：<a class="small button pink">显示更多奖项</a>  ----*/ 
+	font-family:"微软雅黑", Arial, sans-serif;
+	font-size: 12px;
+	padding: 6px 10px 5px;
+	text-decoration:none; 
+	color:#FFF;
+}
+
+.medium.ui-color-button, .medium.ui-color-button:visited { 
+	/*-----  定义大按钮，用法：<a class="medium button pink">显示更多奖项</a>  ----*/	
+	font-family:"微软雅黑", Arial, sans-serif;
+	font-size: 12px;
+	padding: 6px 10px 5px;
+	text-decoration:none; 
+	color:#FFF;
+}
+ 
+.large.ui-color-button, .large.ui-color-button:visited { 
+	/*-----  定义大按钮，用法：<a class="large button pink">显示更多奖项</a>  ----*/
+	font-family:"微软雅黑", Arial, sans-serif;
+	font-size: 12px;
+    padding: 10px 14px 9px 13px;
+	text-decoration:none; 
+	color:#FFF;
+}
+ 
+.super.ui-color-button, .super.ui-color-button:visited { 
+	/*-----  定义最大按钮，用法：<a class="super button pink">显示更多奖项</a>  ----*/
+	font-family:"微软雅黑", Arial, sans-serif;
+	font-size: 34px;
+    padding: 8px 14px 9px; 
+	text-decoration:none;
+	color:#FFF;
+}
+/*
+.pink.ui-color-button, .pink.ui-color-button:visited  { 
+	background-color: #e22092; 
+}
+.pink.ui-color-button:hover { 
+	background-color: #c81e82; 
+}
+.green.ui-color-button, .green.ui-color-button:visited    { background-color: #91bd09; }
+.green.ui-color-button:hover                 { background-color: #749a02; }
+.red.ui-color-button, .red.ui-color-button:visited        { background-color: #e62727; }
+.red.ui-color-button:hover                   { background-color: #cf2525; }
+.orange.ui-color-button, .orange.ui-color-button:visited  { background-color: #ff5c00; }
+.orange.ui-color-button:hover                { background-color: #d45500; }
+.blue.ui-color-button, .blue.ui-color-button:visited      { background-color: #2981e4; }
+.blue.ui-color-button:hover                  { background-color: #2575cf; }
+.yellow.ui-color-button, .yellow.ui-color-button:visited  { background-color: #ffb515; }
+.yellow.ui-color-button:hover                { background-color: #fc9200; }
+*/
+.meadow.ui-color-button, .meadow.ui-color-button:visited { 
+	background-color: #56a447;
+	background-image: linear-gradient(top,#60b452 0,#56a447 100%);
+	background-image: -moz-linear-gradient(top,#60b452 0,#56a447 100%);
+	background-image: -webkit-linear-gradient(top,#60b452 0,#56a447 100%);
+}
+.meadow.ui-color-button:hover { 
+	background-color: #488a3b;
+	background-image: linear-gradient(top,#549c48 0,#488a3b 100%);
+	background-image: -moz-linear-gradient(top,#549c48 0,#488a3b 100%);
+	background-image: -webkit-linear-gradient(top,#549c48 0,#488a3b 100%);
+}
+
+/*-----------------------新加的配色系-------------------------*/
+/*0.默认*/
+.default.ui-color-button, .default.ui-color-button:visited { 
+	background-color: #3C63B9;
+	background-image: linear-gradient(top,#6DACED 0,#3C63B9 100%);
+	background-image: -moz-linear-gradient(top,#6DACED 0,#3C63B9 100%);
+	background-image: -webkit-linear-gradient(top,#6DACED 0,#3C63B9 100%);
+}
+.default.ui-color-button:hover { 
+	background-color: #3356a1;
+	background-image: linear-gradient(top,#619bd4 0,#3356a1 100%);
+	background-image: -moz-linear-gradient(top,#619bd4 0,#3356a1 100%);
+	background-image: -webkit-linear-gradient(top,#619bd4 0,#3356a1 100%);
+}
+
+/*1.暗红色*/
+.dull-red.ui-color-button, .dull-red.ui-color-button:visited { 
+	background-color: #660000;
+	background-image: linear-gradient(top,#D80000 0,#660000 100%);
+	background-image: -moz-linear-gradient(top,#D80000 0,#660000 100%);
+	background-image: -webkit-linear-gradient(top,#D80000 0,#660000 100%);
+}
+.dull-red.ui-color-button:hover { 
+	background-color: #4d0000;
+	background-image: linear-gradient(top,#bf0000 0,#4d0000 100%);
+	background-image: -moz-linear-gradient(top,#bf0000 0,#4d0000 100%);
+	background-image: -webkit-linear-gradient(top,#bf0000 0,#4d0000 100%);
+}
+
+/*2.深红色风格*/
+.dark-red.ui-color-button, .dark-red.ui-color-button:visited { 
+	background-color: #9a0000;
+	background-image: linear-gradient(top,#DF0300 0,#9a0000 100%);
+	background-image: -moz-linear-gradient(top,#DF0300 0,#9a0000 100%);
+	background-image: -webkit-linear-gradient(top,#DF0300 0,#9a0000 100%);
+}
+.dark-red.ui-color-button:hover { 
+	background-color: #800000;
+	background-image: linear-gradient(top,#c40300 0,#800000 100%);
+	background-image: -moz-linear-gradient(top,#c40300 0,#800000 100%);
+	background-image: -webkit-linear-gradient(top,#c40300 0,#800000 100%);
+}
+
+/*3.鲜红色风格*/
+.bright-red.ui-color-button, .bright-red.ui-color-button:visited { 
+	background-color: #cc0000;
+	background-image: linear-gradient(top,#E70303 0,#cc0000 100%);
+	background-image: -moz-linear-gradient(top,#E70303 0,#cc0000 100%);
+	background-image: -webkit-linear-gradient(top,#E70303 0,#cc0000 100%);
+}
+.bright-red.ui-color-button:hover { 
+	background-color: #b30000;
+	background-image: linear-gradient(top,#cf0202 0,#b30000 100%);
+	background-image: -moz-linear-gradient(top,#cf0202 0,#b30000 100%);
+	background-image: -webkit-linear-gradient(top,#cf0202 0,#b30000 100%);
+}
+
+/*4.粉红色风格*/
+.pink.ui-color-button, .pink.ui-color-button:visited { 
+	background-color: #cc3333;
+	background-image: linear-gradient(top,#EE5C5C 0,#cc3333 100%);
+	background-image: -moz-linear-gradient(top,#EE5C5C 0,#cc3333 100%);
+	background-image: -webkit-linear-gradient(top,#EE5C5C 0,#cc3333 100%);
+}
+.pink.ui-color-button:hover { 
+	background-color: #b32d2d;
+	background-image: linear-gradient(top,#d45353 0,#b32d2d 100%);
+	background-image: -moz-linear-gradient(top,#d45353 0,#b32d2d 100%);
+	background-image: -webkit-linear-gradient(top,#d45353 0,#b32d2d 100%);
+}
+
+/*5.玫红色风格*/
+.rose-red.ui-color-button, .rose-red.ui-color-button:visited { 
+	background-color: #ea4c88;
+	background-image: linear-gradient(top,#FF8BB7 0,#ea4c88 100%);
+	background-image: -moz-linear-gradient(top,#FF8BB7 0,#ea4c88 100%);
+	background-image: -webkit-linear-gradient(top,#FF8BB7 0,#ea4c88 100%);
+}
+.rose-red.ui-color-button:hover { 
+	background-color: #d14379;
+	background-image: linear-gradient(top,#e57ea6 0,#d14379 100%);
+	background-image: -moz-linear-gradient(top,#e57ea6 0,#d14379 100%);
+	background-image: -webkit-linear-gradient(top,#e57ea6 0,#d14379 100%);
+}
+
+/*6.浅紫色风格*/
+.light-purple.ui-color-button, .light-purple.ui-color-button:visited { 
+	background-color: #993399;
+	background-image: linear-gradient(top,#D66AD6 0,#993399 100%);
+	background-image: -moz-linear-gradient(top,#D66AD6 0,#993399 100%);
+	background-image: -webkit-linear-gradient(top,#D66AD6 0,#993399 100%);
+}
+.light-purple.ui-color-button:hover { 
+	background-color: #802a80;
+	background-image: linear-gradient(top,#bd5ebd 0,#802a80 100%);
+	background-image: -moz-linear-gradient(top,#bd5ebd 0,#802a80 100%);
+	background-image: -webkit-linear-gradient(top,#bd5ebd 0,#802a80 100%);
+}
+
+/*7.紫色风格*/
+.purple.ui-color-button, .purple.ui-color-button:visited { 
+	background-color: #663399;
+	background-image: linear-gradient(top,#9962CF 0,#663399 100%);
+	background-image: -moz-linear-gradient(top,#9962CF 0,#663399 100%);
+	background-image: -webkit-linear-gradient(top,#9962CF 0,#663399 100%);
+}
+.purple.ui-color-button:hover { 
+	background-color: #552a80;
+	background-image: linear-gradient(top,#8555b5 0,#552a80 100%);
+	background-image: -moz-linear-gradient(top,#8555b5 0,#552a80 100%);
+	background-image: -webkit-linear-gradient(top,#8555b5 0,#552a80 100%);
+}
+
+/*8.宝蓝色风格*/
+.navy-blue.ui-color-button, .navy-blue.ui-color-button:visited { 
+	background-color: #333399;
+	background-image: linear-gradient(top,#6161CF 0,#333399 100%);
+	background-image: -moz-linear-gradient(top,#6161CF 0,#333399 100%);
+	background-image: -webkit-linear-gradient(top,#6161CF 0,#333399 100%);
+}
+.navy-blue.ui-color-button:hover { 
+	background-color: #2a2a80;
+	background-image: linear-gradient(top,#5555b5 0,#2a2a80 100%);
+	background-image: -moz-linear-gradient(top,#5555b5 0,#2a2a80 100%);
+	background-image: -webkit-linear-gradient(top,#5555b5 0,#2a2a80 100%);
+}
+
+/*9.深蓝色风格*/
+.dark-blue.ui-color-button, .dark-blue.ui-color-button:visited { 
+	background-color: #0066cc;
+	background-image: linear-gradient(top,#318FEC 0,#0066cc 100%);
+	background-image: -moz-linear-gradient(top,#318FEC 0,#0066cc 100%);
+	background-image: -webkit-linear-gradient(top,#318FEC 0,#0066cc 100%);
+}
+.dark-blue.ui-color-button:hover { 
+	background-color: #0059b3;
+	background-image: linear-gradient(top,#2c80d4 0,#0059b3 100%);
+	background-image: -moz-linear-gradient(top,#2c80d4 0,#0059b3 100%);
+	background-image: -webkit-linear-gradient(top,#2c80d4 0,#0059b3 100%);
+}
+
+/*10.蓝色风格*/
+.blue.ui-color-button, .blue.ui-color-button:visited { 
+	background-color: #0099cc;
+	background-image: linear-gradient(top,#5DD1F8 0,#0099cc 100%);
+	background-image: -moz-linear-gradient(top,#5DD1F8 0,#0099cc 100%);
+	background-image: -webkit-linear-gradient(top,#5DD1F8 0,#0099cc 100%);
+}
+.blue.ui-color-button:hover { 
+	background-color: #0086b3;
+	background-image: linear-gradient(top,#52bbde 0,#0086b3 100%);
+	background-image: -moz-linear-gradient(top,#52bbde 0,#0086b3 100%);
+	background-image: -webkit-linear-gradient(top,#52bbde 0,#0086b3 100%);
+}
+
+/*11.湖蓝色风格*/
+.sky-blue.ui-color-button, .sky-blue.ui-color-button:visited { 
+	background-color: #66cccc;
+	background-image: linear-gradient(top,#83F1F1 0,#66cccc 100%);
+	background-image: -moz-linear-gradient(top,#83F1F1 0,#66cccc 100%);
+	background-image: -webkit-linear-gradient(top,#83F1F1 0,#66cccc 100%);
+}
+.sky-blue.ui-color-button:hover { 
+	background-color: #59b3b3;
+	background-image: linear-gradient(top,#75d9d9 0,#59b3b3 100%);
+	background-image: -moz-linear-gradient(top,#75d9d9 0,#59b3b3 100%);
+	background-image: -webkit-linear-gradient(top,#75d9d9 0,#59b3b3 100%);
+}
+
+/*12.浅绿色风格*/
+.light-green.ui-color-button, .light-green.ui-color-button:visited { 
+	background-color: #77cc33;
+	background-image: linear-gradient(top,#A8F56B 0,#77cc33 100%);
+	background-image: -moz-linear-gradient(top,#A8F56B 0,#77cc33 100%);
+	background-image: -webkit-linear-gradient(top,#A8F56B 0,#77cc33 100%);
+}
+.light-green.ui-color-button:hover { 
+	background-color: #69b32d;
+	background-image: linear-gradient(top,#98db60 0,#69b32d 100%);
+	background-image: -moz-linear-gradient(top,#98db60 0,#69b32d 100%);
+	background-image: -webkit-linear-gradient(top,#98db60 0,#69b32d 100%);
+}
+
+/*13.绿色风格*/
+.green.ui-color-button, .green.ui-color-button:visited { 
+	background-color: #669900;
+	background-image: linear-gradient(top,#92D60B 0,#669900 100%);
+	background-image: -moz-linear-gradient(top,#92D60B 0,#669900 100%);
+	background-image: -webkit-linear-gradient(top,#92D60B 0,#669900 100%);
+}
+.green.ui-color-button:hover { 
+	background-color: #558000;
+	background-image: linear-gradient(top,#81bd09 0,#558000 100%);
+	background-image: -moz-linear-gradient(top,#81bd09 0,#558000 100%);
+	background-image: -webkit-linear-gradient(top,#81bd09 0,#558000 100%);
+}
+
+/*14.深绿色风格*/
+.dark-green.ui-color-button, .dark-green.ui-color-button:visited { 
+	background-color: #336600;
+	background-image: linear-gradient(top,#64BD0C 0,#336600 100%);
+	background-image: -moz-linear-gradient(top,#64BD0C 0,#336600 100%);
+	background-image: -webkit-linear-gradient(top,#64BD0C 0,#336600 100%);
+}
+.dark-green.ui-color-button:hover { 
+	background-color: #264d00;
+	background-image: linear-gradient(top,#56a30a 0,#264d00 100%);
+	background-image: -moz-linear-gradient(top,#56a30a 0,#264d00 100%);
+	background-image: -webkit-linear-gradient(top,#56a30a 0,#264d00 100%);
+}
+
+/*15.黄绿色风格*/
+.yellow-green.ui-color-button, .yellow-green.ui-color-button:visited { 
+	background-color: #666600;
+	background-image: linear-gradient(top,#A0A002 0,#666600 100%);
+	background-image: -moz-linear-gradient(top,#A0A002 0,#666600 100%);
+	background-image: -webkit-linear-gradient(top,#A0A002 0,#666600 100%);
+}
+.yellow-green.ui-color-button:hover { 
+	background-color: #4c4d00;
+	background-image: linear-gradient(top,#878701 0,#4c4d00 100%);
+	background-image: -moz-linear-gradient(top,#878701 0,#4c4d00 100%);
+	background-image: -webkit-linear-gradient(top,#878701 0,#4c4d00 100%);
+}
+
+/*16.草黄色风格*/
+.grass-yellow.ui-color-button, .grass-yellow.ui-color-button:visited { 
+	background-color: #999900;
+	background-image: linear-gradient(top,#D3D303 0,#999900 100%);
+	background-image: -moz-linear-gradient(top,#D3D303 0,#999900 100%);
+	background-image: -webkit-linear-gradient(top,#D3D303 0,#999900 100%);
+}
+.grass-yellow.ui-color-button:hover { 
+	background-color: #808000;
+	background-image: linear-gradient(top,#baba02 0,#808000 100%);
+	background-image: -moz-linear-gradient(top,#baba02 0,#808000 100%);
+	background-image: -webkit-linear-gradient(top,#baba02 0,#808000 100%);
+}
+
+/*17.浅黄色风格*/
+.light-yellow.ui-color-button, .light-yellow.ui-color-button:visited { 
+	background-color: #cccc33;
+	background-image: linear-gradient(top,#EEEE4D 0,#cccc33 100%);
+	background-image: -moz-linear-gradient(top,#EEEE4D 0,#cccc33 100%);
+	background-image: -webkit-linear-gradient(top,#EEEE4D 0,#cccc33 100%);
+}
+.light-yellow.ui-color-button:hover { 
+	background-color: #b2b32d;
+	background-image: linear-gradient(top,#d4d444 0,#b2b32d 100%);
+	background-image: -moz-linear-gradient(top,#d4d444 0,#b2b32d 100%);
+	background-image: -webkit-linear-gradient(top,#d4d444 0,#b2b32d 100%);
+}
+
+/*18.柠檬黄色风格*/
+.lemon-yellow.ui-color-button, .lemon-yellow.ui-color-button:visited { 
+	background-color: #E5E600;
+	background-image: linear-gradient(top,#FCFC00 0,#E5E600 100%);
+	background-image: -moz-linear-gradient(top,#FCFC00 0,#E5E600 100%);
+	background-image: -webkit-linear-gradient(top,#FCFC00 0,#E5E600 100%);
+}
+.lemon-yellow.ui-color-button:hover { 
+	background-color: #cccc00;
+	background-image: linear-gradient(top,#e3e300 0,#cccc00 100%);
+	background-image: -moz-linear-gradient(top,#e3e300 0,#cccc00 100%);
+	background-image: -webkit-linear-gradient(top,#e3e300 0,#cccc00 100%);
+}
+
+/*19.黄色风格*/
+.yellow.ui-color-button, .yellow.ui-color-button:visited { 
+	background-color: #ffcc33;
+	background-image: linear-gradient(top,#FFEC61 0,#ffcc33 100%);
+	background-image: -moz-linear-gradient(top,#FFEC61 0,#ffcc33 100%);
+	background-image: -webkit-linear-gradient(top,#FFEC61 0,#ffcc33 100%);
+}
+.yellow.ui-color-button:hover { 
+	background-color: #e5b82e;
+	background-image: linear-gradient(top,#e5d557 0,#e5b82e 100%);
+	background-image: -moz-linear-gradient(top,#e5d557 0,#e5b82e 100%);
+	background-image: -webkit-linear-gradient(top,#e5d557 0,#e5b82e 100%);
+}
+
+/*20.橙黄色风格*/
+.orange-yellow.ui-color-button, .orange-yellow.ui-color-button:visited { 
+	background-color: #ff9900;
+	background-image: linear-gradient(top,#FFE000 0,#ff9900 100%);
+	background-image: -moz-linear-gradient(top,#FFE000 0,#ff9900 100%);
+	background-image: -webkit-linear-gradient(top,#FFE000 0,#ff9900 100%);
+}
+.orange-yellow.ui-color-button:hover { 
+	background-color: #e58a00;
+	background-image: linear-gradient(top,#e5cb00 0,#e58a00 100%);
+	background-image: -moz-linear-gradient(top,#e5cb00 0,#e58a00 100%);
+	background-image: -webkit-linear-gradient(top,#e5cb00 0,#e58a00 100%);
+}
+
+/*21.橙色风格*/
+.orange.ui-color-button, .orange.ui-color-button:visited { 
+	background-color: #e5b000;
+	background-image: linear-gradient(top,#FFC200 0,#e5b000 100%);
+	background-image: -moz-linear-gradient(top,#FFC200 0,#e5b000 100%);
+	background-image: -webkit-linear-gradient(top,#FFC200 0,#e5b000 100%);
+}
+.orange.ui-color-button:hover { 
+	background-color: #e55c00;
+	background-image: linear-gradient(top,#ff6600 0,#e55c00 100%);
+	background-image: -moz-linear-gradient(top,#ff6600 0,#e55c00 100%);
+	background-image: -webkit-linear-gradient(top,#ff6600 0,#e55c00 100%);
+}
+
+/*22.棕黄色风格*/
+.brown-yellow.ui-color-button, .brown-yellow.ui-color-button:visited { 
+	background-color: #cc6633;
+	background-image: linear-gradient(top,#FD9D67 0,#cc6633 100%);
+	background-image: -moz-linear-gradient(top,#FD9D67 0,#cc6633 100%);
+	background-image: -webkit-linear-gradient(top,#FD9D67 0,#cc6633 100%);
+}
+.brown-yellow.ui-color-button:hover { 
+	background-color: #b3592d;
+	background-image: linear-gradient(top,#e38e5d 0,#b3592d 100%);
+	background-image: -moz-linear-gradient(top,#e38e5d 0,#b3592d 100%);
+	background-image: -webkit-linear-gradient(top,#e38e5d 0,#b3592d 100%);
+}
+
+/*23.浅棕色风格*/
+.light-brown.ui-color-button, .light-brown.ui-color-button:visited { 
+	background-color: #996633;
+	background-image: linear-gradient(top,#DA9E62 0,#996633 100%);
+	background-image: -moz-linear-gradient(top,#DA9E62 0,#996633 100%);
+	background-image: -webkit-linear-gradient(top,#DA9E62 0,#996633 100%);
+}
+.light-brown.ui-color-button:hover { 
+	background-color: #80552a;
+	background-image: linear-gradient(top,#bf8b56 0,#80552a 100%);
+	background-image: -moz-linear-gradient(top,#bf8b56 0,#80552a 100%);
+	background-image: -webkit-linear-gradient(top,#bf8b56 0,#80552a 100%);
+}
+
+/*24.棕色风格*/
+.brown.ui-color-button, .brown.ui-color-button:visited { 
+	background-color: #845634;
+	background-image: linear-gradient(top,#B88B61 0,#845634 100%);
+	background-image: -moz-linear-gradient(top,#B88B61 0,#845634 100%);
+	background-image: -webkit-linear-gradient(top,#B88B61 0,#845634 100%);
+}
+.brown.ui-color-button:hover { 
+	background-color: #6b452a;
+	background-image: linear-gradient(top,#9e7854 0,#6b452a 100%);
+	background-image: -moz-linear-gradient(top,#9e7854 0,#6b452a 100%);
+	background-image: -webkit-linear-gradient(top,#9e7854 0,#6b452a 100%);
+}
+
+/*25.深棕色风格*/
+.dark-brown.ui-color-button, .dark-brown.ui-color-button:visited { 
+	background-color: #663300;
+	background-image: linear-gradient(top,#AC5600 0,#663300 100%);
+	background-image: -moz-linear-gradient(top,#AC5600 0,#663300 100%);
+	background-image: -webkit-linear-gradient(top,#AC5600 0,#663300 100%);
+}
+.dark-brown.ui-color-button:hover { 
+	background-color: #4d2600;
+	background-image: linear-gradient(top,#914900 0,#4d2600 100%);
+	background-image: -moz-linear-gradient(top,#914900 0,#4d2600 100%);
+	background-image: -webkit-linear-gradient(top,#914900 0,#4d2600 100%);
+}
+
+/*26.暗黑色风格*/
+.black.ui-color-button, .black.ui-color-button:visited { 
+	background-color: #151516;
+	background-image: linear-gradient(top,#3A3A3D 0,#151516 100%);
+	background-image: -moz-linear-gradient(top,#3A3A3D 0,#151516 100%);
+	background-image: -webkit-linear-gradient(top,#3A3A3D 0,#151516 100%);
+}
+.black.ui-color-button:hover { 
+	background-color: #000000;
+	background-image: linear-gradient(top,#222224 0,#000000 100%);
+	background-image: -moz-linear-gradient(top,#222224 0,#000000 100%);
+	background-image: -webkit-linear-gradient(top,#222224 0,#000000 100%);
+}
+
+/*27.深灰色风格*/
+.dark-grey.ui-color-button, .dark-grey.ui-color-button:visited { 
+	background-color: #3F434E;
+	background-image: linear-gradient(top,#697077 0,#3F434E 100%);
+	background-image: -moz-linear-gradient(top,#697077 0,#3F434E 100%);
+	background-image: -webkit-linear-gradient(top,#697077 0,#3F434E 100%);
+}
+.dark-grey.ui-color-button:hover { 
+	background-color: #2b2e36;
+	background-image: linear-gradient(top,#53595e 0,#2b2e36 100%);
+	background-image: -moz-linear-gradient(top,#53595e 0,#2b2e36 100%);
+	background-image: -webkit-linear-gradient(top,#53595e 0,#2b2e36 100%);
+}
+
+/*28.浅灰色风格*/
+.light-grey.ui-color-button, .light-grey.ui-color-button:visited { 
+	background-color: #666666;
+	background-image: linear-gradient(top,#A0A0A0 0,#666666 100%);
+	background-image: -moz-linear-gradient(top,#A0A0A0 0,#666666 100%);
+	background-image: -webkit-linear-gradient(top,#A0A0A0 0,#666666 100%);
+}
+.light-grey.ui-color-button:hover { 
+	background-color: #4d4d4d;
+	background-image: linear-gradient(top,#878787 0,#4d4d4d 100%);
+	background-image: -moz-linear-gradient(top,#878787 0,#4d4d4d 100%);
+	background-image: -webkit-linear-gradient(top,#878787 0,#4d4d4d 100%);
+}
+
+/*29.冷灰色风格*/
+.cool-grey.ui-color-button, .cool-grey.ui-color-button:visited { 
+	background-color: #999999;
+	background-image: linear-gradient(top,#CFCDCD 0,#999999 100%);
+	background-image: -moz-linear-gradient(top,#CFCDCD 0,#999999 100%);
+	background-image: -webkit-linear-gradient(top,#CFCDCD 0,#999999 100%);
+}
+.cool-grey.ui-color-button:hover { 
+	background-color: #808080;
+	background-image: linear-gradient(top,#b5b3b3 0,#808080 100%);
+	background-image: -moz-linear-gradient(top,#b5b3b3 0,#808080 100%);
+	background-image: -webkit-linear-gradient(top,#b5b3b3 0,#808080 100%);
+}
+
+/*30.纯白色风格*/
+.white.ui-color-button, .white.ui-color-button:visited { 
+	background-color: #f9f9f9;
+	background-image: linear-gradient(top,#ffffff 0,#f9f9f9 100%);
+	background-image: -moz-linear-gradient(top,#ffffff 0,#f9f9f9 100%);
+	background-image: -webkit-linear-gradient(top,#ffffff 0,#f9f9f9 100%);
+}
+.white.ui-color-button:hover { 
+	background-color: #e0e0e0;
+	background-image: linear-gradient(top,#e5e5e5 0,#e0e0e0 100%);
+	background-image: -moz-linear-gradient(top,#e5e5e5 0,#e0e0e0 100%);
+	background-image: -webkit-linear-gradient(top,#e5e5e5 0,#e0e0e0 100%);
+}
+
+
+/*-----------------------新加的配色系-------------------------*/
+
+
+/*---------------------↑漂亮的button的css样式↑----------------------*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

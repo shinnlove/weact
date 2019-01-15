@@ -1,0 +1,264 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/MobileCommonStyle.min.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/activityStyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<title>幸运大转盘抽奖</title>
+</head>
+
+<body>
+	<div class="wrap">
+    	<div class="head">{$einfo.brand}</div>
+        
+        <div class="main activity-lottery-winning" style="background:#258500;">
+			<!-- <script type="text/javascript">
+            var loadingObj = new loading(document.getElementById('loading'),{radius:20,circleLineWidth:8});   
+                loadingObj.show();   
+            </script> -->
+            <div id="outercont">
+                <div id="outer-cont">
+                    <div id="outer"><img src="__PUBLIC__/images/activity-lottery-1.png" width="310px" alt="" /></div>
+                </div>
+                
+                <div id="inner-cont">
+                    <div id="inner"><img src="__PUBLIC__/images/activity-lottery-2.png" onclick="checkPlayTime()" /></div>
+                </div>
+                
+                <div class="contentinside">
+                    <div class="boxcontent boxyellow" id="result" style="display:none">
+                        <div class="box">
+                            <div class="title-orange"><span>恭喜你中奖了</span></div>
+                            <div class="Detail">
+                                <a class="ui-link" href="http://www.weact.com.cn" id="opendialog" style="display: none;" data-rel="dialog"></a>
+                                <p>你中了：<span class="red" id="prizetype">一等奖</span></p>
+                                <p>你的兑奖SN码：<span class="red" id="sncode"></span></p>
+                                <p class="red">本次兑奖码已经关联你的微信号，你可向公众号发送 兑奖 进行查询!</p>        
+                                <p><input name="" class="px" id="tel" type="text" placeholder="输入您的手机号码" /></p>
+                                <p><input class="pxbtn" id="save-btn" name="提 交" type="button" value="提 交" /></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="boxcontent boxyellow">
+                        <div class="box">
+                            <div class="title-green"><span>奖项设置：</span></div>
+                            <div class="Detail">
+                                <p>一等奖：IPAD Mini2，奖品数量：3</p>
+                                <p>二等奖：iPhone5s ，奖品数量：5 </p>
+                                <p>三等奖：香格里拉500元代金券，奖品数量：10 </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="boxcontent boxyellow">
+                        <div class="box">
+                            <div class="title-green">活动说明：</div>
+                            <div class="Detail">
+                                <p>本次活动每人可以转 3 次 </p>
+                                <p> 我们的中奖率高达33.3%！！ </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pluginDeco" style="clear:both;width:100%;height:10px;"></div>
+                </div>
+            </div>
+		</div>
+        {:W('Footer', array('e_id' => $e_id))}<!--footer-->
+    </div><!--wrap-->
+
+<script src="__PUBLIC__/js/jquery.js" type="text/javascript" charset="utf-8"></script><!-- 必不可少 -->
+<script type="text/javascript">
+$(function() {
+	window.requestAnimFrame = (function() {
+		return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame ||
+		function(callback) {
+			window.setTimeout(callback, 1000 / 60)
+		}
+	})();
+	var totalDeg = 360 * 3 + 0;
+	var steps = [];
+	var lostDeg = [36, 66, 96, 156, 186, 216, 276, 306, 336];
+	var prizeDeg = [6, 126, 246];
+	var prize, sncode;
+	var count = 0;
+	var now = 0;
+	var a = 0.01;
+	var outter, inner, timer, running = false;
+
+	function countSteps() {
+		var t = Math.sqrt(2 * totalDeg / a);
+		var v = a * t;
+		for (var i = 0; i < t; i++) {
+			steps.push((2 * v * i - a * i * i) / 2)
+		}
+		steps.push(totalDeg)
+	}
+	function step() {
+		outter.style.webkitTransform = 'rotate(' + steps[now++] + 'deg)';
+		outter.style.MozTransform = 'rotate(' + steps[now++] + 'deg)';
+		if (now < steps.length) {
+			requestAnimFrame(step)
+		} else {
+			running = false;
+			setTimeout(function() {
+				if (prize != null) {
+					$("#sncode").text(sncode);
+					var type = "";
+					if (prize == 1) {
+						type = "一等奖"
+					} else if (prize == 2) {
+						type = "二等奖"
+					} else if (prize == 3) {
+						type = "三等奖"
+					}
+					$("#prizetype").text(type);
+					$("#result").slideToggle(500);
+					$("#outercont").slideUp(500)
+				} else {
+					alert("谢谢您的参与，下次再接再厉")
+				}
+			}, 200)
+		}
+	}
+	function start(deg) {
+		deg = deg || lostDeg[parseInt(lostDeg.length * Math.random())];
+		running = true;
+		clearInterval(timer);
+		totalDeg = 360 * 5 + deg;
+		steps = [];
+		now = 0;
+		countSteps();
+		requestAnimFrame(step)
+	}
+	window.start = start;
+	outter = document.getElementById('outer');
+	inner = document.getElementById('inner');
+	i = 10;
+	$("#inner").click(function() {
+		if (running) return;
+		if (count >= 2) {
+			alert("您已经抽过奖了，请明天再来试试运气吧！");
+			return
+		}
+		if (prize != null) {
+			alert("亲，你不能再参加本次活动了喔！下次再来吧~");
+			return
+		}
+		$.ajax({
+			url: "index.php",
+			dataType: "json",
+			data: {
+				token: "o7MB9ji5fQRsE0ZoVAMU7SlnRyMI",
+				ac: "activityuser",
+				tid: "5",
+				t: Math.random()
+			},
+			beforeSend: function() {
+				running = true;
+				timer = setInterval(function() {
+					i += 5;
+					outter.style.webkitTransform = 'rotate(' + i + 'deg)';
+					outter.style.MozTransform = 'rotate(' + i + 'deg)'
+				}, 1)
+			},
+			success: function(data) {
+				if (data.error == "invalid") {
+					alert("您已经抽了 3 次奖。");
+					count = 3;
+					clearInterval(timer);
+					return
+				}
+				if (data.error == "getsn") {
+					alert('本次活动你已经中过奖，本次只显示你上次抽奖结果!兑奖SN码为:' + data.sn);
+					count = 3;
+					clearInterval(timer);
+					prize = data.prizetype;
+					sncode = data.sn;
+					start(prizeDeg[data.prizetype - 1]);
+					return
+				}
+				if (data.success) {
+					prize = data.prizetype;
+					sncode = data.sn;
+					start(prizeDeg[data.prizetype - 1])
+				} else {
+					prize = null;
+					start()
+				}
+				running = false;
+				count++
+			},
+			error: function() {
+				prize = null;
+				start();
+				running = false;
+				count++
+			},
+			timeout: 4000
+		})
+	})
+});
+$("#save-btn").bind("click", function() {
+	var btn = $(this);
+	var tel = $("#tel").val();
+	if (tel == '') {
+		alert("请输入手机号码");
+		return
+	}
+	var regu = /^[1][0-9]{10}$/;
+	var re = new RegExp(regu);
+	if (!re.test(tel)) {
+		alert("请输入正确手机号码");
+		return
+	}
+	var submitData = {
+		tid: 5,
+		code: $("#sncode").text(),
+		tel: tel,
+		action: "setTel"
+	};
+	$.post('index.php?ac=activityuser', submitData, function(data) {
+		if (data.success == true) {
+			alert("提交成功，谢谢您的参与");
+			return
+		} else {}
+	}, "json")
+});
+</script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script>
+	function checkPlayTime(){
+		var e_id = '{$e_id}';
+		$.post("{:U('Home/Plugin/luckyWheelPlayCheck','','')}",
+				{e_id:e_id},//请求判断客户是否玩过大转盘
+			function(data){
+				if (data.status==false) {
+					/* scscms_alert("您今天已经参与过该活动啦，请明天继续来试试运气！","ok",function(){
+						window.history.back(-1);
+					});//回调函数 */
+					alert("您今天已经参与过该活动啦，请明天继续来试试运气！");
+					window.history.back(-1);
+				}
+				else{
+					$.post("{:U('Home/Plugin/luckyWheelPlaySign','','')}",
+							{e_id:e_id},
+							function(data){
+								if (data.status==true) {
+									//alert('记录写入成功!');
+								}
+								else{
+									//alert('记录写入失败!');
+								}
+					});
+				}
+			});
+	}
+</script>
+</body>
+</html>

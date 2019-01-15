@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" /><!-- 魔幻表单 -->
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiColorButtonStyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" /><!-- 控制easyUI每一行按钮等样式 -->
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/myUniformStyle.css" /><!-- 魔幻表单样式自控 -->
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/select2.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/template-native.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script><!-- 魔幻表单必须js -->
+<script type="text/javascript" src="__PUBLIC__/lhgcalendar/lhgcore.min.js"></script><!-- 日历核心js -->
+<script type="text/javascript" src="__PUBLIC__/lhgcalendar/lhgcalendar.min.js"></script><!-- 日历核心js -->
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script><!-- 页脚中文包支持 -->
+<script type='text/javascript' src="__PUBLIC__/js/plugins/select2/select2.min.js"></script>
+<title>退款成功记录</title>
+<style type="text/css">
+/*重写 bootstrap对control的样式*/
+.control-label { width:110px !important; }
+.controls { margin-left:120px!important;  margin-right:120px !important; }
+</style>
+</head>
+
+<body class="easyui-layout" fit="true">
+	<div data-options="region:'center',border:false">
+		<table id="dg" title="所有退款成功信息一览" toolbar="#toolbar" style="width: 100%; height: 100%;"></table>
+	</div>
+
+	<!-- easyUI的工具条 -->
+	<div id="toolbar" style="height:60px; padding-top:5px;">
+		<span>
+			<a href="javascript:history.go(-1);" class="easyui-linkbutton" iconCls="icon-back" plain="true">后退</a> 
+			<a href="javascript:location.reload();" class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
+		</span>
+		<div class="search-tool">
+			<div class="diy-search">
+				<div style="float:left;">
+					<select id="search_condition" class="uniform diy-select">
+						<option value="visual_number" selected="selected">订单编号</option>
+						<option value="customer_id">客户编号</option>
+						<option value="receive_tel">联系电话</option>
+					</select>
+				</div>
+				<div style="float:left;">
+					<input type="text" class="uniform mysearchinput" id="search_content" name="search_content" placeholder="可选择一个条件查询" value="" required />
+					<span id="composite-search" class="searchbox-button searchbox-button-hover uni-search"></span>
+				</div>
+			</div>
+			
+			<div class="diy-search">
+				<span class="left-label">日期范围：</span>
+				<input type="text" class="uniform mysearchinput" id="search-starttime" name="search-starttime" placeholder="请选择日期" value="" />
+				<span class="middle-label">到</span>
+				<input type="text" class="uniform mysearchinput" id="search-endtime" name="search-endtime" placeholder="请选择日期" value="" />
+				<span id="period-search" class="searchbox-button searchbox-button-hover uni-search"></span>
+			</div>
+			
+			<div class="diy-search">
+				<span class="left-label">筛选条件：</span>
+				<select id="status_search" name="status_search" class="uniform diy-select">
+					<option value="-1" selected="selected">全部</option>
+					<option value="0">待发货</option>
+					<option value="1">待收货</option>
+					<option value="2">已收货</option>
+					<option value="3">已评价</option>
+					<option value="4">今天</option>
+					<option value="5">昨天</option>
+					<option value="6">最近7天</option>
+					<option value="7">最近30天</option>
+				</select>
+			</div>
+		</div>
+	</div>
+	
+<script type="text/javascript">
+var dg = $('#dg');
+//共用警示函数：有些调用后不使用此函数可能会存在隐藏错误
+function clearSelect() {
+	dg.datagrid("clearSelections"); // 清楚所有选中的行
+};
+
+$(function() {
+	$(".uniform").uniform(); // 魔幻表单初始化
+	$("#search-select").select2();					//带搜索的选择框初始化
+	
+	/*活动日期的日历呼出*/
+	J(function(){
+		J('#send-time').calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+		$("#lhgcalendar").css("z-index", 9999); // 要更改其css，否则被easyUI挡住了
+		// 搜索框日期查询
+		J('#search-starttime').calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+		J('#search-endtime').calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+	});
+   });
+	
+$(function() {
+	var subbranchdg = $('#dg').datagrid({
+		url : "{:U('Admin/RefundManageRequest/getSuccessRefundOrder', '', '')}",
+		singleSelect : true,
+		collapsible : true,
+		method : 'post',
+		fitColumns : true,
+		fit : true,
+		pagination : true,
+		pageSize: 10,
+        pageList: [10, 20, 30],
+		rownumbers : true,
+		idField : 'order_id',
+		columns : [ [ 
+                     { field : 'order_time', title : '订单时间', width : 150, align : 'left', sortable : true },
+		             { field : 'visual_number', title : '订单编号',width:150,aligh:'left',sortable:true}, 
+		             { field : 'customer_id', title : '顾客编号', width : 150, align : 'left', sortable : true }, 
+		             { field : 'receive_person', title : '下单用户', width : 150, align : 'left', sortable : true },
+		             { field : 'receive_tel', title: '联系电话', width : 100, align:'left' },
+		             { field : 'normal_status', title : '订单状态 ', width : 100, align : 'left', sortable : true ,formatter:statusInit},
+		             { field : 'total_price', title : '订单总价(元)', width : 100, align : 'right', sortable : true },
+		             { field : 'pay_indeed', title : '实付款(元)', width : 100, align : 'right', sortable : true },
+		             { field : 'express_fee', title : '快递费(元)', width : 100, align : 'right', sortable : true },
+		             { field : 'refund_fee', title : '退款金额(元)', width : 100, align : 'right', sortable : true }, 
+		             { field : 'refund_time', title : '退款时间', width : 150, align : 'left', sortable : true }, 
+		          ] ],
+	});	
+	//根据订单状态搜索事件
+	$("#status_search").change(function() {
+		// 定义要查询的参数
+		var params = {
+				searchcondition : '',
+				searchcontent : '',
+				type : 0
+		}; 
+		var status = $(this).val(); // 获取当前下拉选择状态码
+		if(status == -1) {
+			// 查全部
+			params.searchcondition = 'is_del';
+			params.searchcontent = 0;
+		} else if(status == 0) {
+			// 查已付款|待发货 
+			params.searchcondition = 'normal_status';
+			params.searchcontent = 1;
+		} else if(status == 1) {
+			// 查已发货|待收货 
+			params.searchcondition = 'normal_status';
+			params.searchcontent = 2;
+		} else if(status == 2) {
+			// 查已收货 
+			params.searchcondition = 'normal_status';
+			params.searchcontent = 3;
+		} else if(status == 3) {
+			// 查已评价
+			params.searchcondition = 'normal_status';
+			params.searchcontent = 4;
+		} else if(status == 4) {
+			params.searchcondition = 'order_time';
+			params.searchcontent = 'today';
+		} else if(status == 5) {
+			params.searchcondition = 'order_time';
+			params.searchcontent = 'yesterday';
+		} else if(status == 6) {
+			params.searchcondition = 'order_time';
+			params.searchcontent = 'lastweek';
+		} else if(status == 7) {
+			params.searchcondition = 'order_time';
+			params.searchcontent = 'lastmonth';
+		}
+		// 根据订单状态查询
+		dg.datagrid({
+			url:"{:U('Admin/RefundManageRequest/conditionSearchRefundOrder', '', '')}",
+			queryParams : params
+		},'load');
+		clearSelect(); // 清除一些潜在所选择的行
+	});
+
+	//根据下单时间段查询
+	$("#period-search").click(function() {
+		var sst = $("#search-starttime");
+		var set = $("#search-endtime");
+		if(sst.val() == '' && set.val() == '' ){
+			$.messager.alert('温馨提示', '请输入订单日期查询范围！','warning', function(){
+				sst.focus();												//注意聚焦和return的顺序！
+			});
+			return;
+		}else if(sst.val() != '' && set.val() != '' && sst.val() > set.val()){
+			$.messager.alert('温馨提示', '订单日期查询中起始时间不能大于截止时间！','warning', function(){
+				sst.focus();												//注意聚焦和return的顺序！
+			});
+			return;
+		}
+		var params = {
+				searchcondition : 'order_time',
+				startsearchcontent : sst.val(),
+				endsearchcontent : set.val(),
+				type : 1
+		}; // 定义查询参数
+		dg.datagrid({
+			url:"{:U('Admin/RefundManageRequest/conditionSearchRefundOrder', '', '')}",
+			queryParams : params
+		},'load');
+		clearSelect(); // 清除一些潜在所选择的行
+	});
+
+	// 指定条件查询
+	$("#composite-search").click(function() {
+		var params = {
+				searchcondition : $("#search_condition").val().trim(),
+				searchcontent : $("#search_content").val()
+		}; // 定义查询参数
+		dg.datagrid({
+			url:"{:U('Admin/RefundManageRequest/conditionSearchRefundOrder', '', '')}",
+			queryParams : params
+		},'load');
+		clearSelect(); // 清除一些潜在所选择的行
+	});
+});
+
+//easyUI初始化
+function statusInit(val, row) {
+	if(row.normal_status=="1"){
+		return "<span class='green' style='color:#138c13;'>待发货</span>";}
+	else if(row.normal_status=="2") {
+		return "<span class='green' style='color:#138c13;'>待收货</span>";}
+	else if(row.normal_status=="3") {
+		return "<span class='green' style='color:#138c13;'>已收货</span>";}
+	else if(row.normal_status=="4") {
+		return "<span class='green' style='color:#138c13;'>已评价</span>";}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>确认订单</title>
+<style>
+.cover{width: 100%;height: 100%;position: fixed;z-index: 101;background: rgba(0,0,0,0.8);display: none;top:0;}
+.cover img{position: absolute;right: 20px;top: 10px;z-index: 102;width: 288px;}
+.cover .gotoAlipay{display: block;border: solid 2px #fff;padding: 10px 20px;border-radius: 4px;font-size: 20px;margin: 75% auto 0;width: 120px;color: #fff;text-align: center;}
+.confirmList{margin-bottom: 60px;}
+.confirmList .item{background: #fff;padding: 5px 15px;display: block;}
+.confirmList .item > .wbox{border-bottom: solid 1px #e4e4e4;padding-bottom: 5px;}
+.confirmList .item:last-child > .wbox{border: none;}
+.confirmList .detail{padding:0 5px;line-height: 20px;}
+section .item dt{line-height: 42px;width: 75px;padding-left: 15px;}
+</style>
+</head>
+
+<body>
+	<section class="selection" id="sendMethod">
+		<div class="item wbox">
+			<div class="select">
+	        	<input id="dev1" type="radio" value="0" name="delivery" checked /><!-- 快递配送是0 -->
+			</div>
+			<div class="cont wbox-1"><label for="dev1">快递送货</label></div>
+	    </div>
+		<div class="item wbox">
+			<div class="select">
+				<input id="dev2" type="radio" value="1" name="delivery" /><!-- 到店自提是1 -->
+			</div>
+			<div class="cont wbox-1"><label for="dev2">到店自提</label></div>
+		</div>
+	</section>
+	
+	<section class="selection" id="payMethod">
+		<div class="item wbox">
+			<div class="select">
+				<input id="pay2" type="radio" value="2" name="payType" checked /><!-- 微信支付是2 -->
+			</div>
+			<div class="cont wbox-1"><label class="wechat" for="pay2">微信支付</label></div>
+		</div>
+		<div class="item wbox">
+			<div class="select">
+				<input id="pay1" type="radio" value="4" name="payType" /><!-- 支付宝支付是4 -->
+ 			</div>
+			<div class="cont wbox-1"><label class="alipay" for="pay1">支付宝支付</label></div>
+		</div>
+	</section>
+	
+	<section class="selection fn-hide" id="recerverMsg">
+		<div class="item">
+			<dl class="wbox">
+				<dt>收货人姓名</dt>
+				<dd class="wbox-1">
+					<div class="input-box"><input type="text" class="mid rName" placeholder="姓名"></div>
+				</dd>
+			</dl>
+			<dl class="wbox">
+				<dt>收货人手机</dt>
+				<dd class="wbox-1">
+					<div class="input-box"><input type="tel" class="mid rMobile" placeholder="请填写联系方式"></div>
+				</dd>
+			</dl>
+		</div>
+	</section>
+
+	<section class="selection">
+		<div class="item">
+			<a id="addressSel" href="{:U('WeMall/CustomerCenter/deliveryManage', array('sid' => $sid, 'from' => order), '')}" class="block with-go-right">
+				<div class="wbox">
+					<div class="select">
+						<img src="__PUBLIC__/images/receiveMember.png" class="member" />
+					</div>
+					<div class="link wbox-1">请选择收货人</div>
+				</div>
+			</a>
+		</div>
+	</section>
+	
+	<section class="selection">
+		<div class="item">
+			<a id="couponSel" href="{:U('WeMall/CustomerCenter/selectCoupon', array('sid' => $sid, 'from' => order), '')}" class="block with-go-right">
+				<div class="wbox">
+					<div class="select">
+						<img src="__PUBLIC__/images/CouponIconLt.png" class="member" />
+					</div>
+					<div class="link wbox-1"><span id="usableCoupon">0</span>张优惠券可用</div>
+				</div>
+			</a>
+		</div>
+	</section>
+	
+	<section class="confirmList"></section>
+
+	<!--底部 begin -->
+	<div class="ft-cart">
+	    <span class="l_b">合计：共<span class="fcf3b bold" id="totalPrice">0</span>元</span>
+	    <a id="gotoPay" href="javascript:;" disabled="disabled" class="r_b">提交订单</a>
+	</div>
+	
+	<input type="hidden" id="phoneBanded" value="true" />
+	<input type="hidden" id="talkHeigher" />
+	<!--底部 end -->
+	
+	<a href="{:U('WeMall/Cart/shoppingCart', array('sid' => $sid), '')}" class="linkNeedLogin toShoppingCart"></a>
+	<a href="javascript:;" id="gotoTalk" class="toAskSales"></a>
+	
+<!-- 订单商品预览 js arttemplate 模板 begin -->
+<script type="text/html" id="productlisttpl">
+{{each stockList as e i}}
+	<a href="{{e | productDetailURL}}" class="item">
+    	<div class="wbox" data-cartid="{{e.cartId}}">
+        	<img src="{{e.img}}" class="size40" />
+        	<div class="wbox-1 detail">
+            	<div class="name">{{e.name}} {{e.product_number}}</div>
+            	<div class="fc-grey"> {{e.size}} / {{if e.color}}{{e.color}}{{else}}默认{{/if}} </div>
+        	</div>
+        	<div class="tx-r">
+            	<p>￥{{e.price}}</p>
+            	<p>x {{e.count}}</p>
+			</div>
+		</div>
+	</a>
+{{/each}}
+</script>
+<!-- 订单商品预览 js arttemplate 模板 end -->
+
+<script type="text/javascript">
+var eid = "{$eid}", 					// 商家编号
+	sid = "{$sid}", 					// 分店编号
+	webchatRequestURL = "{:U('WeMall/GuideChatRequest/initWebChat', '', '')}", // 请求聊天窗URL
+	frompage = "{$frompage}", 			// 本页面上一个页面的位置
+	curpage = "{:U('WeMall/Order/preOrder', array('sid' => $sid), '')}", // 当前位置
+	loginurl = "{:U('WeMall/GuestMall/login', array('sid' => $sid), '')}"; // 登录地址
+	
+// 页面初始化函数
+$(function(){
+	// 快递送货和到店自提点击checkbox
+	$("#sendMethod .item").on("click", function(e) {
+		var _val = $(this).find("input[name=delivery]").val(); // 获取点击的送货方式
+		if (_val == "0") {
+			// 快递配送
+			if (sessionStorage.receiveAddress && sessionStorage.receiveAddressId) {
+				$("#gotoPay").removeAttr("disabled");
+			} else {
+				$("#gotoPay").attr("disabled", "disabled");
+			}
+			$("#addressSel").closest(".selection").show(); // 快递送货选择地址展现
+			$("#recerverMsg").hide(); // 到店收货联系方式填写隐藏
+		} else {
+			// 到店自提
+			$("#gotoPay").removeAttr("disabled");
+			$("#addressSel").closest(".selection").hide(); // 快递送货选择地址隐藏
+			$("#recerverMsg").show(); // 到店收货联系方式填写展现
+		}
+	});
+	
+	// 如果页面ready的时候，有收货地址编号和收货地址名称的，也可以去支付了
+	if (sessionStorage.receiveAddress && sessionStorage.receiveAddressId) {
+		$('#addressSel .link').html(sessionStorage.receiveAddress).data('id', sessionStorage.receiveAddressId); // 地址写入内容中，id写在标签上
+		$("#gotoPay").removeAttr("disabled"); // 有收货地址也可以解禁提交订单的按钮
+	}
+	
+	// 如果有使用优惠券（显示优惠券名字），价格在下面结算
+	if (sessionStorage.usedCoupon) {
+		var usedCoupon = JSON.parse(sessionStorage.usedCoupon); // 将存储的优惠券信息（和地址信息差不多）转成object类型
+		if (usedCoupon.coupontype == 1) {
+			// 如果是抵用券
+			$("#couponSel").data("id", usedCoupon.id).find(".link").html(usedCoupon.name + " ( -" + usedCoupon.denomination + "元 )"); // 显示抵扣券克扣多少钱
+		} else if (usedCoupon.coupontype == 2) {
+			// 如果是折扣券
+			$("#couponSel").data("id", usedCoupon.id).find(".link").html(usedCoupon.name + " ( ×" + usedCoupon.discount + "% )"); // 显示折扣券打了多少折扣
+		}
+	}
+	
+	// 页面回跳的信息回显
+	if (sessionStorage.confirmOrderMsg) {
+		$("input[name='payType'][value='" + sessionStorage.confirmOrderMsg.getParam("pay") + "']").attr("checked", true);
+		var delivery = sessionStorage.confirmOrderMsg.getParam("delivery");
+		if (delivery == "1") {
+			// 如果是到店自提，到店自提选中
+			$("input[name='delivery'][value='1']").attr("checked", true).closest(".item").trigger("click");
+		} else {
+			// 如果是快递配送，快递配送选中
+			$("input[name='delivery'][value='0']").attr("checked", true);
+		}
+		$("input.rName").val(sessionStorage.confirmOrderMsg.getParam("rName"));
+		$("input.rMobile").val(sessionStorage.confirmOrderMsg.getParam("rMobile"));
+	}
+	
+	// 如果是购物车跳过来的（则sessionStorage有stockInfo），渲染模板并展现在预览订单页面
+	if (sessionStorage.stockInfo) {
+		var stockInfo = JSON.parse(sessionStorage.stockInfo); // 特别注意：stockInfo是一个数组，日后可能支持多分店一起结算（渲染模板的时候带上下标）
+		var totalcartprice = 0, shoppingListArray = [], storeId = ""; // 购物车总价、购物车list和分店编号
+		
+		// 渲染购物车提交的商品SKU模板
+		var tmpl = template('productlisttpl', stockInfo[0]); 	// 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+		if (tmpl == '{Template Error}') {
+			tmpl = ""; // 置空tmpl
+		}
+		$(".confirmList").html(tmpl); 						// 渲染成功就把模板渲染的信息写入
+		
+		// 打包购物车信息并且计算价格
+		Zepto.each(stockInfo, function(i, e) {
+			storeId = e.storeId;
+			Zepto.each(e.stockList, function(j, t) {
+				totalcartprice += t.price*t.count; // 价格叠加：单价×数量
+				var shoppingListItem = '{"sid":"' + t.id + (t.cartId ? '","cartid":"' + t.cartId + '' : '') + '","skuId":"' + t.skuId + '","amount":"' + t.count + '"}';
+				shoppingListArray.push(shoppingListItem); // shoppingListItem包含：分店编号、购物车编号、商品SKU编号、单条购物车的商品数量
+			});
+			if (e.delivery == 1) {
+				// 如果是到店自提
+				$("#dev1").closest(".item").hide();
+				$("#dev2").prop("checked", true);
+				$("#addressSel").closest(".selection").hide();
+				$("#gotoPay").removeAttr("disabled");
+				$("#recerverMsg").show();
+			}
+		});
+		//alert(JSON.stringify(shoppingListArray)); // shoppingListArray是一个二维数组
+		// console.log(shoppingListArray); // 记录日志
+		
+		var shoppingListJson = '[' + shoppingListArray.join(",") + ']';
+		var couponParam = {
+				sid : storeId, // 分店编号
+				storeId: storeId, // 分店编号
+				payment: totalcartprice, // 应支付的价格（不是商品原价，前台计算下价格）
+				shoppingListJson: shoppingListJson // 购物车数据
+		};
+		
+		// 开始结算现金变动
+		if (sessionStorage.usedCoupon) {
+			// 如果已经选过优惠券，开始结算金钱变化
+			var usedCoupon = JSON.parse(sessionStorage.usedCoupon); // 解析优惠券数据
+			
+			var needpayment = couponParam.payment; 			// 需要支付的价格
+			
+			if (usedCoupon.coupontype == 1) {
+				needpayment -= usedCoupon.denomination; 	// 如果是抵用券，计算抵扣价格
+			} else if (usedCoupon.coupontype == 2) {
+				needpayment *= usedCoupon.discount / 100; 	// 如果是折扣券，计算折后价
+			} else if (usedCoupon.coupontype == 3) {
+				needpayment = usedCoupon.special_price; 	// 如果是特价券，直接按特价结算
+			}
+			if (needpayment < 0) {
+				needpayment = 0; // 不允许价格出现负数
+				$("#gotoPay").attr("disabled", "disabled");
+			} else {
+				$("#gotoPay").removeAttr("disabled"); 
+			}
+			$("#totalPrice").html(needpayment.toFixed(2)); // 原价扣除优惠券优惠后的价格
+		} else if (frompage == "removeCoupon") {
+			// 如果从移除优惠券页面来（恢复价格）
+			$("#totalPrice").html(couponParam.payment); // 恢复为要支付的价格
+			// 查询出用户可用的优惠券
+			$.post("{:U('WeMall/CouponRequest/myAvailableCoupon', '' ,'')}", couponParam, function(queryresult){
+				if (queryresult.errCode == 0) {
+					$("#usableCoupon").html(queryresult.totalcount); // 写入可用优惠券数量
+					sessionStorage.usedCoupon = ""; // 存储usedCoupon置空
+					sessionStorage.useCouponList = JSON.stringify(queryresult.data.couponlist); // 可用优惠券列表转成字符串存入sessionStorage
+				}
+			},"json");
+		} else {
+			// 查询这些商品可用的优惠券（暂不考虑，但是下面这段注释的非常有用！切不可删除！！！！！！！！！！！！）
+			/* $.getJSON("getAvailableCoupon.php", couponParam, function(data2) {
+				if (data2.status == 0) {
+					var maxCoupon = {
+						id: "",
+						name: "",
+						value: 0
+					};
+					if (data2.result.availableList.length > 0) {
+						// 有可用的优惠券（默认使用最大面额的那张优惠券）
+						$.each(data2.result.availableList, function(i, e) {
+							if (e.coupon.couponValue > maxCoupon.value) {
+								maxCoupon = {
+									id: e.customerCouponId,
+									name: e.coupon.couponName,
+									value: e.coupon.couponValue
+								};
+							}
+						});
+						$("#couponSel").data("id", maxCoupon.id).find(".link").html(maxCoupon.name + " (-" + maxCoupon.value.toFixed(2) + "元)");
+						$("#totalPrice").html((parseFloat(data.result.payment) - parseFloat(maxCoupon.value)).toFixed(2));
+						sessionStorage.usedCoupon = JSON.stringify(maxCoupon);
+					} else {
+						// 没有优惠券，直接写入价格
+						$("#totalPrice").html(data.result.payment); // 写入价格
+					}
+					sessionStorage.useCouponList = JSON.stringify(data2.result); // h5的sessionStorage存储可用优惠券list
+				}
+			}); */
+			
+			// 查询优惠券并提醒顾客有几张可用
+			$.post("{:U('WeMall/CouponRequest/myAvailableCoupon', '' ,'')}", couponParam, function(queryresult){
+				if (queryresult.errCode == 0) {
+					$("#usableCoupon").html(queryresult.totalcount); // 写入可用优惠券数量
+					sessionStorage.usedCoupon = ""; // 存储usedCoupon置空
+					sessionStorage.useCouponList = JSON.stringify(queryresult.data.couponlist); // 可用优惠券列表转成字符串存入sessionStorage
+				}
+			},"json");
+			
+			// 进入预订单页面时候的初始化，本来是要查询优惠券的，现在优惠券不上，暂时先注释掉这段代码
+			$("#totalPrice").html(totalcartprice.toFixed(2)); // 写入前台计算的价格，应支付的价格（不是商品原价）
+		}
+		
+		// 点击地址选择和优惠券选择（因为页面要跳走）
+		$("#addressSel, #couponSel").on("click", function() {
+			// 巧用URL得到参数，这个#好像对第一个参数不行，所以改成&了（2015/05/17 20:57:36标注）
+			// sessionStorage.confirmOrderMsg = "#delivery=" + $("input[name=delivery]:checked").val() + "&pay=" + $("input[name=payType]:checked").val() + "&rName=" + $(".rName").val() + "&rMobile=" + $(".rMobile").val();
+			sessionStorage.confirmOrderMsg = "&delivery=" + $("input[name=delivery]:checked").val() + "&pay=" + $("input[name=payType]:checked").val() + "&rName=" + $(".rName").val() + "&rMobile=" + $(".rMobile").val();
+		});
+		
+		// 去支付点击
+		$("#gotoPay").on("click", function() {
+			if (!sessionStorage.receiveAddressId && $("input[name=delivery]:checked").val() == "0") {
+				// 如果配送方式是快递配送，并且没有填写收货人地址
+				mobileAlert("请选择收货人");
+				return false;
+			} else if ($("input[name=delivery]:checked").val() == "1" && ($(".rName").val() == "" || $(".rMobile").val() == "")) {
+				// 如果是到店自提方式，并且没有填写收货人（到店自提人信息）
+				if ($(".rName").val() == "") {
+					mobileAlert("请填写到店自提收货人姓名！");
+					$(".rName").focus();
+				} else if ($(".rMobile").val() == "") {
+					mobileAlert("请填写到店自提收货人手机！");
+					$(".rMobile").focus();
+				}
+				return false;
+			} 
+			// 再次处理按钮禁用，防止误点
+			if ($("#gotoPay").attr("disabled")) {
+				return false;
+			}
+			
+			// 准备订单的参数
+			var params = {
+					sid: storeId, // 分店编号
+					useCouponId: $("#couponSel").data("id"), // 所选择优惠券编号
+					payment: $("#totalPrice").text(), // 所支付的价格
+					deliveryType: $("input[name=delivery]:checked").val(), // 配送方式
+					payType: $("input[name=payType]:checked").val(), // 支付类型
+					customerAddressId: ($("input[name=delivery]:checked").val() == "0") ? $('#addressSel .link').data("id") : "0", // 配送方式地址（快递配送方式是0有效）
+					receivePersonName: $(".rName").val(), // （到店自提）收货人姓名
+					receiveMobile: $(".rMobile").val(), // （到店自提）收货人手机
+					shoppingListJson: shoppingListJson // 购物车信息
+			}
+			//$("body").append(JSON.stringify(params));
+			//return
+			// 请求下订单（可以先检查下价格，否则就location.reload()刷新页面）
+			$.post("{:U('WeMall/OrderRequest/orderConfirm', '', '')}", params, function(result){
+				if (result.errCode == 0) {
+					sessionStorage.removeItem("usedCoupon"); // 订单提交成功，所选择的优惠券置空
+					if (params.payType == 2) {
+						// 微信支付
+						window.location.href = "{:U('WeMall/Order/orderInfo', array('sid' => $sid), '')}?oid="+result.data.oid;
+					} else {
+						// 非微信支付（支付宝支付）
+						window.location.href = "{:U('WeMall/Order/orderInfo', array('sid' => $sid), '')}?oid="+result.data.oid;
+					}
+				} else if (result.errCode == 10005 || result.errCode == 20001) {
+					mobileAlert(result.errMsg); // 弹出错误信息
+					setTimeout(function(){
+						window.location.href = loginurl+"?from="+curpage;
+					},1000);
+				} else {
+					mobileAlert(result.errMsg); // 弹出错误信息
+					setTimeout(function(){
+						window.location.reload(); // 刷新页面（防止价格变动）
+					},1200);
+					return false;
+				}
+			},"json");
+		});
+	}
+	
+	// 悬浮按钮聊天窗
+	$("#gotoTalk").click(function(){
+		var param = { 
+				sid : sid, // 分店信息
+		}
+		$.post(webchatRequestURL, param, function(result){
+			if (result.errCode == 0) {
+				location.href = result.data.chaturl; // 跳转顾客与导购聊天窗页面
+			} else if (result.errCode == 20001) {
+				window.location.href = loginurl+"?from="+curpage;
+				return false;
+			} else {
+				mobileAlert(result.errMsg); // 弹出错误信息
+				return false;
+			}
+		}, "json");
+	});
+	
+});
+</script>
+</body>
+</html>

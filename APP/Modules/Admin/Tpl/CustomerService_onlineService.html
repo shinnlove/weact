@@ -1,0 +1,316 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactAdminStyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/myUniformStyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>在线客服</title>
+</head>
+
+<body class="easyui-layout" fit="true">
+	
+	<div class="easyui-tabs" data-options="region:'center',border:false">
+		
+		<div data-options="region:'center',title:'在线提问列表',border:false"><!-- easyUI的TAB菜单分页1；自定义设置分页标题title -->
+		    <table id="oqdg" class="easyui-datagrid" title="所有提问" toolbar="#oqtoolbar" data-options="region:'center'"></table>
+			<!-- easyUI的工具条 -->
+			<div id="oqtoolbar">
+	        	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delQuestion()">删除问题</a>
+	        	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="traceQuestion()">客服追踪</a>
+	        	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="findAll()">所有问题</a>
+				<a href="javascript:location.reload();" class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
+				<a href="javascript:history.go(-1);" class="easyui-linkbutton" iconCls="icon-back" plain="true">后退</a>
+				<span class="searchbox" style="float:right;margin-top: 5px;margin-right:30px;height: 25px;text-align: center;">
+					<select class="conditionselect" id="oq_search_condition" name="oq_search_condition">
+						<option value="question_type" selected="selected">问题分类</option>
+						<option value="question_content">问题内容</option>
+						<option value="keyword">关键字</option>
+					</select>
+					<input id="oq_search_content" name="oq_search_content" type="text" class="searchbox-text mysearchbox" />
+					<span id="search_oq_btn" class="searchbox-button searchbox-button-hover mysearchspan"></span>
+				</span>
+	   		</div>
+		</div><!-- easyUI的TAB菜单分页1结束div -->
+		
+    </div><!-- easyUI的TAB菜单容器结束div -->
+
+	<div id="replywindow" class="easyui-window" title="回复顾客" data-options="modal:true,closed:true" style="width:600px;height:360px;padding:10px;">
+		<table>
+			<tr>
+				<input id="question_author_id" type="hidden" val="" />
+				<th style="color:#8F9695; width:80px;font-size: 15px;">问题编号:</th>
+				<td><input id="reply_question_id" style="width: 250px;height: 20px;" class="easyui-validatebox" type="text" readonly="true"></input></td>
+			</tr>
+			<tr style="height: 15px;"></tr>
+			<tr>
+				<th style="color:#8F9695;width:80px;font-size: 15px;">问题标题:</th>
+				<td><input id="reply_question_title" style="width: 250px; height: 20px;" class="easyui-validatebox" type="text" readonly="true"></input></td>
+			</tr>
+			<tr style="height: 15px;"></tr>
+			<tr>
+				<th style="color:#8F9695;width:80px;font-size: 15px;">回复内容:</th>
+				<td><textarea id="reply_content" rows="8" cols="60" placeholder="请在此输入对顾客提问的回复"></textarea></td>
+			</tr>
+			<tr style="height: 15px;"></tr>
+		</table>
+        <div region="south" border="false" style="margin-left:420px;height: 50px; line-height: 30px;">
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-redo" onclick="replyConfirm()">确定回复</a>
+		</div>
+	</div><!-- replywindow回复窗口结束div -->
+	
+<script type="text/javascript">
+var oqdg = $("#oqdg");
+$(function() {
+	oqdg.datagrid({
+		url : "{:U('Admin/CustomerService/getOnlineQuestion','','')}",
+		singleSelect : true,
+		collapsible : true,
+		method : 'post',
+		fitColumns : true,
+		fit : true,
+		pagination : true,					//是否开启分页
+		pageSize: 10,						//默认初始化每页几行
+        pageList: [5,10,20,50],				//可供选择的一页几行列表
+		rownumbers : true,					//开启行编号
+		idField : 'question_id',			//绑定主键字段
+		columns : [ [ 						//定义表格字段：field→数据库字段；title→表头显示中文字段
+					{ field : 'question_id', title : '问题编号', width : 120, hidden:true },	//主键字段不显示
+					{ field : 'question_author_id', title : '提问人编号', sortable:true, width : 120, hidden:true }, 
+					{ field : 'question_time', title : '提问时间', sortable:true, width : 150 }, 
+					{ field : 'question_type', title : '问题分类', sortable:true, width : 100, formatter: typeDevision }, 
+					{ field : 'question_author', title : '提问人', sortable:true, width : 100 },
+					{ field : 'question_title', title : '标题', sortable:true, width : 130 }, 
+					{ field : 'question_content', title : '内容', sortable:true, width : 200, formatter: contentBrief }, 
+					{ field : 'keyword', title : '关键字', sortable:true, width : 100 }, 
+					{ field : 'urgency_degree', title : '紧急程度', sortable:true, width : 100, formatter: urgencyStatus },
+					{ field : 'current_handle', title : '当前处理', sortable:true, width : 100, formatter: handleInit },
+					{ field : 'is_solved', title : '是否解决', sortable:true, width : 100, formatter: solveStatus },
+					{ field : 'is_del', title : '问题状态', sortable:true, width : 100, formatter: questionStatus }
+				] ],
+		view : detailview,
+		detailFormatter : function(rowIndex, rowData) {
+			return '<div id="questionlist_' + rowIndex + '" style="padding:5px 10px;background:#f7f7f7;"></div>';
+		},
+		onExpandRow: function(rowIndex, rowData){
+			$.post('{:U("Admin/CustomerService/getQuestionDetail","","")}',
+					{ qid : rowData.question_id },
+					function(data){
+						//Step1：先建立问题的详情
+						var qc = '<table>'
+								+	'<tr>'
+								+ 		'<td style="border:0">'
+								+			'<p> <div style="float:left;font-weight:bold;line-height:24px;">问题详情：</div> <a class="small colorbutton blue" href="javascript:void(0)" style="float:right;" onclick="responseQuestion(\''+rowData.question_id+'\',\''+rowData.question_title+'\',\''+rowData.question_author_id+'\' )">回复客户</a></p>'
+								+			'<p style="clear:both;height:2px;"></p>'
+								+			'<p style="text-indent:24px;">'+ rowData.question_content +'</p>'
+								+		'</td>'
+								+ 	'</tr>'
+								+'<table>';
+						
+						//如果有客服回复信息或者顾客追问
+						if(data.length>0){
+							//如果读到了回复或追问信息
+							qc += '<table>'
+								+ 	'<tr>'
+								+ 		'<td style="border:0">'
+								+ 			'<p style="font-weight:bold;">客服回复与顾客追问:</p>'
+								
+							for(var i=0 ; i<5; i++){
+								qc += '<p style="text-indent:24px;">'+ data[i].reply_time +'&nbsp;&nbsp;'+ data[i].replier_name+ '（' + data[i].replier_id + '）&nbsp;说:' +'</p>';
+								qc += '<p style="text-indent:48px;">'+ data[i].reply_content + '</p>';
+							}
+								
+							if(data.length>5){
+								//如果大于5条回复或者追问记录，则直接超链接查看所有回复详情，多余部分不再展示
+								qc += '<p style="text-indent:24px;font-weight:bold;line-height:24px;">（剩余'+ (data.length - 5) +'条记录）<a href="{:U("Admin/CustomerService/onlineQuetionTrace","","")}?qid='+ data.question_id +'" style="color:#000">点击展开所有回复...↓</a></p>'
+							}
+								
+							qc	+=		'</td>'
+								+ 	'</tr>'
+								+ '</table>';
+								
+								$('#questionlist_'+rowIndex).html(qc);
+						}else{
+							//如果没有读到任何回复与追问信息
+							qc += '<table>'
+								+ 	'<tr>'
+								+ 		'<td style="border:0">'
+								+			'<p style="font-weight:bold;"> 没有任何回复与追问信息，请及时回复客户！</p>'
+								+		'</td>'
+								+ 	'</tr>'
+								+ '</table>';
+								
+							$('#questionlist_'+rowIndex).html(qc);
+						}
+					},'json');
+	    }//onExpandRow展开行函数结束
+	});
+});
+
+/*-----------js区块1---------↓easyUI初始化表格的一些另行设置↓-------------------*/
+//easyUI问题分类列初始化
+function typeDevision(val, row){
+	if(row.question_type == -1){
+		return "<span class='red' style='color:#138c13;'>普通分类</span>";
+	}else{
+		return "<span class='green' style='color:#3babbf;'>其他分类</span>";
+	}
+}
+//每行question_content列内容缩减
+function contentBrief(val, row){
+	var qctemp = row.question_content;
+	if(qctemp.length>14){
+		return row.question_content.substr(0, 14)+"...";
+	}else{
+		return qctemp;
+	}
+}
+//初始化问题列紧急程度初始化
+function urgencyStatus(val, row){
+	if(row.urgency_degree == 0){
+		return "<span class='green' style='color:#3babbf;'>普通</span>";
+	}else{
+		return "<span class='red' style='color:#138c13;'>紧急</span>";
+	}
+}
+//问题处理列的初始化
+function handleInit(val, row){
+	return '<a href="javascript:;" onclick="responseQuestion(\''+row.question_id+'\',\''+ row.question_title +'\',\''+ row.question_author_id +'\')"><font color="orange" style="color:#F60">回复提问</font></a>';//特别注意这个转义字符，调用字符串用单撇号，但是要转义！
+}
+//easyUI解决状态列初始化
+function solveStatus(val, row){
+	if(row.is_solved == 1){
+		return "<span class='red' style='color:#138c13;'>已解决</span>";
+	}else{
+		return "<span class='green' style='color:#3babbf;'>待解决</span>";
+	}
+}
+//easyUI初始化问题状态列初始化
+function questionStatus(val, row){
+	if(row.is_del == 1){
+		return "<span class='red' style='color:#138c13;'>问题已关闭。</span>";
+	}else{
+		return "<span class='green' style='color:#3babbf;'>问题进行中...</span>";
+	}
+}
+/*-----------js区块1---------↑easyUI初始化表格的一些另行设置↑-------------------*/
+
+/*-----------js区块2---------↓easyUI查询与回复客户↓-------------------*/
+//条件查询各类问题
+$(function(){
+	$('#search_oq_btn').click(function(){
+		var contentobj = $('#oq_search_content');
+		var searchcondition = $('#oq_search_condition').val().trim();
+		var searchcontent = contentobj.val();
+		if(searchcontent.trim() == "" || searchcontent == null){
+			$.messager.alert('温馨提示', '搜索内容不能为空！','warning', function(){
+				contentobj.focus();
+	  		});
+			return						//注意聚焦和return的顺序！
+		}
+		oqdg.datagrid({
+    		url:"{:U('Admin/CustomerService/searchOnlineQuestion','','')}",
+    		queryParams:{ 
+    			searchcondition:searchcondition,
+    			searchcontent:searchcontent
+    		}
+    	},'load');
+	});
+});
+//处理问题回复函数responseQuestion
+function responseQuestion(qid, qt, qaid){
+	$.messager.confirm('温馨提示', '是否回复该客户？', function(result){
+		if(result == true){
+			//打开对话框
+			$('#replywindow').window('open');
+			$('#reply_question_id').val(qid);
+			$('#reply_question_title').val(qt);
+			$('#question_author_id').val(qaid);	//将被回复人的编号写在input hidden里，方便查询
+		}
+	});
+}
+function replyConfirm(){
+	var rc = $('#reply_content');
+	if(rc.val()==""){
+		$.messager.alert('温馨提示', '请输入回复内容！','warning', function(){
+			rc.focus();
+  		});
+		return						//注意聚焦和return的顺序！
+	}else{
+		$.messager.confirm('温馨提示', '确定回复？', function(result){
+			if(result == true){
+				//读取对话框里所有值，并且提交回复内容给后台
+				//特别注意，后台接收到值之后，不要盲目插入，
+				//Step1：查询有没有回复过→如果没有回复过，直接插入，并且生成组ID编号
+				//Step2：如果有回复过→找出第一条回复的记录，获取组ID编号，作为自己的组ID编号后，再插入，用$this->ajaxReturn()回复告知前台。
+				//2014/06/20 19:02:25留
+				var rqid = $('#reply_question_id').val();		//获取回复问题编号
+				//var rqt = $('#reply_question_title').val();		//获取回复问题标题（这个参数无所谓）
+				var rc = $('#reply_content').val();				//获取回复问题内容
+				var qaid = $('#question_author_id').val();		//获取被回复人的编号
+				$.post('{:U("Admin/CustomerService/replyQuestionConfirm","","")}',
+						{ rqid : rqid, rc : rc, qaid : qaid },
+						function(data){
+							if(data.status == '1'){
+								$('#replywindow').window('close');
+								$.messager.alert('温馨提示', '回复成功！', 'info', function(){
+									window.location.reload();
+								})
+							}else{
+								$.messager.alert('温馨提示','回复失败！'+msg,'error');
+							}
+						},'json');
+			}
+		});
+	}
+}
+/*-----------js区块2---------↑easyUI查询与回复客户↑-------------------*/
+
+/*-----------js区块3---------↓easyUI工具条上的js函数↓-------------------*/
+//删除顾客在线提问
+function delQuestion(){
+	var rows = oqdg.datagrid('getSelections');
+	var rowdata = [];
+	if (rows.length == 0) {
+		$.messager.alert('温馨提示','请选择删除的问题！','warning');				
+	}else{
+		$.messager.confirm('温馨提示','确定删除选中的问题吗？',function(cf){
+			if(cf){
+				$.post('{:U("Admin/CustomerService/delOnlineQuestion","","")}',
+						{ qid : rows[0].question_id },
+						function(data){
+							if(data.status == '1'){
+								$.messager.alert('温馨提示', '删除选中问题成功！', 'info', function(){
+									window.location.reload();
+								})
+							}else{
+								$.messager.alert('温馨提示','删除选中问题失败！'+msg,'error');
+							}
+						},'json');
+			}
+		});	
+	}
+}
+//问题追踪（回复详情查看）
+function traceQuestion(){
+	var row = oqdg.datagrid('getSelected');
+	if (!row) {
+		$.messager.alert('温馨提示','请选择要追踪的问题！','warning');	
+	}else{
+		//使用梁思彬的方法跳转到另外一个easyUI表格。
+		window.location.href = '{:U("Admin/CustomerService/onlineQuetionTrace","","")}?qid='+row.question_id;
+	}
+}
+//查找所有在线问题
+function findAll(){
+	oqdg.datagrid({ url: '{:U("Admin/CustomerService/getOnlineQuestion","","")}' });
+}
+/*-----------js区块3---------↑easyUI工具条上的js函数↑-------------------*/
+</script>
+</body>
+</html>

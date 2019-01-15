@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weact.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.sea.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>{$pageinfo [currentnav] [nav_name]}</title>
+<style type="text/css">
+a { color:#00F;text-decoration:none; }
+img { border:0;max-width:100%;min-height:10px; }
+</style>			
+</head>
+
+<body>
+	<div class="lay_page page_cat_2" id="page_cat_2">
+        <div class="lay_page_wrap">
+        
+            <div class="lay_header" style="height: 45px">
+	            <div class="lay_toptab mod_tab" id="lay_head">
+	                <div class="tab_item go_back" onclick="window.history.go(-1);">
+	                    <i class="qb_icon icon_goback"></i>
+	                </div>
+	                <a class="tab_item" href='{:U("Home/Index/index", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_home"></i></a>
+	                <a class="tab_item" href='{:U("Home/MemberHandle/customerCenter", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_icenter"></i></a>
+	                <a class="tab_item" href='{:U("Home/Cart/shoppingCart", array("e_id"=>$e_id), "")}'>
+	                	<i class="qb_icon icon_cart"></i>
+	                    <i class="qb_icon icon_number_bubble qb_none" id="cartNum">0</i>
+	                </a>
+	            </div>
+	        </div><!-- lay_header结束div -->
+			
+			<div class="module fn_banner qb_gap">
+				<div style="line-height:0;">
+					<img init_src="{$pageinfo [imageInfoList] [0]}" style="width:100%;" />
+				</div>
+			</div>
+            
+			<hr class="hr_microshop3"/>
+            
+            <div class="module fn_readme qb_gap mod_color_weak" style="	 text-align:center;	">
+                <div id="text_1394595738649_text" style="line-height:1.5; text-indent:0.0em; padding:0px 10px  0px;">
+                    <p style="font-family:Microsoft Yahei;font-size:16px;font-weight: bold ;">{$pageinfo.simpleinfo.title}</p>
+                </div>
+			</div>
+
+            <hr class="hr_microshop3"/>
+            
+            <div class="module fn_readme qb_gap mod_color_weak" style="	 text-align:left;	">
+                <div id="text_1394595188371_text" style=" line-height:1.5; text-indent:0.0em; padding:0px 10px  0px;">
+                    <p style="font-family:Microsoft Yahei; font-size:14px; font-weight: normal ;">{$pageinfo.simpleinfo.html_content}</p>
+                </div>
+            </div>
+		</div>
+	</div>
+
+	<div class="lay_footer qb_tac qb_fs_s mod_mb15">
+        <div class="fn_quicklinks">
+			<a class="mod_color_weak" href='{:U("Home/Index/index",array("e_id"=>$e_id),"")}'>商户首页</a>
+			<for start="0" end="3" step="1">
+				<span class="mod_color_comment">|</span>
+				<a class="mod_color_weak" href="{$pageinfo [navigation] [foot] [$i] [url]}">{$pageinfo [navigation] [foot] [$i] [nav_name]}</a>
+			</for>
+		</div>
+        <div class="fn_copyright">
+            <div class="mod_color_comment fn_copyright_agreement ui-fz-x-small ui-ta-c"><a href="#">Powered By WeAct</a></div>
+            <div class="mod_color_comment fn_copyright_text">Copyright &copy; 2014 WeAct.<br/>All Rights Reserved. </div>
+            <div class="mod_color_comment fn_copyright_text">微动公司 版权所有</div>
+        </div>
+    </div><!-- lay_footer结束div -->
+
+<script type="text/javascript">
+var e_id = '{$e_id}';					//要分享的商家编号
+//分享的信息
+var shareData = {
+	appid: "{$pageinfo [shareinfo] [appid]}", // 分享的商家编号
+    img_url: "{$pageinfo [shareinfo] [img_url]}", // 分享的图片
+    img_width: "160", // 宽度
+    img_height: "160", // 高度
+    title: "{$pageinfo [shareinfo] [title]}", // 分享的标题
+    desc: "{$pageinfo [shareinfo] [desc]}", // 分享的描述
+    link: "{$pageinfo [shareinfo] [link]}", // 分享的超链接
+    fakeid : "{$openid}",																		//分享用户的id
+    callback:function(result){
+    	if(result != 'send_app_msg:cancel' && result != 'share_timeline:cancel' && result != 'share_weibo:cancel' && result != 'share_fb:cancel'){
+    		$.post("{:U('Home/MobileCommon/shareRecord','','')}",
+    				{ e_id : e_id, link : shareData.link, openid : shareData.fakeid },			//分享的时候传3个参数：1、商家编号；2、链接地址（区分授权和不授权两种）；3、分享的微信号（只有开启授权登录才有）
+    				function(data){
+    					if(data.status == 1){
+    						scscms_alert("谢谢您的分享!", "ok", "", 2);//定时关闭窗口
+    					}else{
+    						scscms_alert("服务器繁忙，请稍后再试!"+data.msg, "warning", "", 2);//定时关闭窗口
+    					}
+    				},
+    				'json');
+    	}else{
+    		scscms_alert("下次记得分享噢!", "ok", "", 2);//定时关闭窗口
+    	}
+    }	/*分享后的回调函数，发送给朋友的类型分为send_app_msg:confirm或send_app_msg:cancel；对应发送给朋友、分享到朋友圈、分享到腾讯微博、分享到facebook都有4种类型*/
+};
+
+$(function(){
+	// 进行购物车的查询
+	var param = {
+			e_id : e_id
+	};
+	$.post("{:U('Home/ProductView/queryCartNumber', '', '')}", param, function(result) {
+		if (result.errCode == 0) {
+			var carnum = result.data.cart_count;
+			if (carnum > 0) {
+				$("#cartNum").text(carnum).removeClass("qb_none"); // 如果购物车有商品，移除qb_none并显示数量
+			}
+		} else {
+			return false;
+		}
+	}, "json");
+});
+
+(function() {
+	var a = {
+		imgMark: "init_src",
+		imageList: [],
+		loadCount: 0
+	};
+	$.extend(a, {
+		init: function() {
+			this.imageList = document.images;
+			var b = this;
+			setTimeout(function() {
+				b.fetchImg()
+			}, 500);
+			$(window).scroll(function() {
+				b.fetchImg()
+			})
+		},
+		fetchImg: function() {
+			clearTimeout(this.timeout);
+			for (var b = this, a = this.imageList, f = document.body.scrollTop, k = $(window).height(), d = 0, e = 0, g = a.length; e < g; e++) {
+				var c = a[e];
+				if ($(c).attr(this.imgMark)) {
+					var h = $(c).offset().top;
+					h >= f && h <= f + k && 10 > d && (d++, $(c).prop("src", $(c).attr(this.imgMark)).removeAttr(this.imgMark), this.loadCount++, 9 == d && (this.timeout = setTimeout(function() {
+						b.fetchImg()
+					}, 1E3)));
+					this.loadCount == g && $(window).unbind("scroll")
+				}
+			}
+		}
+	});
+	$(document).ready(function() {
+		a.init()
+	})
+})();
+!
+function() {
+	function a(a) {
+		"undefined" == typeof WeixinJSBridge || "undefined" == typeof WeixinJSBridge.invoke ? setTimeout("loadWeixin(" + a + ")", 200) : a()
+	}
+	$(document).ready(function() {
+		function b(a) {
+			return "A" != a[0].tagName.toUpperCase() || "#" == a.prop("href") && 0 == a.prop("href").indexOf("javascript") ? !1 : !0
+		}
+		$(document).on("click", "IMG", function() {
+			var c, d;
+			$(this).attr("data-imgs") || (c = [], c[0] = this.src, d = $(this).parent(), b(d) || b(d.parent()) || b(d.parent().parent()) || a(function() {
+				WeixinJSBridge.invoke("imagePreview", {
+					current: c[0],
+					urls: c
+				})
+			}))
+		})
+	})
+}();
+</script>
+</body>	
+</html>

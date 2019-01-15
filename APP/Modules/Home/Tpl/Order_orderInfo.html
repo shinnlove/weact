@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weact.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>{$einfo.brand} 订单详情</title>
+</head>
+
+<body>
+	<div class="lay_header" style="height: 45px">
+        <div class="lay_toptab mod_tab" id="lay_head">
+            <div class="tab_item go_back" onclick="window.history.go(-1);">
+                <i class="qb_icon icon_goback"></i>
+            </div>
+            <a class="tab_item" href='{:U("Home/Index/index", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_home"></i></a>
+            <a class="tab_item" href='{:U("Home/MemberHandle/customerCenter", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_icenter"></i></a>
+            <a class="tab_item" href='{:U("Home/Cart/shoppingCart", array("e_id"=>$e_id), "")}'>
+            	<i class="qb_icon icon_cart"></i>
+                <i class="qb_icon icon_number_bubble qb_none" id="cartNum">0</i>
+            </a>
+        </div>
+    </div><!-- lay_header结束div -->
+    
+    <div class="lay_page" id="page_order_detail">
+		<div class="lay_page_wrap">
+        	
+			<h3 class="qb_fs_xl ui_gap ui_mt15" style="text-align:center; font-size:14px;">{$einfo.e_name} 微商城</h3>
+        	<input type="hidden" name="order_id" id="order_id" value="{$oinfo[0][order_id]}" />
+            <div class="mod_cell ui_mt15 ui_gap">
+                <dl class="mod_dl dl_tabel">
+                    <dt class="ui_color_weak ui_align_right">订单状态：</dt>
+                    <dd class="" id="deal-status">
+                    	[<span class="receive-status">查询状态中...</span>] [<span class="order-status">查询状态中...</span>]
+                    </dd>
+                    <dt class="ui_color_weak ui_align_right">支付金额：</dt>
+                    <dd class="ui_color_strong">￥{$oinfo[0][total_price]}元 </dd>
+                    <dt class="ui_color_weak ui_align_right">订单编号：</dt>
+                    <dd class="">{$oinfo[0][visual_number]}</dd>
+                    <dt class="ui_color_weak ui_align_right">下单时间：</dt>
+                    <dd class="">{$oinfo[0][order_time]}</dd>
+                    <dt class="ui_color_weak ui_align_right">支付方式：</dt>
+                    <dd class="pay_method">查询状态中...</dd>
+                </dl>
+            </div>
+        	
+            <div class="mod_cell ui_mt15 ui_gap">
+                <dl class="mod_dl dl_tabel">
+                    <dt class="ui_color_weak ui_align_right">收件人：</dt>
+                    <dd class="">{$oinfo[0][receive_person]}</dd>
+                    <dt class="ui_color_weak ui_align_right">联系电话：</dt>
+                    <dd class="">{$oinfo[0][receive_tel]}</dd>
+                    <dt class="ui_color_weak ui_align_right">收货地址：</dt>
+                    <dd class="">{$oinfo[0][receive_address]}</dd>
+                </dl>
+            </div>
+        	
+            <div class="mod_cell ui_mt15 ui_gap">
+                <dl class="mod_dl dl_tabel">
+                    <dt class="ui_color_weak ui_align_right">订单总价：</dt>
+                    <dd class="ui_color_strong">￥{$oinfo[0][total_price]}元</dd>
+                    <dt class="ui_color_weak ui_align_right">优惠活动：</dt>
+                    <dd class="">￥0.00元</dd>
+                    <dt class="ui_color_weak ui_align_right">快递运费：</dt>
+                    <dd class="">￥0.00元</dd>
+                    <dt class="ui_color_weak ui_align_right">实际支付：</dt>
+                    <dd class="ui_color_strong">￥{$oinfo[0][total_price]}元</dd>
+                </dl>
+            </div>
+        	
+            <div class="mod_cell qb_gap">
+                <div class="mod_celltitle">商品信息</div>
+                <div class="ui_color_weak qb_mb10"></div>
+                <ul class="mod_list">
+                    <foreach name="oinfo" item="oi">
+                    <li class="list_item qb_mb10 qb_bfc"> 
+                        <a href="{:U('Home/ProductView/productShow', array(e_id => $e_id, nav_id => $oi[nav_id], product_id => $oi[product_id]), '')}">
+							<div class="bfc_f"><img src="{$oi.micro_path}" width="60" height="60" alt="" /> </div>
+                            <div class="bfc_c">
+                                <p>{$oi.product_name}[{$oi.pro_color} {$oi.pro_size}]</p>
+                                <p class="qb_fs_s mod_color_weak"></p>
+                                <p class="qb_fs_s mod_color_weak">数量：{$oi.amount} 单价：￥{$oi.unit_price}元</p>
+                            </div>
+                        </a>
+                    </li>
+                    </foreach>
+                </ul>
+            </div>
+            
+            <div class="fn_detail qb_gap qb_fs_l">
+                <hr class="qb_hr" />
+                <div class="qb_flex">
+                    <span class="mod_btn btn_block btn_em qb_mr10 flex_box" id="pay_later">稍后支付</span>
+                    <span class="mod_btn btn_block btn_strong flex_box" id="pay-now">立即支付</span>
+                </div>
+			</div>
+			<div id="operate_area"></div>
+		</div>
+    </div>
+	
+    <div class="lay_page page_tracert qb_none" id="page_tracert">
+        <input type="hidden" id="deliver-id" value="" />
+        <div class="lay_page_wrap">
+            <div class="qb_gap qb_pt10 fn_status qb_clearfix" evttag="toDealDetail"> 
+            	<a href="#" class="btn_back qb_fl"><i class="qb_icon icon_back"></i></a>
+            	<div class="status"> 物流公司：<br /> 运单号：<br />收货地址：vvv - 北京 西城区 嘎嘎嘎步步高dsx</div>
+            </div>
+            <div class="fn_tracert qb_mb10">
+            	<div id="wuliu-detail" class="qb_gap"></div>
+            	<div class="qb_none" id="wuliu-detail-fail">
+            		<div class="qb_gap">
+            			<div class="mod_color_comment qb_mb10">抱歉，物流信息查询失败，可能物流公司未同步物流信息，请稍后重试！</div>
+            			<a href="javascript:void(0);" class="mod_btn btn_block" id="retryDetail">重试</a> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	
+	<div class="qb_quick_tip qb_none" id="bubble"></div>
+    <div class="mod_dialog qb_none" id="message-notice">
+        <div class="dialog_mask"></div>
+        <div class="dialog_main qb_br qb_tac">
+            <div class="dialog_bd" id="notice-content"></div>
+            <div class="dialog_ft qb_flex"><a href="javascript:void(0);" class="flex_box" id="notice-cancel">取消</a><a href="javascript:void(0);" class="flex_box" id="notice-sure">确定</a></div>
+        </div>
+    </div>
+	
+	<div class="lay_footer qb_tac qb_fs_s mod_mb15">
+        <div class="fn_quicklinks">
+			<a class="mod_color_weak" href='{:U("Home/Index/index",array("e_id"=>$e_id),"")}'>商户首页</a>
+			<for start="0" end="3" step="1">
+				<span class="mod_color_comment">|</span>
+				<a class="mod_color_weak" href="{$pageinfo [navigation] [foot] [$i] [url]}">{$pageinfo [navigation] [foot] [$i] [nav_name]}</a>
+			</for>
+		</div>
+        <div class="fn_copyright">
+            <div class="mod_color_comment fn_copyright_agreement ui-fz-x-small ui-ta-c"><a href="#">Powered By WeAct</a></div>
+            <div class="mod_color_comment fn_copyright_text">Copyright &copy; 2014 WeAct.<br/>All Rights Reserved. </div>
+            <div class="mod_color_comment fn_copyright_text">微动公司 版权所有</div>
+        </div>
+    </div><!-- lay_footer结束div -->
+    
+<script type="text/javascript">
+var e_id = "{$e_id}", 		// 商家编号
+	openid = "{$openid}", 	// 用户微信号
+	receivestatus = '{$oinfo[0][receive_status]}', 	// 订单接收状态
+	paymethod = '{$oinfo[0][pay_method]}', 	// 用户支付订单的方式
+	flagstatus = '{$oinfo[0][status_flag]}', 	// 订单状态标记
+	normalstatus = '{$oinfo[0][normal_status]}', 	// 正常流水状态标记
+	refundstatus = '{$oinfo[0][refund_status]}'; 	// 退款流水状态标记
+	
+// 页面初始化
+$(function() {
+	
+	// Step1：支付状态初始化
+	if(receivestatus == 1) {
+		var postatus = "<font style='color:#449103;'>已受理</font>";
+		$(".receive-status").html(postatus);
+	} else {
+		var ngstatus = "<font style='color:#F34;'>未受理</font>";
+		$(".receive-status").html(ngstatus);
+	}
+	
+	// Step2：订单状态初始化
+	var orderstatus = orderStatus(flagstatus, normalstatus, refundstatus, 1); // 订单状态
+	$(".order-status").html(orderstatus);
+	
+	// Step3：支付状态初始化：1是现金收讫，2是微信支付，3是刷卡支付。
+	var method = orderPayMethod(paymethod, 1); // 支付状态
+	$(".pay_method").html(method);
+	
+	// 稍后支付按钮
+	$("#pay_later").click(function(){
+		scscms_alert("确定稍后支付吗？<br>请2小时内完成本订单支付，超时订单将自动撤销！", "confirm", function() {
+			scscms_alert("可在客户中心我的订单发起重新支付噢！", "ok", "", 2);	//定时关闭窗口
+			setTimeout(function() {
+				window.location.href = "{:U('Home/Order/myOrder', array(e_id => $e_id), '')}"; // to do 2秒后跳转我的订单页面
+			}, 2000);
+		});
+	});
+	
+	// 立即支付按钮
+	$("#pay-now").click(function(){
+		scscms_alert("用微信支付为该笔订单付款？", "confirm", function() {
+			var params = {
+					oid : $("#order_id").val(),
+					method : 2, // 这里默认2是微信支付
+					openid : openid,
+					e_id : e_id
+			}; // 准备提交参数
+			$.post("{:U('Home/OrderRequest/wechatPay', '', '')}", params, function(result) {
+				if (result.errCode == 0) {
+					var payurl = "{:U('Home/WeChatPay/wechatPayV3', '', '')}?wcpid="+result.data.wcpid+"&redirecturi="+result.data.redirecturi+"&showwxpaytitle=1";
+					scscms_alert("即将开启微信支付，请及时确认支付!", "ok", "", 2);	// 定时2秒后关闭窗口
+					setTimeout(function() {
+						// to do 2.5秒后调起微信支付
+						window.location.href = payurl;
+					}, 2500);
+				} else {
+					scscms_alert(result.errMsg, "error", "", 3);
+				}
+			});
+		});
+	});
+});
+</script>
+</body>
+</html>

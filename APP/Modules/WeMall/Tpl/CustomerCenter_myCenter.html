@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>个人中心</title>
+</head>
+
+<body>
+	<section class="s-options">
+		<ul class="s-items static">
+			<li><a href="{:U('WeMall/Store/storeIndex', array('sid' => $sid), '')}"><span>店铺精选</span></a><hr></li>
+			<li><a href="{:U('WeMall/Product/allCategory', array('sid' => $sid), '')}"><span>商品分类</span></a><hr></li>
+			<li><a class="curr" href="javascript:;"><span>我的账户</span></a><hr></li>
+		</ul>
+	</section>
+	
+	<input type="hidden" id="wechatAccount" value="gh_69b8691944ff" />
+	
+	<section class="customerInfo wbox">
+		<img src="__PUBLIC__/images/default-photo.png" class="photo" />
+		<div class="wbox-1">
+			<p><b class="nickname">{$cinfo.customer_name} {$winfo.nickname}</b></p>
+			<!-- <a class="fc-grey">编辑个人资料</a> -->
+		</div>
+	</section>
+	
+	<section class="customerChannel">
+		<a href="{:U('WeMall/CustomerCenter/myGuide', array('sid' => $sid), '')}" class="linkNeedLogin item with-go-right">
+			<div class="wbox">
+				<div class="icon">
+					<img src="__PUBLIC__/images/salesIcon.png" alt="" />
+				</div>
+				<span class="tit wbox-1">我的导购</span>
+			</div>
+		</a> 
+		<a href="{:U('WeMall/Order/myOrder', array('sid' => $sid), '')}" class="linkNeedLogin item with-go-right">
+			<div class="wbox">
+				<div class="icon">
+					<img src="__PUBLIC__/images/orderIcon.png" alt="" />
+				</div>
+				<span class="tit wbox-1">我的订单</span>
+			</div>
+		</a> 
+		<a href="{:U('WeMall/Cart/shoppingCart', array('sid' => $sid), '')}" class="linkNeedLogin item with-go-right">
+			<div class="wbox">
+				<div class="icon">
+					<img src="__PUBLIC__/images/cartIcon.png" alt="" />
+				</div>
+				<span class="tit wbox-1">我的购物车</span>
+			</div>
+		</a> 
+		<a href="{:U('WeMall/CustomerCenter/myCollection', array('sid' => $sid), '')}" class="linkNeedLogin item with-go-right">
+			<div class="wbox">
+				<div class="icon">
+					<img src="__PUBLIC__/images/favriteIcon.png" alt="" />
+				</div>
+				<span class="tit wbox-1">我的收藏</span>
+			</div>
+		</a> 
+		<a href="{:U('WeMall/CustomerCenter/myCoupon', array('sid' => $sid), '')}" class="linkNeedLogin item with-go-right">
+			<div class="wbox">
+				<div class="icon">
+					<img src="__PUBLIC__/images/couponIcon.png" alt="" />
+				</div>
+				<span class="tit wbox-1">我的优惠券</span>
+			</div>
+		</a> 
+		<a href="{:U('WeMall/CustomerCenter/deliveryManage', array('sid' => $sid), '')}" class="linkNeedLogin item with-go-right">
+			<div class="wbox">
+				<div class="icon">
+					<img src="__PUBLIC__/images/addressIcon.png" alt="" />
+				</div>
+				<span class="tit wbox-1">收货地址管理</span>
+			</div>
+		</a>
+	</section>
+	
+	<a href="{:U('WeMall/Cart/shoppingCart', array('sid' => $sid), '')}" class="linkNeedLogin toShoppingCart"></a>
+	<a href="javascript:;" id="gotoTalk" class="toAskSales"></a>
+	
+	<input type="hidden" id="noTalking" />
+	
+<script type="text/javascript">
+var avatar = "{$winfo.headimgurl}", // 用户的微信头像，可能为空
+	sid = "{$sid}",
+	webchatRequestURL = "{:U('WeMall/GuideChatRequest/initWebChat', '', '')}"; 	// 请求网页聊天窗
+	
+$(function(){
+	
+	if (avatar != "") {
+		$(".photo").attr("src", avatar); // 如果微信头像不空（账号登录不获取微信用户信息），则更换成微信用户的头像
+	}
+	
+	// 悬浮按钮聊天窗
+	$("#gotoTalk").click(function(){
+		var param = { 
+				sid : sid, // 分店信息
+		}
+		$.post(webchatRequestURL, param, function(result){
+			if (result.errCode == 0) {
+				location.href = result.data.chaturl; // 跳转顾客与导购聊天窗页面
+			} else if (result.errCode == 20001) {
+				window.location.href = loginurl+"?from="+curpage;
+				return false;
+			} else {
+				mobileAlert(result.errMsg); // 弹出错误信息
+				return false;
+			}
+		}, "json");
+	});
+	
+});
+</script>
+</body>
+</html>

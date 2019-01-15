@@ -1,0 +1,126 @@
+@charset "utf-8";
+/* CSS Document */
+
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,p,blockquote,th,td{margin:0;padding:0;font-size:12px}
+img{border:0}
+cite,em,strong,th{font-style:inherit;font-weight:inherit;*font-style:normal}
+h1,h2,h3,h4,h5,h6{font-size:100%;font-weight:normal}
+input,button,textarea,select{font-family:inherit;font-size:inherit;font-style:inherit;font-weight:inherit}
+input,button,textarea,select{*font-size:100%}
+body{background-color:#fff;line-height:1.5;font-family:"Microsoft YaHei","微软雅黑",tahoma,verdana,arial,helvetica,sans-serif,"宋体"}
+ol,ul{list-style:none}
+th{text-align:left}
+strong{font-weight:bold}
+blockquote{quotes:none}
+blockquote:before,blockquote:after{content:'';content:none}
+td,th,div{word-break:break-all;word-wrap:break-word}
+form{display:inline}
+*{outline:0;padding:0;margin:0}
+.clearfix:after{content:".";display:block;height:0;clear:both;visibility:hidden}
+.clearfix{zoom:1}
+a{text-decoration:none}
+a:link{color:#666}
+a:visited{color:#666}
+a:hover{color:#4c4c4c}
+.fl{float:left}
+.fr{float:right}
+input[type="button"],input[type="submit"],input[type="reset"]{-webkit-appearance:none}
+textarea{-webkit-appearance:none}
+.pub-header{width:100%;height:44px;line-height:44px;margin:0 auto;background-color:#e34c41;position:fixed;z-index:9999;top:0;left:0}
+.pub-header-tit{width:68.75%;height:100%;margin:0 auto 0;color:#fff;text-align:center;font-size:18px;letter-spacing:2px;font-weight:bold}
+.header{position:relative;z-index:666;width:100%;height:100%}
+.pub-return,.pub-user{display:block;width:50px;height:100%;position:absolute;z-index:666;top:0;background-position:center;background-repeat:no-repeat;-webkit-background-size:50%;background-size:50%}
+.pub-return{left:0;background-image:url("return.png")}
+.pub-user{right:0;background-image:url("user3bg.png")}
+.bottomBox{width:100%;height:44px;line-height:44px;position:fixed;z-index:999;left:0;bottom:0;background-color:#f2c237}
+.bottomBox>ul{display:block;width:100%;height:100%}
+.bottomBox>ul>li{display:inline-block;float:left;width:33.3333333%;height:100%;background-color:#e34c41;text-align:center;position:relative;z-index:333}
+.bottomBox>ul>li a{color:#fff;font-weight:bold;font-size:16px;letter-spacing:2px}
+.bottomBox>ul>li>ul{display:none;width:100%;height:auto;overflow:hidden;position:absolute;left:0;bottom:60px}
+.bottomBox>ul>li>ul>li{display:block;width:100%;height:44px;text-align:center;background-color:#e34c41;margin-top:3px}
+.bottomBox>ul>li>s{display:none;width:15px;height:13px;background-image:url("bottomArr.png");background-repeat:no-repeat;background-position:0 0;-webkit-background-size:15px 13px;background-size:15px 13px;position:absolute;z-index:666;left:50%;bottom:48px;margin-left:-7px;overflow:hidden;text-align:left;text-indent:-999px}
+.bottomBox>ul>li.on>ul,.bottomBox>ul>li.on>s{display:block}
+.logo{width:100%;margin:44px auto 0}
+.logo img{display:block;width:100%;padding:0;margin:0}
+.loginMoudle{width:90.625%;margin:30px auto 0;position:relative;z-index:666}
+.loginMoudle.mgt70{margin-top:70px}
+.cart-up{display:block;width:14px;height:14px;background:url("../images/new/caretbg.png") 0 0 no-repeat;-webkit-background-size:14px 14px;background-size:14px 14px;position:absolute;z-index:666;left:50%;top:-14px;margin-left:-7px}
+
+.login-con{width:100%;height:auto;border-radius:6px;-webkit-box-shadow:0 3px rgba(232,229,229,.5);-moz-box-shadow:0 3px rgba(232,229,229,.5);-ms-box-shadow:0 3px rgba(232,229,229,.5);-o-box-shadow:0 3px rgba(232,229,229,.5);box-shadow:0 3px rgba(232,229,229,.5);background-color:#fff}
+.login-con label{display:block;height:40px;line-height:40px;border-bottom:1px solid #e8e5e5}
+.login-con label:last-child{border-bottom:0}
+.login-con label input{display:block;width:90%;height:20px;padding:10px 12px;border:0;font-size:14px;border-radius:6px}
+.login-con label input.pdl30{padding-left:30px;background-position:8px center;background-repeat:no-repeat;-webkit-background-size:16px 18px;background-size:16px 18px}
+.login-con label input.spsw{background-image:url("../images/new/spswbg.png")}
+.login-con label input.npsw{background-image:url("../images/new/npswbg.png")}
+.login-con label input.rpsw{background-image:url("../images/new/rpswbg.png")}
+.login-choose{width:100%;height:22px;line-height:22px;margin-top:10px}
+.remember{display:block;width:25%;height:100%;font-size:14px;padding-left:30px;background-image:url("../images/new/remember.png");background-repeat:no-repeat;-webkit-background-size:22px 22px;background-size:22px 22px;background-position:0 0;color:#4e4d4d;letter-spacing:1px}
+.remember input{vertical-align:middle;display:none}
+.checked{background-image:url("../images/new/remember2.png")}
+.forgetpsw{display:block;width:80px;height:100%;text-align:right;font-size:14px}
+.loginBtn{display:block;width:80%;height:34px;margin:25px auto 0;border:0;background:#e34c41;color:#fff;border-radius:6px;font-size:16px;letter-spacing:3px;border:1px solid #cc453b}
+.loginBtn:hover{background-color:#ea645a}
+.wechatLoginBtn{display:block;width:80%;height:34px;margin:25px auto 0;border:0;background:#52c640;color:#fff;border-radius:6px;font-size:16px;letter-spacing:3px;border:1px solid #4dc23b}
+.wechatLoginBtn:hover{background-color:#7ddb6b}
+.quicklogin{width:80%;height:30px;line-height:30px;margin:20px auto 0}
+.quicklogin a{display:block;width:90px;height:30px;line-height:30px;color:#fff;text-indent:-999px;text-align:left;overflow:hidden;background-position:0 0;background-repeat:no-repeat;-webkit-background-size:90px 30px;background-size:90px 30px}
+.quicklogin a.fl{background-image:url("../images/new/quick_login_qq.png");margin-left:6px}
+.quicklogin a.fr{background-image:url("../images/new/quick_login_wx.png");margin-right:6px}
+.quickReg{text-align:center;padding:10px;font-size:14px;margin-top:10px}
+.quickReg a{border:1px solid #d5d3d3;color:#044a98;padding:2px 3px;margin-left:10px;border-radius:3px}
+.getpsw{margin-top:20px}
+.getpswborder .login-con,.getpsw .login-con,.getpsw .login-con label input,.getpswborder .login-con label input{border-radius:15px}
+.getpsw .login-con label input,.getpswborder .login-con label input{padding:8px 12px}
+.getpsw .login-con label,.getpswborder .login-con label{height:36px;line-height:36px}
+.getpsw .cart-up{left:20%}
+.getpsw .login-con{width:65%}
+.login-con input{color:#727272}
+.getpswInfo span{display:block;height:40px;line-height:40px;padding:0 5px;font-size:14px;color:#727272}
+.getpswInfo span input{background:#fff;border:0;border-radius:5px;box-shadow:0 3px 3px rgba(232,229,229,.4);padding:3px;color:#727272}
+.mgt30{margin-top:30px}
+.loginMoudle2{padding-top:10px;background-color:#fff}
+.login-con2{width:80%;margin:0 auto}
+.login-con2 label{display:block;margin-bottom:10px;position:relative;z-index:11}
+.login-con2 label i{display:block;width:16px;height:100%;position:absolute;right:5px;top:0;background:url("../images/new/icon_eye.png") 0 center no-repeat;-webkit-background-size:16px;background-size:16px}
+.login-con2 label .hide{display:none}
+.userinfo{display:block;width:90%;height:40px;border-radius:5px;padding-left:25px;border:1px solid #e7e7e7;background-color:#f2f2f2;background-image:url("../images/new/user2bg.png");background-repeat:no-repeat;background-position:3px center;-webkit-background-size:20px;background-size:20px}
+.pswinfo{display:block;width:90%;height:40px;border-radius:5px;padding-left:25px;border:1px solid #e7e7e7;background-color:#f2f2f2;background-image:url("../images/new/icon_close.png");background-repeat:no-repeat;background-position:3px center;-webkit-background-size:20px;background-size:20px}
+.login-choose2{width:80%;height:22px;margin:10px auto 0;color:#ec7873}
+.login-choose2 a{color:#ec7873}
+.loginBtn2{margin-top:10px;height:40px}
+.quicklogin2{width:50%;height:40px;line-height:40px;margin:20px auto 0}
+.quickReg2 a{border:0;text-decoration:underline}
+.quicklogin2 a{width:40px;height:40px;border-radius:50%;overflow:hidden;text-indent:-999px}
+.quicklogin2 a.fl{background:url("../images/new/icon_chat.png") 0 0 no-repeat;-webkit-background-size:80px;background-size:80px}
+.quicklogin2 a.fr{background:url("../images/new/icon_chat.png") right 0 no-repeat;-webkit-background-size:80px;background-size:80px}
+.mgt44{margin-top:44px;padding:0}
+.loginMoudle2>h2{height:30px;line-height:30px;text-align:center;color:#666;font-size:14px}
+.nobg{background-image:none;padding:0 20px 0 5px}
+.loginbtn3{width:94%;margin-top:20px}
+.reglst{width:100%;height:auto;margin-top:44px;background-color:#fff}
+.reglst ul{display:block;height:auto}
+.reglst ul li{display:block;height:44px;border-bottom:1px solid #ccc;padding:2px 10px}
+.reglst ul li img{display:block;width:30px;height:30px;padding:0;margin:0;margin-top:7px;border:0;border-radius:50%}
+.reginfo{margin-left:10px}
+.reginfo h3{font-size:15px;position:relative;z-index:11;overflow:hidden;height:22px;line-height:22px}
+.reginfo h3 span{display:inline-block;height:22px;line-height:22px;float:left}
+.reginfo h3 i{display:inline-block;float:left;width:16px;height:16px;margin-top:3px;margin-left:5px;background:url("../images/new/icon_sex.png") 0 0 no-repeat;-webkit-background-size:16px;background-size:16px}
+.reginfo h3 i.fsex{background-position:0 bottom}
+.verify{height:auto;padding-bottom:50px}
+.verify ul li{height:auto;position:relative;z-index:11;padding-top:5px;padding-bottom:5px}
+.verifyinfo{padding-top:5px;width:60%}
+.verifyinfo p{height:20px;line-height:20px;font-size:13px;color:#333}
+.verifyinfo p span{color:#b6b6b6;padding-right:5px;float:left}
+.verifyinfo p i{display:inline-block;float:left;width:16px;height:15px;margin-top:3px;margin-left:5px;background:url("../images/new/icon_sex.png") 0 0 no-repeat;-webkit-background-size:14px;background-size:14px}
+.verifyinfo p span.c333{color:#333}
+.mailmodule{width:100%;height:auto}
+.mailmodule input{display:block;width:90%;height:30px;margin:0 auto;padding:5px;border-radius:5px;color:#999;font-size:14px;background:0;border:1px solid #ccc}
+.loginModule3{margin-top:30px}
+.login3 input{padding-left:5px;background:0}
+.login3 label{padding-left:30px}
+.login3 label:first-child{background-image:url("../images/new/user2bg.png");background-repeat:no-repeat;background-position:3px center;-webkit-background-size:20px;background-size:20px}
+.login3 label:nth-child(2){background-image:url("../images/new/icon_close.png");background-repeat:no-repeat;background-position:3px center;-webkit-background-size:20px;background-size:20px}
+.login3{position:relative;z-index:11}
+.login3 i{display:block;width:1px;height:100%;background:url("../images/new/logbg.png") 0 0 no-repeat;-webkit-background-size:1px 100%;background-size:1px 100%;position:absolute;left:12px;top:0}
+.log3{margin-top:0}

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/myUniformStyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<title>生成门店二维码</title>
+</head>
+
+<body>
+    <form id="myForm" name="myForm" class="form-horizontal uniform" method="post" action="{:U('Admin/DimensionCode/addShopQR','','')}" style="margin:0px; padding:10px;background:#fafafa;border:1px solid #DDD;min-width:800px;">
+        <div class="control-group">
+            <div class="controls controls-row"><h2>门店二维码生成</h2></div>
+            <div class="controls controls-row">
+				<font style="font-size:1.17em; font-weight:bold; color:highlight;">说明：从已添加的店铺下拉菜单中选择要生成二维码的店铺。</font>
+			</div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">选择门店：</label>
+            <div class="controls controls-row">
+                <select id="shop_select" class="uniform myselected" onchange="shopSelected(this)">
+                	<foreach name="sbinfo" item="sbi">
+                		<option value="{$sbi.subbranch_id}">{$sbi.subbranch_name}</option>
+                	</foreach>
+                </select>
+                <input type="hidden" id="shop_selected_id" name="shop_selected_id" value="" />
+            </div>
+            <div class="controls controls-row">
+                <a id="addmoreprize" class="large colorbutton blue" href="javascript:void(0)" style="position:relative;top:-30px;left:500px;">添加新门店</a>
+            </div>
+            <div id="shop_brief" class="controls controls-row" style="display:none;">
+                <label class="ln" name="ln"></label>
+                <label class="la" name="la"></label>
+                <label class="ld" name="ld"></label>
+            </div>
+        </div>
+        
+        <div class="control-group">
+          <label class="control-label">二维码名称</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myinput" id="keyword" name="keyword" placeholder="可输入此二维码的名称" value="" />
+            </div>
+            <div class="controls controls-row">
+               填写二维码名称方便用户记忆。
+          </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">推广描述</label>
+            <div class="controls controls-row">
+                <textarea id="activity_brief" name="activity_brief" class="uniform mytextarea" placeholder="可简要输入二维码推广描述"></textarea>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">门店图片</label>
+            <div class="controls">
+                <input type="text" class="uniform myinput" id="shop_image_src" name="shop_image_src" value="http://www.we-act.cn/weact/App/Tpl/Admin/Public/images/platformimage/shopQR.png" />
+                <br />
+				<div class="btn">
+                    <span>添加附件:</span>
+                    <input type="file" class="uniform" id="shop_image_select"/>
+                </div>
+				<div style="margin-top:10px;">
+                	<img id="shop_image" src="__PUBLIC__/images/platformimage/shopQR.png" style="width:300px;" />
+                </div>                                       
+            </div>
+        </div>
+    	
+        <hr style="width:90%;margin:0px auto;"/>
+        
+        <div class="control-group">
+            <div class="controls controls-row" style="line-height:26px;">门店二维码</div>
+            <div class="controls controls-row">
+                <a id="createQR" class="large colorbutton blue" href="javascript:void(0)" style="position:relative;top:-20px;left:500px;">生成二维码</a>
+            </div>
+            <div class="controls controls-row">
+                <img id="generated_image" src="" alt="" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <div class="controls controls-row">
+                <div class="checker" id="uniform-moren_yes">
+                	<span><input type="checkbox" checked="checked" class="uniform" id="focus_alert" name="focus_alert" /></span>
+                </div>关注后即弹出门店推广
+            </div>
+        </div>
+        
+	</form>
+<script type="text/javascript">
+$(function (){
+	$(".uniform").uniform();				//初始化uniform，文本框的uniform格式化
+	
+	$("#shop_image_select").change(function(e) {
+		var src = e.target || window.event.srcElement; //获取事件源，兼容chrome/IE
+		if(e.target != null && e.target != ''){
+			//$('#new_flag').val('1');
+			if(e.originalEvent && e.originalEvent.srcElement && e.originalEvent.srcElement.files
+					&& e.originalEvent.srcElement.files.length > 0){
+				var file = e.originalEvent.srcElement.files[0];
+				var reader = new FileReader();
+				reader.onloadend = function(e) {
+					$('#shop_image').attr('src',reader.result);			//读的是二进制
+					$('#shop_image_src').val($('#shop_image_select').val());
+				};
+				reader.readAsDataURL(file);
+			}
+		}else{
+			$('#shop_image').attr('src','');
+			$('#shop_image_src').val($('#shop_image_select').val());
+		}
+	});
+	
+	$("#createQR").click(function(){
+		var sid = $('#shop_selected_id').val();
+		//生成二维码按钮
+		$.post('{:U("Admin/DimensionCode/addShopQR","","")}',
+			{ sid : sid },
+			function(data){
+				//接收服务器生成的二维码信息，并且回传的data数据里有产生的二维码图片路径
+				if(data.status){
+					//alert(data.code_path);
+					$("#generated_image").attr('src',data.code_path);		//最后将图片插入进去
+				}
+			},
+			'json');
+	});
+});
+
+function shopSelected(obj){	
+	var current_shop = obj.options[obj.selectedIndex].value;				//获取当前的店铺
+	$('#shop_selected_id').val(current_shop);								//获取option的value，并写入input里
+	$.post("{:U('Admin/DimensionCode/shopSelected','','')}",
+			{ cs : current_shop },
+			function(data){
+				$('.la').html(data.subbranch_address);						//写入门店地址
+				$('.ld').html(data.subbranch_description);					//写入门店简介
+				$('#shop_brief').css('display','block');
+			},'json');
+}
+</script>
+</body>
+</html>

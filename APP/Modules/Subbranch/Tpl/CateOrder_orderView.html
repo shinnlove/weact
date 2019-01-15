@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/tableCommonStyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>店铺所有订单</title>
+</head>
+
+<body class="easyui-layout" fit="true">
+	<div data-options="region:'center',border:false">
+		<table id="dg" title="店铺所有订单信息一览" toolbar="#toolbar" style="width: 100%; height: 100%;"></table>
+	</div>
+	<!-- easyUI的工具条 -->
+	<div id="toolbar" style="height:30px; padding-top:5px;">
+		<span>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-reload" plain="true" onclick="newOrder();">新提交订单<span id="neworder"></span></a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" plain="true" onclick="allRecievedOrder();">已接收订单</a>
+			<a href="javascript:location.reload();" class="easyui-linkbutton" iconCls="icon-search" plain="true">所有订单</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-redo" plain="true" onclick="recieveOrder();">确认接收订单</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="orderPay();">订单缴费</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-tip" plain="true" onclick="sendAll();">上餐完成</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-help" plain="true" onclick="remarkOrder();">备注订单</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="exportOrder();">导出订单</a>
+		</span>
+		<span class="searchbox" style="float: right; margin-right: 30px; height: 25px; text-align: center;">
+			<select id="cate_search_condition" name="cate_search_condition" style="border:0px;width: 80px;height: 25px;text-align: center;">
+				<option value="visual_number" selected="selected">订单编号</option>
+			</select>
+			<input id="cate_search_content" name="cate_search_content" type="text" class="searchbox-text mysearchbox" />
+			<span>
+				<span id="search_cate_btn" class="searchbox-button searchbox-button-hover mysearchspan" style="margin-top:3px;"></span>
+			</span>
+		</span>
+	</div>
+	
+	<div id="remarkdialog" class="easyui-window" title="备注订单" data-options="modal:true,closed:true" style="width:600px;height:300px;padding:10px;">
+		<input type="hidden" name="oid" id="oid" val="" />
+		<table>
+			<tr>
+				<th style="color:#8F9695; width:80px;font-size: 15px;">订单编号:</th>
+				<td><input id="order_number" style="width: 250px;height: 20px;" class="easyui-validatebox" type="text" readonly="true"></input></td>
+			</tr>
+			<tr style="height: 15px;"></tr>
+			<tr>
+				<th style="color:#8F9695;width:80px;font-size: 15px;">备注内容:</th>
+				<td><textarea id="remarkcontent" rows="8" cols="60" placeholder="请在此输入对该笔订单的备注"></textarea></td>
+			</tr>
+			<tr style="height: 15px;"></tr>
+		</table>
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-redo" style="float:right;margin-right:40px;" onclick="markOrderConfirm()">确定备注</a>
+	</div><!-- replywindow回复窗口结束div -->
+	
+<script type="text/javascript">
+var params = {
+		'e_id' : '{$e_id}',
+		'sid' : '{$subbranch_id}'
+}
+//初始化easyUI表格
+var dg = $('#dg');			//easyUI DOM
+$(function() {
+	dg.datagrid({
+		url: "{:U('Subbranch/CateOrder/read','','')}",	//读取客户的url地址
+		singleSelect: false,							//可多选
+		collapsible: true,								//datagrid可滑动展开
+		method: 'post',									//post提交类型
+		pagination: true,								//开启分页
+		rownumbers: true,								//显示行号
+		fitColumns: true,								//自适应列宽
+		fit: true,										//datagrid整屏适应
+		pageSize: 10,									//默认一页10条记录
+		pageList: [5, 10, 20],							//可供选择的有一页5条、10条、20条
+		idField: 'order_id',							//主键字段是order_id
+		columns: [[
+					{ field : 'ck', checkbox : 'true', width : 100 },
+					{ field: 'order_id', title: '主单编号', sortable: true, hidden: true }, 
+					{ field: 'order_time', title: '下单时间', width : 100, align:'left', sortable: true }, 
+					{ field: 'visual_number', title: '订单编号', width : 75, align:'left', sortable: true }, 
+					{ field: 'openid', title: '微信号', width : 50, align:'left', sortable: true }, 
+					{ field: 'nick_name', title: '昵称', width : 70, align:'left', sortable: false }, 
+					{ field: 'consume_table_id', title: '所在餐桌编号', width : 80, align:'left', sortable: true, formatter: tableInfoInit }, 
+					{ field: 'total_price', title: '订单总价（元）', width : 70, align:'right', sortable: true }, 
+					{ field: 'pay_indeed', title: '实际付款（元）', width : 70, align:'right', sortable: true, formatter: payIndeedInit }, 
+					{ field: 'is_payed', title: '支付状态', width : 70, align:'center', sortable: true, formatter: payStatusInit }, 
+					{ field: 'receive_status', title: '店铺确认', width : 70, align:'center', sortable: true, formatter: checkStatusInit },
+					{ field: 'is_send', title: '上餐状况', width : 70, align:'center', sortable: true, formatter: sendStatusInit },
+					{ field: 'remark', title: '订单备注', width : 50, align:'center', sortable: false }
+				]],
+		view: detailview,
+		detailFormatter: function(rowIndex, rowData) {
+			return '<div id="' + rowData.order_id + '">' + '</div>';
+		},
+		onExpandRow: function(rowIndex, rowData){
+			$.post('{:U("Subbranch/CateOrder/getOrderDetail","","")}',
+					{ order_id : rowData.order_id },
+					function(result){
+						if(result){
+								
+							//拼接列表起始
+							var detailinfo = '<table>'
+								+ '<tr>'
+								+ 	'<td style="border:0; width:150px;">'
+								+		'<p style="font-weight:bold;"> 本订单餐饮信息：</p>';
+								+	'</td>'
+								+ '</tr>';
+								
+								//拼接表头
+								detailinfo += '<tr style="border:0;height:30px;">'
+								+	'<td style="font-weight:bold; border:0; width:100px; text-align:center;">序号</td>'
+								+	'<td style="font-weight:bold; border:0; width:100px; text-align:center;">缩略图</td>'
+								+	'<td style="font-weight:bold; border:0; width:150px; text-align:center;">名称</td>'
+								+	'<td style="font-weight:bold; border:0; width:100px; text-align:center;">单价</td>'
+								+	'<td style="font-weight:bold; border:0; width:100px; text-align:center;">数量</td>'
+								+	'<td style="font-weight:bold; border:0; width:100px; text-align:center;">小计</td>'
+								+ '</tr>'
+								
+								//循环拼接餐饮信息制表
+								for(var i = 0; i<result.length; i++) {
+									
+									detailinfo += '<tr>'
+										+	'<td style="border:0; width:100px; text-align:center;">' + ( i + 1 ) + '</td>'
+										+	'<td style="border:0; width:100px; text-align:center;"><img src="' + result[i].macro_path + '" style="width:60px;" alt="" /></td>'
+										+	'<td style="border:0; width:100px; text-align:center;">' + result[i].cate_name + '</td>'
+										+	'<td style="border:0; width:100px; text-align:center;">' + result[i].price + '</td>'
+										+	'<td style="border:0; width:100px; text-align:center;">' + result[i].amount + '</td>'
+										+	'<td style="border:0; width:100px; text-align:center;">' + ( result[i].price * result[i].amount ) + '</td>'
+										+ '</tr>'
+										
+								}
+								
+								//加上表尾
+								detailinfo += '</table>';
+							$('#'+rowData.order_id).html(detailinfo);
+						}
+					},'json');	//post
+	    }	//onExpandRow
+	});		//easyUI params
+	
+	//查询订单信息的功能
+	$('#search_cate_btn').click(function(){
+		var contentobj = $('#cate_search_content');
+		var searchcondition = $('#cate_search_condition').val().trim();
+		var searchcontent = contentobj.val();
+		if(searchcontent.trim() == "" || searchcontent == null){
+			$.messager.alert('温馨提示', '搜索内容不能为空！','warning', function(){
+				contentobj.focus();
+	  		});
+			return						//注意聚焦和return的顺序！
+		}
+		dg.datagrid({
+    		url:"{:U('Subbranch/CateOrder/conditionSearchOrder')}",
+    		queryParams:{ 
+    			searchcondition:searchcondition,
+    			searchcontent:searchcontent
+    		}
+    	},'load');
+	});
+});
+//easyUI顾客所在餐桌列初始化
+function tableInfoInit(val, row){
+	if(row.consume_table_id == null || row.consume_table_id == ''){
+		return "<span class='gray' style='color:#9e9e9e;'>暂无餐桌信息/顾客未扫码</span>";
+	}else{
+		return "<span class='green' style='color:#39b868;'>第" + row.consume_table_id + "桌</span>";
+	}
+}
+//easyUI实际付款列初始化
+function payIndeedInit(val, row){
+	if(row.pay_indeed == 0){
+		return "<span class='gray' style='color:#9e9e9e;'>/</span>";
+	}else{
+		return "<span class='green' style='color:#39b868;'>" + row.pay_indeed + "元</span>";
+	}
+}
+//easyUI支付状态列初始化
+function payStatusInit(val, row){
+	if(row.is_payed == 0){
+		return "<span class='gray' style='color:#d00224;'>尚未支付</span>";
+	}else{
+		return "<span class='green' style='color:#39b868;'>已经支付</span>";
+	}
+}
+//easyUI店铺确认列初始化
+function checkStatusInit(val, row){
+	if(row.receive_status == 0){
+		return "<span class='gray' style='color:#d00224;'>未确认</span>";
+	}else{
+		return "<span class='green' style='color:#39b868;'>已确认</span>";
+	}
+}
+function sendStatusInit(val, row){
+	if(row.is_send == 0){
+		return "<span class='gray' style='color:#d00224;'>备餐中...</span>";
+	}else{
+		return "<span class='green' style='color:#39b868;'>餐品已上齐</span>";
+	}
+}
+//所有订单allOrder
+function allOrder(){
+	
+}
+//新提交订单newOrder
+function newOrder(){
+	dg.datagrid({
+		url:"{:U('Subbranch/CateOrder/conditionSearchOrder')}",
+		queryParams:{ 
+			searchcondition:'receive_status',
+			searchcontent:0
+		}
+	},'load');
+	//$("#neworder").html('(0)').hide();
+}
+function allRecievedOrder(){
+	dg.datagrid({
+		url:"{:U('Subbranch/CateOrder/conditionSearchOrder')}",
+		queryParams:{ 
+			searchcondition:'receive_status',
+			searchcontent:1
+		}
+	},'load');
+}
+//接受订单recieveOrder（接受订单可以一次选中多条）
+function recieveOrder(){
+	var rows = dg.datagrid('getSelections');
+	var rowdata = [];
+	if (rows.length == 0) {
+		$.messager.alert('温馨提示','请至少选择一条要接收的订单！','warning');				
+	}if (rows.length > 5) {
+		$.messager.alert('温馨提示','一次最多接收5条订单！','warning');				
+	}else{
+		//准备参数
+		var orderlist = '';
+		var n = rows.length;
+		for(var i = 0; i < n - 1; i ++) {
+			orderlist += rows[i].order_id + ',';
+		}
+		orderlist += rows[i].order_id;
+		//打包参数
+		var params = {
+				'orderlist' : orderlist
+		}
+		$.messager.confirm('温馨提示','确定接收选中订单？',function(cf){
+			if(cf){
+				$.post("{:U('Subbranch/CateOrder/orderReceiveConfirm')}", params, function(result){
+					if(result.errCode == 0){
+						$.messager.alert('温馨提示', '已经成功接收订单！', 'info', function(){
+							window.location.reload();
+						})
+					}else{
+						$.messager.alert('温馨提示', '网络繁忙，请稍后再试！'+result.errMsg, 'error');
+					}
+				},'json');
+			}
+		});	
+	}
+}
+//订单缴费（一次只能选中一个订单进行确认）
+function orderPay(){
+	var rows = dg.datagrid('getSelections');
+	var rowdata = [];
+	if (rows.length == 0) {
+		$.messager.alert('温馨提示','请选择要缴费的订单！','warning');
+	}else if(rows.length > 1){
+		$.messager.alert('温馨提示','一次只能选择一笔订单进行缴费确认！','warning');
+	}else{
+		// 选择缴费的订单参数
+		if(rows[0].receive_status == 0){
+			$.messager.alert('温馨提示', '请先确认接收该笔订单，才能进行缴费！', 'warning');
+			return;
+		}
+		var params = {
+				'order_id' : rows[0].order_id
+		}
+		$.messager.confirm('温馨提示','确定顾客已经现金/刷卡缴费过，并更新订单的缴费状态？',function(cf){
+			if(cf){
+				$.post("{:U('Subbranch/CateOrder/orderPayedConfirm')}", params, function(result){
+					if(result.errCode == 0){
+						$.messager.alert('温馨提示', '订单缴费状态更新成功！', 'info', function(){
+							window.location.reload();
+						})
+					}else{
+						$.messager.alert('温馨提示', result.errMsg+'网络繁忙，请稍后再试！', 'error');
+					}
+				},'json');
+			}
+		});	
+	}
+}
+//上餐完成提醒
+function sendAll(){
+	var rows = dg.datagrid('getSelections');
+	var rowdata = [];
+	if (rows.length == 0) {
+		$.messager.alert('温馨提示','请至少选择一条要上餐完成的订单！','warning');				
+	}if (rows.length > 5) {
+		$.messager.alert('温馨提示','一次最多提醒5条订单！','warning');				
+	}else{
+		//准备参数
+		var orderlist = '';
+		var n = rows.length;
+		for(var i = 0; i < n - 1; i ++) {
+			orderlist += rows[i].order_id + ',';
+		}
+		orderlist += rows[i].order_id;
+		//打包参数
+		var params = {
+				'orderlist' : orderlist
+		}
+		$.messager.confirm('温馨提示','确定提醒选中订单已经上餐完成？',function(cf){
+			if(cf){
+				$.post("{:U('Subbranch/CateOrder/sendAllConfirm')}", params, function(result){
+					if(result.errCode == 0){
+						$.messager.alert('温馨提示', '已经成功发送提醒！', 'info', function(){
+							window.location.reload();
+						})
+					}else{
+						$.messager.alert('温馨提示', '网络繁忙，请稍后再试！'+result.errMsg, 'error');
+					}
+				},'json');
+			}
+		});	
+	}
+}
+//导出订单
+function exportOrder() {
+	$.messager.alert('温馨提示','稍后开放该功能！','info');
+}
+//检查新订单
+function checkNewOrder() {
+	$.post("{:U('Subbranch/CateOrder/checkNewOrder')}", params, function(result){
+		if(result.errCode == 0){
+			var n = result.newordernumber;
+			if(n == 0) {
+				$("#neworder").html('(' + n + ')').hide();
+			} else {
+				$("#neworder").html('(' + n + ')').show();
+				Msgslide('您有新的订单，请注意查收！');
+			}
+		}
+	},'json');
+}
+// 给订单添加备注信息
+function remarkOrder() {
+	var rows = dg.datagrid('getSelections');
+	if (rows.length == 0) {
+		$.messager.alert('温馨提示', '请选择要备注的订单！', 'warning');
+	}else if(rows.length > 1){
+		$.messager.alert('温馨提示', '一次只能选择一笔订单进行备注！', 'warning');
+	}else{
+		$.messager.confirm('温馨提示', '是否对选中订单添加备注？', function(result){
+			if(result){
+				$('#remarkdialog').window('open'); //打开对话框
+				$('#oid').val(rows[0].order_id); // 写入订单编号
+				$('#order_number').val(rows[0].visual_number); // 写入订单序号
+				$('#remarkcontent').val(rows[0].remark); // 写入订单备注内容
+			}
+		});
+	}
+}
+//确认提交订单备注
+function markOrderConfirm() {
+	var oid = $('#oid').val(); // 订单编号
+	var remark = $('#remarkcontent').val().trim(); // 获取内容
+	if(remark == '') {
+		$.messager.alert('温馨提示', '请输入该订单需要备注内容！', 'warning');
+	}else {
+		var param = {
+				'oid' : oid,
+				'remark' : remark
+		}
+		$.post("{:U('Subbranch/CateOrder/remarkOrder')}", param, function(result) {
+			if(result.errCode == 0) {
+				$('#remarkdialog').window('close'); //关闭对话框
+				dg.datagrid('reload');
+			} else {
+				$.messager.alert('温馨提示', '网络繁忙，请稍后再试！', 'error');
+			}
+		});
+	}
+}
+//消息直接弹出
+function Msgshow(msg) {
+	$.messager.show({
+		title: '温馨提示',
+		msg: msg,
+		showType: 'show'
+	});
+}
+//消息上下滑
+function Msgslide(msg) {
+	$.messager.show({
+		title: '温馨提示',
+		msg: msg,
+		timeout: 3000,
+		showType: 'slide'
+	});
+}
+//消息淡进淡出
+function Msgfade(msg) {
+	$.messager.show({
+		title: '温馨提示',
+		msg: msg,
+		timeout: 3000,
+		showType: 'fade'
+	});
+}
+// 页面刷新订单
+$(function(){
+	// 定义订单检测函数
+	setInterval( checkNewOrder, 10000 );		// 开启检查订单
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/om-apusic.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/operamasks/themes/apusic/om-theme.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/operamasks/themes/apusic/om-base.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/menu-monitor.min.css?v=1.0.2" />
+<script type="text/javascript" src="__PUBLIC__/operamasks/jquery.js"></script>
+<script type="text/javascript" src="__PUBLIC__/operamasks/ui/om-core.js"></script>
+<script type="text/javascript" src="__PUBLIC__/operamasks/ui/om-mouse.js"></script>
+<script type="text/javascript" src="__PUBLIC__/operamasks/ui/om-draggable.js"></script>
+<script type="text/javascript" src="__PUBLIC__/operamasks/ui/om-droppable.js"></script>
+<script type="text/javascript" src="__PUBLIC__/operamasks/ui/om-tree.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.json-2.4.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/template-native.js"></script><!-- arttemplate模板制作菜单预览 -->
+<title>公众号菜单设置</title>
+</head>
+
+<body>
+	<div id="top" class="alert alert-info" style="margin:20px;">
+	1.使用本模块，必须在微信公众平台<strong>申请</strong>自定义菜单使用的<strong>AppId和AppSecret</strong>，然后在【授权设置】中设置。<br/>
+	2.最多创建<span class="red bold">3 个一级菜单</span>，每个一级菜单下最多可以创建 <span class="red bold">5 个二级菜单</span>，菜单<span class="red bold">最多支持两层</span>。<br/>
+	3.拖动树形菜单再点击<strong>“保存排序”</strong>可以对菜单重排序，但最终只有<strong>“发布”</strong>后才会生效。公众平台限制了每天的发布次数。
+	</div>
+
+    <!-- view_source_begin -->
+    <div id="main">
+        <div class="frame_left">
+        	<table>
+				<tr valign="top">
+					<td width="220"><ul id="menu_tree"></ul></td>
+				</tr>
+			</table>
+        
+			<div class="confirmRegion" style="position:fixed;left:25px;bottom:20px;">
+                <button class="btn btn-small" id="sync">还原</button>
+                <button class="btn btn-small" id="save">保存排序</button>
+                <button class="btn btn-small" id="preview">预览</button>
+                <button class="btn btn-small" id="publish">发布</button>
+            </div>
+        </div>
+        
+        <div class="frame_right">
+            <iframe frameborder="0" id="detail" name="detail" src=""></iframe>
+        </div>
+    </div> 
+    <!-- view_source_end -->
+    
+    <!-- 预览菜单开始 -->
+    <div class="pre_wrapper" style="display:none;">     
+		<div class="pre_hd">       
+			<h4 class="pre_nav_name">{$ename}</h4>     
+		</div>     
+		<div class="pre_bd" id="previewAction"></div>     
+		<div class="pre_ft">       
+			<div id="pre_nav_wrapper" class="pre_nav_wrapper group screen1">       
+				<ul id="preview_screen1" class="pre_nav_list">
+					<!-- arttemplate菜单预览区域 -->
+				</ul>      
+			</div>     
+		</div>     
+		<span class="pre_windows_opr"><i id="pre_close" class="opr_icon closed"></i></span>   
+	</div>
+	<!-- 预览菜单结束 -->
+    
+<script id="premenutpl" type="text/html">
+<% for (var i in data) {%>
+	<li id="<%=data[i].menu_id%>" class="previewlevel1 pre_nav">
+		<a href="javascript:;" class="pre_nav_btn"><%=data[i].name%></a>
+		<% if (data[i].children) { %>
+			<ul class="pre_sub_nav_list" style="display:none">
+				<span class="pre_sub_nav_arrow"></span>
+				<% for (var j in data[i].children) {%>
+					<li class="previewlevel2 pre_sub_nav"><a href="javascript:;" class="pre_sub_nav_btn"><%=data[i].children[j].name%></a></li>
+				<% } %>
+			</ul>
+		<% } %>
+	</li>
+<% } %>
+</script>
+<!-- view_source_begin -->
+<script type="text/javascript">
+var LEVEL_1_COUNT = 3; // 一级菜单最大数
+var LEVEL_2_COUNT = 5; // 二级子菜单最大数
+	
+$(function(){
+	resize();
+	$(window).resize(function(){
+		resize();
+	});
+	
+	var menutree = [{
+		text: "公众号自定义菜单",
+		id:-1,
+		rootid:0,
+		"expanded": true,
+	}];
+	
+	menutree[0].children = {$menujson}; // 根据后台推送的json数据来显示公众号菜单
+	
+	$tree = $("#menu_tree").omTree({
+		simpleDataModel:true,
+		dataSource : menutree, // 静态数据源就是menutree
+		//draggable : true, // 可拖拽
+		draggable : false, // 可拖拽
+		onSelect: function(){
+			//此函数是结点选中函数
+			var selNode = $("#menu_tree").omTree("getSelected");						//获取当前选中的树节点
+			//alert('编辑 id='+selNode.id+ ' 的、 key='+selNode.key+' 的、 名称为 '+selNode.text+' 的菜单');
+			//alert('编辑 id='+selNode.id+ ' 的、  名称为 '+selNode.text+' 的菜单');
+			if(selNode["id"] != -1){
+				$("#detail").attr("src" , "{:U('Admin/PublicSubscriber/editMenu','','')}?&mid="+selNode.id);		//如果选中的不是根节点，则直接传当前选中节点的id
+			}
+		},
+		onDrag:function(nodeData, event){
+			//树节点拖动开始时触发事件。
+			var level = $("#"+nodeData.nid).parents(".om-tree-node").length;
+			if(level == 1){
+				return false;//根节点不可以拖拽
+			}
+		},
+		onDrop:function(nodeData, event){
+			//树节点拖动放置时触发事件。这款中间金蝶的js插件貌似有问题，拖拽nodeData永远为父节点下第一个子节点，真心吐槽。
+			refreshActions();
+		},
+	});
+	$("#menu_tree").omTree("expandAll");		//展开结点树
+	refreshActions();
+	initSelect();								//默认选中第一个菜单 
+	
+	//绑定对树节点的添加事件操作
+	$tree.delegate(".tree-menu .add","click",function(){
+		var node = getNode(this);																				//调用getNode函数，获取点击添加的树节点
+		unselect();																								//取消选中该节点
+		$("#detail").attr("src" , "{:U('Admin/PublicSubscriber/addMenu','','')}?mid="+node.id);					//获取参数跳转addMenu，特别注意，添加页面和编辑页面可以是同一个页面
+	});
+	
+	//绑定对树节点的编辑事件操作
+	$tree.delegate(".tree-menu .edit","click",function(){
+		var selectedNode = $tree.omTree("findByNId",$(this).closest(".om-tree-node").attr("id"));				//调用findByNID的方法，选取某个树节点，是一个target对象
+		$tree.omTree('select',selectedNode);																	//调用omTree的select方法，将某个树节点选中
+		$("#detail").attr("src" , "{:U('Admin/PublicSubscriber/editMenu','','')}?mid="+selectedNode.id);		//获取参数跳转editMenu，特别注意，添加页面和编辑页面可以是同一个页面
+    });
+	
+	//绑定对树节点的删除事件操作
+	$tree.delegate(".tree-menu .del", "click", function() {
+		var delNode = getNode(this); 					//调用getNode函数，选择当前要删除的树节点
+		var selectedNode = $tree.omTree("getSelected"); //获取当前选中的树节点（可能不是要删除的树节点），这是为了删除后让框架不为空									
+		if (hasChild(delNode)) { 
+			//直接调用判断是否有孩子函数获取其孩子节点
+			$.messager.alert("温馨提示", "所选删除菜单下边有子菜单，请先逐个删除子菜单！", "warning");
+			return;
+		}
+		// 如果没有孩子节点，可以删除
+		$.messager.confirm('温馨提示', '是否确定要删除该菜单？请谨慎操作，删除后不可恢复。<br />您真的要删除菜单【' + delNode.text + '】吗？', function(cf) {
+			if (cf) { 
+				//用户确认
+				var treeData = $.toJSON($tree.omTree("getData")[0].children); //将当前树上的结点以json格式的方法打包
+				//发送一个post请求删除所选节点（注意：不但要传入树信息，还要传入删除节点信息）
+				$.post("{:U('Admin/PublicSubscriber/delMenuConfirm', '', '')}?mid=" + delNode.id, {
+					treeData: treeData
+				}, function(result) {
+					if (result.errCode == 0) {
+						$tree.omTree("remove", delNode); 			//调用omTree的remove方法将当前要删除的结点删除
+						refreshActions(); 							//刷新整棵树的所有节点
+						initSelect(); 								//下面代码不能正常运行，先用initSelect代替
+						/* if(selectedNode && delNode.hid == selectedNode.hid){
+								$("#detail").attr("src" , "{:U('Admin/PublicSubscriber/editMenu','','')}?menu_id="+selectedNode.id);	//如果所选节点就是当前要删除的树节点，则框架的src路径直接改成最近的一个结点框架，（此处有错误）
+						} */
+						$.messager.alert('温馨提示', '删除该菜单成功！', 'info', function() {
+							setTimeout(function() {
+								window.location.reload();
+							}, 500);
+						});
+					} else {
+						$.messager.alert('温馨提示', '删除该菜单失败，' + result.errMsg, 'error', function() {
+							setTimeout(function() {
+								window.location.reload();
+							}, 500);
+						});
+					}
+				}, "json");
+			}
+		});
+	});
+	
+	// 点击还原按钮事件，将微信平台的菜单还原到本地数据库
+	$("#sync").click(function() {
+		$.messager.confirm('温馨提示', '是否要舍弃本地现有数据并还原？所有菜单信息将以微信公众号当前菜单为准进行还原同步！', function(cf) {
+			if (cf) { 
+				$("#sync").attr("disabled", "disabled"); // 锁住该按钮
+				$.post("{:U('Admin/PublicSubscriber/syncMenu', '', '')}", {
+					reset: true
+				}, function(result) {
+					$("#sync").removeAttr("disabled"); // 解锁该按钮
+					if (result.errCode == 0) {
+						$.messager.alert('温馨提示', '公众号菜单还原成功！', 'info', function() {
+							setTimeout(function() {
+								window.location.reload();
+							}, 500);
+						});
+					} else {
+						$.messager.alert('温馨提示', '公众号菜单还原失败，' + result.errMsg, 'error', function() {
+							setTimeout(function() {
+								window.location.reload();
+							}, 500);
+						});
+					}
+				}, "json");
+			}
+		});
+	});
+	
+	// 保存排序按钮点击事件
+	$("#save").click(function() {
+		var children = $tree.omTree("getData")[0].children; // 获取公众号自定义菜单下的父级菜单和子级菜单
+		// 开始验证菜单合法性
+		if (children && children.length > 0 && children.length <= 3) {
+			for (var i = 0; i < children.length; i++) {
+				var level_one = children[i];
+				if (hasChild(level_one)) {
+					var sub_children = level_one.children;
+					for (var j = 0; j < sub_children.length; j++) {
+						// 如果二级菜单下边还有子节点，则说明超过二层，不予保存
+						if (hasChild(sub_children[j])) {
+							$.messager.alert('温馨提示', '微信公众号最多只支持两级菜单！', 'warning');
+							return false;
+						}
+					}
+					// 如果二级菜单超过5个，不予保存
+					if (j > 5) {
+						$.messager.alert('温馨提示', '微信公众号的子级菜单最多支持5个！请调整规范后保存！', 'warning');
+						return false;
+					}
+				}
+			}
+		} else if (children && children.length > 3) {
+			// 父级菜单超过3个
+			$.messager.alert('温馨提示', '微信公众号的父级菜单最多支持3个！请调整规范后保存！', 'warning');
+			return false;
+		} else {
+			// 没有设置菜单
+			$.messager.alert('温馨提示', '请设置菜单后再保存！', 'warning');
+			return false;
+		}
+		// 公众号自定义菜单合法性通过检验
+		$.messager.confirm('温馨提示', '是否要保存当前菜单的信息与排序？', function(cf) {
+			if (cf) { 
+				$("#save").attr("disabled", "disabled"); // 锁定该按钮
+				var treedata = $.toJSON(children);
+				// 发送json数据
+				$.post("{:U('Admin/PublicSubscriber/saveMenu', '', '')}", {
+					treeData: treedata
+				}, function(result) {
+					$("#save").removeAttr("disabled"); // 解锁该按钮
+					if (result.errCode == 0) {
+						$.messager.alert('温馨提示', '保存菜单排序成功，请及时发布菜单与微信公众号同步！', 'info', function() {
+							setTimeout(function() {
+								window.location.reload();
+							}, 500);
+						});
+					} else {
+						$.messager.alert('温馨提示', '保存菜单排序失败，'+result.errMsg, 'error', function() {
+							setTimeout(function() {
+								window.location.reload();
+							}, 500);
+						});
+					}
+				}, "json");
+			}
+		});
+	});
+	
+	// 点击预览按钮事件
+	$("#preview").click(function(){
+		$.post("{:U('Admin/PublicSubscriber/previewMenu', '', '')}", { 
+			preview:true
+		},function(result){
+			if (result.errCode == 0) {
+				$(".pre_wrapper").css("display", "block"); // 弹出预览框
+				var tmpl = template('premenutpl', result); // 使用新数据渲染art模板引擎
+                if (tmpl == '{Template Error}') {
+                    tmpl = ''; // 如果渲染失败，则html置空
+                }
+				$("#preview_screen1").html(tmpl); // 将模板渲染的菜单数据写入
+				// 对html上新生成的页面DOM结构写入事件：自定义菜单点击父级菜单显示子菜单
+				$("#preview_screen1").delegate(".pre_nav_btn","click",function(){
+					$(".pre_sub_nav_list").hide();
+					$(this).next(".pre_sub_nav_list").show();
+				});
+			} else {
+				$.messager.confirm('温馨提示', '网络繁忙，请稍后再试，'+result.errMsg, 'warning');
+			}
+		},"json");
+	});
+	
+	// 关闭预览按钮
+	$("#pre_close").click(function(){
+		$(".pre_wrapper").css("display", "none");
+	});
+	
+	// 点击发布按钮事件，将本地数据库的菜单发布到微信服务端
+	$("#publish").click(function() {
+		$.messager.confirm('温馨提示', '是否发布当前菜单到公众号，所有用户将在12~24小时内看到新发布菜单。更新时间、次数都有限，请确认后再发布！', function(cf) {
+			if (cf) { 
+				$("#publish").attr("disabled", "disabled"); // 锁住该按钮
+				$.post("{:U('Admin/PublicSubscriber/publishMenu','','')}", {
+					publish: true
+				}, function(result) {
+					$("#publish").removeAttr("disabled"); // 解锁该按钮
+					if (result.errCode == 0) {
+						$.messager.alert('温馨提示', '公众号菜单发布成功！', 'info', function() {
+							setTimeout(function() {
+								window.location.reload();
+							}, 500);
+						});
+					} else {
+						$.messager.alert('温馨提示', '公众号菜单发布失败，'+result.errMsg, 'error', function() {
+							setTimeout(function() {
+								window.location.reload();
+							}, 500);
+						});
+					}
+				}, "json");
+			}
+		});
+	});
+});
+
+//判断当前结点是否有孩子
+function hasChild(nodeData){
+	return nodeData.children && nodeData.children.length>0;				//如果孩子不为空，且孩子的长度大于0，代表有孩子节点
+}
+
+//对整个树节点数据进行初始化
+function initSelect(){
+	var data = $tree.omTree("getData");
+	var child = data[0].children;
+	if(child && child.length>0){
+		$tree.omTree("select" , child[0]);
+	}else{
+		$("#detail").attr("src" , "{:U('Admin/PublicSubscriber/menuFrameInit','','')}");		//记得传参数
+	}
+}
+
+//取消选择树节点函数
+function unselect(){
+	var selected = $tree.omTree("getSelected");		//尝试获取当前树选中的结点
+	if(selected){
+		$tree.omTree("unselect",selected);			//如果有结点被选中，则调用unselect方法将该树节点取消选中
+	}
+}
+
+//得到要传递的Url值
+function getCommonParam(node){
+	return "wuid=60202"+"&nid="+node.nid+"&level="+($("#"+node.nid).parents(".om-tree-node").length);
+}
+
+//定义一个得到结点的函数，该函数返回当前目标最近的一个树节点
+function getNode(target){
+	return $tree.omTree("findByNId",$(target).closest(".om-tree-node").attr("id"));		//该返回类型为object对象
+}
+
+//刷新树节点函数（非常重要，决定整棵数哪些节点有添加、哪些节点有编辑）
+function refreshActions(){
+	$("#menu_tree .om-tree-node span").each(function(index,span){
+		$(span).prev(".tree-menu").remove();//先删除再重新创建
+		var node = getNode(this);
+		var menuHtml = '<div class="tree-menu">';
+		var level = $(this).parents(".om-tree-node").length;
+		var childCount = $tree.omTree("getChildren",node).length;
+		if(level == 1){
+			$(span).find("a").width(190);
+			if(childCount < LEVEL_1_COUNT){
+		    	menuHtml += '<span><i class="icon-plus add" title="添加一级菜单"></i></span>';
+			}
+		}else if(level == 2){
+			$(span).find("a").width(70);
+			if(childCount < LEVEL_2_COUNT){
+				menuHtml += '<span><i class="icon-plus add" title="添加二级子菜单"></i></span>';
+			}
+			menuHtml += '<span><i class="icon-edit edit" title="编辑菜单"></i></span>';
+			menuHtml += '<span><i class="icon-remove del" title="删除菜单(其下没有子菜单才可以删除)"></i></span>';
+		}else{
+			$(span).find("a").css("width","90");
+			menuHtml += '<span><i class="icon-edit edit" title="编辑菜单"></i></span>';
+			menuHtml += '<span><i class="icon-remove del" title="删除菜单"></i></span>';
+		}
+		menuHtml += '</div>';
+		$(span).before($(menuHtml));
+	});
+	$("#menu_tree_1").children("span").find("a").css("width", 110); // 调整自定义菜单的样式
+}
+
+//添加结点函数，传入结点编号和结点
+function addNode(nid , node){
+	var $pnode = $tree.omTree("findByNId", nid);			//传入nid调用findByNId找到当前树节点
+	$tree.omTree("insert" , node , $pnode);					//调用omTree的插入方法插入节点
+	refreshActions();										//刷新整个树节点
+}
+
+//形参传入新结点信息（与原结点的id编号相同），更新其名称
+function updateNode(node){
+	$("#"+node.nid).find("a:eq(0)").text(node.text);
+}
+
+//对整个页面框架的重定位技术
+function resize(){
+	var w = $(window).width(),
+	h = $(window).height(),
+	th = $("#top").outerHeight(true),
+	mh = $(".main-title h3").outerHeight(true); 
+	$(".frame_right").width(w - $(".frame_left").width() - 40);
+	$(".frame_left").height(h - th - mh- 55);
+	$(".frame_right").height(h - th - mh - 5);
+	$("#detail").width(w - $(".left").width() - 320);
+	$("#detail").height(h - th - mh- 55);
+}
+</script>
+<!-- view_source_end -->
+</body>
+</html>

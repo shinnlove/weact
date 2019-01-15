@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<title>列表风格定制</title>
+</head>
+
+<body>
+	<div class="widget">
+		<div class="widget-head">
+			<div class="pull-left">设置列表风格</div>
+			<div class="clearfix"></div>
+		</div>
+
+		<div class="widget-content">
+			<div class="padd">
+				<form id="createForm" class="form-horizontal uniform" method="post" action="">
+					<div class="control-group">
+			            <div class="controls controls-row"><h2>列表风格说明</h2></div>
+			            <div class="controls controls-row">
+							<font style="font-weight:bold; color:#666;">二级列表风格：</font><font style="color:highlight; line-height:22px;">如果选择了<strong>列表式</strong>的信息二级导航、信息详情、微商城、产品陈列这4个模板之一，可以对颜色风格进行定制（非列表模板无需选择）。</font><br />
+			            </div>
+			        </div>
+					
+					<hr />
+					
+					<div class="control-group">
+						<label class="control-label"> 选择模板<span class="text-error">(*)</span>
+						</label>
+						<div class="controls controls-row" id="cate1">
+							<ul class="mainmenu">
+								<foreach name="ctresult" item="ct">
+								<li>
+									<div class="menubtn">
+										<div class="menumesg">
+											<div class="menuimg">
+												<img src="{$ct['template_imagepath']}" alt="" />
+											</div>
+											<div class="menutitle">
+												<input name="mobanid" type="radio" value="{$ct['template_id']}" class="radio" />{$ct['template_name']}
+												<input type="hidden" name="selectopt" value="{$ct['selected']}" />
+											</div>
+										</div>
+									</div>
+								</li>
+								</foreach>
+							</ul>
+						</div>
+					</div>
+
+					<hr />
+					
+					<div class="handle-action">
+			            <a id="tplconfirm" class="large ui-color-button light-green" href="javascript:void(0)">保存</a>
+			            <a href="javascript:history.go(-1);">
+			                <img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/images/goback.png" />
+			            </a>
+			        </div>
+				</form>
+				
+			</div>
+		</div>
+	</div>
+
+<script type="text/javascript">
+$(function (){
+	$(".uniform").uniform();
+	
+	$("input[name='selectopt'][value='1']").parent().find(".radio").attr("checked","true");
+	
+	$("#tplconfirm").click(function(){
+		var selected = $("input[type='radio']:checked").val();	//jquery必须是':checked'才能获取选中的radio
+		
+		$.post("{:U('Admin/UltimateUIRequest/uiListConfirm','','')}",
+				{ selected : selected },//请求注销登录
+				function(data){
+					if (data.status == 1) {
+						$.messager.alert('温馨提示', '已经提交更改!', 'info');
+					}else{
+						$.messager.alert('温馨提示', '更改模板失败!', 'info');
+					}
+				},'json'); 
+	});
+});
+</script>
+</body>
+</html>

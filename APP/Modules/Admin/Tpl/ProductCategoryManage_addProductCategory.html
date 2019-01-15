@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=7" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/enterpriseMainStyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/dialog.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>编辑分类</title>
+</head>
+
+<body>
+<form action="{:U('Admin/ProductCategoryManage/addCategory','','')}" method="post" name="myform" id="myform"  enctype="multipart/form-data" style="margin-top:10px;">
+  <div class="pad-10">
+    <div class="col-tab">
+      <ul class="tabBut cu-li">
+        <li id="tab_setting_1" class="on">基本信息</li>
+      </ul>
+      <div id="div_setting_1" class="contentList pad-10">
+        <table width="100%" cellpadding="2" cellspacing="1" class="table_form">
+          <tr>
+            <th>
+            <td><input id="hasPro" name="hasPro" value="0"  type="hidden"/></td>
+            </th>
+          </tr>
+          <tr>
+            <th width="100">上级分类：</th>
+            <td>
+             <input id="father_nav_id" value="-2" type="hidden" name="father_nav_id"/>
+            <input id="cc" value=""/>
+            <span><font color="#C06">*</font>&nbsp;只能添加二级分类</span>
+            </td>
+          </tr>
+          <tr>
+            <th width="100">分类名称：</th>
+            <td>
+            	<input type="text" name="nav_name" id="nav_name" class="input-text easyui-validatebox" size="60" data-options="required:true"/>                  
+            </td>
+          </tr>		  
+		  <tr>
+            <th width="100">描述信息：</th>
+            <td>
+            	<input type="text" name="description" id="description" class="input-text easyui-validatebox"  size="80" data-options="validType:length[0,250]"/>
+			</td>
+          </tr>
+            <tr>
+            <th width="100">添加图标：</th>
+            <td>
+            	<input type="file" id="upfile" name="nav_image"/>
+            </td>
+            </tr>        
+          <tr>
+            <th width="100">排序值：</th>
+            <td><input type="text" name="nav_order" id="nav_order" class="input-text" size="4" value="{$editnavdata.nav_order}" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"/></td>
+          </tr>
+        </table>
+      </div>
+      <div class="bk15"></div>
+      <div class="btn"><input type="button" value="提交"  name="dosubmit" class="button" id="dosubmit" /></div>
+    	 <div style="position: fixed;right: 20px;bottom: 20px;"><a href="javascript:history.go(-1);"><img style="width: 80px;height: 80px;" alt="还回" src="__PUBLIC__/images/shop-return.jpg"></a></div>
+    </div>
+  </div>
+  </form>
+
+<script type="text/javascript">
+	$(document).ready(function(){
+    	$('#cc').combotree({
+    	    url: "{:U('Admin/ProductCategoryManage/getFirstCategory','','')}",
+    	    valueField:'id',   
+    	    textField:'text',
+    	    onLoadSuccess:function(){
+    	    	$('#father_nav_id').val('-2');
+    	    },
+    	    onSelect:function(rec){
+    	    	$('#father_nav_id').val(rec.id);
+    	    }
+    	});
+	});	
+</script>
+<script type="text/javascript">
+$(function(){
+	$('#dosubmit').click(function(){
+		var father_nav_id = $('#father_nav_id').val();
+		var nav_name = $('#nav_name').val().trim();
+		if(father_nav_id == '-2'){
+			$.messager.alert('警告','请选择父级分类！');
+			return;
+		}
+		if(nav_name == '' || nav_name == null){
+			$.messager.alert('警告','分类名称不能为空！');
+			return;
+		}
+		
+		$.post('{:U("Admin/ProductCategoryManage/checkAddCondition","","")}',
+				{father_nav_id:father_nav_id},
+				function(data){
+					if(data.status == '0'){
+						alert('分类级数超过2级');
+						return ;
+					}else if(data.status == '1'){
+						var flag = window.confirm('所选则的上级分类下有商品，若继续上级分类下的商品将会被移动到新建的分类下，是否继续？');
+						if(flag == true){
+							$('#hasPro').val('1');
+							$('#myform').submit();
+						}
+					}else{
+						$('#myform').submit();
+					}
+				});	
+	});
+});
+</script>
+</body>
+</html>

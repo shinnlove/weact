@@ -1,0 +1,230 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<title>API参数控制接口 - LHGCALENDAR</title>
+    <meta name="keywords" content="lhg,lhgcalendar,calendar,date,datepicker,time,日历,弹出日历,js日历,组件,js组件,js库,lhgcore,javascript,jquery,window,clientside,control,open source,LGPL,dhtml,html,xhtml,word,plugins"/>
+    <meta name="description" content="lhgcalendar是一功能强大的简单迷你并且高效的弹出日历组件,基于网络访问并且兼容IE 6.0+,Firefox 3.0+,Opera 9.6+,Chrome 1.0+,Safari 3.22+."/>
+    <meta name="copyright" content="lhgcore.com"/>
+	<link rel="icon" href="../favicon.ico" type="image/x-icon"/>
+	<link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"/>
+	<link href="../index.css" type="text/css" rel="stylesheet"/>
+	<link href="../prettify/prettify.css" type="text/css" rel="stylesheet"/>
+	<script type="text/javascript" src="../prettify/prettify.js"></script>
+</head>
+
+<body>
+    <div class="container">
+	    <div class="header">
+		    <div class="header_logo"><a href="index.html"><img border="0" src="../images/lhgcal_logo.gif" alt="lhgcalendar"/></a></div>
+			<div class="header_nav">
+			    <a href="../index.html">首页</a> | <a href="../api/basic.html">基本使用指南</a> | API参数控制接口 | <a href="../demo/demo.html">在线演示示例</a> | <a href="../donate/donate.html">捐赠</a>
+			</div>
+		</div>
+		<div class="line">&nbsp;</div>
+		<div class="demo_content">
+			<h2>初始化参数列表</h2>
+			<p>初始化参数列表：即为J.calendar.Show({ 这里的参数 })或J('#id').calendar({ 这里的参数 });</p>
+			<ol>
+			    <li>
+				    <h3>id：输入框的id</h3>
+					<pre class="prettyprint">参数值：输入框的id。使用其他的元素如:&lt;img&gt;&lt;div&gt;等来调用弹出日期框时一定要指定输入日期的文本框的id。</pre>
+				</li>
+				<li>
+				    <h3>format：自定义日期格式</h3>
+					<pre class="prettyprint">参数值：默认'yyyy-MM-dd'。yMdHms分别代表年月日时分秒，你可以任意组合这些元素来自定义你个性化的日期格式。请见下表：</pre>
+					<p>日期格式表</p>
+<table width="100%" border="0" cellspacing="1" bgcolor="#000000">
+	<tr>
+		<th width="12%">格式</th>
+		<th width="88%">说明</th>
+	</tr>
+	<tr>
+		<td align="center">yy</td>
+		<td>将年份表示为二位数字。</td>
+	</tr>
+	<tr>
+		<td align="center">yyyy</td>
+		<td>将年份表示为四位数字。如果少于四位数，前面补零。</td>
+	</tr>
+	<tr>
+		<td align="center">M</td>
+		<td>将月份表示为从 1 至 12 的数字</td>
+	</tr>
+	<tr>
+		<td align="center">MM</td>
+		<td>同上，如果小于两位数，前面补零。</td>
+	</tr>
+	<tr>
+		<td align="center">d</td>
+		<td>将月中日期表示为从 1 至 31 的数字。</td>
+	</tr>
+	<tr>
+		<td align="center">dd</td>
+		<td>同上，如果小于两位数，前面补零。</td>
+	</tr>
+	<tr>
+		<td align="center">H </td>
+		<td>将小时表示为从 0 至 23 的数字。</td>
+	</tr>
+	<tr>
+		<td align="center">HH</td>
+		<td>同上，如果小于两位数，前面补零。</td>
+	</tr>
+	<tr>
+		<td align="center">m</td>
+		<td>将分钟表示为从 0 至 59 的数字。</td>
+	</tr>
+	<tr>
+		<td align="center">mm</td>
+		<td>同上，如果小于两位数，前面补零。</td>
+	</tr>
+	<tr>
+		<td align="center">s</td>
+		<td>将秒表示为从 0 至 59 的数字。</td>
+	</tr>
+	<tr>
+		<td align="center">ss</td>
+		<td>同上，如果小于两位数，前面补零。</td>
+	</tr>
+</table>
+					<p>示例(只列出了常用的几种格式，如需要其它格式请自行设置)</p>
+<table width="100%" border="0" cellspacing="1" bgcolor="#000000">
+	<tr>
+		<th width="191">格式字符串</th>
+		<th>值</th>
+	</tr>
+	<tr>
+		<td align="center">yyyy-MM-dd HH:mm:ss</td>
+		<td>2008-03-12 19:20:00</td>
+	</tr>
+	<tr>
+		<td align="center">yy年M月</td>
+		<td>08年3月</td>
+	</tr>
+	<tr>
+		<td align="center">yyyyMMdd</td>
+		<td>20080312</td>
+	</tr>
+	<tr>
+		<td align="center">MM/dd/yyyy</td>
+		<td>03/12/2008</td>
+	</tr>
+</table>
+					<p>动态变量表</p>
+<table width="100%" border="0" cellspacing="1" bgcolor="#000000">
+	<tr>
+		<th width="12%">格式</th>
+		<th width="88%">说明</th>
+	</tr>
+	<tr>
+		<td align="center">%y</td>
+		<td>当前年</td>
+	</tr>
+	<tr>
+		<td align="center">%M</td>
+		<td>当前月</td>
+	</tr>
+	<tr>
+		<td align="center">%d</td>
+		<td>当前日</td>
+	</tr>
+	<tr>
+		<td align="center">%H</td>
+		<td>当前时</td>
+	</tr>
+	<tr>
+		<td align="center">%m</td>
+		<td>当前分</td>
+	</tr>
+	<tr>
+		<td align="center">%s</td>
+		<td>当前秒</td>
+	</tr>
+</table>
+					<p></p>
+				</li>
+				<li>
+				    <h3>btnBar：是否显示下面的按钮栏</h3>
+					<pre class="prettyprint">参数值：默认true(显示），false(不显示)。</pre>
+				</li>
+				<li>
+				    <h3>minDate：最小日期</h3>
+					<pre class="prettyprint">参数值：默认null，注意格式要为 yyyy-MM-dd。</pre>
+				</li>
+				<li>
+				    <h3>maxDate：最大日期</h3>
+					<pre class="prettyprint">参数值：默认null，注意格式要为 yyyy-MM-dd。</pre>
+				</li>
+				<li>
+				    <h3>targetFormat：目标文本框的日期格式</h3>
+					<pre class="prettyprint">参数值：null，当有2个文本框之间进行日期范围限制时指来指定对应的文本框的日期格式。</pre>
+				</li>
+				<li>
+				    <h3>disWeek：无效周</h3>
+					<pre class="prettyprint">参数值：null，可以使用此功能禁用周日至周六所对应的日期。</pre>
+				</li>
+				<li>
+				    <h3>disDate：无效日期</h3>
+					<pre class="prettyprint">参数值：null，可以使用此功能禁用所指定的一个或多个日期。</pre>
+				</li>
+				<li>
+				    <h3>enDate：有效日期 </h3>
+					<pre class="prettyprint">参数值：默认false，为true时,无效日期变成有效日期，一般和disDate配合使用。</pre>
+				</li>
+				<li>
+				    <h3>real：存储真实日期值的控件的ID</h3>
+					<pre class="prettyprint">参数值：null，指定一个控件的ID,必须具有value属性(如input),用于存储真实值。</pre>
+				</li>
+				<li>
+				    <h3>onSetDate：点击某一日期时执行的函数</h3>
+					<pre class="prettyprint">当选择一个日期时点击这个日期时就会触发这个函数。</pre>
+				</li>
+				<li>
+				    <h3>linkageObj：联动弹出日历的目标对象(2.0.3新增)</h3>
+					<pre class="prettyprint">如果想要2个文本框实现日期间的联动，要加此参数，此参数指定的是第2个自己弹出的文本框的对象，这里要注意第二个文本框要使用onfocus来弹出日历。</pre>
+				</li>
+			</ol>
+			<p>其中一些参数的用法请参照示例中的使用方法</p>
+			<h2>API函数接口列表</h2>
+			<p>API接口列表：</p>
+			<ol>
+			    <li>
+				    <h3>Show() ：显示日历</h3>
+					<pre class="prettyprint">无参数，jQ调用方式不需要加此方法。</pre>
+				</li>
+			    <li>
+				    <h3>hideCalendar() ：隐藏日历</h3>
+					<pre class="prettyprint">无参数。</pre>
+				</li>
+			    <li>
+				    <h3>getDateStr(param) ：获取指定格式的日期</h3>
+					<pre class="prettyprint">参数1：指定的日期格式 (y:返回年，M:返回月，d:返回日，H:返回小时，m:返回分钟，s:返回秒，date:返回年月日，格式yyyy-MM-dd，dateTime:返回年月日时分秒，格式yyyy-MM-dd HH:mm:ss)</pre>
+				</li>
+			    <li>
+				    <h3>formatDate(data,format) ：格式化日期</h3>
+					<pre class="prettyprint">参数1：要格式化的日期，参数2：指定的格式，如：'MM/dd/yyyy'。</pre>
+				</li>
+			</ol>
+			<p>API属性接口列表：</p>
+			<ol>
+			    <li>
+				    <h3>inpObj ：文框架对象</h3>
+					<pre class="prettyprint">显示日期的文本框。</pre>
+				</li>
+			    <li>
+				    <h3>cal ：日历的DOM对象</h3>
+					<pre class="prettyprint">通过此对象可以对日历DOM对象进行操作。</pre>
+				</li>
+			</ol>
+			<p>若希望lhgdialog开发团队为您定制特殊的功能、皮肤和插件，请参阅我们提供的<a href="../donate/donate.html">捐赠</a>页面。</p>
+		</div>
+		<div class="line">&nbsp;</div>
+		<div class="footer">
+		    <div class="copyright">Copyright &copy <a href="http://www.lhgcore.com/" target="_blank">lhgcore.com</a>. All rights reserved. | 豫ICP备06002782号 | <script src="http://s15.cnzz.com/stat.php?id=2990550&web_id=2990550" language="JavaScript"></script></div>
+			<a href="../footer/contact.html">联系我们</a> | <a href="../footer/link.html">友情链接</a> | <a href="../footer/ad.html">广告服务</a> | <a href="../footer/partners.html">合作伙伴</a>
+		</div>
+	</div>
+	<script type="text/javascript">prettyPrint();</script>
+</body>
+</html>

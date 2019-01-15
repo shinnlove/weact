@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/ueditor/themes/default/css/ueditor.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ueditor/lang/zh-cn/zh-cn.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/PCASClass.js"></script>
+<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=0915c96d31d25a43decd812514605c9e"></script>
+<title>添加店铺信息</title>
+</head>
+
+<body>
+	<form id="shopLocation" class="form-horizontal uniform" method="post" action="#">
+        <div class="control-group">
+            <div class="controls controls-row">
+                <h2>添加店铺信息</h2>
+            </div>
+            <div class="controls controls-row">
+				<font style="font-weight:bold; color:#666;">说明：</font><font style="color:highlight; line-height:22px;">可在此添加包括分店在内的所有店铺的信息。</font><br />
+			</div>
+        </div>
+        
+        <hr />
+        
+        <input type="hidden" id="new_subbranch" name="new_subbranch" value="{$sid}" />
+        
+        <div class="control-group">
+            <label class="control-label"> 店铺名称<span class="text-error">(*)</span>：</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="shop_name" name="shop_name" placeholder="请填写店铺的名称" required="required" value="" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label"> 店铺性质： </label>
+            <div class="controls controls-row">
+                <select id="type_select" class="uniform myselected">
+                	<option value="-1">请选择店铺性质</option>
+                	<option value="1">直营店</option>
+                	<option value="2">加盟店</option>
+                </select>&nbsp;&nbsp;注：不选择即默认不明确或不区分店铺直营或加盟的性质
+            </div>
+            <input type="hidden" id="current_type" name="current_type" value="-1" /><!--当前选择的店铺性质-->	
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label"> 店铺编码：</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="shop_code" name="shop_code" placeholder="请填写店铺的编码" value="" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label"> 营业执照：</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="shop_license" name="shop_license" placeholder="请填写店铺的营业执照编号" value="" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label"> 店铺负责人：</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="shop_manager" name="shop_manager" placeholder="请填写门店负责人姓名" required="required" value="" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label"> 联系电话：</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="shop_phone" name="shop_phone" placeholder="请填写门店的联系电话" required="required" value="" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">店铺LOGO<span class="text-error">(*)</span>： </label>
+			<div class="controls controls-row">
+				<input type="hidden" class="uniform myinput" id="logo_path" name="logo_path" value="" />
+                <div class="btn">
+                    <span style="font-size:12px;">添加附件:</span>
+                    <input type="file" name="logoimage" class="uniform logoimage"/>
+                </div>
+                <div class="info-tip controls-row">温馨提示：推荐最佳logo尺寸（比例）：300px * 300px，100k以内，jpg、png格式。</div>
+                <div class="logoimagepreview" style="margin-top:10px;">
+                	<img id="limg" name="limg" src="" alt="" style="width:100px;" />
+                </div>
+			</div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">店招图片<span class="text-error">(*)</span>： </label>
+			<div class="controls controls-row">
+				<input type="hidden" class="uniform myinput" id="signs_path" name="signs_path" value="" />
+                <div class="btn">
+                    <span style="font-size:12px;">添加附件:</span>
+                    <input type="file" name="signsimage" class="uniform signsimage"/>
+                </div>
+                <div class="info-tip controls-row">温馨提示：推荐最佳店招尺寸（比例）：640px * 240px，100k以内，jpg、png格式。</div>
+                <div class="signsimagepreview" style="margin-top:10px;">
+                	<img id="simg" name="simg" src="" alt="" style="width:200px;" />
+                </div>
+			</div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label"> 店铺地址<span class="text-error">(*)</span>:</label>
+        	<div class="controls controls-row">
+				<select name="province" class="uniform myselected province-select"></select>
+				<select name="city" class="uniform myselected city-select"></select>
+				<select name="area" class="uniform myselected area-select"></select>
+			</div>
+			<div class="controls controls-row">
+				<input type="text" name="shop_addr" style="width:420px;" class="uniform" id="newaddress" placeholder="请输入街道等详细地址">
+				<input type="hidden" class="uniform myinput" id="addressKeyword" placeholder="请输入街道等详细地址">
+				<a id="searchOnMap" class="small ui-color-button green" href="javascript:void(0)">搜索</a>
+           		<div class="fn-tip">点击地图选取地址，地图支持鼠标拖拽，鼠标滚轮放大/缩小</div>
+           		<div id="mapContainer"></div>
+       			<input type="hidden" id="lngX" name="longitude" value="121.007907">
+       			<input type="hidden" id="latY" name="latitude" value="30.690789">
+			</div>
+		</div>
+		
+        <div class="control-group">
+            <label class="control-label">
+                店铺描述<span class="text-error">(*)</span>：
+            </label> 
+            <div class="controls controls-row">
+                <div class="ueditorContainer" id="shop_description">
+                    <script id="container" type="text/plain" style="width:605px;height:300px;margin:0px;"></script>
+                </div>
+            </div>
+        </div>
+    
+        <hr />
+        
+        <div class="handle-action">
+            <a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">提交</a>
+            &nbsp;&nbsp;
+            <a id="resetbtn" class="large ui-color-button blue" href="javascript:void(0)">重置</a>
+            <a href="javascript:history.go(-1);">
+                <img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/images/goback.png" />
+            </a>
+        </div>
+
+    </form>
+
+<script type="text/javascript">
+var uploadUrl = "{:U('Admin/SubbranchRequest/subImgUpload', '', '')}"; // 提交图片的地址
+//页面初始化函数
+$(function (){
+	new PCAS("province","city","area","","","");
+	
+	$(".uniform").uniform();				//初始化uniform，文本框的uniform格式化
+
+	var sid = $("#new_subbranch").val();
+	var ue = UE.getEditor('container',{
+		imageUrl : "{:U('Admin/SubbranchRequest/subbranchImageHandle')}?sid="+sid,
+		imagePath : "__ROOT__"
+	});
+	 
+	//监听ueditor图片插入，插入前设置图片宽度（不让图片太大）。
+	ue.addListener('beforeInsertImage', function (t, arg) {
+		 for(i=0; i<arg.length; i++){
+			 arg[i].width = 580;									//防止手机上显示超出屏幕
+		 }
+	});
+
+	//初始化省市区三级联动
+	$(".province-select").change(function(){
+		$(".city-select").change();
+	});
+	
+	$(".city-select").change(function(){
+		$(".area-select").change();
+	});
+	
+	//店铺性质的选择框处理
+	$("#type_select").change(function(){
+		$('#current_type').val($(this).val());			   //获取option选中的subbranch_type的value，并写入input里
+	});
+
+	//在地图上选取店铺位置
+	var lngX=$("#lngX").val(),
+    latY=$("#latY").val();
+	var mapObj = new AMap.Map('mapContainer',{
+		resizeEnable: true,
+		view: new AMap.View2D({
+			center:(lngX && latY) ? new AMap.LngLat(lngX,latY) : "",
+			zoom: 15
+		})
+	}); 
+	if(!lngX || !latY){
+		$("#lngX").val(mapObj.getCenter().lng);
+		$("#latY").val(mapObj.getCenter().lat);
+	}
+	var marker = new AMap.Marker({
+		position:mapObj.getCenter()
+	});
+	marker.setMap(mapObj);
+	var clickEventListener=AMap.event.addListener(mapObj,'click',function(e){
+		lngX = e.lnglat.getLng();
+		latY = e.lnglat.getLat(); 
+		marker.setPosition(new AMap.LngLat(lngX,latY));
+		$("#lngX").val(lngX);
+		$("#latY").val(latY);
+	});
+	$("#searchOnMap").on("click",function(e){
+		e.preventDefault();
+		var addr = $("#addressKeyword").val();
+		geocoder(addr);
+	})
+	function geocoder(addr) {
+		var MGeocoder;
+		//加载地理编码插件
+		AMap.service(["AMap.Geocoder"], function() {        
+			MGeocoder = new AMap.Geocoder({ 
+				radius:1000 //范围，默认：500
+			});
+			//返回地理编码结果 
+			//地理编码
+			MGeocoder.getLocation(addr, function(status, result){
+				if(status === 'complete' && result.info === 'OK'){
+					var geocode = new Array();
+					geocode = result.geocodes;  
+					lngX = geocode[0].location.getLng();
+					latY = geocode[0].location.getLat(); 
+					marker.setPosition(new AMap.LngLat(lngX,latY));
+					$("#lngX").val(lngX);
+					$("#latY").val(latY);
+					mapObj.setFitView();
+				}
+			});
+		});
+	}
+	$("input[name=shop_addr]").blur(function(){
+		var address=$("select[name='province']").val()+$("select[name='city']").val()+$("select[name='area']").val()+$(this).val();
+		$("#addressKeyword").val(address);
+		$("#searchOnMap").trigger("click");
+	}) 
+	//提交所有信息
+	$("#submitbtn").click(function(){
+		//抓取店铺信息
+		var prov = $("select[name='province']").val();
+		var city = $("select[name='city']").val();
+		var area = $("select[name='area']").val();
+		var addr = $("#newaddress");
+		var lngx = $("#lngX");
+		var laty = $("#latY");
+		var ts = $("#type_select");
+		var ct = $("#current_type");
+		var sc = $("#shop_code");
+		var sn = $("#shop_name");
+		var sl = $("#shop_license");
+		var sm = $("#shop_manager");
+		var sp = $("#shop_phone");
+		var lop = $("#logo_path");					//抓取店铺logo路径
+		var sip = $("#signs_path");					//抓取店招图片路径
+		var sa = $("#shop_address");
+		var sd = UE.getEditor('container').getContent();
+
+		//判断店铺名称是否填写
+		if (sn.val() == ''){
+			$.messager.alert('温馨提示', '请填写店铺名称!', 'warning', function(){
+				sn.focus();							//注意聚焦和return的顺序！
+	  		});
+	  		return									//注意聚焦和return的顺序！
+		}
+		
+		//判断电话号码格式是否标准
+		if(sp.val() != ''&& (!isTel(sp.val()))){
+			$.messager.alert('温馨提示', '请填写正确的电话号码格式7~18位!', 'warning', function(){
+				sp.focus();
+	  		});
+			return
+		}
+		
+		//判断logo和店招图片是否上传
+		if (lop.val() == ''){
+			$.messager.alert('温馨提示', '请上传店铺LOGO!', 'warning', function(){
+				lop.focus();
+	  		});
+	  		return
+		}
+		if (sip.val() == ''){
+			$.messager.alert('温馨提示', '请上传店铺店招图片!', 'warning', function(){
+				sip.focus();
+	  		});
+	  		return
+		}
+		
+		//判断店铺所在地址是否正确输入
+		if(prov == '' || prov == null || prov == 'undefined'){
+			$.messager.alert('温馨提示', '请选择店铺所在省市区!', 'warning');
+	  		return                                  //注意聚焦和return的顺序！
+		}
+		
+		if(addr.val() == ''){
+			$.messager.alert('温馨提示', '请填写店铺详细街道地址!', 'warning', function(){
+				addr.focus();                        //注意聚焦和return的顺序！
+	  		});
+	  		return                                  //注意聚焦和return的顺序！
+		} 
+		 
+		//判断店铺描述是否填写
+		if(sd == "" || sd == null){
+			$.messager.alert('温馨提示', '请填写店铺描述信息!', 'warning');
+	  		return
+		}
+		
+		$.post("{:U('Admin/SubbranchRequest/addSubbranchConfirm')}", 
+				{
+					sid : sid,
+					sn : sn.val(),
+					ct : ct.val(),
+					sc : sc.val(),
+					sl : sl.val(),
+					sm : sm.val(),
+					sp : sp.val(),
+					prov : prov,
+					city : city,
+					area : area,
+					addr : addr.val(),
+					lngx : lngx.val(),
+					laty : laty.val(),
+					lop : lop.val(),
+					sip : sip.val(),
+					sd : sd
+				}, 
+				function(data){
+					if(data.status == 1){
+						$.messager.alert('温馨提示', '添加店铺信息成功!', 'warning');
+						window.location.href = "{:U('Admin/Subbranch/subbranches')}";
+					}else{
+						$.messager.alert('温馨提示', '添加店铺信息失败!'+data.msg, 'error');
+					}
+				}, 
+				'json');
+	});
+
+	//重置所有信息
+	$("#resetbtn").click(function(){
+		$.messager.confirm('温馨提示', '确定重置吗?', function(result){
+			if(result) {
+				//清空所有
+				$("#shop_name").val('');
+				$("#current_type").val('-1');
+				$("#type_select").val('-1');
+				$("#type_select").change();
+				$("#shop_code").val('');
+				$("#shop_license").val(''),
+				$("#shop_manager").val('');
+				$("#shop_phone").val('');
+				$("#logo_path").val(''),
+				$("#signs_path").val(''),
+				$(".uploader span[class='filename']").html('未选择文件');
+				$('#limg').attr('src', '');
+				$('#simg').attr('src', '');
+				$("select[name='province']").val('');
+				$("select[name='province']").change();
+				$("select[name='city']").val('');
+				$("select[name='city']").change();
+				$("select[name='area']").val('');
+				$("select[name='area']").change();
+				$("#newaddress").val('');
+				UE.getEditor('container').setContent('');
+				$.messager.alert('温馨提示', '重置成功!', 'info');
+			}
+		});
+	});
+	
+	// js创建XHR上传图片并获得图片预览路径
+	$("#shopLocation").find("input[name=logoimage], input[name=signsimage]").on("change", function(e){
+		var loadfun = $(this).attr("name")+"complete";
+		e = e || window.event;
+        var fileList = e.target.files;
+        if (!fileList.length) return false; 						//没有文件返回 
+        
+		//创建表单数据
+		var formData = new FormData();
+		formData.append('picture', fileList[0]); 					//图片文件数据附加到name为pic中
+		// 创建 ajax 请求
+        var xhr = new XMLHttpRequest();
+		xhr.addEventListener("load", window[loadfun], false);		//监听XMLHttpRequest的load事件，使用模块内complete函数响应（注意使用window[某js函数名]）
+		xhr.addEventListener("abort", abort, false);				//监听XMLHttpRequest的abort事件，使用模块内abort函数响应
+		xhr.addEventListener("error", failed, false);				//监听XMLHttpRequest的error事件，使用模块内failed函数响应
+		xhr.open("POST", uploadUrl + '?time=' + Date.now());		//打开静态POST提交，并加上时间作为参数，打开一个GET请求
+		xhr.send(formData);											//使用ajax请求 发送表单
+	});
+});
+
+//logoimage上传完成时的函数
+var logoimagecomplete = function (e) {
+    var result = $.parseJSON(e.target.response);					//解析服务器返回的json数据为result
+    if (result.errCode == 0) {
+    	$("input[name=logo_path]").val(result.data.uploadpath); 	//没有经过组装的原始路径
+        $("#limg").attr("src", result.data.nowifipath); 			//预览写入图片路径
+    } else {
+        $.messager.alert("温馨提示", result.errMsg, "error");
+    }
+}
+
+// signsimage上传完成时的函数
+var signsimagecomplete = function (e) {
+    var result = $.parseJSON(e.target.response);					//解析服务器返回的json数据为result
+    if (result.errCode == 0) {
+    	$("input[name=signs_path]").val(result.data.uploadpath); 	//没有经过组装的原始路径
+        $("#simg").attr("src", result.data.nowifipath); 			//预览写入图片路径
+    } else {
+        $.messager.alert("温馨提示", result.errMsg, "error");
+    }
+}
+
+// 上传失败函数
+var failed = function() {
+	$.messager.alert("温馨提示", "上传文件失败！", "error");
+}
+
+// 上传终止函数
+var abort = function() {
+	$.messager.alert("温馨提示", "上传已取消！", "error");
+}
+
+//判断联系方式是否为正确的手机号码/电话号码格式
+function isTel(str){
+    var reg=/^([0-9]|[\-])+$/g ;
+    if(str.length<7 || str.length>18){
+     return false;
+    }
+    else{
+      return reg.exec(str);
+    }
+}
+</script>
+</body>
+</html>

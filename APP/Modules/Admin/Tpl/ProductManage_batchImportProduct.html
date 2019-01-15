@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.min.css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/batchstyle.css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/ui-dialog.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/webuploader.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/diywebuploader.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artdialog/dialog-min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonutil.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>批量导入商品</title>
+</head>
+
+<body>
+	<div class="bodyContent">
+        <div class="batchImport">
+            <h4>批量导入商品</h4>
+            <div class="minContainer">
+                <div class="uploadifyBox tc">
+                    <div class="webUploaderWrap">
+                        <div id="fileUpload" class="webuploader-container">点击上传</div>
+                    </div>
+                    <div class="fn-tip tc">请选择.csv文件按进行上传</div>
+                    <input type="hidden" id="fileUrl">
+                    <div id="loadedFileName"></div>
+                    <button class="batch-submit btn btn-success disabled">确认导入</button>
+                </div>
+                <div class="uploadTip lh30">
+                    <p><b>批量导入说明：</b></p>
+                    <p>
+                        <b class="badge blue">1</b>
+                        	请根据模板填写商品信息，下载填写并使用csv文件上传。
+                        <a href="http://www.we-act.cn/app/商品批量导入模板.csv">下载批量导入模板</a>
+                        <!-- <a class="pl10" target="_blank" href="https://qiakr.kf5.com/posts/view/58148">非服装品类商品导入说明</a> -->
+                    </p>
+                    <p>
+                        <b class="badge blue">2</b>
+                        	一款商品有多个SKU，每一个SKU的FAB等库存信息记为一条记录，注意这些SKU要共用一个商品吊牌编号。
+                        <!-- <a href="downLoadBrandExcel.json" target="_blank">下载品牌列表</a> -->
+                    </p>
+                    <p>
+                        <b class="badge blue">3</b>
+                       	可以用excel或wps打开csv，但请不要另存为非csv格式，特别的，请勿更改表头。
+                        <!-- <a href="downLoadCategoryExcel.json" target="_blank">点击下载品类说明</a> -->
+                    </p>
+                    <p>
+                        <b class="badge blue">4</b>
+                        	单次上传csv最大条目（行数）为1500，超出请按文件分批上传。
+                    </p>
+                    <p>
+                        <b class="badge blue">5</b>
+                        	上传后系统将智能检查批量数据是否有效，若出错请根据行列标记的提示进行修改，并重新上传csv文件。
+                    </p>
+                </div>
+                <div class="importIntro fix pt20">
+                    <h4>模板填写说明</h4>
+                    <table class="exm-tbl pct90">
+                        <tr>
+                            <th class="w100">商品编号</th>
+                            <th class="w100">商品名称</th>
+                            <th class="w100">性别</th>
+                            <th class="w100">质地</th>
+                            <th class="w100">重量</th>
+                            <th class="w100">吊牌价</th>
+                            <th class="w100">现售价</th>
+                            <th class="w100">SKU颜色</th>
+                            <th class="w100">SKU尺码</th>
+                            <th class="w100">库存量</th>
+                            <th class="w100">条形码</th>
+                            <th class="w100">单位</th>
+                        </tr>
+                        <tr>
+                            <td>NZ 12506</td>
+                            <td>韩版潮流 牛仔裤</td>
+                            <td>男</td>
+                            <td>牛仔</td>
+                            <td>0.7</td>
+                            <td>399.00</td>
+                            <td>179.00</td>
+                            <td>蓝色</td>
+                            <td>27</td>
+                            <td>500</td>
+                            <td>36259548978454</td>
+                            <td>条</td>
+                        </tr>
+                        <tr class="c-rd">
+                            <td>
+								同一商品的不同SKU<br>
+								商品吊牌编号必须一致<br>
+								（必填）
+                                <!-- <a href="downLoadBrandExcel.json" target="_blank">下载品牌列表</a> -->
+                            </td>
+                            <td>商品名称<br>（必填）</td>
+                            <td>
+                            	男，女，通用<br>
+								（必填）
+                            </td>
+                            <td>（选填）</td>
+                            <td>
+                            	单位kg，用以邮费计算<br>
+                            	（必填）
+                            	<!-- （<a href="downLoadCategoryExcel.json" target="_blank">点击下载品类说明</a>） -->
+                            </td>
+                            <td>吊牌价<br>（必填）</td>
+                            <td>实际售价<br>（必填）</td>
+                            <td>
+								颜色规格<br>
+								（如'黑色'）<br>
+								没有则"默认"
+                            </td>
+                            <td>
+								尺码规格<br>
+								（如'XL'）<br>
+								没有则"默认"
+                            </td>
+                            <td>当前库存数<br>（必填）</td>
+                            <td>
+                            	条形码<br>
+                            	请连接USB扫描枪采集<br>
+                            	（选填）
+                            </td>
+                            <td>量词单位<br>（必填）</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+<script type="text/javascript">
+var serverhandlecsv = "{:U('Admin/ProductManageRequest/csvBatchHandle', '', '')}"; // csv表格上传
+
+$(function(){
+	
+	// 初始化csv上传
+	$("#fileUpload").singleCSVUploader({
+		csvFileName : $("#loadedFileName"), // csv文件名
+		csvPathInput : $("#fileUrl"), // csv回传路径
+	});
+	
+	// 绑定事件
+	$("body").on("click", ".batch-submit", function(e){
+		e.stopPropagation();
+		var _t = $(this);
+		if (_t.hasClass("disabled")) {
+			if ($("#fileUrl").val() == "") {
+				util.alert("请先上传csv文件。");
+			} else {
+				util.alert("请先等待当前csv上传完成。");
+			}
+			return false;
+		}
+		var params = {
+				csvpath:$("#fileUrl").val() 
+		}
+		MLoading.show("批量处理中，请稍后..."); // 显示处理等待，批处理时间比较长
+		_t.addClass("disabled"); // 锁定按钮防重入
+		$.post("{:U('Admin/ProductManageRequest/batchProductHandle', '', '')}", params, function(result){
+			MLoading.hide(); // 去除等待
+			_t.removeClass("disabled"); // 解锁按钮
+			if (result.errCode == 0) {
+				util.alert("批量导入商品成功");
+				setTimeout(function(){
+					location.href = "{:U('Admin/ProductManage/productView', '', '')}";
+				},1000);
+			} else {
+				util.alert(result.errMsg);
+			}
+		}, "json");
+	});
+	
+});
+</script>
+</body>
+</html>

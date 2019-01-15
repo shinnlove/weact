@@ -1,0 +1,92 @@
+html,body{height:100%;width:100%;margin:0;pading:0; font-family: Microsoft YaHei,'宋体' , Tahoma, Helvetica, Arial, sans-serif;}
+
+/*预加载动画*/
+#loading_out{position:fixed;width:100%;height:100%;z-index:99;}
+#loading{position:fixed;_position:absolute;top:50%;left:50%;width:146px;height:95px;overflow:hidden;background:url(../../images/expo/loading.gif) no-repeat;z-index:99; margin:-48px -73px}
+/*擦图*/
+* {
+      -webkit-touch-callout: none; /* prevent callout to copy image, etc when tap to hold */
+      -webkit-text-size-adjust: none; /* prevent webkit from resizing text to fit */
+    /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+      -webkit-tap-highlight-color: rgba(0,0,0,0);
+      -webkit-user-select: none; /* prevent copy paste, to allow, change 'none' to 'text' */
+     /* -webkit-tap-highlight-color: rgba(0,0,0,0); */
+    }
+
+.container {position: relative;display: inline-block;width: 100%;height: auto;}
+#robot {position: absolute;top: 0px;left: 0px;z-index: 1;-webkit-box-shadow: 0px 0px 20px 0px #707070;-moz-box-shadow: 0px 0px 20px 0px #707070;
+  box-shadow: 0px 0px 20px 0px #707070;opacity:0;}
+#redux {position: absolute;top: 0px;left: 0px;z-index: 99;}
+/*全局idv*/
+html,body{height:100%;width:100%;margin:0;pading:0;}
+.z-show {opacity: 1;display:block;}
+.z-hide {opacity:0;}
+.d-hide{display:none;}
+
+.app-bottom{position: fixed;bottom: 0;z-index: 99;padding: 0;margin: 0;width:100%;}
+.a-guideTop{position:absolute;bottom:5px;left:50%;width:36px;height:36px;background: url(../../images/expo/lz1icon_bg.png) 0px 0px;background-size: 36px;margin: 0 -18px;z-index:4;}
+.icon-music{position: absolute;bottom: 5px;right: 5px;height: 35px;width: 35px;background: url(../../images/expo/units-icons_music.png?a=1) 0 0px;display: block;background-size: 35px;}
+.icon-scroll{-webkit-animation:reverseRotataZ 3s linear infinite;}
+.icon-showshare{position:absolute;bottom:5px;left:5px;height:36px;width:36px;background: url(../../images/expo/lz1icon_05.png) 0px 0px;background-size: 36px;}
+/*e*/
+.app-top{position: fixed;top: 0;z-index: 99;padding: 0;margin: 0;width:100%;}
+.showshare{position:absolute;top:2px;right:3px;height:48px;width:113px;background: url(../../images/expo/lz1icon_share.png) 0px 0px;background-size: 113px 48px;display:none;}
+.showshare_show{-webkit-animation:showTop 2s 1;}
+
+.z-guidtop{-webkit-animation:guideTop 1.5s infinite;position:absolute;bottom:5px;left:50%;width:22px;height:20px;background: url(../../images/expo/lz1icon_top.png) 0px 0px;background-size: 22px 20px;margin: 0 -11px;}
+@-webkit-keyframes reverseRotataZ{0%{-webkit-transform:rotateZ(0deg)}100%{-webkit-transform:rotateZ(-360deg)}}
+@-webkit-keyframes guideTop{0%{-webkit-transform:translateY(0px);opacity:0}60%{-webkit-transform:translateY(-5px);opacity:1}100%{-webkit-transform:translateY(-7px);opacity:0}}
+@-webkit-keyframes showTop{0%{opacity:0.2}10%{opacity:1}80%{opacity:1}90%{opacity:0.6}100%{opacity:0}}
+
+/*page*/
+
+.pagebg{top:0px;left:0px;z-index:2;position: absolute;width:100%;height:100%;}
+.page-bg{top:0px;left:0px;z-index:2;position: absolute;width:100%;height:100%;}
+
+@media screen and (min-height:500px){
+    .page-bg-222{background: url(../../images/expo/big_ca1.jpg) center center;background-size: 100% 100%;}
+}
+
+.page-word-top{top:45%;left:50%;z-index:3;position: absolute;margin:-22px -150px;width:300px;height: 44px;opacity: 0;}
+.page-word-bottom{top:45%;left:50%;z-index:3;position: absolute;margin:40px -150px;width:300px;height: 31px;opacity: 0;}
+.page-word-bottoms{bottom:10px;right:10px;z-index:3;position: absolute;width:225px;height: 31px;opacity: 0;}
+.active .page-word-top{opacity: 1;-webkit-animation: topleft 2s ease-in-out 0s;}
+.active .page-word-bottom{-webkit-animation: bottomright 2s ease-in-out 0s;opacity: 1;}
+.active .page-word-bottoms{-webkit-animation: topleft 2.5s ease-in-out 0s;opacity: 1;}
+/*视频*/
+.page-word-play{top:45%;left:50%;z-index:3;position: absolute;margin:-22.5px;width:45px;height: 45px;}
+.m-btnPlay i, .m-btnPlay div {display: block;width: 45px;height: 45px;border-radius: 50%;position: absolute;left: 0;top: 0;}
+.m-btnPlay {display: block;height: 45px;position: absolute;left: 50%;top: 60%;margin: -22.5px;z-index: 3;}
+.m-btnPlay i {background: url(../../images/expo/invite9_yuan.png) center center;z-index: 3;background-size: 45px;}
+.m-btnPlay div {background: rgba(255, 255, 255, .6);-webkit-animation: video_btnPlay 1s linear infinite;opacity: 0;}
+.u-maskLayer {position: absolute;left: 0;top: 0;right: 0;bottom: 0;background-color: rgba(0,0,0,.7);opacity: 0;-webkit-transition: all .5s;z-index: 9;}
+.u-maskLayer.z-show {opacity: 1;}
+/*height:460*/
+.m-youkuVideo {width: 100%;height: 210px;margin-top: 100px;background-color: #000;z-index:10; }
+
+.u-maskLayer-close::after, .u-maskLayer-close::before {
+width: 42px;height: 4px;background-color: #fff;border-radius: 2px;content: '';display: block;position: absolute;
+bottom: 35px;left: 15px;-webkit-transform: rotateZ(45deg);}
+.u-maskLayer .u-maskLayer-close::after {-webkit-transform: rotateZ(45deg);}
+.u-maskLayer-close::after, .u-maskLayer-close::before {
+width: 42px;height: 4px;background-color: #fff;border-radius: 2px;content: '';display: block;position: absolute;bottom: 35px;left: 15px;-webkit-transform: rotateZ(45deg);}
+.u-maskLayer .u-maskLayer-close::before {-webkit-transform: rotateZ(-45deg);}
+.u-maskLayer-close {width: 100px;height: 100px;background: rgba(255,0,0,.6);border-radius: 50%;display: block;position: absolute;top: -30px;
+right: -30px;-webkit-transition: all .6s;-webkit-transform: translate(100%,-100%);}
+a:active, a:hover {outline: 0;}
+.u-maskLayer.z-show .u-maskLayer-close {-webkit-transform: translate(0%,0);}
+
+@-webkit-keyframes topleft{0%{-webkit-transform:translateX(-350px)}100%{-webkit-transform:translateX(0)}}
+@-webkit-keyframes bottomright{0%{-webkit-transform:translateX(350px)}100%{-webkit-transform:translateX(0)}}
+@-webkit-keyframes video_btnPlay {0% { - webkit-transform: scale(1);opacity: .8}
+    100% { -webkit-transform: scale(1.5);opacity: 0}}
+
+/*导航*/
+.point{position:absolute;top:46%;left:50%;-webkit-animation: distributedPoints_a 1s infinite;width:57px;height:63px;z-index:10;margin: -31px -28px;}
+@-webkit-keyframes distributedPoints_a{0%{opacity:0.6}50%{opacity:1}100%{opacity:0.4}}
+
+.div_center{position:absolute;bottom:25%;left:50%;width:230px;height:40px;margin:-20px -115px;z-index: 3;}
+.modalhide{position: absolute;top:0;width: 100%;height: 100%;background-color: #fafafa;opacity: 0.5;z-index: 8;background-color: #000;}
+.modalshow{position: absolute;height: 212px;padding: 8px;top:23%;text-align: center;z-index: 9;background-color: #fafafa;}
+
+

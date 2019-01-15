@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactAdminStyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>企业信息一览</title>
+</head>
+
+<body class="easyui-layout" fit="true">
+	<div data-options="region:'center',border:false">
+		<table id="enterprise" title="所有企业信息一览" toolbar="#toolbar"
+			style="width: 100%; height: 100%;">
+		</table>
+	</div>
+	
+	<!-- easyUI的工具条 -->
+	<div id="toolbar">
+		<span>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addEnterprise();">添加企业</a> 
+			<a href="javascript:location.reload();" class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="exportApply();">导出</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="enterpriseContinueOrMinus(1);">账户续期</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cut" plain="true" onclick="enterpriseContinueOrMinus(2);">账户减期</a> 
+		</span>
+		<span class="searchbox" style="float: right; margin-right: 30px; height: 25px; text-align: center;">
+			<select id="search_condition" name="search_condition">
+				<option value="enter_account">登录账号</option>
+				<option value="enter_name">商家名称</option>
+			</select>
+			<input id="search_content" name="search_content" type="text" class="searchbox-text mysearchbox" placeholder="可选择一个条件查询" />
+			<span class="searchbox-button searchbox-button-hover"></span>
+		</span>
+	</div>
+	
+	<div id="sevcontinue" class="easyui-window" title="商家续期" data-options="modal:true,closed:true" style="width:300px;height:220px;padding:10px 20px">
+		<input type="hidden" name="e_id" id="e_id" value="" /><!-- 所备注订单编号的隐藏框 -->
+		<form name="remark-form"  method="post" action="#" style="width:200px;height:100px;padding:10px 20px">
+            <div>
+               <h5>请选择续期时间:</h5>
+                <select id="continuetime"  style="width:100px">
+					<option value="1">1个月</option>
+					<option value="2">2个月</option>
+					<option value="3">3个月</option>
+					<option value="6">6个月</option>
+					<option value="12">12个月</option>
+				</select>
+            </div> 
+	    </form>
+	    <div id="search-window-buttons" style="text-align: left; background: #FFF;">
+			<a href="javascript:void(0)" id="btn-search" class="easyui-linkbutton" iconCls="icon-ok" onclick="chooseOK()">确定</a>
+			<a href="javascript:void(0)" id="btn-search-cancel" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#sevcontinue').dialog('close')">取消</a>
+		</div>
+	</div><!-- 续期窗口结束div -->
+
+
+	<div id="sevminus" class="easyui-window" title="商家减期" data-options="modal:true,closed:true" style="width:300px;height:220px;padding:10px 20px">
+		<input type="hidden" name="e_id2" id="e_id2" value="" /><!-- 所备注订单编号的隐藏框 -->
+		<form name="remark-form"  method="post" action="#" style="width:200px;height:100px;padding:10px 20px">
+            <div>
+               <h5>请选择减期时间:</h5>
+                <select id="continuetime2"  style="width:100px">
+					<option value="1">1个月</option>
+					<option value="2">2个月</option>
+					<option value="3">3个月</option>
+					<option value="6">6个月</option>
+					<option value="12">12个月</option>
+				</select>
+            </div> 
+	    </form>
+	    <div id="search-window-buttons2" style="text-align: left; background: #FFF;">
+			<a href="javascript:void(0)" id="btn-search" class="easyui-linkbutton" iconCls="icon-ok" onclick="chooseOK()">确定</a>
+			<a href="javascript:void(0)" id="btn-search-cancel" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#sevminus').dialog('close')">取消</a>
+		</div>
+	</div><!-- 减期窗口结束div -->
+<script type="text/javascript">
+var continueOrMinus;	//1表示是续期，2表示是减期
+$(function() {
+	enterprise = $('#enterprise').datagrid({
+		url : "{:U('readEnterprise')}",
+		singleSelect: true,
+		collapsible: true,
+		method: 'post',
+		fitColumns: true,
+		fit: true,
+		pagination: true,
+		pageSize: 20,
+		pageList: [10, 20, 30],
+		rownumbers: true,
+		idField : 'e_id',
+		columns : [ [ 
+		              { field : 'e_id', title : '企业编号', width : 100, align : 'center'},
+		              { field : 'e_name', title : '企业名称', width : 100 },
+		              { field : 'account', title : '登录账号', width : 100 },
+		              { field : 'service_start_time', title : '服务生效时间', sortable : true, width : 100 },
+		              { field : 'service_end_time', title : '服务失效时间', sortable : true, width : 100 },
+		          ] ],
+	});
+	// 指定条件查询，进行商品搜索
+	$('.searchbox-button').click(function() {
+		var searchcondition = $('#search_condition').val().trim();			// 获取搜索条件
+		var searchcontent = $('#search_content').val();						// 获取搜索内容
+		if (searchcontent.trim() == "" || searchcontent == "undefined") {
+			$.messager.alert('温馨提示', '请输入搜索内容！', 'warning');
+			return
+		}
+		$("#enterprise").datagrid({
+			url: "{:U('SuperAdmin/EnterpriseAuth/searchEnterSev', '', '')}",
+			queryParams: {
+				searchcondition: searchcondition,
+				searchcontent: searchcontent
+			}
+		}, 'load');
+		clearSelect(); // 清空潜在选择项
+	});
+});
+
+//企业延期操作
+function enterpriseContinueOrMinus(type){
+	continueOrMinus = type;
+	var rows = $('#enterprise').datagrid('getSelections');			// 获取选中的行（已经绑定过主键auth_id列）
+	if (rows.length == 0) {
+		if(continueOrMinus==1){
+			$.messager.alert('温馨提示','请选择一条商家信息进行续期');	
+		}else{
+			$.messager.alert('温馨提示','请选择一条商家信息进行减期');	
+		}
+					
+	}else{
+		var eid = rows[0].e_id;
+		if(continueOrMinus==1){
+			$("#e_id").val(eid);
+			$('#sevcontinue').dialog('open');
+		}else{
+			$("#e_id2").val(eid);
+			$('#sevminus').dialog('open');
+		}
+		
+	}
+}
+
+
+//确认续期或减期
+function chooseOK(){
+	var eid ;
+	var continuetime;
+	if(continueOrMinus==1){
+		eid= $("#e_id").val();
+		continuetime = $("#continuetime").val();
+	}else{
+		eid= $("#e_id2").val();
+		continuetime = $("#continuetime2").val();
+	}
+	$.post(
+			"{:U('SuperAdmin/EnterpriseAuth/putOffEnterpriseService', '', '')}",
+			{
+				e_id: eid,
+				continuetime : continuetime,
+				continueOrMinus : continueOrMinus
+			},
+			function(result) {
+				if (result.errCode==0) {
+					if(continueOrMinus==1){
+						$('#sevcontinue').dialog('close');
+					}else{
+						$('#sevminus').dialog('close');
+					}
+					
+					$.messager.alert('温馨提示', '操作成功！', 'info');
+					$('#enterprise').datagrid('reload');
+					$('#enterprise').datagrid('clearSelections');
+				} else {
+					$.messager.alert('温馨提示', '操作失败！'+result.errMsg, 'warning');
+				}
+			},
+			'json'); 
+}
+//取消选择
+function cancelSelect() {
+	$('#enterprise').datagrid('unselectAll');
+}
+
+//共用警示函数：有些调用后不使用此函数可能会存在隐藏错误
+function clearSelect() {
+	$("#enterprise").datagrid("clearSelections"); // 清除所有选中的行
+}
+
+
+function addEnterprise(){
+	window.location.href = "{:U('addEnterpriseInfo')}";
+}
+
+//共用警示函数：有些调用后不使用此函数可能会存在隐藏错误
+function clearSelect() {
+	enterprise.datagrid("clearSelections"); 			// 清楚所有选中的行
+}
+
+//导出excel数据
+function exportApply() {
+	$.messager.confirm('温馨提示', '确定要导出所有数据?', function(result){
+		if(result) {
+			window.location.href = "{:U('exportapplicant', '', '')}";
+		}
+	});
+}
+</script>
+</body>
+</html>

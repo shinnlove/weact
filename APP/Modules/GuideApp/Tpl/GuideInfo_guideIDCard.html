@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/guideappstyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>我的专属导购</title>
+</head>
+
+<body>
+	<div class="wrap">
+		<input type="hidden" name="headimg" value="{$ginfo.headimg}" /><!-- 导购头像必须检测是否存在，不然用默认的 -->
+		<input type="hidden" name="cellphone" value="{$ginfo.cellphone}" /><!-- 导购联系电话如果未填写，就写未填写 -->
+    	<div class="guide-title"><h1>导购信息</h1></div>
+        <div class="guide-info">
+        	<div class="guide-qrcode"><img class="qr-code" src="{$ginfo.headimg}" /></div>
+            <div class="guide-shop"><h2>{$ginfo.subbranch_name}</h2></div>
+            <div class="guide-name"><h2>{$ginfo.guide_name}</h2></div>
+            <div class="guide-cellphone"><h2>联系电话：<span class="phone-number">{$ginfo.cellphone}</span></h2></div>
+        </div>
+        <div class="guide-btn">
+        	<div class="enter-shop">
+                <a href="{:U('WeMall/Store/storeIndex', array('sid' => $sid), '')}" class="large ui-color-button orange-yellow">逛逛TA的店铺</a>
+            </div>
+            <div class="start-chat">
+                <a href="javascript:;" class="large ui-color-button blue">和TA聊上几句</a>
+            </div>
+        </div>
+    </div>
+    
+<script type="text/javascript">
+var eid = '{$ginfo.e_id}', // 商家编号
+	sid = '{$ginfo.subbranch_id}', // 分店编号
+	gid = '{$ginfo.guide_id}', // 导购编号
+	gname = '{$ginfo.nickname}'; // 导购姓名
+	
+// 页面初始化函数
+$(function(){
+	var defaulthead = "__PUBLIC__/images/defaulthead.png"; // 默认导购头像
+	var headimg = $("input[name='headimg']").val().trim(); // 取出导购头像
+	var cellphone = $("input[name='cellphone']").val().trim(); // 取出导购手机号
+	
+	if (typeof headimg == "undefined" || headimg == "") {
+		// 如果导购头像没定义或者没头像
+		$(".guide-qrcode img").attr("src", defaulthead);
+	}
+	if (typeof cellphone == "undefined" || cellphone == "") {
+		// 如果导购头像没定义或者没手机号码
+		$(".phone-number").html("未填写");
+	}
+	
+	// 生成DOM结构事件
+	$(".enter-shop a").click(function(e){
+		// 进入TA的店铺
+		e.preventDefault(); // 阻止超链接跳转
+		var shopurl = "{:U('WeMall/Store/storeIndex', '', '')}?sid=" + window.sid + "&selectskip=1"; // 本超链接默认不用选导购
+		scscms_alert(window.gname+"非常欢迎您来我的店铺，有任何问题请随时咨询我!", "ok", "", 1);	// 定时3秒后关闭窗口
+		setTimeout(function(){
+			window.location.href = shopurl; // 跳转该导购店铺首页
+		},2000);
+	});
+	$(".start-chat a").click(function(e){
+		// 和TA聊上几句
+		e.preventDefault(); // 阻止超链接跳转
+		scscms_alert("请关闭本页面，返回微信公众号界面，在底部聊天框输入内容与导购聊天!", "ok", "", 3);	// 定时3秒后关闭窗口
+		return false;
+	});
+});
+</script>
+</body>
+</html>

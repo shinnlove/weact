@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<title>赵董事长的网页聊天窗跨域请求</title>
+</head>
+
+<body>
+	
+	<!-- 以下参数进入页面就会有 -->
+	<input type="hidden" name="eid" value="201406261550250006"><!-- 商家品牌编号 -->
+	<input type="hidden" name="gid" value="g10001"><!-- 该顾客当前直接聊天的导购编号 -->
+	<input type="hidden" name="cid" value="201503021503437865"><!-- 当前操作聊天窗的顾客编号 -->
+	<input type="hidden" name="openid" value=""><!-- 顾客微信openid，不一定用得着 -->
+	
+<script type="text/javascript">
+var webchat = {
+		access_token:"3943203027FB0083DBDA35652B8DABED1B3A9BF98B2A01B34F9DB1F188949FF2470EC692D0906034D74D1412799372FF", // 赵董事长的网页聊天窗的接口token（请通过算法产生）
+		getGuideInfoURL : "http://www.we-act.cn/weact/Interface/WebChatGuide/guideInfo", 
+		sendMsgURL : "http://www.we-act.cn/weact/Interface/WebChatMsg/receiveWebMsg", 
+		queryNewMsgURL : "http://www.we-act.cn/weact/Interface/WebChatMsg/queryNewMsg", 
+		webMsgConfirmURL : "http://www.we-act.cn/weact/Interface/WebChatMsg/receiveMsgConfirm", 
+		queryMsgPositionURL : "http://www.we-act.cn/weact/Interface/WebChatMsg/queryMsgPos", 
+		queryHistoryMsgURL : "http://www.we-act.cn/weact/Interface/WebChatMsg/queryHistoryMsg", 
+		getGuideInfo:function(opt){
+			$.ajax({
+				url:this.getGuideInfoURL,
+				data:opt,
+				type:"GET",
+				dataType:"jsonp",
+				jsonpCallback:"weactCallback1",
+				success:function(data){
+					console.log(JSON.stringify(data));
+				}
+			});
+		},
+		sendMsg:function(opt){
+			$.ajax({
+				url:this.sendMsgURL+"?access_token="+this.access_token, // POST类型请拼接
+				data:opt,
+				type:"post",
+				dataType:"jsonp",
+				jsonpCallback:"weactCallback2",
+				success:function(data){
+					console.log(JSON.stringify(data));
+				}
+			});
+		},
+		queryNewMsg:function(opt){
+			$.ajax({
+				url:this.queryNewMsgURL+"?access_token="+this.access_token, // POST类型请拼接
+				data:opt,
+				type:"post",
+				dataType:"jsonp",
+				jsonpCallback:"weactCallback3",
+				success:function(data){
+					console.log(JSON.stringify(data));
+				}
+			});
+		},
+		webMsgConfirm:function(opt){
+			$.ajax({
+				url:this.webMsgConfirmURL+"?access_token="+this.access_token, // POST类型请拼接
+				data:opt,
+				type:"post",
+				dataType:"jsonp",
+				jsonpCallback:"weactCallback4",
+				success:function(data){
+					console.log(JSON.stringify(data));
+				}
+			});
+		},
+		queryMsgPosition:function(opt){
+			$.ajax({
+				url:this.queryMsgPositionURL+"?access_token="+this.access_token, // POST类型请拼接
+				data:opt,
+				type:"post",
+				dataType:"jsonp",
+				jsonpCallback:"weactCallback5",
+				success:function(data){
+					console.log(JSON.stringify(data));
+				}
+			});
+		},
+		queryHistoryMsg:function(opt){
+			$.ajax({
+				url:this.queryHistoryMsgURL+"?access_token="+this.access_token, // POST类型请拼接
+				data:opt,
+				type:"post",
+				dataType:"jsonp",
+				jsonpCallback:"weactCallback6",
+				success:function(data){
+					console.log(JSON.stringify(data));
+				}
+			});
+		}
+}
+
+$(function(){
+	
+	// GET请求导购身份信息
+	var ginfodemo = {
+			access_token:webchat.access_token, 	// GET接口需要token
+			gid:"g10001" 
+	}
+	//webchat.getGuideInfo(ginfodemo); 
+	
+	// POST发送消息给导购
+	var sendmsgdemo = {
+			webmsg_id:"woaixiaobaobao", 		// 模拟一个网页端消息的主键（用来排重），每次都必须不同
+			eid:"201406261550250006", 			// 商家编号
+			from_customer:"201503021503437865", // 消息来自的顾客编号
+			to_guide:"g10001", 					// 消息送达的导购编号
+			msg_type:0, 						// 消息类型包括文本、图片、语音，默认0代表文本消息，1代表图片，2代表声音，3代表视频（短视频），4代表音乐，5代表商品图文推送
+			time:1438426142, 					// 消息时间，格林尼治事件，PHP用time ()
+			content:"我想要一辆阿斯顿马丁！",
+	}
+	//webchat.sendMsg(sendmsgdemo); 
+	
+	// POST请求某导购新消息
+	var msgdemo = {
+			gid:"g10001" 
+	}
+	//webchat.queryNewMsg(msgdemo); 
+	
+	// POST确认收到新消息
+	var msgconfirmdemo = {
+			confirmlist:{
+				msgid:"woaixiaobaobao", 
+				msgid:"testnew00002" 
+			}
+	}
+	webchat.webMsgConfirm(msgconfirmdemo);
+	
+	// POST请求某消息在历史消息的位置
+	var msgposdemo = {
+			gid:"g10001", 						// 消息所属导购编号
+			cid:"201503021503437865", 			// 模拟某顾客编号
+			msg_id:"143661615110001" 			// 模拟某顾客和该导购聊天的某消息编号
+	}
+	//webchat.queryMsgPosition(msgposdemo); 
+	
+	// POST请求历史消息
+	var historymsgdemo = {
+			cid:"201503021503437865", 			// 模拟某顾客编号
+			gid:"g10001", 						// 消息所属导购编号
+			next_start:10, 						// 下一条消息是要读取第几条，如果没有该参数，默认读取第一条消息（历史消息数组下标从0开始）
+			perpage:50 							// 每页所查询的消息数目，最小10条，最大100条，如果不给出参数，默认一页50条消息
+	}
+	//webchat.queryHistoryMsg(historymsgdemo); 
+	
+});
+</script>
+</body>
+</html>

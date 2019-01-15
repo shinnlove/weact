@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>商品评价</title>
+<style>
+.appriseBox .tit,.appriseBox .cont{padding: 0;}
+.appriseBox{margin: 0;}
+</style>
+</head>
+
+<body class="fn-center bc">
+	<div class="appriseBox">
+		<a class="tit">商品评价(<span id="commentCount">0</span>条)</a>
+        <div class="cont"></div>
+    </div>
+	
+	<div class="loadingBox wbox fn-hide"><a href="javascript:;">正在加载中···</a></div>
+	<div class="no-more fn-hide">已显示全部</div>
+	
+<!-- 商品评价 js arttemplate begin -->
+<script type="text/html" id="productcommenttpl">
+{{each pcommentlist as e i}}
+	<div class="item">
+		<div class="wbox">
+			<img src="{{e.headimgurl}}" class="size43 round mr10" />
+			<div class="wbox-1 lh20">
+				<div>{{e.nickname}}
+					<div class="appProgress ml5">
+						<span class="val" data-stars="{{e.star_level}}" style="width:0%"></span>
+					</div>
+				</div>
+				<div class="fc-grey fs12">{{e.comment_time}}</div>
+			</div>
+		</div>
+		<div class="fc-grey pt5">{{e.content}}</div>
+	</div>
+{{/each}}
+</script>
+<!-- 商品评价 js arttemplate end -->
+
+<script type="text/javascript">
+var eid = "{$eid}", 					// 商家编号
+	sid = "{$sid}", 					// 分店编号
+	pid = "{$pinfo.product_id}",		// 查看评论的商品编号
+	hasMoreData = true, 				// 本js模块全局变量：后续是否还有数据
+	isLoadingData = false, 				// 本js模块全局变量：本模块正在请求数据标记
+	nextstart = 0, 						// 页面默认下一次请求开始的数据位置
+	requestCommentListURL = "{:U('WeMall/Product/queryProductComment', '', '')}",// 分页请求商品评价地址
+	commentjson = '{$commentlist}'; 	// 打开页面一屏commentjson信息
+	
+// 页面初始化函数
+$(function(){
+	
+	// 第一次直出渲染模板
+	var commentlist = $.parseJSON(window.commentjson); // 解析页面的json数据（不管是带了反斜杠，还是没有反斜杠，都可以解析json数据） 
+	var tmpl = template('productcommenttpl', commentlist.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+	var commentListObj = $('.appriseBox .cont'); 		// 抓取class为cont的div，定义为commentListObj对象
+	if (tmpl == '{Template Error}') {
+		tmpl = ""; // 置空tmpl
+	} else if (tmpl == '') {
+		$(".no-more").removeClass("fn-hide"); 		// 显示没有评价
+		hasMoreData = false; 						// 已经没有更多数据了
+	}
+	commentListObj.html(tmpl);						// 渲染成功就把模板渲染的信息写入
+	$("#commentCount").html(commentlist.totalcount);// 写入评论总数
+	window.nextstart = commentlist.nextstart;		// 下一页开始 
+	
+	// 计算评论分数
+	$(".appriseBox .cont .item").each(function(i,e){
+		var stars = parseFloat($(e).find(".val").data("stars")); // 计算获得的星星
+		$(e).find(".val").width((stars * 20).toFixed(1) + "%"); // 加宽span[class='val']的style宽度，默认0%一颗星都没有，精确到小数点后1位，与淘宝一样，最高5分
+	});
+	
+	// 向上推（到底部才加载）与向下拉（不是很敏感）
+	$(window).scroll(function() {
+		var scrollh = document.body.scrollHeight; // 网页正文全文高
+		var clienth = document.documentElement.clientHeight; // 网页可见区域高度
+		var scrollt = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop; // 网页被卷去的高
+		var limitheight = 30; // 触碰屏幕的距离底部（增加到50px，预留一下）
+		if (scrollt + clienth + limitheight >= scrollh && !isLoadingData && hasMoreData) {
+			isLoadingData = true;
+			getComment('drag'); // 由本模块内的init方法来调用getComment方法上推加载下一页评论
+		}
+		scrollPosition = $(window).scrollTop();
+	}).swipeDown(function(){
+		if (! isLoadingData && document.body.scrollTop <= 1) {
+            isLoadingData = true;
+            getComment('pull', 0);			// 由本模块内的init方法来调用getComment方法下拉刷新
+        }
+	});
+	
+});
+
+// 分页获取导购评价函数
+function getComment(action, nextstart) {
+	// Step1：定义请求参数
+	var start = 0; // 定义起始页为0
+	if (typeof nextstart == 'undefined') {
+		start = window.nextstart; // 如果没有定义nextstart下一页数据，就用window.nextstart这个值
+	} 
+	var url = requestCommentListURL + "?eid=" + eid + "&sid=" + sid + "&pid=" + pid + "&nextstart=" + start; // 分页请求数据的地址
+	
+	// Step2：根据不同的请求方式
+	switch (action) {
+		case 'pull':
+			$('.no-more').addClass("fn-hide"); // 默认已显示全部的div隐藏
+			break;
+		case 'drag':
+			// 如果是上推操作
+			MLoading.show('加载中');
+			$(".loadingBox").removeClass("fn-hide");
+			break;
+		default:
+			MLoading.show('加载中');
+			$(".loadingBox").removeClass("fn-hide");
+			break;
+	}
+	hasMoreData = true; // 模块开始请求新数据的标记置为true
+	isLoadingData = true; // 模块设置为正在请求数据
+	
+	// 准备请求参数
+	var params = {
+			eid : eid, 					// 商家编号
+			sid : sid, 					// 分店编号
+			pid : pid, 					// 商品编号
+			nextstart : start 			// 下一页商品评论开始的位置
+	}
+	// Step3：请求并且完成界面不同显示
+	$.post(url, params, function(result){
+		
+		$(".loadingBox").addClass("fn-hide"); // 正在加载中隐藏
+		MLoading.hide(); // 隐藏等待刷新框
+		isLoadingData = false; // 本模块正在loading数据的状态变为false
+		
+		if (result.errCode == 0) {
+			// 如果正确请求到了评论数据
+			var commentListObj = $('.appriseBox .cont'); 		// 抓取class为cont的div，定义为commentListObj对象
+			
+			if (action == 'pull') {
+				// 如果加载数据的动作是下拉，则有新收藏可能已经更新，需要清空原来的
+				commentListObj.html('');					// 下拉先清空模板
+				var tmpl = template('productcommenttpl', result.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+				if (tmpl == '{Template Error}') {
+					tmpl = ""; // 如果渲染模板出错，置空tmpl
+				} 
+				commentListObj.html(tmpl); // 写入新html数据
+			} else {
+				// 上推加载下一页的处理
+				var tmpl = template('productcommenttpl', result.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+				if (tmpl == '{Template Error}') {
+					tmpl = ''; // 如果渲染失败，则html置空
+				}
+				commentListObj.append(tmpl); // 在文档尾追加新html数据
+				
+				// 如果返回的json数据的data字段的productlist字段里无数据，就不再加载任何数据
+				if (result.data.pcommentlist.length == 0) {
+					hasMoreData = false; // 模块不在加载数据中
+					$('.no-more').removeClass("fn-hide"); // 显示所有数据
+				}
+			}
+			// 计算评论分数
+			$(".appriseBox .cont .item").each(function(i,e){
+				var stars = parseFloat($(e).find(".val").data("stars")); // 计算获得的星星
+				$(e).find(".val").width((stars * 20).toFixed(1) + "%"); // 加宽span[class='val']的style宽度，默认0%一颗星都没有，精确到小数点后1位，与淘宝一样，最高5分
+			});
+			window.nextstart = nextstart = result.nextstart; // 将下一页数据给到nextStart，同时给到window.nextStart
+			// 至此，一次pull或者drag操作所有DOM元素与结构、特效变更结束
+		} else {
+			mobileAlert("加载商品评论列表失败，网络繁忙，请稍后再试！");
+			return false; // errCode不为0，有错误码，表示请求数据失败
+		}
+	}, 'json');
+}
+</script>
+</body>
+</html>

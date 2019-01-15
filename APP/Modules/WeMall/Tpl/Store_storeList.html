@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<title>线下门店</title>
+<style>
+body { padding-top: 50px;}
+.with-go-right:after{top: 40px;margin-top: 0;}
+li.noResult{position: fixed;width: 100%;height: 100%;top: 50px;background: #fff;left: -10px;}
+.searchBox{position: fixed;z-index: 1;top: 0;}
+.storeListTit{padding: 0 15px;line-height: 32px;color: #F60; background:#fff;}
+.storeListTit a{color: #999;display: block;padding: 0 10px;}
+.storeList { margin-bottom:20px; }
+#storeHistory { background:#fbf48a; }
+</style>
+</head>
+
+<body>
+    <div class="searchBox">
+        <form id="storeListForm" class="wbox">
+            <div class="wbox-1 cont">
+                <input type="search" class="search" name="keywords" placeholder="搜索门店名称或关键字">
+                <input type="hidden" name="eid" value="2">
+                <input type="submit" class="s-btn" value="" />
+            </div>
+        </form>
+    </div>
+    
+    <div class="storeListTit historyTit fn-hide">
+		专属导购所在的门店
+         <!--<a class="fr" id="clearHistory">清除</a> -->
+    </div>
+    <ul class="storeList fn-hide" id="storeHistory">
+    	<!-- 显示绑定导购的门店 -->
+    </ul>
+    
+    <div class="storeListTit aroundTit fn-hide">
+		离你最近的部分门店
+    </div>
+	<ul class="storeList fn-hide" id="storeAround">
+		<!-- 显示最近3家门店 -->
+    </ul>
+    
+    <div class="popLoading">
+	    <div class="cont">
+	        <div class="loadingAmt">
+	            <div class="img">
+	                <div class="img2"></div>
+	            </div>
+	        </div>
+	        <div class="pt10">正在加载···</div>
+	    </div>
+	</div>
+	
+<!-- 绑定导购的门店  js arttemplate begin -->
+<script type="text/html" id="bindshoptpl">
+{{each subbranchlist as e i}}
+	<li>
+		<a data-id="{{e.subbranch_id}}" href="{{e.subbranch_id | shopIndexURL}}" class="into-shop">
+			<div class="rank-box">
+				<div class="shop-logo">
+					<img class="shop-img" src="{{e.image_path}}" alt="" />
+				</div>
+				<div class="shop-info">
+					<div class="basic-info"><span class="latest-visit">{{e.guide_name}}随时为您服务</span></div>
+					<div class="basic-info"><span class="shop-name">{{e.subbranch_name}}</span></div>
+					<div class="basic-info"><span class="shop-address">{{e.subbranch_address}}</span></div>
+				</div>
+				<div class="distance c-9"><!-- {{e.distance}} --></div>
+				<div class="clear"></div>
+			</div>
+		</a>
+	</li>
+{{/each}}
+</script>
+<!-- js arttemplate end -->
+	
+<!-- 最近的3家店铺 js arttemplate begin -->
+<script type="text/html" id="shoplisttpl">
+{{each subbranchlist as e i}}
+	<li>
+		<a data-id="{{e.subbranch_id}}" href="{{e.subbranch_id | shopIndexURL}}" class="into-shop">
+			<div class="rank-box">
+				<div class="shop-logo">
+					<img class="shop-img" src="{{e.image_path}}" alt="" />
+				</div>
+				<div class="shop-info">
+					<!-- 如果最近访问过，增加最近访问的span标签 -->
+					<div class="basic-info">{{if e.is_visited == 1}}<span class="latest-visit">最近访问</span>{{/if}}</div>
+					<div class="basic-info"><span class="shop-name">{{e.subbranch_name}}</span></div>
+					<div class="basic-info"><span class="shop-address">{{e.subbranch_address}}</span></div>
+				</div>
+				<div class="distance c-9">{{e.distance}}</div>
+				<div class="clear"></div>
+			</div>
+		</a>
+	</li>
+{{/each}}
+</script>
+<!-- js arttemplate end -->
+
+<script type="text/javascript">
+//配置微信js环境
+wx.config({
+    debug: false,
+    appId: 'wxf8b4f85f3a794e77', 	// appid
+    timestamp: 1431021730, 			// 时间戳
+    nonceStr: 'G0ymPvUV7bQ11YJP', 	// 随机数
+    signature: '168b46660bd9c1005fce33068f08fe56a57a351d', // 签名
+    jsApiList: [ 'getLocation' ] 	// 使用地理位置接口
+});
+
+var eid = "{$eid}", 
+	sid = "{$sid}", 
+	showall = {$showall}, // 是否显示所有店铺开关
+	perpage = {$perpage}, // 每页几条
+	hasMoreData = true, 				
+	isLoadingData = false, 				
+	nextstart = 0, 						
+	requestSubbranchListURL = "{:U('WeMall/Store/querySubbranch', '', '')}", // 分页请求分店URL
+	longitude = 116.3, 					
+	latitude = 39.9, 					
+	shoplistjson = '{$limitsubbranchjson}'; 
+	
+$(function(){
+	
+	// 先处理绑定导购部分
+	var storeinfo = $.parseJSON(window.shoplistjson); 
+	var bindtmpl = template('bindshoptpl', storeinfo.data.bindlist); // 绑定导购的店铺
+	// 容错处理
+	if (bindtmpl == '{Template Error}') {
+		bindtmpl = ""; // 置空bindtmpl
+	}
+	// 控制显示绑定分店
+	if (bindtmpl != "") {
+		// 绑定过导购状态
+		$(".historyTit").removeClass("fn-hide"); // 移除绑定隐藏
+		$('#storeHistory').removeClass("fn-hide").html(bindtmpl); // 载入绑定的店铺
+		
+		// 坚持显示所有店铺
+		if (showall == 1) {
+			// 进入页面首先获取地理位置
+			if (navigator.geolocation) {
+				// 手机端浏览器
+				navigator.geolocation.getCurrentPosition(getStoreList, getLocationFailed);
+			} else {
+				// PC端浏览器，第一次直出渲染模板
+				var neartmpl = template('shoplisttpl', storeinfo.data.nearlist); // 最近店铺
+				if (neartmpl == '{Template Error}') {
+					neartmpl = ""; // 置空neartmpl
+				} 
+				if (neartmpl != "") {
+					$(".aroundTit").removeClass("fn-hide"); // 移除最近3加店隐藏
+					$("#storeAround").removeClass("fn-hide").html(neartmpl);	// 载入最近3家店铺
+				}
+			}
+		}
+	} else {
+		// 未绑定过导购状态
+		// 进入页面首先获取地理位置
+		if (navigator.geolocation) {
+			// 手机端浏览器
+			navigator.geolocation.getCurrentPosition(getStoreList, getLocationFailed);
+		} else {
+			// PC端浏览器，第一次直出渲染模板
+			var neartmpl = template('shoplisttpl', storeinfo.data.nearlist); // 最近店铺
+			if (neartmpl == '{Template Error}') {
+				neartmpl = ""; // 置空neartmpl
+			} 
+			if (neartmpl != "") {
+				$(".aroundTit").removeClass("fn-hide"); // 移除最近3加店隐藏
+				$("#storeAround").removeClass("fn-hide").html(neartmpl);	// 载入最近3家店铺
+			}
+		}
+	}
+	$(".popLoading").remove();
+	
+	// 如果坚持要显示分店，则绑定分页
+	if (showall == 1) {
+		window.nextstart = storeinfo.nextstart; // 先把下一页给到全局变量
+		
+		// 向上推（到底部才加载）与向下拉（不是很敏感）
+		$(window).scroll(function() {
+			var scrollh = document.body.scrollHeight; // 网页正文全文高
+			var clienth = document.documentElement.clientHeight; // 网页可见区域高度
+			var scrollt = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop; // 网页被卷去的高
+			var limitheight = 20; // 触碰屏幕的距离底部
+			if (scrollt + clienth + limitheight >= scrollh && !isLoadingData && hasMoreData) {
+				isLoadingData = true;
+				getSubbranchList('drag'); 
+			}
+			scrollPosition = $(window).scrollTop();
+		}).swipeDown(function(){
+			if (! isLoadingData && document.body.scrollTop <= 1) {
+	            isLoadingData = true;
+	            getSubbranchList('pull', 0);	
+	        }
+		});
+	}
+	
+});
+
+// 获取地理位置成功后执行的函数
+function getStoreList(position) {
+	window.longitude = longitude = position.coords.longitude; // 获取经度
+	window.latitude = latitude = position.coords.latitude; // 获取纬度
+	//alert("您所在的位置：\n东经 " + longitude + " ，\n 北纬 "+latitude);
+	getSubbranchList ( 'pull', 0, longitude, latitude ); // 获取分店列表
+}
+
+// 获取地理位置失败后执行的函数
+function getLocationFailed(error) {
+	if (error.code=="1") {
+		mobileAlert("用户拒绝访问地理位置权限，请允许APP或浏览器获取地理位置。");
+	} else if (error.code=="2") {
+		mobileAlert("无法确定设备的位置，一个或多个的用于定位采集程序报告了一个内部错误。");
+	} else if (error.code=="3") {
+		mobileAlert("获取地理位置超时。");
+	} 
+	
+	var wechatlocation = wechatLocationAgain(); // 继续调用微信访问东经和北纬
+	if (wechatlocation != false && wechatlocation != "" && typeof wechatlocation != "undefined") {
+		// 如果微信获取地理位置成功
+		window.longitude = wechatlocation.longitude; // 取东经更改全局经度
+		window.latitude = wechatlocation.latitude; // 取北纬更改全局纬度
+		getSubbranchList ( 'pull', 0, window.longitude, window.latitude ); // 获取分店列表
+	} else {
+		// 2种方式定位失败，只好默认全部距离千里之外
+		getSubbranchList ( 'pull', 0, window.longitude, window.latitude ); // 采用默认位置获取分店列表
+	}
+}
+
+// 调用微信获取地理位置方法
+function wechatLocationAgain() {
+	wx.getLocation({
+		success: function(res) {
+			//return JSON.stringify(res);
+			return res; // 返回object对象
+		},
+		cancel: function(res) {
+			mobileAlert('用户拒绝授权获取地理位置');
+			return false;
+		}
+	});
+}
+
+// 分页请求最近分店函数（带经度纬度参数）
+function getSubbranchList(action, nextstart, longitude, latitude) {
+	// Step1：定义请求参数
+	var start = 0; // 定义起始页为0
+	if (typeof nextstart == 'undefined') {
+		start = window.nextstart; // 如果没有定义nextstart下一页数据，就用window.nextstart这个值
+	} 
+	if (typeof longitude == 'undefined') {
+		longitude = window.longitude; // 如果没有定义longitude下一页数据，就用window.longitude这个值
+	} 
+	if (typeof latitude == 'undefined') {
+		latitude = window.latitude; // 如果没有定义latitude下一页数据，就用window.latitude这个值
+	} 
+	var url = requestSubbranchListURL + "?eid=" + eid + "&sid=" + sid + "&nextstart=" + start; // 分页请求数据的地址
+	
+	// Step2：根据不同的请求方式
+	switch (action) {
+		case 'pull':
+			$('.no-more').addClass("fn-hide"); // 默认已显示全部的div隐藏
+			break;
+		case 'drag':
+			// 如果是上推操作
+			MLoading.show('加载中');
+			break;
+		default:
+			MLoading.show('加载中');
+			break;
+	}
+	hasMoreData = true; // 模块开始请求新数据的标记置为true
+	isLoadingData = true; // 模块设置为正在请求数据
+	
+	// 准备请求参数
+	var params = {
+			eid : eid, // 商家编号
+			sid : sid, // 分店编号
+			longitude : longitude, // 经度
+			latitude : latitude, // 纬度
+			nextstart : start, // 下一页店铺开始的位置
+			perpage : perpage // 查询多少商家
+	}
+	// Step3：请求并且完成界面不同显示
+	$.post(url, params, function(result){
+		
+		MLoading.hide(); // 隐藏等待刷新框
+		isLoadingData = false; // 本模块正在loading数据的状态变为false
+		
+		if (result.errCode == 0) {
+			var subbranchListObj = $('#storeAround'); 		// 抓取id为storeAround，定义为subbranchListObj对象
+			
+			if (action == 'pull') {
+				// 如果加载数据的动作是下拉，则有新收藏可能已经更新，需要清空原来的
+				subbranchListObj.html('');					// 下拉先清空模板
+				var storeinfo = $.parseJSON(window.shoplistjson); 
+				if (storeinfo.data.bindlist.subbranchlist.length > 0) {
+					// 有导购绑定，如果还坚持显示附近列表，再显示
+					if (showall == 1) {
+						var neartmpl = template('shoplisttpl', result.data); // 最近3家店铺
+						// 容错处理
+						if (neartmpl == '{Template Error}') {
+							neartmpl = ""; // 置空neartmpl
+						} 
+						// 控制显示
+						if (neartmpl != "") {
+							$(".aroundTit").removeClass("fn-hide"); // 移除最近3加店隐藏
+							$("#storeAround").removeClass("fn-hide").html(neartmpl);	// 载入最近3家店铺
+						}
+						window.nextstart = result.nextstart;
+					}
+				} else {
+					// 无导购状态下
+					var neartmpl = template('shoplisttpl', result.data); // 最近3家店铺
+					// 容错处理
+					if (neartmpl == '{Template Error}') {
+						neartmpl = ""; // 置空neartmpl
+					} 
+					// 控制显示
+					if (neartmpl != "") {
+						$(".aroundTit").removeClass("fn-hide"); // 移除最近3加店隐藏
+						$("#storeAround").removeClass("fn-hide").html(neartmpl);	// 载入最近3家店铺
+					}
+					window.nextstart = result.nextstart;
+				}
+			} else {
+				// 上推加载下一页的处理
+				var tmpl = template('shoplisttpl', result.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+				if (tmpl == '{Template Error}') {
+					tmpl = ''; // 如果渲染失败，则html置空
+				}
+				subbranchListObj.append(tmpl); // 在文档尾追加新html数据
+				
+				// 如果返回的json数据的data字段的threadList字段里无数据，就不再加载任何数据
+				if (result.data.subbranchlist.length == 0) {
+					hasMoreData = false; // 模块不在加载数据中
+					$('.no-more').removeClass("fn-hide"); // 显示所有数据
+				}
+			}
+			window.nextstart = nextstart = result.nextstart; // 将下一页数据给到nextStart，同时给到window.nextStart
+			// 至此，一次pull或者drag操作所有DOM元素与结构、特效变更结束
+		} else {
+			mobileAlert("请求店铺列表失败！");
+			return false; // errCode不为0，有错误码，表示请求数据失败
+		}
+	}, 'json');
+}
+</script>
+</body>
+</html>

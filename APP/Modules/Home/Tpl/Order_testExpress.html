@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weact.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>快递测试</title>
+</head>
+
+<body>
+	测试爱查快递
+	
+<script type="text/javascript">
+var baseOption = {
+		id : "108386",
+		secret : "e5f4bb052cc515e85f217f7fc9d7d580",
+		com : "zhongtong",
+		nu : "728563275418",
+}
+$(function() {
+	
+	$.ajax({
+		url: "http://api.ickd.cn/",
+		data: "id=" + baseOption.ickdID + "&secret=" + baseOption.ickdKey + "&com=" + baseOption.com + "&nu=" + baseOption.nu + "&callback=expressCallback",
+		dataType: "jsonp",
+		success: function(data) {
+			console.log(data)
+			expressCallback(data);
+		}
+	});
+	
+});
+
+function expressCallback(dataObj) {
+	var html = '<tr>';
+	html += '<th>物流状态：</th>';
+	html += '<td>';
+	if (dataObj.status > 0) {
+		html += '<table width="520px" cellspacing="0" cellpadding="0" border="0" style="border-collapse: collapse; border-spacing: 0pt;">';
+		html += '<tr>';
+		html += '<td width="163" style="background-color:#e6f9fa;border:1px solid #75c2ef;font-size:14px;font-weight:bold;height:20px;text-indent:15px;">';
+		html += '时间';
+		html += '</td>';
+		html += '<td width="354" style="background-color:#e6f9fa;border:1px solid #75c2ef;font-size:14px;font-weight:bold;height:20px;text-indent:15px;">';
+		html += '地点和跟踪进度';
+		html += '</td>';
+		html += '</tr>';
+		//输出data的子对象变量                   
+		$.each(dataObj.data, function(idx, item) {
+			html += '<tr>';
+			html += '<td width="163" style="border:1px solid #dddddd;font-size: 12px;line-height:22px;padding:3px 5px;">';
+			html += item.time; // 每条数据的时间                           
+			html += '</td>';
+			html += '<td width="354" style="border:1px solid #dddddd;font-size: 12px;line-height:22px;padding:3px 5px;">';
+			html += item.context; // 每条数据的状态                          
+			html += '</td>';
+			html += '</tr>';
+		});
+		html += '</table>';
+	} else {
+		//查询不到                   
+		html += '<span style="color:#f00">Sorry！ ' + dataObj.message + '</span>';
+	}
+	html += '</td></tr>';
+	$("body").append(html);
+}
+</script>
+</body>
+</html>

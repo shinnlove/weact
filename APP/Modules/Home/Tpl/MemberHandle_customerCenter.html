@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/MobileCommonStyle.min.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>会员中心</title>
+<style type="text/css">
+.memberCard{
+	background-image: url('{$memberinfo.membercard_path}');
+	background-size:cover;
+}
+</style>
+</head>
+
+<body style="background:#efefef;">
+	<div class="wrap" id="wrap">
+    	<div class="head">{$einfo.brand}</div>
+        <div class="content">
+        	<div class="memberCard"></div>
+            <div class="memberCardInfo">
+                <div class="memberInfo">
+                    <div><font>欢迎您：{$customer.customer_name}&nbsp;&nbsp;</font></div>
+                    <font>卡号：{$customer.customer_id}&nbsp;&nbsp;</font>
+                    <font>积分：<span class="orange"></span></font>
+                    <div><font>所属分店：{$seinfo}&nbsp;&nbsp;</font></div>
+                </div>
+            </div>
+            <div class="memberRights">
+                <div class="f_card_content clearfix">
+                    <if condition = "$memberinfo.show_right neq 0">
+                    	<div class="f_card_c_list"><span>会员特权</span>
+	                        <div class="hide">
+	                            <h3>{$customer.customer_id}</h3>
+	                            {$memberinfo.member_right}
+	                        </div>
+	                    </div>
+                    </if>
+                    <if condition = "$memberinfo.show_coupon neq 0">
+                    	<div class="f_card_c_list"><span>VIP会员优惠</span>
+	                        <div class="hide">
+	                            <h3>{$customer.customer_id}</h3>
+	                            {$memberinfo.member_coupon}
+	                        </div>
+	                    </div>
+                    </if>
+                </div>
+            </div>
+            <div class="memberFunction">
+            	<ul>
+            		<foreach name="serviceinfo" item="si">
+            			<li><a href="{$si.url}">{$si.servicenav_name}</a></li>
+            		</foreach>
+            		<if condition="$loginstyle eq 0">
+            			<li><a href="javascript:void(0);" onClick="LoginOut()">注销登录</a></li>
+            		</if>
+                </ul>
+            </div>
+            <div class="bottom">
+            	<div class="weActName">微信公众名称：{$einfo.e_name}</div>
+                <div class="weActNumber">微信号：{$einfo.wechat_account}</div>
+                <div class="weActProducer">Powered by <a href="#">WeAct</a></div>
+                <div class="weact-deco"></div>
+            </div>
+        </div><!--content-->
+        {:W('Footer', array('e_id' => $e_id))}<!--footer-->
+    </div><!--wrap-->
+
+<script type="text/javascript">
+//及时刷新页面脚本
+$(function(){
+	$.post("{:U('Home/MemberHandle/refreshScore','','')}",
+			{
+				score:'refresh',
+				e_id : '{$e_id}'
+			},//请求刷新分数
+		function(data){
+			if (data.status) {
+				$('.orange').text(data.status+' 分');
+			} 
+		});
+	
+	$(".f_card_c_list").click(function(){
+		$(this).find("div").toggleClass("hide")
+	})
+});
+
+//用户注销函数
+function LoginOut(){
+	var e_id = '{$e_id}';
+	scscms_alert("您确定要注销登录吗？","confirm",function(){		//询问对话框
+		$.post("{:U('Home/GuestHandle/customerLoginOut','','')}", {
+			loginout: 'true',
+			e_id: e_id
+		}, function(result) {
+			if (result.errCode == 0) {
+				scscms_alert("注销登录成功！", "ok", 2);
+				setTimeout(function() {
+					window.location.href = "{:U('Home/Index/index', array(e_id => $e_id), '')}";
+				}, 2000);
+			} else {
+				scscms_alert("注销登录失败，" + result.errMsg, "error", 2); //定时关闭窗口
+			}
+		});
+	});
+}
+</script>
+</body>
+</html>

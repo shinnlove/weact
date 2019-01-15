@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="pragma" CONTENT="no-cache">
+<meta http-equiv="Cache-Control" CONTENT="no-cache, must-revalidate">
+<meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/template1/css/wei_canyin_v1.8.4.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/template1/css/wei_dialog_v1.2.1.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/template1/css/styleappend.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/template1/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/template1/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/template1/js/loadmsgshare.js"></script>
+<title>历史订单</title>
+</head>
+
+<body id="page_intelOrder">
+	<div class="center">
+		<if condition = "$historyorder neq null">
+			<foreach name = "historyorder" item = "ho">
+				<div class="content buyHistory">
+		            <div class="oneHistory">
+		                <div class="data">{$ho.yeargroup}年{$ho.monthgroup}月</div>
+		                <!-- 循环该年月里的菜单 begin -->
+		                <for start = "0" end = "$ho [ordercount]" step = "1">
+		                	<div class="orderinfo" data-id = "{$ho [$i] [order_id]}">
+			                    <div class="content3">
+			                        <div class="conTop"></div>
+			                        <div class="conCenter">
+			                            <div class="operateOrder">
+			                            	<a class="small ui-color-button bright-red delorder" href="javascript:void(0)">删除</a>
+			                                <a class="small ui-color-button blue editorder" href="javascript:void(0)">编辑</a><!--这个按钮付款后不显示-->
+			                                <input type="hidden" class="thisreceived" value = "{$ho [$i] [receive_status]}" />
+			                                <h2>总金额：<em>￥{$ho [$i] [total_price]}元</em></h2>
+			                            </div>
+			                            <p class="buyTime">订单号：{$ho [$i] [visual_number]}</p>
+			                            <p class="buyTime">下单时间：{$ho [$i] [order_time]}</p>
+			                            <table class="orderstatus">
+			                              <tr>
+			                                <td width="33%">订餐方式</td>
+			                                <td width="33%">支付方式</td>
+			                                <td width="33%">状态</td>
+			                              </tr>
+			                              <tr>
+											<td width="33%" class="orderstyle">{$ho [$i] [is_outsend]}</td>
+			                                <td width="33%" class="paymethod">{$ho [$i] [pay_method]}</td>
+			                                <td width="33%" class="paystatus">{$ho [$i] [is_payed]}</td>
+			                              </tr>
+			                            </table>
+			                            <ul>
+			                                <for start = "0" end = "$ho [$i] [detailcount]" step = "1" name = "j">
+			                                	<li class="fixed"><p>{$j+1}、{$ho [$i] [detaillist] [$j] [cate_name]} × {$ho [$i] [detaillist] [$j] [amount]}</p><em>￥{$ho [$i] [detaillist] [$j] [price]}/{$ho [$i] [detaillist] [$j] [unit_name]}</em></li>
+			                                </for>
+			                            </ul>
+			                        </div>
+			                        <div class="conBottom"></div>
+			                    </div>
+			                </div>
+		                </for>
+		                <!-- 循环该年月里的菜单 end -->
+		            </div>
+		        </div>
+			</foreach>
+        <else/>
+        	<div class="oneHistory" style="font-family:'Microsoft YaHei','微软雅黑','黑体',helvetica,arial;margin-bottom:60px;">
+	            <div class="orderinfo">
+	                <div class="content2">
+	                    <div class="conTop"></div>
+	                    <div class="conCenter">
+	                    	<h2>尊敬的{$einfo.e_name}顾客：{$nickname}，您好,</h2>
+	                       	<h2>暂时没有任何您的订单信息。</h2>
+	                    </div>
+	                    <div class="conBottom"></div>
+	                </div>
+	            </div>
+	        </div>
+        </if>
+        <footer class="footFix">
+			<a href="javascript:;" class="cateshop" style="float:left;margin-left:20px;background-color:#e4af25;">继续点餐</a>
+            <a href="javascript:;" class="mycart">我的餐车</a>
+		</footer>
+	</div>
+
+<script type="text/javascript">
+var e_id = '{$e_id}'; // 企业编号
+var openid = '{$openid}'; // 用户微信编号
+$(function() {
+	
+	// 订单状态初始化
+	$('.center').find('.orderinfo').each(function(e) {
+		var tempobj = $(this);
+		var t_orderstyle = tempobj.find('.orderstyle').html(); // 订单种类：堂食/外卖
+		var t_paymethod = tempobj.find('.paymethod').html(); // 订单支付方式：微信支付/现金刷卡
+		var t_paystatus = tempobj.find('.paystatus').html(); // 订单支付状态：已支付/未支付
+		var t_received = tempobj.find('.thisreceived').val(); // 订单接收状态：已接收/未接收
+		// 处理订单类型
+		if(t_orderstyle == 0) {
+			tempobj.find('.orderstyle').addClass('fontblue').html('堂食');
+		} else {
+			tempobj.find('.orderstyle').html('外卖');
+		}
+		// 处理支付方式
+		if(t_paymethod == 0) {
+			tempobj.find('.paymethod').html('未选择');
+		} else if(t_paymethod == 1) {
+			tempobj.find('.paymethod').addClass('fontblue').html('现金支付');
+		} else if(t_paymethod == 2) {
+			tempobj.find('.paymethod').addClass('fontgreen').html('微信支付');
+		} else if(t_paymethod == 3) {
+			tempobj.find('.paymethod').addClass('fontyellow').html('刷卡支付');
+		}
+		// 处理支付状态
+		if(t_paystatus == '0') {
+			tempobj.find('.paystatus').html('未支付');
+		} else {
+			tempobj.find('.paystatus').addClass('fontgreen').html('已支付');
+		}
+		// 预处理编辑按钮是否显示（已支付肯定已选过付款方式）
+		tempobj.find('.operateOrder .editorder').hide(); // （默认）不能编辑，隐藏编辑按钮
+		if(t_paystatus == 0 && t_paymethod == 0) {
+			// 没有付款状态下：不管店铺是否接收订单，只要未选择过付款方式，都可以默认编辑
+			tempobj.find('.operateOrder .editorder').show(); // 可以编辑，显示编辑按钮
+		}
+	});
+	
+	// 编辑订单按钮
+	$(".editorder").click(function(){
+		var orderobj = $(this).closest('.orderinfo');
+		var orderid = orderobj.attr('data-id'); // 获得订单id
+		var url = "{:U('CateIndustry/CateOrder/editOrderCheck', '', '')}"; // 检查是否允许编辑订单
+		var params = { 'oid' : orderid, 'e_id' : e_id, 'openid' : openid }; // 定义要编辑的订单等的参数
+		$.post(url, params, function(result){
+			if(result.errCode == 0) {
+				var infourl = "{:U('CateIndustry/CateOrder/orderInfo', array(e_id => $e_id), '')}/oid/"+orderid;
+				window.location.href = infourl;
+			}else {
+				$(this).hide(); // 隐藏编辑按钮
+				setTimeout(function() {
+					window.location.reload(); // 订单有状态变化，及时刷新页面
+				}, 500);
+			}
+		});
+	});
+	
+	// 删除订单按钮
+	$(".delorder").click(function() {
+		var orderobj = $(this).closest('.orderinfo');
+		var orderid = orderobj.attr('data-id');
+		var url = "{:U('CateIndustry/CateOrder/delOrder', '', '')}";
+		var params = { 'oid' : orderid, 'e_id' : e_id, 'openid' : openid };
+		scscms_alert("您确定要删除该笔订单吗？删除后不可恢复，请谨慎操作！", "confirm", function() {
+			$.post(url, params, function(result){
+				if (result.errCode == 0) {
+					// 先取到对象
+					var monthnode = orderobj.parent(); // 获取父亲节点
+					var nodeorderleft = monthnode.find('.orderinfo').length; // 该年月结点下，订单的数量
+					// 再执行动态删除订单效果
+					orderobj.animate({width:0, height:0}, "normal", "linear", function() {
+						orderobj.stop(false, true); // 停止效果
+						orderobj.remove(); // 移除该笔订单DOM
+						if(nodeorderleft == 1) monthnode.parent().remove(); // 如果是最后一条订单被移除，该年月的结点也被移除
+					});
+					// 然后根据服务器的订单数量判断删完订单后有没有别的事情要做
+					if(result.data.ordernumber == 0) {
+						setTimeout(function() {
+							window.location.reload(); // 服务器返回数据记得提醒剩下订单数量，如果没有，setTimeout1秒后则直接刷新页面（显示空历史订单），不要立刻刷新影响体验
+						}, 1000);
+					}
+				} else{
+					scscms_alert(result.errMsg, "error", "", 3);
+				}
+			});
+		});
+	});
+	// 继续点餐
+	$(".cateshop").click(function(){
+		window.location.href = '{$cateshopurl}'; // 跳转至餐饮微商城首页或某餐饮导航下
+	});
+	// 我的餐车
+	$(".mycart").click(function(){
+		window.location.href = "{:U('CateIndustry/CateCart/myCateCart', array(e_id => $e_id), '')}"; // 跳转至我的餐车下
+	});
+});
+</script>
+</body>
+</html>

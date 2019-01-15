@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="msapplication-tap-highlight" content="no" />
+<meta name="robots" content="noarchive" />
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+<meta name="renderer" content="webkit" />
+<meta name="description" content="让我们的微 动起来 WEACT!" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css?v=1.0.0" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css?v=1.0.0" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/bootstrap.min.css?v=1.0.0" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/bootstrap.min.js"></script>
+<title>SEC中研微动服务开通</title>
+</head>
+
+<body>
+	<div class="register">
+        <form id="service-commit" action="#" method="post">
+            <h3>
+                <span class="red"><strong>SEC中研微动WEACT</strong></span>
+                <div class="">服务开通注册表</div>
+            </h3>
+            
+            <div class="section-title">一、基本联系信息</div>
+            <hr class="section-hr" />
+            
+            <label for="company-name">公司(<span class="text-required">*</span>)：</label>
+            <input type="text" id="company-name" name="company-name" placeholder="请输入您的公司名称...">
+            
+            <label for="industry">行业(<span class="text-required">*</span>)：</label>
+            <input type="text" id="industry" name="industry" placeholder="请输入您的行业...">
+            
+            <label for="location">公司所在省份&城市(<span class="text-required">*</span>)：</label>
+            <input type="text" id="location" name="location" placeholder="请输入省份和城市...">
+            
+            <label for="brand">品牌名(<span class="text-required">*</span>)：</label>
+            <input type="text" id="brand" name="brand" placeholder="请输入您的品牌名称...">
+            
+            <label for="name">姓名(<span class="text-required">*</span>)：</label>
+            <input type="text" id="name" name="name" placeholder="请输入您的姓名...">
+            
+            <label for="cellphone">手机(<span class="text-required">*</span>)：</label>
+            <input type="text" id="cellphone" name="cellphone" placeholder="请输入您的手机号...">
+            
+            <label for="e-mail">E-mail(<span class="text-required">*</span>)：</label>
+            <input type="text" id="e-mail" name="e-mail" placeholder="请输入您的电子邮件地址...">
+            
+            <label for="wechat-account">微信号(<span class="text-required">*</span>)：</label>
+            <input type="text" id="wechat-account" name="wechat-account" placeholder="请输入您的个人微信号...">
+            
+            <label for="qq-number">QQ(<span class="text-required">*</span>)：</label>
+            <input type="text" id="qq-number" name="qq-number" placeholder="请输入您的QQ号...">
+            
+            <div class="section-title">二、已通过认证的微信服务号名字（非订阅号）</div>
+            <hr class="section-hr" />
+            
+            <label for="wechat-public">公众账号微信号(<span class="text-required">*</span>)：</label>
+            <input type="text" id="wechat-public" name="wechat-public" placeholder="请正确提供可成功添加的微信号...">
+            
+            <label for="appid">调取微信服务号AppID(<span class="text-required">*</span>)：</label>
+            <input type="text" id="appid" name="appid" placeholder="请输入公众号的appid...">
+            
+            <label for="appsecret">调取微信服务号AppSecret(<span class="text-required">*</span>)：</label>
+            <input type="text" id="appsecret" name="appsecret" placeholder="请输入公众号的appsecret...">
+            
+            <img class="normal-img" src="__PUBLIC__/images/register/appidsecret.jpg" />
+            
+            <label for="original_id">调取微信服务号original id(<span class="text-required">*</span>)：</label>
+            <input type="text" id="original_id" name="original_id" placeholder="请输入公众号的original id...">
+            
+            <img class="normal-img" src="__PUBLIC__/images/register/originalid.jpg" />
+            
+            <div class="section-title">三、选填部分，请如实填写</div>
+            <div class="section-title">为了让我们更好的了解你、为你服务</div>
+            <hr class="section-hr" />
+            
+            <label for="plan-time">计划（希望）何时使用微动开展线下服务？</label>
+            <input type="text" id="plan-time" name="plan-time" placeholder="请输入计划的大致时间...">
+            
+            <label for="self-property">企业性质</label>
+            <input type="text" id="self-property" name="self-property" placeholder="请填品牌商、加盟商、代理商或其他...">
+            
+            <label for="recognize-way">何种渠道了解到微动</label>
+            <input type="text" id="recognize-way" name="recognize-way" placeholder="请输入您的了解方式...">
+            
+            <label for="focus-question">针对自身企业，未来的实体零售你最关心的是什么问题</label>
+            <input type="text" id="focus-question" name="focus-question" placeholder="请输入您的关心方向...">
+            
+            <label for="your-expiration">写下您对它（下图）的期待和感想</label>
+            <textarea class="mul-text" id="your-expiration" name="your-expiration" placeholder="请畅所欲言..."></textarea>
+            
+            <img class="weact-img" src="__PUBLIC__/images/register/seeyou.jpg" />
+            
+            <div class="clear"></div>
+            
+            <!-- <a id="confirm" href="javascript:;">提交信息</a> -->
+            <button id="confirm">提交</button>
+        </form>
+    </div>
+    
+<script type="text/javascript">
+// 页面初始化函数
+$(function(){
+	
+	// 绑定事件
+	$("#confirm").click(function(e){
+		e.preventDefault();
+		var btnObj = $(this);
+		// 手机号验证正则
+		var telreg = /1((3[0123456789])|(4[0123456789])|(5[0123456789])|(7[0123456789])|(8[0123456789]))\d{8}/;
+		
+		// 必填信息
+		var companyname = $("#company-name").val().trim(); 			// 公司名称
+		var industry = $("#industry").val().trim(); 				// 所属行业
+		var location = $("#location").val().trim(); 				// 公司位置
+		var brand = $("#brand").val().trim(); 						// 品牌名称
+		var name = $("#name").val().trim(); 						// 用户姓名
+		var cellphone = $("#cellphone").val().trim(); 				// 手机号
+		var email = $("#e-mail").val().trim(); 						// 电子邮件
+		var wechataccount = $("#wechat-account").val().trim(); 		// 个人微信号
+		var qqnumber = $("#qq-number").val().trim(); 				// QQ号
+		
+		// 微信公众号信息
+		var wechatpublic = $("#wechat-public").val().trim(); 		// 服务号微信账号名称
+		var appid = $("#appid").val().trim(); 						// 微信账号appid
+		var appsecret = $("#appsecret").val().trim(); 				// 微信账号appsecret
+		var originalid = $("#original_id").val().trim(); 			// 微信账号原始original_id
+		
+		// 选填信息
+		var plantime = $("#plan-time").val().trim(); 				// 计划时间
+		var selfproperty = $("#self-property").val().trim(); 		// 企业性质
+		var recognizeway = $("#recognize-way").val().trim(); 		// 认知微动的方式
+		var focusquestion = $("#focus-question").val().trim(); 		// 关心问题
+		var yourexpiration = $("#your-expiration").val().trim(); 	// 期待感想
+		
+		// 判断必填参数是否完整
+		if (companyname == "") {
+			scscms_alert("请填写您的公司名称！", "warn", "", 2);
+			$("#company-name").focus();
+			return false;
+		}
+		if (industry == "") {
+			scscms_alert("请输入您的行业！", "warn", "", 2);
+			$("#industry").focus();
+			return false;
+		}
+		if (location == "") {
+			scscms_alert("请输入您所在的省份和城市！", "warn", "", 2);
+			$("#location").focus();
+			return false;
+		}
+		if (brand == "") {
+			scscms_alert("请输入您的品牌！", "warn", "", 2);
+			$("#brand").focus();
+			return false;
+		}
+		if (name == "") {
+			scscms_alert("请输入您的姓名！", "warn", "", 2);
+			$("#name").focus();
+			return false;
+		}
+		if (cellphone == "") {
+			scscms_alert("请输入您的手机号！", "warn", "", 2);
+			$("#cellphone").focus();
+			return false;
+		}
+		if(! telreg.test( cellphone ) ) {	
+			scscms_alert("请填写正确的手机号！", "warn", "", 2);
+			$("#cellphone").focus();
+			return false;
+		}
+		if (email == "") {
+			scscms_alert("请输入您的电子邮件！", "warn", "", 2);
+			$("#e-mail").focus();
+			return false;
+		}
+		if (wechataccount == "") {
+			scscms_alert("请输入您的个人微信号！", "warn", "", 2);
+			$("#wechat-account").focus();
+			return false;
+		}
+		if (qqnumber == "") {
+			scscms_alert("请输入您的QQ号，方便我们联系您！", "warn", "", 2);
+			$("#qq-number").focus();
+			return false;
+		}
+		if (wechatpublic == "") {
+			scscms_alert("请输入您的公众账号微信号！", "warn", "", 2);
+			$("#wechat-public").focus();
+			return false;
+		}
+		if (appid == "") {
+			scscms_alert("请输入您的公众账号appid！", "warn", "", 2);
+			$("#appid").focus();
+			return false;
+		}
+		if (appsecret == "") {
+			scscms_alert("请输入您的公众账号appsecret！", "warn", "", 2);
+			$("#appsecret").focus();
+			return false;
+		}
+		if (originalid == "") {
+			scscms_alert("请输入您的公众账号original-id！", "warn", "", 2);
+			$("#original_id").focus();
+			return false;
+		}
+		
+		// 参数验证通过，准备params静态提交表单
+		var params = {
+				// 基本信息
+				companyname : companyname, 			// 公司名称
+				industry : industry, 				// 所属行业
+				location : location, 				// 公司位置
+				brand : brand, 						// 品牌名称
+				name : name, 						// 用户姓名
+				cellphone : cellphone, 				// 手机号
+				email : email, 						// 电子邮件
+				wechataccount : wechataccount, 		// 个人微信号
+				qqnumber : qqnumber, 				// QQ号
+				
+				// 微信公众号信息
+				wechatpublic : wechatpublic, 		// 服务号微信账号名称
+				appid : appid, 						// 微信账号appid
+				appsecret : appsecret, 				// 微信账号appsecret
+				originalid : originalid, 			// 微信账号原始original_id
+				
+				// 选填信息
+				plantime : plantime, 				// 计划时间
+				selfproperty : selfproperty, 		// 企业性质
+				recognizeway : recognizeway, 		// 认知微动的方式
+				focusquestion : focusquestion, 		// 关心问题
+				yourexpiration : yourexpiration 	// 期待感想
+		}
+		MLoading.show("提交中..."); // 出现提交等待框，友好度
+		btnObj.attr('disabled',true); // 冻结按钮防止重复点
+		$.post("{:U('WebSite/ServiceEnroll/registerConfirm', '', '')}", params, function(result){
+			MLoading.hide(); // 隐藏等待提醒框
+			btnObj.removeAttr('disabled'); // 恢复按钮
+			if (result.errCode == 0) {
+				scscms_alert("信息提交成功！", "ok", "", 1); // 1秒提醒成功
+				setTimeout(function(){
+					window.location.href = "{:U('WebSite/ServiceEnroll/registerSuccess', '', '')}"; // 跳转提交成功页面
+				},1500);
+			} else {
+				scscms_alert("信息提交失败！"+result.errMsg, "error", "", 3); // 信息提交失败，弹出错误提醒框
+				return false;
+			}
+		}, "json");
+	});
+});
+</script>
+</body>
+</html>

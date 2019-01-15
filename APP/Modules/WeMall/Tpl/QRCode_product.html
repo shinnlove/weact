@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/myToushSlider.js"></script>
+<script>
+(function(doc, win) {
+	// 移动端REM自适应
+    var docEl = doc.documentElement, 
+  		dpr = Math.floor(win.devicePixelRatio),
+    		vp = doc.querySelector('[name="viewport"]'),
+        	resizeEvt = 'orientationchange' in win ? 'orientationchange' : 'resize',
+        	recalc = function () {
+            var clientWidth=Math.max(docEl.clientWidth, win.innerWidth)||320;
+            var width=(clientWidth<=320)?320:((clientWidth>=640)?640:clientWidth);
+            if (!clientWidth) return;
+            docEl.style.fontSize = 100 * (width / 320) + 'px';
+            docEl.style.opacity=1;
+        	};
+    docEl.style.opacity=0;
+    win.addEventListener(resizeEvt, recalc, false);
+    doc.addEventListener('DOMContentLoaded', recalc, false);
+
+  // 触发元素的hover状态
+  doc.addEventListener("touchstart", function(){}, true)
+})(document, window);
+</script>
+<title>{$pinfo.product_name}</title>
+<style type="text/css">
+.ft-cart{padding-top: 5px;}
+.ft-cart .pr5 a, .ft-cart .pl5 a{background: #e04241;color: #fff;font-size: 16px;}
+.ft-cart .pl5 a{background: #ff5722;}
+#skuPriceBox{padding-top: 6px;}
+body{margin-bottom: 50px;}
+.off-shelf { color:#F20; font-weight:bold; }
+.btn-disabled {background: #c4c4c4;color: #666;border-color: #c4c4c4;}
+</style>
+</head>
+
+<body>
+	<div class="swiper-containter">
+		<div class="flicking_con"></div>
+		<div class="main_image">
+     		<ul></ul><!-- 顶部滑动图片列表 -->
+		</div>
+	</div>
+	
+	<section class="products-msg">
+		<div class="wbox">
+			<div class="fs15 lh20 wbox-1">
+				<div class="productName">{$pinfo.product_name}</div>
+				<div>
+					<span class="fc-red fs18"><b id="marketPrice">¥</b></span>
+	        		<del class="fs14 pl5 fn-hide">¥{$pinfo.original_price}</del>
+				</div>
+			</div>
+			<a id="inserFav" href="javascript:;" class="btn ">收藏</a>
+		</div>
+	</section>
+	
+	<!-- 显示部分商品评价，最多5条 begin -->
+	<div class="appriseBox">
+		<a href="{:U('WeMall/Product/comment', array('sid' => $sid, 'pid' => $pid, 'showall' => 1), '')}" class="tit with-go-right">商品评价(<span id="commentCount">0</span>条)</a>
+		<div class="cont"></div>
+	</div>
+	<!-- 显示部分商品评价，最多5条 end -->
+	
+	<div class="storeBox wbox">
+		<div class="wbox-1 lh22 pl5 pr10">
+			<p>您所查看的是商品FAB快照</p>
+			<p class="off-shelf fn-hide">该商品已下架</p><!-- 总店下架才彻底下架 -->
+			<p class="goto-shop fc-grey fs13 fn-hide">如果您喜欢该商品，可以逛逛我们的店铺</p><!-- goto-shop和off-shelf只显示一个 -->
+		</div>
+		<a href="javascript:;" class="goto-buy btn mt5">去店铺</a>
+	</div>
+	
+	<section class="products-cont mt10">
+		<div class="d-tab">
+			<span class="on">图文描述</span>
+			<span id="getRecommend" data-json="getRecommendStockList.json?storeId=1&productId=5521&stockId=35152">相关推荐</span>
+		</div>
+		<div class="tab-c discrip" id="tab-c1">
+			{$pinfo.html_description}
+		</div>
+		<div class="tab-c stockList" id="tab-c2" style="display:none;" >
+			<ul></ul><!-- 相关推荐列表 -->
+		</div>
+	</section>
+
+	<!--底部-->
+	<div class="ft-cart">
+		<a id="goStreet" href="javascript:;" class="goto-buy btn btn-disabled full fav fs16">去店铺购买</a>
+	</div>
+	<!--end-->
+	
+<!-- 商品评价 js arttemplate begin -->
+<script type="text/html" id="productcommenttpl">
+{{each pcommentlist as e i}}
+	<div class="item">
+		<div class="wbox">
+			<img src="{{e.headimgurl}}" class="size43 round mr10" />
+			<div class="wbox-1 lh20">
+				<div>{{e.nickname}}
+					<div class="appProgress ml5">
+						<span class="val" data-stars="{{e.star_level}}" style="width:0%"></span>
+					</div>
+				</div>
+				<div class="fc-grey fs12">{{e.comment_time}}</div>
+			</div>
+		</div>
+		<div class="fc-grey pt5">{{e.content}}</div>
+	</div>
+{{/each}}
+</script>
+<!-- 商品评价 js arttemplate end -->
+
+<!-- 相关推荐的 js arttemplate begin -->
+<script type="text/html" id="recommendtpl">
+{{each recommendlist as e i}}
+	<li class="stockBox">
+		<a href="{{e.product_id | productDetailURL}}" class="stockLink" data-id="{{e.product_id}}">
+			<div class="stockImg wbox">
+				<img src="{{e.micro_path}}" alt="" />
+			</div>
+			<div class="stockName">{{if e.is_feature}}<b>精选</b>{{else if e.is_new}}<b>新品</b>{{else if e.is_preferential}}<b>特价</b>{{/if}}{{e.product_name}}</div>
+			<div class="stockPrice">
+				{{if e.original_price && e.current_price < e.original_price}}
+				<span class="fc-red fw-bold">¥{{e.current_price}}</span>
+				<del class="block">¥{{e.original_price}}</del>
+				{{else}}<span class="fc-red fw-bold">¥{{e.current_price}}</span>{{/if}}
+			</div>
+		</a>
+	</li>
+{{/each}}
+</script>
+<!-- 相关推荐的 js arttemplate end -->
+
+<script type="text/javascript">
+var eid = "{$eid}", 					// 商家编号
+	sid = "{$sid}", 					// 微猫商城的sid通行证，或许导购/顾客不在任何店铺
+	pid = "{$pinfo.product_id}",		// 查看评论的商品编号
+	ptype = "{$pinfo.product_type}", 	// 商品类型
+	nid = "{$pinfo.nav_id}", 			// 商品导航编号（获取同类商品推荐）
+	original_price = "{$pinfo.original_price}", // 商品原价
+	current_price = "{$pinfo.current_price}", 	// 商品现价
+	onshelf = "{$pinfo.on_shelf}", 		// 商品是否上架
+	curpage = "{:U('WeMall/QRCode/product', array('pid' => $pid), '')}", 	// 当前位置（注意要带上商品参数）
+	loginurl = "{:U('WeMall/GuestMall/login', array('sid' => $sid), '')}", 	// 登录地址
+	recommendListURL = "{:U('WeMall/Product/recommendProduct', '', '')}",	// 请求商品推荐地址
+	commentjson = '{$commentlist}'; 	// 打开页面一屏commentjson信息
+
+// 定义图片预览变量，previewArr是预览数组
+var previewArr = "{$pinfo.preview_images}".split("^"), // 图片预览数组
+	previewStr = "", // 等待加载图片的htmlDOM结构
+	iconStr = ""; // 点击切换的slider的.
+	
+// 页面初始化函数
+$(function(){
+	// 初始化价格显示
+	$("#marketPrice, #skuPriceBox").html("￥" + current_price); // 写入现价
+	if (parseFloat(original_price) > parseFloat(current_price)) {
+		$(".wbox .fs14").removeClass("fn-hide").html("￥" + original_price); // 写入原价并划去
+	}
+	
+	sliderImageInit(); // 初始化横幅图片
+	
+	// 图文详情图片自适应全屏
+	$("#tab-c1 img").each(function(i, e){
+		$(this).css("width", "100%");
+	});
+	
+	// 控制可否购买
+	if (onshelf == "1") {
+		// 如果商品上架状态
+		$("#goStreet").removeClass("btn-disabled").addClass("btn-red"); // 移除下架的处理
+		$(".goto-shop").removeClass("fn-hide"); // 显示去商店
+	} else {
+		$(".off-shelf").removeClass("fn-hide"); // 显示已下架
+	}
+	
+	// 第一次直出渲染商品评论模板
+	var commentlist = $.parseJSON(window.commentjson); // 解析页面的json数据（不管是带了反斜杠，还是没有反斜杠，都可以解析json数据） 
+	var tmpl = template('productcommenttpl', commentlist.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+	var commentListObj = $('.appriseBox .cont'); 		// 抓取class为cont的div，定义为commentListObj对象
+	if (tmpl == '{Template Error}') {
+		tmpl = ""; // 置空tmpl
+	}
+	commentListObj.html(tmpl);							// 渲染成功就把模板渲染的信息写入
+	$("#commentCount").html(commentlist.totalcount);	// 写入商品评论总数
+	if (tmpl != "") {
+		// 如果有评论，初始化评论的星级
+		$(".appriseBox .cont .item").each(function(i,e){
+			var stars = parseFloat($(e).find(".val").data("stars")); // 计算获得的星星
+			$(e).find(".val").width((stars * 20).toFixed(1) + "%"); // 加宽span[class='val']的style宽度，默认0%一颗星都没有，精确到小数点后1位，与淘宝一样，最高5分
+		});
+	}
+	
+	// 为DOM结构绑定事件
+	$("body").on("click", "#inserFav", function(){
+		// 收藏
+		var params = {
+				sid : sid, 
+				pid : pid
+		}
+		if (!$(this).hasClass("on")) {
+			$.post("{:U('WeMall/CustomerRequest/addCollection', '', '')}", params, function(result){
+				if (result.errCode == 0) {
+					mobileAlert("收藏成功");
+					$("#inserFav").addClass("on").text("已收藏");
+				} else if (result.errCode == 20001) {
+					window.location.href = loginurl+"?from="+curpage;
+					return false;
+				} else {
+					mobileAlert(result.errMsg); // 弹出错误信息
+					if (result.data.collected == 1) {
+						$("#inserFav").addClass("on").text("已收藏"); // 收藏过的商品显示已收藏
+					}
+					return false;
+				}
+			},"json");
+		} else {
+			$.post("{:U('WeMall/CustomerRequest/deleteCollection', '', '')}", params, function(result){
+				if (result.errCode == 0) {
+					mobileAlert("已取消收藏");
+					$("#inserFav").removeClass("on").text("收藏");
+				} else if (result.errCode == 20001) {
+					window.location.href = loginurl+"?from="+curpage;
+					return false;
+				} else {
+					mobileAlert(result.errMsg); // 弹出错误信息
+					return false;
+				}
+			},"json");
+		}
+	}).on("click", ".d-tab span", function(){
+		// 切换商品图文详情和同类推荐span点击事件
+		if ($(this).hasClass("on")) {
+			return false; // 如果点击的是当前的页卡，直接return
+		}
+		$(".d-tab span").removeClass("on"); // 所有span全部切换成没有on
+		$(this).addClass("on"); // 当前点击span增加class on
+		var n = $(this).index() + 1; // 下标从0开始，下表+1取到第几个页卡展示
+		$(".tab-c").hide(); // 页卡全部隐藏
+		$("#tab-c" + n).show(); // 点击的页卡展示
+		if (this.id == "getRecommend") {
+			// 如果点击的是相关推荐页卡
+			if ($("#tab-c2 ul li").length > 0) {
+				return false; // 如果不是第一次点击，不用重复请求（页面只请求一次）
+			}
+			//var jsonurl = $(this).data("json"); // 请求json数据的地址
+			
+			// 定义同类推荐参数
+			var params = {
+					eid : eid, // 商家编号
+					sid : sid, // 分店编号
+					nid : nid, // 本商品的导航编号
+					pid : pid  // 要获取同类的商品编号
+			}
+			// 请求同类商品推荐
+			$.post(recommendListURL, params, function(result){
+				if (result.errCode == 0) {
+					var recommendListObj = $('#tab-c2 ul'); // 推荐列表对象
+					// 渲染模板
+					var tmpl = template('recommendtpl', result.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+					if (tmpl == '{Template Error}') {
+						tmpl = ""; // 置空tmpl
+					}
+					recommendListObj.html(tmpl); // 渲染成功就把模板渲染的信息写入
+				} else {
+					mobileAlert('获取同类推荐失败，网络繁忙，请稍后再试！');
+					return false;
+				}
+			}, "json");
+		}
+	}).on("click", ".goto-buy", function(){
+		// 去店铺购买
+		if (onshelf != "1") {
+			mobileAlert("该商品已下架");
+			return false;
+		} 
+		if ($(this).hasClass("btn-disabled")) {
+			mobileAlert("抱歉，该商品店铺暂无供应");
+			return false;
+		} 
+		// 可以购买则跳转街市选择出售的店铺
+		window.location.href = "{:U('WeMall/StreetMall/supplyShop', array('sid' => $sid, 'pid' => $pid), '')}";
+	});
+	
+});
+
+// 横幅图片初始化函数
+function sliderImageInit() {
+	// 将预览图片数组中的每个图片信息加载到main_image中，Zepto.each中i是循环值，e是对象值
+	Zepto.each(previewArr, function(i, e) {
+		previewStr += '<li style="width:' + document.body.clientWidth + 'px;"><img src="' + e + '?imageView2/2/h/640"></li>';
+		iconStr += '<a href="#" class="">' + i + '</a>';
+	});
+	$('.main_image ul').append(previewStr); // 附加图片内容
+	if (previewArr.length > 1) {
+		$('.flicking_con').append(iconStr);
+		$('.flicking_con a:eq(0)').addClass("on");
+		$('.flicking_con').css("margin-left", "-" + $('.flicking_con a').length * 7.5 + "px");
+		$.mggScrollImg('.main_image ul', {
+			loop: true, //循环切换
+			auto: true, //自动切换
+			callback: function(ind) { 
+				// 回调函数，这里传过来的是索引值
+				$('.flicking_con a').removeClass("on");
+				$('.flicking_con a:eq(' + ind + ')').addClass("on");
+			}
+		});
+	}
+}
+</script>
+</body>
+</html>

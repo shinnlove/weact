@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>我的收货人</title>
+<style type="text/css">
+a.addr{display: block;width: 100%;}
+a.addr .item{width: 100%; overflow: hidden;text-overflow:ellipsis;word-break:break-all;}
+</style>
+</head>
+
+<body>
+	<input type="hidden" id="noTalking" />
+	
+	<section class="addr-list">
+		<foreach name="deliverylist" item="dl">
+			<dl>
+		    	<dt>
+		        	<input name="" type="checkbox" value="" class="yes" />
+		    	</dt>
+		    	<dd>
+		        	<a class="addr" href="javascript:;" data-id="{$dl.deliveryinfo_id}">
+						<div class="item">{$dl.province}&nbsp;{$dl.city}&nbsp;{$dl.region}</div>
+						<div class="item">{$dl.province}&nbsp;{$dl.city}&nbsp;{$dl.region}&nbsp;{$dl.receive_address}</div>
+						<div class="item">{$dl.receive_person}&nbsp;&nbsp;{$dl.contact_number}</div>
+					</a>
+					<a href="javascript:;" data-addrjson='{$dl.jsoninfo}' class="edit"></a><!--把delivery信息用json写在a标签的addrjson里-->
+				</dd>
+			</dl>
+		</foreach>
+	</section>
+	
+	<a class="newAddress" href="javascript:;">
+		<img class="pr5 size20" src="__PUBLIC__/images/addrAdd.png" alt="" />新增收货人信息
+	</a>
+	
+	<a href="{:U('WeMall/Cart/shoppingCart', array('sid' => $sid), '')}" class="linkNeedLogin toShoppingCart"></a>
+	<a href="javascript:;" id="gotoTalk" class="toAskSales"></a>
+
+<!-- 收货地址 js arttemplate begin -->
+<!-- 特别注意：糖饼的arttemplate当文字和数字一起渲染的时候会吃掉数字，在bug没修复之前，建议Zepto.each进行手动拼接为好 -->
+<script type="text/html" id="deliverytpl">
+{{each deliverylist as e i}}
+	<dl>
+    	<dt>
+        	<input name="" type="checkbox" value="" class="yes" />
+    	</dt>
+    	<dd>
+        	<a class="addr" href="javascript:;" data-id="{{e.deliveryinfo_id}}">
+				<div class="item">{{e.province}}&nbsp;{{e.city}}&nbsp;{{e.region}}</div>
+				<div class="item">{{e.province}}&nbsp;{{e.city}}&nbsp;{{e.region}}&nbsp;{{e.receive_address}}</div>
+				<div class="item">{{e.receive_person}}&nbsp;&nbsp;{{e.contact_number}}</div>
+			</a>
+			<a href="javascript:;" data-addrjson="{{e.jsoninfo}}" class="edit"></a><!--把delivery信息用json写在a标签的addrjson里-->
+		</dd>
+	</dl>
+{{/each}}
+</script>
+<!-- 收货地址 js arttemplate begin -->
+
+<script type="text/javascript">
+var eid = "{$eid}", 					// 商家编号
+	sid = "{$sid}", 					// 分店编号
+	frompage = "{$frompage}", 			// 本页面上一个页面的位置
+	curpage = "{:U('WeMall/CustomerCenter/deliveryManage', array('sid' => $sid), '')}", // 当前位置
+	loginurl = "{:U('WeMall/GuestMall/login', array('sid' => $sid), '')}", // 登录地址
+	webchatRequestURL = "{:U('WeMall/GuideChatRequest/initWebChat', '', '')}", // 请求聊天窗URL
+	deliverylistjson = '{$deliverylistjson}'; // 当前顾客的地址信息（在该商家下的） 
+	
+// 页面初始化函数
+$(function(){
+	
+	$(".addr-list").append('<div class="loading-bottom">加载中...</div>'); // 显示正在加载中
+	
+	// 直接渲染模板（arttemplate渲染有问题，目前改为字符串拼接解决）
+	/* var deliverylist = $.parseJSON(window.deliverylistjson); // 解析页面的json数据（不管是带了反斜杠，还是没有反斜杠，都可以解析json数据） 
+	var tmpl = template('deliverytpl', deliverylist.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+	var deliveryListObj = $('.addr-list'); 		// 抓取class为addr-listl，定义为deliveryListObj对象
+	if (tmpl == '{Template Error}') {
+		tmpl = ""; // 置空tmpl
+	}
+	deliveryListObj.html(tmpl);					// 渲染成功就把模板渲染的信息写入 */
+	// 为了防止出错暂时改为拼接字符串（貌似也不行）
+	/* var deliveryhtml = assembleDeliveryList(); 	// 调用字符串拼接函数
+	$('.addr-list').html(deliveryhtml); 		// 写入地址列表 */
+	$(".loading-bottom").remove(); 				// 隐藏loading
+	
+	// 生成DOM结构事件
+	$('.addr-list').on("click", "a.addr", function(e) {
+		// 地址列表点击某一条地址正文内容时
+		e.preventDefault();
+		if (frompage == "order") {
+			// 如果是从订单跳过来的
+			sessionStorage.receiveAddress = $(this).html(); // 保存html的内容（预订单页面也是显示HTML的DOM结构）
+			sessionStorage.receiveAddressId = $(this).data('id'); // 保存deliveryinfo编号
+			window.location.href = "{:U('WeMall/Order/preOrder', array('sid' => $sid), '')}"; // 回跳预订单页面
+		} else {
+			// 如果是其他地方跳过来的（比如用户中心），就等于点击编辑
+			$(this).parent().find("a.edit").click();
+		}
+	}).on("click", "a.edit", function(e) {
+		// 点击地址编辑按钮
+		e.preventDefault();
+		sessionStorage.receiveAddressJson = JSON.stringify($(this).data('addrjson'));
+		window.location.href = "{:U('WeMall/CustomerCenter/addDelivery', array('sid' => $sid), '')}?from="+frompage; // 跳转编辑地址列表
+	}).on("click", "input[type='checkbox']", function(e) {
+		// 地址栏前checkbox点击效果同点击a.addr一样
+		$(this).closest("dl").find("a.addr").click();
+	});
+	
+	// 添加新地址按钮点击
+	$(".newAddress").on("click", function(e) {
+		e.preventDefault();
+		if (sessionStorage.receiveAddressJson) {
+			sessionStorage.removeItem('receiveAddressJson'); // 既然要添加新地址，刚才选择的地址先移除
+		}
+		window.location.href = "{:U('WeMall/CustomerCenter/addDelivery', array('sid' => $sid), '')}?from="+frompage; // 跳转编辑地址列表
+	});
+	
+	// 悬浮按钮聊天窗
+	$("#gotoTalk").click(function(){
+		var param = { 
+				sid : sid, // 分店信息
+		}
+		$.post(webchatRequestURL, param, function(result){
+			if (result.errCode == 0) {
+				location.href = result.data.chaturl; // 跳转顾客与导购聊天窗页面
+			} else if (result.errCode == 20001) {
+				window.location.href = loginurl+"?from="+curpage;
+				return false;
+			} else {
+				mobileAlert(result.errMsg); // 弹出错误信息
+				return false;
+			}
+		}, "json");
+	});
+	
+});
+
+// 组装店铺地址列表函数，返回html的DOM字符串结构
+function assembleDeliveryList() {
+	var deliobj = $.parseJSON(window.deliverylistjson); // 解析页面的json数据（不管是带了反斜杠，还是没有反斜杠，都可以解析json数据） 
+	var len = deliobj.data.deliverylist.length; 		// 获取地址列表数量
+	var deliveryhtml = ""; // 最后拼接完成的字符串
+	
+	for(var i = 0; i < len; i ++) {
+		var _t = deliobj.data.deliverylist[i]; // 取个临时变量
+		deliveryhtml += '<dl>'
+					+		'<dt>'
+					+			'<input name="" type="checkbox" value="" class="yes" />'
+					+		'</dt>'
+					+		'<dd>'
+					+			'<a class="addr" href="javascript:;" data-id="'+_t.deliveryinfo_id+'">'
+					+				'<div class="item">'+_t.province+'&nbsp;'+_t.city+'&nbsp;'+_t.region+'</div>'
+					+				'<div class="item">'+_t.province+'&nbsp;'+_t.city+'&nbsp;'+_t.region+'&nbsp;'+_t.receive_address+'</div>'
+					+				'<div class="item">'+_t.receive_person+'&nbsp;&nbsp;'+_t.contact_number+'</div>'
+					+			'</a>'
+					+			'<a href="javascript:;" data-addrjson="'+_t.jsoninfo+'" class="edit"></a>'
+					+		'</dd>'
+					+	'</dl>'
+	}
+	//alert(deliveryhtml);
+	return deliveryhtml;
+}
+</script>
+</body>
+</html>

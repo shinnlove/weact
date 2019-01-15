@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+<meta http-equiv="expires" content="Wed, 26 Feb 1997 08:21:57GMT" />
+<meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/template2/css/style.css" />
+<script type="text/javascript" src="__PUBLIC__/template2/js/jquery.js"></script>
+<title>餐饮详情</title>
+</head>
+
+<body>
+	<div class="title foodMenu">
+		<a href="{:U('CateIndustry/MenuView/menu', array(e_id => $e_id), '')}"><img src="__PUBLIC__/template2/images/back.png" width="20" alt="" /></a>
+	    <a href="{:U('CateIndustry/CateCart/myCateCart', array(e_id => $e_id), '')}" class="jiesuan">餐车结算（<span>12</span>）</a>
+	    <em><img src="__PUBLIC__/template2/images/dian.png" width="11" alt="" /></em>
+	</div>
+	<div class="content oneFood">
+		<div class="conTop"></div>
+	    <div class="conCenter">
+	    <dl class="fixed">
+	    	<dt><img src="__PUBLIC__/template2/images/oneFood.jpg" width="135" alt="" /></dt>
+	        <dd>
+	        	<h1>港式缤纷迷你堡</h1>
+	            <p>原价：<del>￥36元/份</del></p>
+	            <p>现价：<em>￥28元/份</em></p>
+	            <a href="{:U('CateIndustry/CateCart/myCateCart', array(e_id => $e_id), '')}">加入购物车</a>
+	        </dd>
+	    </dl>
+	    </div>
+	    <div class="conBottom"></div>
+	</div>
+	<div class="content aboutFood">
+		<div class="conTop"></div>
+	    <div class="conCenter">
+		<h4>港式缤纷迷你堡</h4>
+	    <p>好看又好吃，视觉味觉双享受！现推特惠两只装，量更足，让你一次吃个够！</p>
+	    </div>
+	    <div class="conBottom"></div>
+	</div>
+	<div class="content guestCom">
+		<div class="conTop"></div>
+	    <div class="conCenter">
+		<h4>客户评价</h4>
+		<ul>
+	    	<li>
+	        	<p>味道真赞~喜欢到不行</p>
+	            <div class="fixed"><span>135***7849</span><em>2013.08.04</em></div>
+	        </li>
+	        <li>
+	        	<p>味道真赞~喜欢到不行</p>
+	            <div class="fixed"><span>135***7849</span><em>2013.08.04</em></div>
+	        </li>
+	        <li>
+	        	<p>味道真赞~喜欢到不行</p>
+	            <div class="fixed"><span>135***7849</span><em>2013.08.04</em></div>
+	        </li>
+	        <li>
+	        	<p>味道真赞~喜欢到不行</p>
+	            <div class="fixed"><span>135***7849</span><em>2013.08.04</em></div>
+	        </li>
+	    </ul>
+	    </div>
+	    <div class="conBottom"></div>
+	</div>
+	<div class="content myCom" id="pinglun">
+		<div class="conTop"></div>
+	    <div class="conCenter">
+	        <h4>我要评价</h4>
+	        <div class="comArea">
+	        <textarea></textarea>
+	        <label>请在此发表您的宝贵建议，感谢您的支持！</label>
+	        </div>
+	        <a href="javascript:void(0);" class="redBtn">提交评价</a>
+	    </div>
+	    <div class="conBottom"></div>
+	</div>
+	<a href="javascript:void(0);" target="_self" class="comIco"><img src="__PUBLIC__/template2/images/comIco.png" width="64" /></a>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$('.comArea label').click(function(){
+		$(this).hide().prev('textarea').focus();
+	});
+		
+	$('.comArea textarea').focus(function(){
+		$(this).next('label').hide();
+	});
+	$('.comArea textarea').blur(function(){
+		var thisVal=$(this).val();
+		if(thisVal == ""){
+			$(this).next('label').show();	
+		}else{
+			$(this).next('textarea').val(thisVal);
+		}
+	});
+
+	/*-----------------*/
+	var aa=$('#pinglun').offset().top;
+	$('.comIco').click(function(){
+		$('body,html').animate({ scrollTop: aa}, 800);
+		});
+	var bodyH=$('body').height();
+	var winH=$(window).height();
+	var n=Math.ceil(bodyH/winH);
+	var a=bodyH-n*winH;
+	var bb=(n-1)*winH+a;
+	$(window).scroll(function() {
+		if($(this).scrollTop() >= aa || $(this).scrollTop() >= bb){
+			$('.comIco').fadeOut(200);
+		}else{
+			$('.comIco').fadeIn(200);  
+		}
+	});
+});
+</script>
+</body>
+</html>

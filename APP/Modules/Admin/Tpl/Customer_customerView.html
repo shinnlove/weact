@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/tableCommonStyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>店铺所有会员</title>
+</head>
+
+<body class="easyui-layout">
+	<div class="easyui-tabs" data-options="region:'center',border:false">
+		<div data-options="region:'center',title:'店铺客户信息',border:false">
+			<!-- easyUI的TAB菜单分页1；自定义设置分页标题title -->
+			<table id="dg" class="easyui-datagrid" title="所有客户信息一览" toolbar="#toolbar" data-options="region:'center'"></table>
+			<!-- easyUI的工具条 -->
+			<div id="toolbar">
+				<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addCustomer()">添加客户</a>
+				<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editCustomer()">编辑客户</a>
+				<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delCustomer(delURL)">删除客户</a>
+				<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="conditionFind(conditionQueryURL)">查找客户</a>
+				<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="findAll(findAllURL)">所有客户</a>
+				<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="exportData()">导出记录</a>
+			</div>
+		</div><!-- easyUI的TAB菜单分页1结束div -->
+
+		<div data-options="region:'center',title:'今日活跃客户',border:false">
+			<!-- easyUI的TAB菜单分页2；自定义设置分页标题title -->
+			<table id="activedg" class="easyui-datagrid" title="线上互动客户一览" toolbar="#activetoolbar" data-options="region:'center'"></table>
+			<!-- easyUI的工具条 -->
+			<div id="activetoolbar">
+				<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="activeConditionFind()">查找活跃客户</a>
+				<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="activeFindAll()">所有活跃客户</a>
+			</div>
+		</div><!-- easyUI的TAB菜单分页2结束div -->
+
+	</div><!-- easyUI的TAB菜单容器结束div -->
+
+	<!--------------------------------------↓以下为easyUI的查询对话框部分↓----------------------------------->
+	
+	<!-- easyUI的查询客户对话框 -->
+	<div id="search-window" class="easyui-dialog" title="查询窗口" style="width: 535px; height: 330px;" closed="true">
+		<div style="padding: 10px 10px 10px 10px;">
+			<form id="qfm" method="post">
+			<!-- 调试表格区域↓ -->
+				<table width="500px" border="0" cellspacing="0" cellpadding="0" align="left">
+					<tr>
+						<td valign="top" bgcolor="#E1ECEE">
+							<table width="100%" border="0" cellspacing="1" cellpadding="0" style="font-size: 12px;">
+								<tr>
+									<td height="20" colspan="4" bgcolor="#FFFFFF" class="Menu">基本自定义条件</td>
+								</tr>
+
+								<tr>
+									<td bgcolor="#FFFFFF" align="center" class="style1">客户编号</td>
+									<td bgcolor="#FFFFFF" class="style1">
+										<input id="searchCustomer_id" name="searchCustomer_id" style="width: 150px;" /></td>
+									<td bgcolor="#FFFFFF" align="center" class="style1">邮箱</td>
+									<td bgcolor="#FFFFFF" class="style1">
+										<input id="searchEmail" name="searchEmail" style="width: 150px;" />
+									</td>
+								</tr>
+
+								<tr>
+									<td bgcolor="#FFFFFF" align="center" class="style1">客户姓名</td>
+									<td bgcolor="#FFFFFF" class="style1">
+										<input id="searchCustomer_name" name="searchCustomer_name" style="width: 150px;" />
+									</td>
+									<td bgcolor="#FFFFFF" align="center" class="style1">昵称</td>
+									<td bgcolor="#FFFFFF" class="style1">
+										<input id="searchNick_name" name="searchNick_name" style="width: 150px;" />
+									</td>
+								</tr>
+
+								<tr>
+									<td bgcolor="#FFFFFF" align="center" class="style1">性别</td>
+									<td bgcolor="#FFFFFF" class="style1">
+										<select id="searchSex" name="searchSex" class="easyui-combobox" style="width: 154px;">
+											<option value="不区分性别">不区分性别</option>
+											<option value="男">男</option>
+											<option value="女">女</option>
+										</select>
+									</td>
+									<td bgcolor="#FFFFFF" align="center" class="style1">联系方式</td>
+									<td bgcolor="#FFFFFF" class="style1">
+										<input id="searchContact_number" name="searchContact_number" style="width: 150px;" />
+									</td>
+								</tr>
+
+								<tr>
+									<td bgcolor="#FFFFFF" align="center" class="style1">地址</td>
+									<td bgcolor="#FFFFFF" class="style1">
+										<input id="searchCustomer_address" name="searchCustomer_address" style="width: 150px;" />
+									</td>
+									<td bgcolor="#FFFFFF" align="center" class="style1">会员等级</td>
+									<td bgcolor="#FFFFFF" class="style1">
+										<input id="searchMember_level" name="searchMember_level" style="width: 150px;" />
+									</td>
+								</tr>
+
+								<tr>
+									<td height="20" colspan="4" bgcolor="#FFFFFF" class="Menu">区间自定义条件</td>
+								</tr>
+
+								<tr>
+									<td bgcolor="#FFFFFF" align="center" class="style1">生日(起)</td>
+									<td bgcolor="#FFFFFF" class="style1">
+										<input id="searchBirthdayStart" name="searchBirthdayStart" class="Wdate" onClick="WdatePicker()" style="width: 150px;" />
+									</td>
+									<td bgcolor="#FFFFFF" align="center" class="style1">生日(止)</td>
+									<td bgcolor="#FFFFFF" class="style1">
+										<input id="searchBirthdayEnd" name="searchBirthdayEnd" class="Wdate" onClick="WdatePicker()" style="width: 150px;" />
+									</td>
+								</tr>
+
+								<tr>
+									<td bgcolor="#FFFFFF" align="center" class="style1">注册(起)</td>
+									<td bgcolor="#FFFFFF" class="style1">
+										<input id="searchRegister_timeStart" name="searchRegister_timeStart" class="Wdate" onClick="WdatePicker()" style="width: 150px;" /></td>
+									<td bgcolor="#FFFFFF" align="center" class="style1">注册(止)</td>
+									<td bgcolor="#FFFFFF" class="style1">
+										<input id="searchRegister_timeEnd" name="searchRegister_timeEnd" class="Wdate" onClick="WdatePicker()" style="width: 150px;" />
+									</td>
+								</tr>
+							</table> <!-- 调试表格区域 ↑-->
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+		
+		<div id="search-window-buttons" style="text-align: right; background: #FFF;">
+			<a href="javascript:void(0)" id="btn-search" class="easyui-linkbutton" iconCls="icon-ok" onclick="SearchOK(conditionQueryURL)">确定</a>
+			<a href="javascript:void(0)" id="btn-search-cancel" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#search-window').dialog('close')">取消</a>
+		</div>
+	</div>
+	<!-- easyUI的查询客户对话框 --> 
+	
+	<!--------------------------------------↑以上为easyUI的查询对话框部分↑----------------------------------->
+
+<script type="text/javascript">
+//定义PHP框架需要的全局变量（引用将无法识别，必不可少！）
+var selectURL = "{:U('Admin/CustomerRequest/read','','')}"; //查询客户信息的控制器action处理函数地址
+var activeURL = "{:U('Admin/CustomerRequest/activeRead','','')}"; //查询活跃客户信息的控制器action处理函数地址
+var delURL = "{:U('Admin/CustomerRequest/del','','')}"; //删除客户的控制器action处理函数地址
+var findAllURL = "{:U('Admin/CustomerRequest/read','','')}"; //查询所有客户的控制器action处理函数地址
+var conditionQueryURL = "{:U('Admin/CustomerRequest/conditionQuery','','')}"; //条件查询客户的控制器action处理函数地址
+
+//--------读取页面经常使用的DOM元素
+var dg = $('#dg'); 							//抓取店铺客户一览表
+var searchwindow = $('#search-window'); 	//抓取搜索对话框
+var qfm = $('#qfm'); 						//抓取搜索表单qfm：queryform
+
+var url; //提交的url地址
+
+//初始化easyUI表格
+$(function() {
+	$('#dg').datagrid({
+		url: selectURL,						//读取客户的url地址
+		singleSelect: true,					//只能进行单选
+		collapsible: true,					//datagrid可滑动展开
+		method: 'post',						//post提交类型
+		pagination: true,					//开启分页
+		rownumbers: true,					//显示行号
+		fitColumns: true,					//自适应列宽
+		fit: true,							//datagrid整屏适应
+		pageSize: 10,						//默认一页10条记录
+		pageList: [10, 20, 30],				//可供选择的有一页10条、20条、30条、50条记录（50条貌似没必要，1080高的也不能显示完全30条，何况50条）
+		idField: 'customer_id',				//主键字段是customer_id
+		columns: [
+			[{ field: 'customer_id', title: '客户编号', sortable: true }, 
+			 { field: 'openid', title: '微信openid', sortable: true }, 
+			 { field: 'account', title: '登录账号', sortable: true }, 
+			 { field: 'customer_name', title: '客户姓名', sortable: true }, 
+			 { field: 'nick_name', title: '昵称', sortable: true }, 
+			 { field: 'sex', title: '性别', sortable: true }, 
+			 { field: 'birthday', title: '出生年月', sortable: true }, 
+			 { field: 'contact_number', title: '联系方式', sortable: true }, 
+			 { field: 'email', title: '邮箱', sortable: true }, 
+			 { field: 'size', title: '尺码体型', sortable: true }, 
+			 { field: 'wear_prefer', title: '个人喜好', sortable: true }, 
+			 { field: 'detail_remark', title: '详细备注',sortable: true }, 
+			 { field: 'customer_address', title: '送货地址',sortable: true, hidden: true }, 
+			 { field: 'register_time', title: '注册时间', sortable: true }, 
+			 { field: 'inviter', title: '推广人编号', sortable: true }, 
+			 { field: 'member_level', title: '会员等级', sortable: true }, 
+			 //{ field: 'member_level', title: '会员等级', sortable: true, formatter: formatterlevel }, 
+			 { field: 'subordinate_shop', title: '所属门店',sortable: true }]
+		],
+		view: detailview,
+		detailFormatter: function(rowIndex, rowData) {
+			var Remark = rowData.remark == null ? '' : rowData.remark;
+			return '<table>' + '<tr>' + '<td rowspan=2 style="border:0;height:50px;width:50px"></td>' + '<td style="border:0">' + '<p>描述:</p><p>' + Remark + '</p>' + '</td>' + '</tr>' + '</table>';
+		}
+	});
+	
+	//今日活跃用户的表（今日登录表）
+	$('#activedg').datagrid({
+		url: activeURL,						//读取客户的url地址
+		singleSelect: true,					//只能进行单选
+		collapsible: true,					//datagrid可滑动
+		method: 'post',						//post提交类型
+		pagination: true,					//开启分页
+		rownumbers: true,					//显示行号
+		fitColumns: true,					//自适应列宽
+		fit: true,							//datagrid整屏适应
+		pageSize: 10,						//默认一页10条记录
+		pageList: [10, 20, 30],				//可供选择的有一页10条、20条、30条记录
+		idField: 'customer_id',				//主键字段是customer_id
+		columns: [
+			[{ field: 'customer_id', title: '客户编号', sortable: true }, 
+			 { field: 'openid', title: '微信openid', sortable: true }, 
+			 { field: 'account', title: '登录账号', sortable: true }, 
+			 { field: 'customer_name', title: '客户姓名', sortable: true }, 
+			 { field: 'operate_time', title: '活跃时间', sortable: true }, 
+			 { field: 'operate_type', title: '活跃操作', sortable: true, formatter: loginOrLoginOut }, 
+			 { field: 'device', title: '操作设备', sortable: true }, 
+			 { field: 'ip', title: '登录IP', sortable: true }]
+		],
+		view: detailview,
+		detailFormatter: function(rowIndex, rowData) {
+			var Remark = rowData.remark == null ? '' : rowData.remark;
+			return '<table>' + '<tr>' + '<td rowspan=2 style="border:0;height:50px;width:50px"></td>' + '<td style="border:0">' + '<p>描述:</p><p>' + Remark + '</p>' + '</td>' + '</tr>' + '</table>';
+		}
+	});
+});
+
+/*----------------------------easyUI初始化的数据-----------------------------*/
+//会员等级初始化
+
+/* function formatterlevel(val, row) {
+	if (row.member_level == 0) {
+		return "<span class='green' style='color:#138c13;'>普通会员</span>";
+	} else if (row.member_level == 1) {
+		return "<span class='green' style='color:#138c13;'>白银会员</span>";
+	} else if (row.member_level == 2) {
+		return "<span class='green' style='color:#138c13;'>黄金会员</span>";
+	} else if (row.member_level == 3) {
+		return "<span class='green' style='color:#138c13;'>白金会员</span>";
+	} else if (row.member_level == 4) {
+		return "<span class='green' style='color:#138c13;'>钻石会员</span>";
+	} else if (row.member_level == 5) {
+		return "<span class='green' style='color:#138c13;'>至尊VIP</span>";
+	} else {
+		return "<span class='green' style='color:#138c13;'>扫码潜在会员</span>";
+	}
+} */
+
+function loginOrLoginOut(val, row) {
+	if (row.operate_type == 0) {
+		return "<span class='green' style='color:#138c13;'>登录</span>";
+	} else {
+		return "<span class='green' style='color:#138c13;'>注销</span>";
+	}
+}
+
+/*-----------------------easyUI数据表操作-----------------------*/
+//添加客户操作
+function addCustomer() {
+	window.location.href = "{:U('addCustomer')}";
+}
+
+//编辑客户操作
+function editCustomer() {
+	var row = dg.datagrid('getSelected'); //获取选中的行（已经绑定过主键customer_id列）
+	if (row) {
+		var cid = row.customer_id;
+		window.location.href = "{:U('editCustomer')}?cid="+cid;
+	} else {
+		$.messager.alert('温馨提示', '请选中一个客户进行编辑!', 'warning');
+	}
+}
+
+//删除客户信息操作
+function delCustomer(delURL) {
+	var row = dg.datagrid('getSelected'); //获取要删除的选中行（已经绑定customer_id列作为主键）
+	if (row) {
+		$.messager.confirm('温馨提示', '确定要删除该客户吗?信息将不可被恢复!', function(r) {
+			if (r) {
+				$.post(
+				//Step1：post第一个参数：推送消息的地址。
+				delURL,
+
+				//Step2：post第二个参数：post的字段：数据。
+				{
+					customer_id: row.customer_id
+				},
+
+				//Step3：post之后接收服务器返回数据的回调函数function
+
+				function(result) {
+					if (result.success) {
+						dg.datagrid('reload');
+						dg.datagrid('clearSelections');
+					} else {
+						$.messager.show({
+							title: 'Error',
+							msg: result.errorMsg
+						});
+					}
+				},
+
+				//Step4：约定本次post的数据格式是json（json也就是一维数组格式）
+				'json'); //本次post结束括号
+			} //if(r)如果选中行数据不为空结束if
+		}); //jquery弹窗提示用户确认是否删除的结束括号。
+	} else {
+		$.messager.alert('温馨提示', '请选中要删除的客户!', 'warning');
+	}
+}
+
+//打开条件查询对话框
+function conditionFind() {
+	searchwindow.dialog('open').dialog('setTitle', '查找客户');
+	qfm.form('clear');
+	$('#searchSex').combobox('setValue', '不区分性别');
+}
+
+//查看所有客户信息操作
+function findAll(findAllURL) {
+	dg.datagrid({
+		url: findAllURL
+	});
+}
+
+//条件查询客户操作
+function SearchOK(conditionQueryURL) {
+	searchwindow.dialog('close');
+	//普通查询参数
+	var customer_id = $("#searchCustomer_id").val().trim();
+	var customer_name = $("#searchCustomer_name").val().trim();
+	var sex = $("#searchSex").combobox('getValue');
+	var sexnum = 0;
+	if(sex=='男') sexnum = 1;
+	else if(sex=='女') sexnum = 2;
+	var customer_address = $("#searchCustomer_address").val().trim();
+	var email = $("#searchEmail").val().trim();
+	var nick_name = $("#searchNick_name").val().trim();
+	var contact_number = $("#searchContact_number").val().trim();
+	var member_level = $("#searchMember_level").val().trim();                      //数据库中存整型数据，读出时需格式转换
+	//区间查询参数
+	var birthdayStart = $("#searchBirthdayStart").val().trim();
+	var birthdayEnd = $("#searchBirthdayEnd").val().trim();
+	var register_timeStart = $("#searchRegister_timeStart").val().trim();
+	var register_timeEnd = $("#searchRegister_timeEnd").val().trim();
+	//传递查询参数并获得数据
+	dg.datagrid({
+		url: conditionQueryURL,
+		queryParams: {
+			customer_id: customer_id,
+			customer_name: customer_name,
+			sex: sexnum,
+			customer_address: customer_address,
+			email: email,
+			nick_name: nick_name,
+			contact_number: contact_number,
+			member_level: member_level,
+			birthdayStart: birthdayStart,
+			birthdayEnd: birthdayEnd,
+			register_timeStart: register_timeStart,
+			register_timeEnd: register_timeEnd
+		}
+	});
+}
+
+//小万的导出数据js
+function exportData() {
+	// 返回grid的所有可见行给后端供导出Excel用
+	var rows = $('#dg').datagrid("getRows");
+	if (rows.length == 0) {
+		msgShow("没有数据可供导出");
+		return;
+	}
+	//返回grid的所有列的选项title、列宽等
+	// var columns = $('#userlist').datagrid("options").columns;
+
+	//定制DataGrid的columns信息,只返回{field:,title:}
+	var columns = new Array();
+	var fields = $('#dg').datagrid('getColumnFields');
+	for (var i = 0; i < fields.length; i++) {
+		var opts = $('#dg').datagrid('getColumnOption', fields[i]);
+		var column = new Object();
+		column.field = opts.field;
+		column.title = opts.title;
+		columns.push(column);
+	}
+	var excelWorkSheet = new Object();
+	//excelWorkSheet.rows = rows;
+	excelWorkSheet.columns = columns;
+	excelWorkSheet.sheetName = "设置导出的Excel工作表名";
+	var jsondata = JSON.stringify(excelWorkSheet);
+	//var decodedata = URLDecoder.decode(jsondata);
+	//alert('decodedata');
+	window.location.href = "{:U('Admin/Excel/index','','')}?data=" + jsondata;
+	/* var postURL = "{:U('Admin/Excel/index','','')}";
+	$.post(postURL,{ json:jsondata},function(data){
+		window.location.href="{:U('Admin/Excel/index','','')}";
+	},'json'); */
+}
+</script>
+</body>
+</html>

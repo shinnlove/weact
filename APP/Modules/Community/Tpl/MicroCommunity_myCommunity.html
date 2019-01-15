@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="format-detection" content="telephone=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="description" content="" />
+<meta name="keywords" content="" />
+<link rel="shortcut icon" href="" />
+<title>微社区</title>
+<script type="text/javascript">
+    window.g_module = [];					// 本页面需要使用的js模块清单数组
+    var STATIC_DOMAIN = '__PUBLIC__',
+        ARS_TIME = '',
+        IMG_LOADING = 'data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==';
+    
+    var g_tsBase = new Date(),g_ts = {};
+    var PathUtil = {
+        getCPath: function() {
+        	return STATIC_DOMAIN + '/js/';
+        }
+    };
+    
+    g_ts.css_start=new Date();
+    var pageName = '';
+</script>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/postquan.css" />
+<!--debug-->
+<!-- 页面上js需要用到的全局变量 begin -->
+<script type="text/javascript">
+    var sId = {$site_id},					// 微社区编号
+    	e_id = '{$sinfo.e_id}',				// 企业编号（在微动企业编号就是微社区编号）
+        tId = 0,							// 帖子编号
+        openid = '{$openid}',				// 用户微信号
+        //uId = '{$openid}',					// 诗人账号（每个用户都不一样）
+        uId = '105339320',					// 诗人账号（每个用户都不一样）
+        //uId = '87919782',					// 管理员账号
+        isNullNick = '0' | false,
+        isManager = 0,						// 不是管理员
+        //isManager = 1,					// 是管理员
+        authUrl = '',
+        siteLogo = '{$sinfo.site_logo}',	// 站点Logo
+        CSRFToken = "{$sinfo.csrf_token}",
+        debug = '' | false,
+        DOMAIN = 'http://192.168.1.101/',					//注意这个域名在jq.DIC.reload里有用到（本地测试，手机必须给出局域网内serverip，本机必须localhost）
+        IMAGEUPLOADURL = '{:U("Community/UploadResource/uploadReplyImage", "", "")}?e_id='+e_id+'&sId='+sId,					// 定义图片上传路径
+        _speedMark = new Date(),
+        isWX = '' | false,
+        isMQ = '' | false,
+        isAppBar = '' | false,
+        isQQBrowser = '' | false,
+        isWeixinLink = '' | false,
+        newMsgCount = '2',					// 新消息数目
+        isFriendSite = '0',
+        enabledSmiley = '1';				// 是否开启手机QQ动态表情
+    
+    window.addEventListener("DOMContentLoaded", function() {g_ts.domready = new Date();});
+    window.addEventListener("load", function() {g_ts.domload = new Date();});
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideToolbar');
+        WeixinJSBridge.call('showOptionMenu');
+    }); 
+</script>
+<!-- 页面上js需要用到的全局变量 end -->
+</head>
+
+<!-- 如果body的class是pt代表topbar，pb代表bottombar -->
+<body class="pb">
+<!-- 社区第一页的帖子json数据默认直接在页面上，可以由后台推送 begin -->
+<script>
+	//特别注意，第一次页面上的json数据是刷新或者上推请求返回的数据里的data字段封装的东西
+	var jsonData = '{$firstpage}';		//第一页的数据
+    //var jsonData = '{\"threadList\":[{\"authorUid\":87919782,\"author\":\"\\u6728\\u5934\",\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/icicIvSc9Yf6XH4BUDIszjQyjgkGkmZJx0ia4ZpyH0k0q9XtKMr9vb1Kicmnv0wWLibQ5RUbiabk0SpQIWKcBxObcFQM7Stj01wpbb\\/64?max-age=1296000\",\"authorGender\":0,\"LBSInfo\":\"\\u5e7f\\u5dde\\u5e02\",\"isAdmin\":true,\"tId\":173,\"fId\":0,\"sId\":187471671,\"parentId\":0,\"rCount\":9,\"threadType\":0,\"title\":\"\",\"summary\":\"\\u53d1\\u5e7f\\u544a\\u8005\\uff0c\\u8bf7\\u7ed5\\u884c\\u3002\\u4e00\\u65e6\\u53d1\\u73b0\\uff0c\\u6c38\\u4e45\\u7981\\u8a00\\uff0c\\u62c9\\u9ed1\\uff01\",\"hCreatedTime\":\"2014-09-23 21:34\",\"hLastPostTime\":\"2014-09-30 10:28\",\"isStick\":1,\"replyList\":[{\"tId\":173,\"pId\":194,\"isLZ\":false,\"authorUid\":132468946,\"author\":\"\\u8303\\u7279\\u897f\",\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/zPHK62E0q5gEVtMyFCaEz7lX9jDKqhgax1juHoKxOZhrpchU16AXIJDphceZT50wzIF79umuic7lxY71L0Atpic8Y8ibIOAuMky\\/64?max-age=1296000\",\"content\":\"\\u4f60\\u597d\"},{\"tId\":173,\"pId\":204,\"isLZ\":false,\"authorUid\":139257533,\"author\":\"macro\",\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/vd8yNL3TS9CZypv1aoblcWNMK1Y6ZwJ7ZcyAdv48E8meib2xPcVcibv49YIeW1qX2FTyqIfSiac1tDBkSqyoXbjwYzPyCtiajmhU\\/64?max-age=1296000\",\"content\":\"\\u6211\\u770b\\u4e86\\u4e00\\u4e0b\\u4e5f\\u592a\\u591a\\u4eba\\u53d1\\u5c0f\\u5e7f\\u544a\\u4e86\\u5427\\uff01\\u8fd9\\u662f\\u4e2a\\u5e7f\\u544a\\u9006\\u88ad\\u7684\\u65f6\\u4ee3\\u3002\"},{\"tId\":173,\"pId\":1215,\"isLZ\":false,\"authorUid\":94460970,\"author\":\"\\u2665\\u8a69\\u4eba\\u706c\\u00d5\",\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/Q3auHgzwzM4lU0k1MctGicHhpugl7eHp4B3j0lyljVictPN4zYcialHQlpLAarIV5XLLAjjRQXQ0iamC3PziaVLTrNw\\/64?max-age=1296000\",\"content\":\"<img class=\\\"expimg\\\" src=\\\"http:\\/\\/dzqun.gtimg.cn\\/quan\\/images\\/smiley\\/default\\/e102.gif\\\" \\/>\"}],\"showMore\":false,\"liveId\":0,\"hideMQ\":0,\"joinNumber\":0,\"joinUser\":[],\"isEnd\":0,\"likeNum\":5,\"shareLink\":\"http:\\/\\/m.wsq.qq.com\\/187471671\\/t\\/173?action=share\",\"share\":{\"qq\":\"\",\"qzone\":\"http:\\/\\/m.wsq.qq.com\\/shareDirect?site=TOPMEN%E7%94%B7%E8%A3%85%E7%BD%91&title=%E5%BF%AB%E6%9D%A5%E7%9C%8B%E7%9C%8B%E8%BF%99%E4%B8%AA%E8%AF%9D%E9%A2%98&summary=%E5%8F%91%E5%B9%BF%E5%91%8A%E8%80%85%EF%BC%8C%E8%AF%B7%E7%BB%95%E8%A1%8C%E3%80%82%E4%B8%80%E6%97%A6%E5%8F%91%E7%8E%B0%EF%BC%8C%E6%B0%B8%E4%B9%85%E7%A6%81%E8%A8%80%EF%BC%8C%E6%8B%89%E9%BB%91%EF%BC%81&targetUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671%2Ft%2F173%3F_wv%3D1%26source%3Dconnect_qzone&pageUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671&imageUrl=http%3A%2F%2Fshp.qlogo.cn%2Fgqclogo%2F0%2F187471671%2F200%3Fmax-age%3D2592000%26t%3D1394112055&type=qzone\"},\"videos\":[],\"weishiInfo\":[],\"showPicType\":0,\"closeJoin\":0,\"closeUpdate\":0,\"peId\":0,\"worldCup\":0,\"appId\":0,\"appName\":\"\",\"authorHonor\":0,\"authorExps\":{\"num\":4,\"rank\":1}},{\"authorUid\":144776933,\"author\":\"\\u715c\\u9555\",\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/vd8yNL3TS9Ab8vXHibQQPtQtjOMRBk73bLCCy4ibjO8NInoAo2VBIiaeRBd4vG6Iw1rfyG4Ytcv1hoHWia5ucJcA9EeWluPicrEzY\\/64?max-age=1296000\",\"authorGender\":0,\"LBSInfo\":\"\\u83b1\\u829c\\u5e02 \\u80dc\\u5229\\u5357\\u8def\",\"tId\":1287,\"fId\":0,\"sId\":187471671,\"parentId\":0,\"rCount\":1,\"threadType\":0,\"title\":\"\",\"summary\":\"\\u8fd9\\u6b3e\\u978b\\u5b50\\u6709\\u6ca1\\u6709\",\"hCreatedTime\":\"<em>10\\u5c0f\\u65f6\\u524d<\\/em>\",\"hLastPostTime\":\"<em>2\\u5c0f\\u65f6\\u524d<\\/em>\",\"isStick\":0,\"replyList\":[{\"tId\":1287,\"pId\":1293,\"isLZ\":false,\"authorUid\":200717773,\"author\":\"\\u58a8\\u5c14\\u672c\",\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/Q3auHgzwzM6sG0iawLFodIjDgNDQzPEMxekwibYibydTGuianmyJUGtzBPBOck71sd0ecXthKIpElk57PChnVaWjKQ\\/64?max-age=1296000\",\"content\":\"\\u6709\\u554a\\uff0c\\u8fd9\\u978b\\u4e0d\\u9519\"}],\"showMore\":false,\"liveId\":0,\"hideMQ\":0,\"joinNumber\":0,\"joinUser\":[],\"isEnd\":0,\"likeNum\":0,\"shareLink\":\"http:\\/\\/m.wsq.qq.com\\/187471671\\/t\\/1287?action=share\",\"share\":{\"qq\":\"\",\"qzone\":\"http:\\/\\/m.wsq.qq.com\\/shareDirect?site=TOPMEN%E7%94%B7%E8%A3%85%E7%BD%91&title=%E5%BF%AB%E6%9D%A5%E7%9C%8B%E7%9C%8B%E8%BF%99%E4%B8%AA%E8%AF%9D%E9%A2%98&summary=%E8%BF%99%E6%AC%BE%E9%9E%8B%E5%AD%90%E6%9C%89%E6%B2%A1%E6%9C%89&targetUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671%2Ft%2F1287%3F_wv%3D1%26source%3Dconnect_qzone&pageUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671&imageUrl=http%3A%2F%2Fugc.qpic.cn%2Fquan_pics%2F0%2F187471671_1269%2F1280%3Fmax-age%3D2592000%26t%3D0&type=qzone\"},\"picNum\":1,\"picUrls\":[{\"small\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1269\\/150?max-age=2592000&t=0\",\"big\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1269\\/1280?max-age=2592000&t=0\",\"middle\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1269\\/300?max-age=2592000&t=0\",\"large\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1269\\/600?max-age=2592000&t=0\"}],\"videos\":[],\"weishiInfo\":[],\"showPicType\":0,\"closeJoin\":0,\"closeUpdate\":0,\"peId\":0,\"worldCup\":0,\"appId\":0,\"appName\":\"\",\"authorHonor\":0,\"authorExps\":{\"num\":3,\"rank\":1}},{\"authorUid\":105339320,\"author\":\"Loading~\",\"avatar\":\"http:\\/\\/qlogo1.store.qq.com\\/qzone\\/306086640\\/306086640\\/100?max-age=1296000\",\"authorGender\":0,\"LBSInfo\":\"\\u4e0a\\u6d77\\u5e02\",\"tId\":1288,\"fId\":0,\"sId\":187471671,\"parentId\":0,\"rCount\":0,\"threadType\":0,\"title\":\"\",\"summary\":\"<img class=\\\"expimg\\\" src=\\\"http:\\/\\/dzqun.gtimg.cn\\/quan\\/images\\/smiley\\/default\\/e109.gif\\\" \\/>sdafsdafdsafsdafsdafsdafsdafasdf\",\"hCreatedTime\":\"<em>2\\u5c0f\\u65f6\\u524d<\\/em>\",\"hLastPostTime\":\"<em>2\\u5c0f\\u65f6\\u524d<\\/em>\",\"isStick\":0,\"showMore\":false,\"liveId\":0,\"hideMQ\":0,\"joinNumber\":0,\"joinUser\":[],\"isEnd\":0,\"likeNum\":0,\"shareLink\":\"http:\\/\\/m.wsq.qq.com\\/187471671\\/t\\/1288?action=share\",\"share\":{\"qq\":\"\",\"qzone\":\"http:\\/\\/m.wsq.qq.com\\/shareDirect?site=TOPMEN%E7%94%B7%E8%A3%85%E7%BD%91&title=%E5%BF%AB%E6%9D%A5%E7%9C%8B%E7%9C%8B%E8%BF%99%E4%B8%AA%E8%AF%9D%E9%A2%98&summary=%5B%E5%A4%A7%E5%93%AD%5Dsdafsdafdsafsdafsdafsdafsdafasdf&targetUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671%2Ft%2F1288%3F_wv%3D1%26source%3Dconnect_qzone&pageUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671&imageUrl=http%3A%2F%2Fugc.qpic.cn%2Fquan_pics%2F0%2F187471671_1270%2F1280%3Fmax-age%3D2592000%26t%3D0&type=qzone\"},\"picNum\":1,\"picUrls\":[{\"small\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1270\\/150?max-age=2592000&t=0\",\"big\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1270\\/1280?max-age=2592000&t=0\",\"middle\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1270\\/300?max-age=2592000&t=0\",\"large\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1270\\/600?max-age=2592000&t=0\"}],\"videos\":[],\"weishiInfo\":[],\"showPicType\":0,\"closeJoin\":0,\"closeUpdate\":0,\"peId\":0,\"worldCup\":0,\"appId\":0,\"appName\":\"\",\"authorHonor\":0,\"authorExps\":{\"num\":4,\"rank\":1}},{\"authorUid\":208298694,\"author\":\"TALLIS&H\",\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/joZUTdiam9lfN8u7ibV4CwdJsr9Mf2UcMVr1fk3e6OSccKcV3Ip5NMeEibTN72uaibYV4PP30icZgMES0ctsuYY018Lv2ZlGe91mX\\/64?max-age=1296000\",\"authorGender\":0,\"LBSInfo\":\"\",\"tId\":1286,\"fId\":0,\"sId\":187471671,\"parentId\":0,\"rCount\":0,\"threadType\":0,\"title\":\"\",\"summary\":\"\\u65f6\\u5c1a\\u5b9a\\u5236\\u7537\\u88c5\",\"hCreatedTime\":\"1\\u5929\\u524d\",\"hLastPostTime\":\"1\\u5929\\u524d\",\"isStick\":0,\"showMore\":false,\"liveId\":0,\"hideMQ\":0,\"joinNumber\":0,\"joinUser\":[],\"isEnd\":0,\"likeNum\":0,\"shareLink\":\"http:\\/\\/m.wsq.qq.com\\/187471671\\/t\\/1286?action=share\",\"share\":{\"qq\":\"\",\"qzone\":\"http:\\/\\/m.wsq.qq.com\\/shareDirect?site=TOPMEN%E7%94%B7%E8%A3%85%E7%BD%91&title=%E5%BF%AB%E6%9D%A5%E7%9C%8B%E7%9C%8B%E8%BF%99%E4%B8%AA%E8%AF%9D%E9%A2%98&summary=%E6%97%B6%E5%B0%9A%E5%AE%9A%E5%88%B6%E7%94%B7%E8%A3%85&targetUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671%2Ft%2F1286%3F_wv%3D1%26source%3Dconnect_qzone&pageUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671&imageUrl=http%3A%2F%2Fugc.qpic.cn%2Fquan_pics%2F0%2F187471671_1268%2F1280%3Fmax-age%3D2592000%26t%3D0&type=qzone\"},\"picNum\":1,\"picUrls\":[{\"small\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1268\\/150?max-age=2592000&t=0\",\"big\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1268\\/1280?max-age=2592000&t=0\",\"middle\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1268\\/300?max-age=2592000&t=0\",\"large\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1268\\/600?max-age=2592000&t=0\"}],\"videos\":[],\"weishiInfo\":[],\"showPicType\":0,\"closeJoin\":0,\"closeUpdate\":0,\"peId\":0,\"worldCup\":0,\"appId\":0,\"appName\":\"\",\"authorHonor\":0,\"authorExps\":{\"num\":5,\"rank\":2}},{\"authorUid\":208298694,\"author\":\"TALLIS&H\",\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/joZUTdiam9lfN8u7ibV4CwdJsr9Mf2UcMVr1fk3e6OSccKcV3Ip5NMeEibTN72uaibYV4PP30icZgMES0ctsuYY018Lv2ZlGe91mX\\/64?max-age=1296000\",\"authorGender\":0,\"LBSInfo\":\"\\u4e0a\\u6d77\\u5e02 \\u5ddd\\u6c99\\u00b7\\u519c\\u573a\\u652f\\u8def\",\"tId\":1285,\"fId\":0,\"sId\":187471671,\"parentId\":0,\"rCount\":0,\"threadType\":0,\"title\":\"\",\"summary\":\"\\u81ea\\u5df1\\u641e\\u7537\\u5b50\\u5b9a\\u5236 \\u4e00\\u76f4\\u5173\\u6ce8\\u8fd9\\u4e2a\\u516c\\u4f17\\u53f7 \\u5f88\\u591a\\u65f6\\u5c1a\\u8d44\\u8baf \\u5f88\\u559c\\u6b22 \\u4f1a\\u4e00\\u76f4\\u652f\\u6301\\u7684<img class=\\\"expimg\\\" src=\\\"http:\\/\\/dzqun.gtimg.cn\\/quan\\/images\\/smiley\\/default\\/e113.gif\\\" \\/>\",\"hCreatedTime\":\"1\\u5929\\u524d\",\"hLastPostTime\":\"1\\u5929\\u524d\",\"isStick\":0,\"showMore\":false,\"liveId\":0,\"hideMQ\":0,\"joinNumber\":0,\"joinUser\":[],\"isEnd\":0,\"likeNum\":0,\"shareLink\":\"http:\\/\\/m.wsq.qq.com\\/187471671\\/t\\/1285?action=share\",\"share\":{\"qq\":\"\",\"qzone\":\"http:\\/\\/m.wsq.qq.com\\/shareDirect?site=TOPMEN%E7%94%B7%E8%A3%85%E7%BD%91&title=%E5%BF%AB%E6%9D%A5%E7%9C%8B%E7%9C%8B%E8%BF%99%E4%B8%AA%E8%AF%9D%E9%A2%98&summary=%E8%87%AA%E5%B7%B1%E6%90%9E%E7%94%B7%E5%AD%90%E5%AE%9A%E5%88%B6+%E4%B8%80%E7%9B%B4%E5%85%B3%E6%B3%A8%E8%BF%99%E4%B8%AA%E5%85%AC%E4%BC%97%E5%8F%B7+%E5%BE%88%E5%A4%9A%E6%97%B6%E5%B0%9A%E8%B5%84%E8%AE%AF+%E5%BE%88%E5%96%9C%E6%AC%A2+%E4%BC%9A%E4%B8%80%E7%9B%B4%E6%94%AF%E6%8C%81%E7%9A%84%5B%E5%91%B2%E7%89%99%5D&targetUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671%2Ft%2F1285%3F_wv%3D1%26source%3Dconnect_qzone&pageUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671&imageUrl=http%3A%2F%2Fshp.qlogo.cn%2Fgqclogo%2F0%2F187471671%2F200%3Fmax-age%3D2592000%26t%3D1394112055&type=qzone\"},\"videos\":[],\"weishiInfo\":[],\"showPicType\":0,\"closeJoin\":0,\"closeUpdate\":0,\"peId\":0,\"worldCup\":0,\"appId\":0,\"appName\":\"\",\"authorHonor\":0,\"authorExps\":{\"num\":5,\"rank\":2}},{\"authorUid\":208167960,\"author\":\"\\u6e14\\u513f\",\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/rPibt62gfVOia2C8UQBIcRiceq4EVpoMbJEGKTIr1YbOJfKTaEyh2gXkfRlnvfL3w7btRmd3Gmurd2nnJPHgjswnPTghQw8GpmD\\/64?max-age=1296000\",\"authorGender\":0,\"LBSInfo\":\"\",\"tId\":1284,\"fId\":0,\"sId\":187471671,\"parentId\":0,\"rCount\":0,\"threadType\":0,\"title\":\"\",\"summary\":\"\\u6ca1\\u6709\\u7c89\\u4e1d\\uff0c\\u79c1\\u804a\\u6211\",\"hCreatedTime\":\"1\\u5929\\u524d\",\"hLastPostTime\":\"1\\u5929\\u524d\",\"isStick\":0,\"showMore\":false,\"liveId\":0,\"hideMQ\":0,\"joinNumber\":0,\"joinUser\":[],\"isEnd\":0,\"likeNum\":0,\"shareLink\":\"http:\\/\\/m.wsq.qq.com\\/187471671\\/t\\/1284?action=share\",\"share\":{\"qq\":\"\",\"qzone\":\"http:\\/\\/m.wsq.qq.com\\/shareDirect?site=TOPMEN%E7%94%B7%E8%A3%85%E7%BD%91&title=%E5%BF%AB%E6%9D%A5%E7%9C%8B%E7%9C%8B%E8%BF%99%E4%B8%AA%E8%AF%9D%E9%A2%98&summary=%E6%B2%A1%E6%9C%89%E7%B2%89%E4%B8%9D%EF%BC%8C%E7%A7%81%E8%81%8A%E6%88%91&targetUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671%2Ft%2F1284%3F_wv%3D1%26source%3Dconnect_qzone&pageUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671&imageUrl=http%3A%2F%2Fshp.qlogo.cn%2Fgqclogo%2F0%2F187471671%2F200%3Fmax-age%3D2592000%26t%3D1394112055&type=qzone\"},\"videos\":[],\"weishiInfo\":[],\"showPicType\":0,\"closeJoin\":0,\"closeUpdate\":0,\"peId\":0,\"worldCup\":0,\"appId\":0,\"appName\":\"\",\"authorHonor\":0,\"authorExps\":{\"num\":3,\"rank\":1}},{\"authorUid\":3387235,\"author\":\"\\u5c0f\\u9e7f\\u7eaf\\u5b50\",\"avatar\":\"http:\\/\\/shp.qlogo.cn\\/qgc_avatar\\/0\\/3387235\\/50?max-age=2592000&t=0?max-age=1296000\",\"authorGender\":0,\"LBSInfo\":\"\\u5609\\u5174\\u5e02\",\"tId\":1281,\"fId\":0,\"sId\":187471671,\"parentId\":0,\"rCount\":3,\"threadType\":0,\"title\":\"\",\"summary\":\"\\u8fd9\\u4e24\\u6b3e\\u6709\\u6728\\u6709\\u4eba\\u770b\\u5230\\u8fc7\\u554a\\uff1f\\u5b9e\\u4f53\\u5e97\\u8fd9\\u6b3e\\u7fbd\\u7ed2\\u597d\\u8d35\\u5662\\u3002\\u4e0d\\u8fc7\\u4ef7\\u683c\\u8ddf\\u963f\\u739b\\u5c3c\\u4e13\\u67dc\\u6ca1\\u5f97\\u6bd4<img class=\\\"expimg\\\" src=\\\"http:\\/\\/dzqun.gtimg.cn\\/quan\\/images\\/smiley\\/default\\/e127.gif\\\" \\/>\\u7f51\\u4e0a\\u627e\\u5230\\u4e86\\uff0c\\u60f3\\u518d\\u95ee\\u95ee\\u770b\\u3002\\u8fd8\\u6709\\u8fd9\\u6b3e\\u5355\\u76ae\\u7684\\uff0c\\u4e5f\\u86ee\\u597d\\u770b\\u3002\\u4f46\\u662f\\u642d\\u914d\\u4ec0\\u4e48\\u5462\\uff1f\\u5c0f\\u811a\\u88e4\\uff1f\",\"hCreatedTime\":\"3\\u5929\\u524d\",\"hLastPostTime\":\"1\\u5929\\u524d\",\"isStick\":0,\"replyList\":[{\"tId\":1281,\"pId\":1284,\"isLZ\":false,\"authorUid\":5169680,\"author\":\"\\u6d77\\u6f6e\\u76ae\\u9769\",\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/vd8yNL3TS9Ab8vXHibQQPtY5mT3h5Eq7ibDJDpODgvoIdlDiaWGOD1F0UQnx4df66tcEduReZlIBfAcjWvicRmyk1IPDLK8RRtKJ\\/64?max-age=1296000\",\"content\":\"\\u6211\\u5bb6\\u6709\\u554a\\u3002\\u8fd9\\u4e24\\u6b3e\\u3002<img class=\\\"expimg\\\" src=\\\"http:\\/\\/dzqun.gtimg.cn\\/quan\\/images\\/smiley\\/default\\/e121.gif\\\" \\/>\\u5382\\u5bb6\\u76f4\\u9500\\u5662\\uff0c\\u4eb2\\u53ef\\u4ee5\\u8fc7\\u6765\\u770b\\u770b\\u5440\\u3002\\u5fae\\u4fe1\\uff1a18606737171\\uff0c\\u540c\\u7535\\u8bdd\\u3002\"},{\"tId\":1281,\"pId\":1287,\"isLZ\":false,\"authorUid\":65801620,\"author\":\"\\u5fae\",\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/icicIvSc9Yf6UCeK5zYUH9WyCUFad2SJib8aksP8LSPQLbXAJibmPicjNUveic10HGTe1YpkiaDDb5Aowzxc3iafQAnfG6gpAiaBGp1Dp\\/64?max-age=1296000\",\"content\":\"\\u76ae\\u5939\\u514b\\u4e0a\\u8863\\uff0c\\u642d\\u6709\\u70b9\\u57ae\\u584c\\u7684\\u88e4\\u5b50\\uff0c\\u88e4\\u811a\\u8d34\\u8eab\\u4e9b\\u7684\\uff0c\\u518d\\u6765\\u4e00\\u53cc\\u4e2d\\u90a6\\u7684\\u978b\\u5b50\\uff0c\\u90a3\\u6837\\u8eab\\u624d\\u663e\\u7684\\u66f4\\u5b8c\\u7f8e\\u54af\\u3002<img class=\\\"expimg\\\" src=\\\"http:\\/\\/dzqun.gtimg.cn\\/quan\\/images\\/smiley\\/default\\/e100.gif\\\" \\/>\"},{\"tId\":1281,\"pId\":1288,\"isLZ\":false,\"authorUid\":65801620,\"author\":\"\\u5fae\",\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/icicIvSc9Yf6UCeK5zYUH9WyCUFad2SJib8aksP8LSPQLbXAJibmPicjNUveic10HGTe1YpkiaDDb5Aowzxc3iafQAnfG6gpAiaBGp1Dp\\/64?max-age=1296000\",\"content\":\"\\u987a\\u4fbf\\u8ddf\\u4f60\\u8bb2\\u4e0b\\u6211\\u5bb6\\u6709\\u57ae\\u88e4\\u53ca\\u978b\\u5b50\\u51fa\\u552e\\u563f\\u3002\"}],\"showMore\":false,\"liveId\":0,\"hideMQ\":0,\"joinNumber\":0,\"joinUser\":[],\"isEnd\":0,\"likeNum\":0,\"shareLink\":\"http:\\/\\/m.wsq.qq.com\\/187471671\\/t\\/1281?action=share\",\"share\":{\"qq\":\"\",\"qzone\":\"http:\\/\\/m.wsq.qq.com\\/shareDirect?site=TOPMEN%E7%94%B7%E8%A3%85%E7%BD%91&title=%E5%BF%AB%E6%9D%A5%E7%9C%8B%E7%9C%8B%E8%BF%99%E4%B8%AA%E8%AF%9D%E9%A2%98&summary=%E8%BF%99%E4%B8%A4%E6%AC%BE%E6%9C%89%E6%9C%A8%E6%9C%89%E4%BA%BA%E7%9C%8B%E5%88%B0%E8%BF%87%E5%95%8A%EF%BC%9F%E5%AE%9E%E4%BD%93%E5%BA%97%E8%BF%99%E6%AC%BE%E7%BE%BD%E7%BB%92%E5%A5%BD%E8%B4%B5%E5%99%A2%E3%80%82%E4%B8%8D%E8%BF%87%E4%BB%B7%E6%A0%BC%E8%B7%9F%E9%98%BF%E7%8E%9B%E5%B0%BC%E4%B8%93%E6%9F%9C%E6%B2%A1%E5%BE%97%E6%AF%94%5B%E6%B5%81%E6%B1%97%5D%E7%BD%91%E4%B8%8A%E6%89%BE%E5%88%B0%E4%BA%86%EF%BC%8C%E6%83%B3...&targetUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671%2Ft%2F1281%3F_wv%3D1%26source%3Dconnect_qzone&pageUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671&imageUrl=http%3A%2F%2Fugc.qpic.cn%2Fquan_pics%2F0%2F187471671_1265%2F1280%3Fmax-age%3D2592000%26t%3D0&type=qzone\"},\"picNum\":2,\"picUrls\":[{\"small\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1265\\/150?max-age=2592000&t=0\",\"big\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1265\\/1280?max-age=2592000&t=0\",\"middle\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1265\\/300?max-age=2592000&t=0\",\"large\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1265\\/600?max-age=2592000&t=0\"},{\"small\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1266\\/150?max-age=2592000&t=0\",\"big\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1266\\/1280?max-age=2592000&t=0\",\"middle\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1266\\/300?max-age=2592000&t=0\",\"large\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1266\\/600?max-age=2592000&t=0\"}],\"videos\":[],\"weishiInfo\":[],\"showPicType\":0,\"closeJoin\":0,\"closeUpdate\":0,\"peId\":0,\"worldCup\":0,\"appId\":0,\"appName\":\"\",\"authorHonor\":0,\"authorExps\":{\"num\":3,\"rank\":1}},{\"authorUid\":45641488,\"author\":\"\\u4e03\\u6708\",\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/rPibt62gfVOhqiat7fJd1GCezYOkEh6C7VUtfsF1YvVa6BY4oEm3XuFIpwAVUPFwNFthn7OGNj5JblaPWOtibAecA\\/64?max-age=1296000\",\"authorGender\":0,\"LBSInfo\":\"\",\"tId\":1282,\"fId\":0,\"sId\":187471671,\"parentId\":0,\"rCount\":0,\"threadType\":0,\"title\":\"\",\"summary\":\"\\u4eb2\\u4eec\\uff0c\\u8fd9\\u6b3e\\u978b\\u642d\\u914d\\u4ec0\\u4e48\\u989c\\u8272\\u88e4\\u5b50\\u548c\\u5916\\u5957\\u597d\\u554a\\uff1f\\u6c42\\u6307\\u5bfc\\uff0c\\u62dc\\u8c22\\u3002\",\"hCreatedTime\":\"2\\u5929\\u524d\",\"hLastPostTime\":\"2\\u5929\\u524d\",\"isStick\":0,\"showMore\":false,\"liveId\":0,\"hideMQ\":0,\"joinNumber\":0,\"joinUser\":[],\"isEnd\":0,\"likeNum\":0,\"shareLink\":\"http:\\/\\/m.wsq.qq.com\\/187471671\\/t\\/1282?action=share\",\"share\":{\"qq\":\"\",\"qzone\":\"http:\\/\\/m.wsq.qq.com\\/shareDirect?site=TOPMEN%E7%94%B7%E8%A3%85%E7%BD%91&title=%E5%BF%AB%E6%9D%A5%E7%9C%8B%E7%9C%8B%E8%BF%99%E4%B8%AA%E8%AF%9D%E9%A2%98&summary=%E4%BA%B2%E4%BB%AC%EF%BC%8C%E8%BF%99%E6%AC%BE%E9%9E%8B%E6%90%AD%E9%85%8D%E4%BB%80%E4%B9%88%E9%A2%9C%E8%89%B2%E8%A3%A4%E5%AD%90%E5%92%8C%E5%A4%96%E5%A5%97%E5%A5%BD%E5%95%8A%EF%BC%9F%E6%B1%82%E6%8C%87%E5%AF%BC%EF%BC%8C%E6%8B%9C%E8%B0%A2%E3%80%82&targetUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671%2Ft%2F1282%3F_wv%3D1%26source%3Dconnect_qzone&pageUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671&imageUrl=http%3A%2F%2Fugc.qpic.cn%2Fquan_pics%2F0%2F187471671_1267%2F1280%3Fmax-age%3D2592000%26t%3D0&type=qzone\"},\"picNum\":1,\"picUrls\":[{\"small\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1267\\/150?max-age=2592000&t=0\",\"big\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1267\\/1280?max-age=2592000&t=0\",\"middle\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1267\\/300?max-age=2592000&t=0\",\"large\":\"http:\\/\\/ugc.qpic.cn\\/quan_pics\\/0\\/187471671_1267\\/600?max-age=2592000&t=0\"}],\"videos\":[],\"weishiInfo\":[],\"showPicType\":0,\"closeJoin\":0,\"closeUpdate\":0,\"peId\":0,\"worldCup\":0,\"appId\":0,\"appName\":\"\",\"authorHonor\":0,\"authorExps\":{\"num\":3,\"rank\":1}},{\"authorUid\":152090289,\"author\":\"\\u6817\\u5b50\",\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/vd8yNL3TS9Ab8vXHibQQPtVh7eNmEFW2Llb9dyexzGOTjjxlFWbia7rvajiadiaeb0eteRbHFKUZLR2slxGiaLuBRfcUo1WfNB4Kt\\/64?max-age=1296000\",\"authorGender\":0,\"LBSInfo\":\"\\u54c8\\u5c14\\u6ee8\\u5e02\",\"tId\":1274,\"fId\":0,\"sId\":187471671,\"parentId\":0,\"rCount\":3,\"threadType\":0,\"title\":\"\",\"summary\":\"\\u624b\\u673a\\u7a81\\u7136\\u4e0d\\u597d\\u4f7f\\uff0c\\u56fe\\u7247\\u5168\\u6ca1\\u4e86\\uff0c\\u4eb2\\u4eec\\u80fd\\u53d1\\u70b9\\u7537\\u88c5\\u5927\\u8863\\u56fe\\u7247\\u5417\\uff0c\\u6211\\u662f\\u641e\\u9500\\u552e\\u5730\\uff0c\\u63a5\\u7740\\u8fd9\\u4e2a\\u5e73\\u53f0\\u5728\\u8fd9\\u91cc\\u5b66\\u4e9b\\u642d\\u914d\\u3002\\u8c22\\u8c22\\uff01\\u771f\\u7684\\u5b66\\u5230\\u4e1c\\u897f\\uff01\\uff01\\uff01\",\"hCreatedTime\":\"2014-12-01 22:12\",\"hLastPostTime\":\"3\\u5929\\u524d\",\"isStick\":0,\"replyList\":[{\"tId\":1274,\"pId\":1276,\"isLZ\":false,\"authorUid\":22086506,\"author\":\"\\u2714\\ufe0f\\u6211\\u662fRoar\\u7403\\u978b\\u6742\\u8d27\\u94fa\",\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/PiajxSqBRaELtEKF1ClIzVkePfKKstkAFgT3dwnpXNKjAurUdWbkEUVGgE3IOKvVsL0zmlHSDupP36kSOOOlLkQ\\/64?max-age=1296000\",\"content\":\"\\u8c01\\u80fd\\u63a8\\u8350\\u51e0\\u6b3e\\u957f\\u6b3e\\u68c9\\u8863\"},{\"tId\":1274,\"pId\":1281,\"isLZ\":false,\"authorUid\":101404599,\"author\":\"\\u6f2a\\u84dd\\u84dd\",\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/Q3auHgzwzM6nNia1JEt41TDqKg2byA4vvBwuy0R3ibgy7n4GuptamSJmDmcxMGl5PRJC4335Jbw8K3swqjRFkiaBXrpFF7Fg3w3iaHpk0iaQra2o\\/64?max-age=1296000\",\"content\":\"\\u56de\\u590d\\u540e\\u80fd\\u6392\\u5728\\u524d\\u8fb9\\u4e48\\uff1f\"},{\"tId\":1274,\"pId\":1283,\"isLZ\":false,\"authorUid\":5169680,\"author\":\"\\u6d77\\u6f6e\\u76ae\\u9769\",\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/vd8yNL3TS9Ab8vXHibQQPtY5mT3h5Eq7ibDJDpODgvoIdlDiaWGOD1F0UQnx4df66tcEduReZlIBfAcjWvicRmyk1IPDLK8RRtKJ\\/64?max-age=1296000\",\"content\":\"\\u76ae\\u8863\\u8981\\u4e0d\\u8981\\u554a\\u4eb2\\uff1f\\u56fe\\u7247\\u7684\\u8bdd \\u8fd9\\u91cc\\u4e0d\\u80fd\\u6253\\u5e7f\\u544a\\u3002\\u4f60\\u53ef\\u4ee5\\u52a0\\u6211\\u5fae\\u4fe1\\u554a\\uff1a1123015167<img class=\\\"expimg\\\" src=\\\"http:\\/\\/dzqun.gtimg.cn\\/quan\\/images\\/smiley\\/default\\/e121.gif\\\" \\/>\"}],\"showMore\":false,\"liveId\":0,\"hideMQ\":0,\"joinNumber\":0,\"joinUser\":[],\"isEnd\":0,\"likeNum\":0,\"shareLink\":\"http:\\/\\/m.wsq.qq.com\\/187471671\\/t\\/1274?action=share\",\"share\":{\"qq\":\"\",\"qzone\":\"http:\\/\\/m.wsq.qq.com\\/shareDirect?site=TOPMEN%E7%94%B7%E8%A3%85%E7%BD%91&title=%E5%BF%AB%E6%9D%A5%E7%9C%8B%E7%9C%8B%E8%BF%99%E4%B8%AA%E8%AF%9D%E9%A2%98&summary=%E6%89%8B%E6%9C%BA%E7%AA%81%E7%84%B6%E4%B8%8D%E5%A5%BD%E4%BD%BF%EF%BC%8C%E5%9B%BE%E7%89%87%E5%85%A8%E6%B2%A1%E4%BA%86%EF%BC%8C%E4%BA%B2%E4%BB%AC%E8%83%BD%E5%8F%91%E7%82%B9%E7%94%B7%E8%A3%85%E5%A4%A7%E8%A1%A3%E5%9B%BE%E7%89%87%E5%90%97%EF%BC%8C%E6%88%91%E6%98%AF%E6%90%9E%E9%94%80%E5%94%AE%E5%9C%B0%EF%BC%8C%E6%8E%A5%E7%9D%80%E8%BF%99%E4%B8%AA%E5%B9%B3%E5%8F%B0%E5%9C%A8%E8%BF%99%E9%87%8C%E5%AD%A6%E4%BA%9B%E6%90%AD%E9%85%8D...&targetUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671%2Ft%2F1274%3F_wv%3D1%26source%3Dconnect_qzone&pageUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671&imageUrl=http%3A%2F%2Fshp.qlogo.cn%2Fgqclogo%2F0%2F187471671%2F200%3Fmax-age%3D2592000%26t%3D1394112055&type=qzone\"},\"videos\":[],\"weishiInfo\":[],\"showPicType\":0,\"closeJoin\":0,\"closeUpdate\":0,\"peId\":0,\"worldCup\":0,\"appId\":0,\"appName\":\"\",\"authorHonor\":0,\"authorExps\":{\"num\":6,\"rank\":2}},{\"authorUid\":85189227,\"author\":\"\\u2460\\u6839\\u70df@\\u5b64\\u72ec\",\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/icicIvSc9Yf6UCeK5zYUH9W38smqicTaZ02LeQHxSoDzH7t2GUlbdj464CTIOP5W6wQJZHcUicic1WXAa0tFmJ19p1IdlMoNMcaT9\\/64?max-age=1296000\",\"authorGender\":0,\"LBSInfo\":\"\",\"tId\":1278,\"fId\":0,\"sId\":187471671,\"parentId\":0,\"rCount\":1,\"threadType\":0,\"title\":\"\",\"summary\":\"<img class=\\\"expimg\\\" src=\\\"http:\\/\\/dzqun.gtimg.cn\\/quan\\/images\\/smiley\\/default\\/e113.gif\\\" \\/><img class=\\\"expimg\\\" src=\\\"http:\\/\\/dzqun.gtimg.cn\\/quan\\/images\\/smiley\\/default\\/e113.gif\\\" \\/>\",\"hCreatedTime\":\"2014-12-05 15:31\",\"hLastPostTime\":\"2014-12-06 17:41\",\"isStick\":0,\"replyList\":[{\"tId\":1278,\"pId\":1282,\"isLZ\":false,\"authorUid\":101404599,\"author\":\"\\u6f2a\\u84dd\\u84dd\",\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/Q3auHgzwzM6nNia1JEt41TDqKg2byA4vvBwuy0R3ibgy7n4GuptamSJmDmcxMGl5PRJC4335Jbw8K3swqjRFkiaBXrpFF7Fg3w3iaHpk0iaQra2o\\/64?max-age=1296000\",\"content\":\"\\u5475\\u5475\\u5475\\u5475\"}],\"showMore\":false,\"liveId\":0,\"hideMQ\":0,\"joinNumber\":0,\"joinUser\":[],\"isEnd\":0,\"likeNum\":0,\"shareLink\":\"http:\\/\\/m.wsq.qq.com\\/187471671\\/t\\/1278?action=share\",\"share\":{\"qq\":\"\",\"qzone\":\"http:\\/\\/m.wsq.qq.com\\/shareDirect?site=TOPMEN%E7%94%B7%E8%A3%85%E7%BD%91&title=%E5%BF%AB%E6%9D%A5%E7%9C%8B%E7%9C%8B%E8%BF%99%E4%B8%AA%E8%AF%9D%E9%A2%98&summary=%5B%E5%91%B2%E7%89%99%5D%5B%E5%91%B2%E7%89%99%5D&targetUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671%2Ft%2F1278%3F_wv%3D1%26source%3Dconnect_qzone&pageUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671&imageUrl=http%3A%2F%2Fshp.qlogo.cn%2Fgqclogo%2F0%2F187471671%2F200%3Fmax-age%3D2592000%26t%3D1394112055&type=qzone\"},\"videos\":[],\"weishiInfo\":[],\"showPicType\":0,\"closeJoin\":0,\"closeUpdate\":0,\"peId\":0,\"worldCup\":0,\"appId\":0,\"appName\":\"\",\"authorHonor\":0,\"authorExps\":{\"num\":3,\"rank\":1}},{\"authorUid\":101404599,\"author\":\"\\u6f2a\\u84dd\\u84dd\",\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/Q3auHgzwzM6nNia1JEt41TDqKg2byA4vvBwuy0R3ibgy7n4GuptamSJmDmcxMGl5PRJC4335Jbw8K3swqjRFkiaBXrpFF7Fg3w3iaHpk0iaQra2o\\/64?max-age=1296000\",\"authorGender\":0,\"LBSInfo\":\"\\u4e34\\u6ca7\\u5e02\",\"tId\":1280,\"fId\":0,\"sId\":187471671,\"parentId\":0,\"rCount\":0,\"threadType\":0,\"title\":\"\",\"summary\":\"\\u53ef\\u4ee5\\u53d1\\u591a\\u5c11\\u4e2a\\u5b57\\u554a\\uff1f\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c\\u4f60\\u731c...\",\"hCreatedTime\":\"2014-12-06 17:38\",\"hLastPostTime\":\"2014-12-06 17:38\",\"isStick\":0,\"showMore\":true,\"liveId\":0,\"hideMQ\":0,\"joinNumber\":0,\"joinUser\":[],\"isEnd\":0,\"likeNum\":0,\"shareLink\":\"http:\\/\\/m.wsq.qq.com\\/187471671\\/t\\/1280?action=share\",\"share\":{\"qq\":\"\",\"qzone\":\"http:\\/\\/m.wsq.qq.com\\/shareDirect?site=TOPMEN%E7%94%B7%E8%A3%85%E7%BD%91&title=%E5%BF%AB%E6%9D%A5%E7%9C%8B%E7%9C%8B%E8%BF%99%E4%B8%AA%E8%AF%9D%E9%A2%98&summary=%E5%8F%AF%E4%BB%A5%E5%8F%91%E5%A4%9A%E5%B0%91%E4%B8%AA%E5%AD%97%E5%95%8A%EF%BC%9F%E4%BD%A0%E7%8C%9C%E4%BD%A0%E7%8C%9C%E4%BD%A0%E7%8C%9C%E4%BD%A0%E7%8C%9C%E4%BD%A0%E7%8C%9C%E4%BD%A0%E7%8C%9C%E4%BD%A0%E7%8C%9C%E4%BD%A0%E7%8C%9C%E4%BD%A0%E7%8C%9C%E4%BD%A0%E7%8C%9C%E4%BD%A0%E7%8C%9C%E4%BD%A0%E7%8C%9C%E4%BD%A0%E7%8C%9C%E4%BD%A0%E7%8C%9C%E4%BD%A0%E7%8C%9C%E4%BD%A0%E7%8C%9C%E4%BD%A0%E7%8C%9C%E4%BD%A0%E7%8C%9C%E4%BD%A0%E7%8C%9C...&targetUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671%2Ft%2F1280%3F_wv%3D1%26source%3Dconnect_qzone&pageUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671&imageUrl=http%3A%2F%2Fshp.qlogo.cn%2Fgqclogo%2F0%2F187471671%2F200%3Fmax-age%3D2592000%26t%3D1394112055&type=qzone\"},\"videos\":[],\"weishiInfo\":[],\"showPicType\":0,\"closeJoin\":0,\"closeUpdate\":0,\"peId\":0,\"worldCup\":0,\"appId\":0,\"appName\":\"\",\"authorHonor\":0,\"authorExps\":{\"num\":7,\"rank\":2}}],\"nextStart\":10,\"newMsgCount\":2,\"threadCount\":213,\"liveThreadCount\":200,\"sitePV\":\"79297\",\"groupStar\":2,\"verifyDeveloper\":1,\"verifyStar\":2,\"fId\":0,\"isLive\":false,\"enabledSmiley\":\"1\",\"siteRankListTopThree\":{\"94460970\":{\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/Q3auHgzwzM4lU0k1MctGicHhpugl7eHp4B3j0lyljVictPN4zYcialHQlpLAarIV5XLLAjjRQXQ0iamC3PziaVLTrNw\\/64?max-age=1296000",\"rank\":1,\"praise\":\"20\"},\"119011394\":{\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/rPibt62gfVOgG4frT56HM9FvqFKVFzKiaIRWibMOL0T9kIjbVbAE975s0llVd3OOHk5qQjSFxy0byGVBF9lxW1a4w\\/64?max-age=1296000\",\"rank\":2,\"praise\":\"2\"},\"88677927\":{\"avatar\":\"http:\\/\\/dzqun.gtimg.cn\\/quan\\/images\\/personImg.jpg\",\"rank\":3,\"praise\":\"1\"},\"122946508\":{\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/ajNVdqHZLLBNZFZYpwjgtlTaqPRictpkYAPQhib51vvm3RXC5DbYib1NE8oApVcX104QVtiax21O7G54nXTMzkPiaeg\\/64?max-age=1296000\",\"rank\":4,\"praise\":\"1\"}}}';
+</script>
+<!-- 社区第一页的帖子json数据默认直接在页面上，可以由后台推送 end -->
+<div class="warp">
+    <!-- 广告层 begin -->
+    <!-- <div class="topicM worldC" style="display:none;" id="pEvent">
+        <img class="topicMImg" src="" alt="图片" id="pEventImg">
+        <p>活动总参与人数：<span id="pEventNum">0</span></p>
+    </div> -->
+    <!-- 广告层 end -->
+    
+    <!-- 下拉等待刷新效果层 begin -->
+	<div class="loading f14" id="refreshWait" style="display:none;">
+	    <div class="loadicon">
+	        <span class="blockG" id="rotateG_01"></span>
+	        <span class="blockG" id="rotateG_02"></span>
+	        <span class="blockG" id="rotateG_03"></span>
+	        <span class="blockG" id="rotateG_04"></span>
+	        <span class="blockG" id="rotateG_05"></span>
+	        <span class="blockG" id="rotateG_06"></span>
+	        <span class="blockG" id="rotateG_07"></span>
+	        <span class="blockG" id="rotateG_08"></span>
+	    </div>
+	    正在加载...
+	</div>
+	<!-- 下拉等待刷新效果层 end -->
+	
+	<!-- 微社区头部标题层 begin -->
+	<header class="header oh pr">
+	    <i class="logo fl mr db"><img src="{$sinfo.site_logo}" class="tImg br" width="50" height="50" alt="logo"></i>
+	    <div class="evtSiteRank" data-link="/187471671/categoryrank">
+		    <h2 class="title wot f18 fn c0">{$sinfo.site_name}</h2>
+		    <p class="subTitle f10 c9">
+				<span class="rankBtn"></span>
+				<span aa>话题<em id="threadCount">{$sinfo.topic_number}</em></span><span>访问<em id="sitePV">{$sinfo.visit_number}</em></span>
+		    </p>
+	    </div>
+		<a href="javascript:;" class="addBbsBtn db pa shareBtn" _qzone="http://m.wsq.qq.com/shareDirect?site=TOPMEN%E7%94%B7%E8%A3%85%E7%BD%91&amp;title=TOPMEN%E7%94%B7%E8%A3%85%E7%BD%91&amp;summary=%E9%A2%86%E5%85%88%E7%94%B7%E8%A3%85%E6%96%B0%E5%93%81%E5%8F%91%E5%B8%83%E5%B9%B3%E5%8F%B0%EF%BC%8C%E4%B8%BA%E6%82%A8%E8%81%9A%E7%84%A6%E7%94%B7%E8%A3%85%E6%9C%80%E6%96%B0%E5%9E%8B%E5%BD%95%EF%BC%8C%E4%B8%BA%E6%82%A8%E5%A5%89%E4%B8%8A%E6%9D%A5%E8%87%AA%E5%B7%B4%E9%BB%8E%E3%80%81%E7%B1%B3%E5%85%B0%E3%80%81%E4%BC%A6%E6%95%A6%E3%80%81%E7%BA%BD%E7%BA%A6%E3%80%81%E6%97%A5%E6%9C%AC%E5%92%8C%E5%9B%BD%E5%86%85%E6%97%B6%E8%A3%85...&amp;targetUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671%3F_wv%3D1%26source%3Dconnect_qzone&amp;pageUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671&amp;imageUrl=http%3A%2F%2Fshp.qlogo.cn%2Fgqclogo%2F0%2F187471671%2F200%3Fmax-age%3D2592000%26t%3D1394112055&amp;type=qzone" title="分享"><span class="addBbs db  br f13 c2">分享</span></a>
+	</header>
+	<!-- 微社区头部标题层 end -->
+	
+	<!-- 旋转木马层 forumdisplay中有功能定义 begin -->
+	<div id="showCarousel" class="showCarousel" style="margin-bottom:8px;">
+		<ul class="sCUl">
+			<li class="sCLi" style="">
+	    		<div class="customArea customHide">
+	        		<div class="caCon">
+	                	<h3 class="f12 fn c6"><i class="iconRank c4 cf"></i>用户人气榜</h3>
+	            		<ul class="customImg" data-link="">
+	                    	<!-- <li>
+			                    <i class="brBig cuImg db"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" data-original="http://wx.qlogo.cn/mmopen/vd8yNL3TS9Ab8vXHibQQPtZwzzMKhCZpQ8nZLEWl4wAWepsnsTbFQkZhz526JN4B8ySbRiava4wTZ5icHkKcU9qiaUEXgYHyYAAq/64?max-age=1296000" width="40" height="40"></i>
+			                    <span class="cuText f11 c4 br db">2赞</span>
+			                </li>
+	                        <li>
+			                    <i class="brBig cuImg db"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" data-original="http://wx.qlogo.cn/mmopen/rPibt62gfVOgG4frT56HM9FvqFKVFzKiaIRWibMOL0T9kIjbVbAE975s0llVd3OOHk5qQjSFxy0byGVBF9lxW1a4w/64?max-age=1296000" width="40" height="40"></i>
+			                    <span class="cuText f11 c4 br db">2赞</span>
+			                </li>
+	                        <li>
+			                    <i class="brBig cuImg db"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" data-original="http://dzqun.gtimg.cn/quan/images/personImg.jpg" width="40" height="40"></i>
+			                    <span class="cuText f11 c4 br db">1赞</span>
+			                </li>
+	                        <li>
+			                    <i class="brBig cuImg db"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" data-original="http://wx.qlogo.cn/mmopen/ajNVdqHZLLBNZFZYpwjgtlTaqPRictpkYAPQhib51vvm3RXC5DbYib1NE8oApVcX104QVtiax21O7G54nXTMzkPiaeg/64?max-age=1296000" width="40" height="40"></i>
+			                    <span class="cuText f11 c4 br db">1赞</span>
+			                </li> -->
+	                	</ul>
+	                </div>
+			        <div class="caSide">
+			            <h4 class="f11 fn c6"></h4>
+			            <a href="javascript:;" class="iconPage c9 db cf sCNext"></a>
+			        </div>
+				</div>
+			</li>
+		</ul>
+	</div>
+	<!-- 旋转木马层 forumdisplay中有功能定义 end -->
+	
+	<!-- 帖子内容层 begin -->
+    <div class="container" id="threadList" style="min-height:240px;">
+        <div class="infobox">
+            <i class="iconSuccess cf cFont db"></i>
+            <p>正在努力加载...</p>
+        </div>
+    </div>
+    <!-- 帖子内容层 end -->
+    
+    <!-- 上推瀑布流刷新下一页效果层与现实全部信息层 begin -->
+    <div class="loading f14" id="loadNext" style="display:none;">
+        <div class="loadicon">
+            <span class="blockG" id="rotateG_01"></span>
+            <span class="blockG" id="rotateG_02"></span>
+            <span class="blockG" id="rotateG_03"></span>
+            <span class="blockG" id="rotateG_04"></span>
+            <span class="blockG" id="rotateG_05"></span>
+            <span class="blockG" id="rotateG_06"></span>
+            <span class="blockG" id="rotateG_07"></span>
+            <span class="blockG" id="rotateG_08"></span>
+        </div>
+	正在加载...
+    </div>
+    <div id='loadNextPos'></div>
+    <div class="loading" id="showAll" style="display:none;">已显示全部</div>
+    <!-- 上推瀑布流刷新下一页效果层与现实全部信息层 end -->
+</div>
+
+<!-- 点击右下角弹出侧栏模板 begin -->
+<script id="tmpl_sideBar" type="text/html">
+<div class="sideBar" style="display:none;">
+    <div class="searchContent evtSearchWrap">
+        <div class="sInputIn br">
+            <i class="searchInco cf pa db"></i>
+            <div class="f12 sInput2" style="line-height: 20px">搜索</div>
+        </div>
+    </div>
+    <div class="sideBarCon" id="sideBarCon">
+        <h3 class="sideTit f14 fn c2">话题筛选</h3>
+        <ul style="position: relative;">
+            <li class="filter<%if (!filterType) {%> on<%}%>"><a class="<%if (!filterType) {%>iconSucc cf s_succ db<%} else {%>c9<%}%>" href="javascript:;">全部</a></li>
+            <li class="filter<%if (filterType == 'hot') {%> on<%}%>" labelId="hot"><a class="<%if (filterType == 'hot') {%>iconSucc cf s_succ db<%} else {%>c9<%}%>" href="javascript:;">热门</a></li>
+            <li class="filter<%if (filterType == 'showPic') {%> on<%}%>" labelId="showPic"><a class="<%if (filterType == 'showPic') {%>iconSucc cf s_succ db<%} else {%>c9<%}%>" href="javascript:;">晒图</a></li>
+        </ul>
+        <div class="loading pd10" id="customTagWait">
+            <div class="loadicon">
+                <span class="blockG" id="rotateG_01"></span>
+                <span class="blockG" id="rotateG_02"></span>
+                <span class="blockG" id="rotateG_03"></span>
+                <span class="blockG" id="rotateG_04"></span>
+                <span class="blockG" id="rotateG_05"></span>
+                <span class="blockG" id="rotateG_06"></span>
+                <span class="blockG" id="rotateG_07"></span>
+                <span class="blockG" id="rotateG_08"></span>
+            </div>
+            正在加载...
+        </div>
+        <div class="customTag" id="customTag">
+        </div>
+        <ul class="sidePerMan">
+            <li id="sideProfile"><a href="javascript:;" class="iconPrfile  f16 c9 cf"><i class="db numP" id="sideMsgNum"<%if (newMsgCount < 1) {%> style="display:none;"<%}%>><%if (newMsgCount < 100) {%><%=newMsgCount%><%}else{%>99+<%}%></i>个人主页</a></li>
+            <li id="sideUnfollow" sid="<%=sId%>"<%if (isLiked != 1) {%> style="display:none;"<%}%>><a href="javascript:;" class="iconExit f16 c9 cf">退出社区</a></li>
+        </ul>
+    </div>
+</div>
+</script>
+<!-- 点击右下角弹出侧栏模板 end -->
+
+<!-- 页面上标记过的label标签模板 begin -->
+<script id="tmpl_customTag" type="text/html">
+<div>
+<% for (var i in labelList) { %>
+    <a href="javascript:;" class="f12 filter<%if (filterType == labelList[i].labelId) {%> on<%}%>" labelId="<%=labelList[i].labelId%>"><%=labelList[i].labelName%></a>
+<%}%>
+</div>
+</script>
+<!-- 页面上标记过的label标签模板 end -->
+
+<div class="bottomBar" id="bottomBar" style="display:none;">
+	<div class="bottomBarCon pr">
+        <a href="javascript:;" class="backBtn" id="goback"><i class="iconAnswer cf back db"></i></a><!-- 如果少了back，方向就会反 -->
+        <a href="{:U('Community/MicroCommunity/newTopic', '', '')}" style="color:#769cdc;" class="publish db" id="publish" sId="187471671"><i style="font-size:18px;" class="iconPost f21 cf db">发话题</i></a>
+		<a href="javascript:;" id="mqOption" isSite="1" class="moreC qMore db"><i class="circle">●</i><i class="circle">●</i><i class="circle">●</i><i class="db numP" id="navMsgNum">2</i></a>
+	</div>
+</div>
+
+<!-- 本页面需要navBar这个js模块 begin -->
+<script type="text/javascript">
+var isForceReload = '0',
+    isLiked = '1',
+    inviteUrl = '#';
+//g_module.push('module/topBar');			//如果执行这句话，上边就会被压出一个topbar的距离
+g_module.push('module/navBar');
+</script>
+<!-- 本页面需要navBar这个js模块 end -->
+
+<!-- 显示回复信息的模板 begin -->
+<script id="tmpl_reply" type="text/html">
+  <% for (var k in replyList) { var reply = replyList[k]%>
+    <% reply.floorPId = reply.floorPId || 0 %>
+    <% if (!isDOMExist('p_' + reply.tId + '_' + reply.pId + '_' + reply.floorPId)) { %>
+    <li id="p_<%=reply.tId%>_<%=reply.pId%>_<%=reply.floorPId || 0%>" uId="<%=reply.authorUid%>" author="<%=reply.author%>"><a href="javascript:;" class="f13 c3"><img src="<%=getWinParams('IMG_LOADING');%>" data-original="<%=reply.avatar%>" class="sImg brBig pa db" width="20" height="20" alt="头像"><span class="c7"><%=reply.author%><% if (reply.toAuthor) { %> 回复 <%=reply.toAuthor %><% } %>：</span><%== reply.content %></a>
+    </li>
+    <% } %>
+  <% } %>
+</script>
+<!-- 显示回复信息的模板 end -->
+
+<!-- 用帖子json数据渲染html模板 begin -->
+<script id="tmpl_thread" type="text/html">
+<div class="tlNode" id="<%=tlNodeId%>">
+<%if (isObjEmpty(threadList) && showEmptyTip) {%>
+<div class="infobox">
+    <i class="iconEmpty cf cFont db"></i>
+    <p>目前没有话题</p>
+</div>
+<%} else {%>
+<% for (var i in threadList) {var thread = threadList[i]; %>
+  <% if (!isDOMExist('t_' + thread.tId + '_0_0')) { %>
+    <div class="topicBox" id="t_<%= thread.tId %>_0_0" tId="<%=thread.tId%>"<%if (thread.threadType == 7) {%> isPic="1"<%}%>>
+      <%if (thread.threadType == 7 || thread.threadType == 9) {%>
+        <%if (thread.picUrls) {%>
+        <div class="showImg"><img src="<%=thread.picUrls[0].middle%>" alt="图片"></div>
+        <%}%>
+        <div class="topicCon">
+            <div class="detailCon">
+                <%if (thread.threadType == 7) {%>
+                    <h2 class="dTitle f18 c5 fn wot">
+                        <a href="javascript:;" data-link="/187471671?filterType=showPic" class="showBtn br f11 c2 db">晒图</a><%=thread.title%>
+                    </h2>
+                    <p class="dTime c9 f12">
+                        <i class="iconTime f16 mr5 cf"></i>
+                        截止时间：<% if (thread.isEnd) {%>已结束<% } else {%><%=thread.fEndTime%><% if (!thread.closeJoin || getWinParams('isManager') == 1) {%><a href="javascript:;" parentId="<%=thread.tId%>" class="topBtn br f11 ml5 c2 db attendPic">点击参加</a><% } %><% } %>
+                    </p>
+                <%} else {%>
+                    <h2 class="dTitle f18 c7 fn wot">
+                        #<%=thread.title%>#
+                    </h2>
+                <%}%>
+                <div class="dCon f16"><%== thread.summary%><a class="showAll f11 evtShowAllPic"  tId="<%=thread.tId%>" showAll="1" href="javascript:;" title="查看全文">查看全文</a></div>
+                <div class="dNum pr">
+                    <span class="db fl">
+                        <%if (!thread.closeJoin) {%>
+                        <% for(var j in thread.joinUser) {%>
+                        <img width="25" height="25" alt="头像" class="rImg brBig" src="<%=thread.joinUser[j]%>">
+                        <%}%>
+                        <%}%>
+                    </span>
+                    <span class="db c7 f12 pa">
+                        <%if (!thread.closeJoin) {%>
+                            等<%if (thread.joinUserCount <= 20) {%><%=thread.joinUserCount%><%} else {%><%=thread.joinNumber%><%}%>人参加
+                        <%} else {%>
+                            <%=thread.joinNumber%>个话题
+                        <%}%>
+                    </span>
+                </div>
+            </div>
+        </div>
+      <%} else {%>
+        <div class="topicCon">
+            <div class="personImgDate pr">
+                <i class="perImg mr db fl pr avatar" uId="<%=thread.authorUid%>">
+                    <img src="<%=getWinParams('IMG_LOADING');%>" data-original="<%= thread.avatar %>" class="pImg brBig" width="35" height="35" alt="头像">
+                  <% if (thread.verifyType) {%>
+                    <% if (thread.verifyType == verifyDeveloper) { %>
+                    <span class="statusBg brBig db c2 pa"><i class="iconDeveloper cf f11"></i></span>
+                    <% } else if (thread.verifyType == verifyStar) { %>
+                    <span class="statusBg3 brBig db c2 pa"><i class="iconVUser cf f11"></i></span>
+                    <% } %>
+                  <% } else if (thread.isAdmin) { %>
+                    <span class="statusBg1 brBig db c2 pa"><i class="iconStationmaster cf f11"></i></span>
+                  <% } else if (thread.gId == groupStar) { %>
+                    <span class="statusBg2 brBig db c2 pa"><i class="iconActiveUser cf f11"></i></span>
+                  <%}%>
+                </i>
+                <h3 class="title f13 fn c6"><%= thread.author%>
+                    <% if (thread.authorGender == 1) { %><span class="iconMan cf"></span><% } else if (thread.authorGender == 2) { %><span class="iconWoman cf"></span><%}%>
+                    <% if (thread.rank && thread.rank <= 3) {%><span class="honorBg brSmall"><i class="iconRank db cf c2"></i></span><%}%>
+                    <% if (thread.authorHonor == 1){ %><span class="honorBg1 brSmall"><i class="iconHonor db cf f10 c2"></i></span><%}%>
+                    <% if (isWX && thread.authorExps) {%>
+                        <% if (thread.authorExps.rank <= 6) {%>
+                        <span class="gBg1 brSmall fb f8 c2">LV<%=thread.authorExps.rank%></span>
+                        <%} else if (thread.authorExps.rank <= 12) {%>
+                        <span class="gBg2 brSmall fb f8 c2">LV<%=thread.authorExps.rank%></span>
+                        <%}else{%>
+                        <span class="gBg3 brSmall fb f8 c2">LV<%=thread.authorExps.rank%></span>
+                        <%}%>
+                    <%}%>
+                </h3>
+                <p class="f11">
+                    <span class="time c9 mr"><%== thread.hLastPostTime %></span>
+                    <% if (thread.LBSInfo) { %><span class="address c6"><i class="iconloc f14 c1 cf"></i><%= thread.LBSInfo %></span><%}%>
+                </p>
+            <%if (!thread.isStick || thread.isStick && (getWinParams('isManager') == 1 || thread.isAdmin)) {%>
+                <a class="iconAd cf f16 c9 pa db PerPopBtn" tId="<%=thread.tId%>" href="javascript:;"></a>
+                <div class="adPop pa perPop" style="display:none;">
+                    <div class="adBCon pr  f12" tId="<%=thread.tId%>" uId="<%=thread.authorUid%>" author="<%=thread.author%>">
+                        <%if ( (getWinParams('isManager') == 1 || thread.isAdmin) && '105339320' != thread.authorUid ) {%>
+                            <p btnType="pmDialog">私信</p>
+                        <%}%>
+                        <%if (!thread.isStick && '105339320' != thread.authorUid) { %><p btnType="markAd">屏蔽</p><%}%>
+                        <%if ('105339320' == thread.authorUid || getWinParams('isManager') == 1) {%><p btnType="delThread">删除</p><%}%>
+                        <%if (getWinParams('isManager') == 1) {%>
+                            <p btnType="closeUpdate" threadStatus="<%=thread.closeUpdate%>"><%if (thread.closeUpdate) {%>解锁<%} else {%>锁定<%}%></p>
+                            <p btnType="banUser">禁言</p>
+                            <p btnType="cleanPost">清理</p>
+                            <p btnType="changeLabel">修改标签</p>
+                        <%}%>
+                    </div>
+                </div>
+              <%}%>
+            </div>
+            <div class="detailCon">
+                <div class="dCon f16">
+                  <%if (thread.isStick) {%>
+                    <a href="javascript:;" class="topBtn br f11 c2 db">置顶</a>
+                  <% } else if (!fId && !isLive) { %>
+                    <% if (thread.labelName) { %>
+                        <a href="javascript:;" data-link="/187471671?filterType=<%=thread.fId%>" labelId=<%=thread.fId%> class="topBtn br f11 c2 db evtTag"><%=thread.labelName%></a>
+                    <% } else if (!isLive && thread.liveId) { %>
+                        <a href="javascript:;" data-linke="/187471671?liveId=<%=thread.liveId%>" class="topBtn br f11 c2 db">直接间</a>
+                    <% } else if (thread.hot && !thread.isStick) { %>
+                        <a href="javascript:;" data-link="/187471671?filterType=hot" class="topBtn br f11 c2 db">热门</a>
+                    <% }%><%}%><%== thread.summary%><%if (thread.showMore) {%><a class="showAll f11" href="javascript:;" title="查看全文">查看全文</a><%}%>
+                </div>
+              <%if (!isObjEmpty(thread.videos) && !isObjEmpty(thread.videos[0])) {%>
+                <div class="videoConL videoArea" tId="<%=thread.tId%>" style="line-height:192px;">
+                    <img src="<%=thread.videos[0].cover%>" class="" alt="" style="width:100%;vertical-align:middle;">
+                    <a href="javascript:;" class="videoPlay vList db"></a>
+                </div>
+              <%} else if (thread.picUrls) {%>
+                <div class="slideBox">
+                    <ul>
+                      <% for (j in thread.picUrls) { %>
+                        <%if (getWinParams('isFriendSite') == 1 && !thread.liked && uId != thread.authorUid && !thread.isStick && j > 0) {%>
+                        <li>
+                            <img src="<%= thread.picUrls[j].small %>" data-original="<%= thread.picUrls[j].small %>" alt="<%=thread.tId%>" class="blur"><span class="db slideText pa">赞后可见</span>
+                            <%if ( thread.picUrls[j].small.indexOf('_GIF') != -1 ) {%>
+                                <span class="gifImg pa fn br db c2">GIF</span>
+                            <%}%>
+                        </li>
+                        <%}else{%>
+                            <li>
+                                <img src="<%=getWinParams('IMG_LOADING');%>" data-original="<%= thread.picUrls[j].small %>" alt="">
+                                <%if ( thread.picUrls[j].small.indexOf('_GIF') != -1 ) {%>
+                                    <span class="gifImg pa fn br db c2">GIF</span>
+                                <%}%>
+                            </li>
+                        <%}%>
+                      <%}%>
+                    </ul>
+                    <span class="pageNum br pa db" style="display:none;"><%= thread.picNum %>张</span>
+                </div>
+              <%} else if (thread.weishiInfo && thread.weishiInfo.picUrl) {%>
+                <div class="videoConL videoArea" tId="<%=thread.tId%>">
+                    <img src="<%= thread.weishiInfo.picUrl %>" class="" alt="" style="width:100%;">
+                    <span class="incoMV db"></span>
+                    <a href="javascript:;" class="vList db"></a>
+                </div>
+              <%}%>
+                <div class="operation oh">
+                    <%if (thread.appId && thread.appName) {%><span class="source db c6 f11 fl sourceApp">来自：<a href="javascript:;" appId="<%=thread.appId%>"><%=thread.appName%></a></span><%}%>
+                    <span class="replyShare db c9 fr f13" tId="<%=thread.tId%>">
+                        <a href="javascript:;" title="赞" class="c9 like"><i class="icon<% if (!thread.liked) { %>No<%}%>Praise f18 cf"></i><span class="likeNum"><%if (thread.likeNum) {%><%=thread.likeNum%><%} else {%>赞<%}%></span></a>
+                        <a href="javascript:;" title="分享" class="c9 shareBtn" data-link="<%=thread.shareLink%>" _qq="<%=thread.share.qq%>" _qzone="<%=thread.share.qzone%>" onclick="pgvSendClick({hottag:'QUAN.INDEX.SHARE.LINK'});"><i class="iconShare f18 cf"></i></a>
+                        <a href="javascript:;" title="回复" class="c9 threadReply"><i class="iconReply f18 cf"></i><%=thread.rCount%></a>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="topicList"<% if (!thread.rCount) { %> style="display:none"<% } %>>
+            <ul class="replyList">
+                <% include('tmpl_reply', {'replyList':thread.replyList}) %>
+            </ul>
+            <a href="javascript:;" class="db f12 moreReply"<% if (thread.rCount <= 3) { %> style="display:none;"<% }%> id="rCount_<%= thread.tId %>" rCount="<%=thread.rCount%>">查看全部<%= thread.rCount %>条回复</a>
+        </div>
+      <%}%>
+    </div>
+  <%}%>
+<%}%>
+<%}%>
+</div>
+</script>
+<!-- 用帖子json数据渲染html模板 end -->
+
+<script type="text/javascript">
+var isLive = 0;
+var isBindQQ = 0;
+var isQAClub = '';
+var faqFilter = 0;
+var inviteUrl = '#';
+var isLiked = '1';
+var nextStart = 10;					// 初始化下一页数据开始
+window.statConf = {id:1, map:{9:'first_render_end'}};				// 初始化渲染模板
+g_module.push('module/forumdisplay');
+</script>
+<div class="floatLayer br db" id="goTop" style="display:none;"><a class="upBtn cf db" href="javascript:;"></a></div><!-- 当下滑到一定程度显示回到顶部的透明小三角层 -->
+
+<!-- 社区主页上的回复框部分 replyForm template begin -->
+<script id="tmpl_replyForm" type="text/html">
+<div class="popLayer pSpace brNone" style="width:100%">
+<form method="post" action="{:U('Community/MicroCommunity/replyConfirm')}" id="replyForm">
+    <input type="hidden" name="CSRFToken" value="{$sinfo.csrf_token}">
+	<input type="hidden" name="e_id" value="{$sinfo.e_id}">
+	<input type="hidden" name="type" value="0">
+    <input type="hidden" name="sId" value="<%= data.sId %>">
+    <input type="hidden" name="tId" value="<%= data.tId %>">
+    <input type="hidden" name="pId" value="<%= data.pId %>">
+    <input type="hidden" name="floorPId" value="<%= data.floorPId %>">
+    <input type="hidden" name="parentId" value="<%= data.parentId %>">
+    <div class="sendRCon">
+        <textarea id="content" name="content" cols="" rows="" class="sInput f13" placeholder="回两句吧..."></textarea>
+    </div>
+    <div class="sendNav">
+        <ul>
+            <li>
+                <a data-id='0' href="javascript:;" class="operatIcon iconExpression f21 db c9 cf"></a>
+            </li>
+            <li class="pr uploadPicBox">
+                <a data-id='1' href="javascript:;" class="operatIcon iconSendImg db f21 c9 cf pr" style="z-index:1;"></a>
+            </li>
+            <li>&nbsp;</li>
+            <li>&nbsp;</li>
+            <li><a id="cBtn" href="javascript:;" class="cancelNewBtn brSmall f13 db fr c3 close">取消</a></li>
+            <li><a id="comBtn" href="javascript:;" class="sendBtn brSmall f13 db c2">发送</a>
+            </li>
+        </ul>
+    </div>
+    <div class="operatingBox">
+        <div class="operatList tipLayer" style="display:none;margin:0;border:0;">
+        </div>
+        <div class="operatList photoTipsBox" style="display:none;height:213px;background-color:#efefef;border-top:1px solid #e2e2e2;">
+            <div class="photoList">
+                <ul>
+                    <li class="on" id="addPic">
+                    	<input type="file" class="on needsclick" style="z-index:200;opacity:0;filter:alpha(opacity=0);-ms-filter:'alpha(opacity=0)';" id="uploadFile" accept="image/*" single>
+                    </li>
+                </ul>
+                <p class="textTip f12">还可上传<span id="onlyUploadNum">8</span>张照片呦~</p>
+            </div>
+        </div>
+    </div>
+</form>
+</div>
+</script>
+<!-- 社区主页上的回复框部分 replyForm template end -->
+
+<script id="tmpl_expreBox" type="text/html">
+<div class="expreBox" style="display:none;" id="expreBox">
+    <div class="expressionTab pr">
+        <div class="expressionMenu">
+            <% var def = null %>
+            <% for (var i in cate) {%>
+            <% if (def === null) { def = i }%>
+            <a href="javascript:;"<% if (def == i) {%> class="on"<%}%> id="emo<%=i%>" title="<%=cate[i]%>"><%=cate[i]%></a>
+            <% }%>
+        </div>
+        <a href="javascript:;" class="eR db iconArrowR cf pa c9" style="display:none;"></a>
+    </div>
+    <% var pageNum = []%>
+    <div class="expreList" id="expreList">
+        <% for (var i in emo) {%>
+        <ul class="expreCon <%=emo[i].ulClass%>" id="exp_emo<%=i%>" style="<%if(i != def) {%>display:none;<%}%>">
+            <% var emoNum = 0%>
+            <% var page = 0%>
+			<% for (var j in emo[i].icon) {%>
+            	<% ++emoNum%>
+            	<% if (emoNum % emo[i].perPage == 1) { %>
+                	<% ++page%>
+                	<% pageNum[i] = page%>
+                	<li class="<%=emo[i].liClass%><%=page%>">
+            	<% } %>
+                	<a href="javascript:;" title="<%=j%>"></a>
+            	<% if (emoNum % emo[i].perPage == 0) { %>
+                	<%if (emo[i].delBtn) {%><a href="javascript:;"></a><%}%>
+                	</li>
+            	<% } %>
+        	<% }%>
+        </ul>
+        <% }%>
+    </div>
+    <% for (var k in pageNum) {%>
+    <p class="pNumCon" id="exp_emo<%=k%>_page"<% if (def != k) {%> style="display:none;"<%}%>>
+        <% for(var i = 1; i <= pageNum[k]; i++) { %>
+        <a href="javascript:;" class="<% if(i == 1) { %> on <% } %> pNum db"></a>
+        <%}%>
+    </p>
+    <% }%>
+</div>
+</script>
+
+<script id="tmpl_manage" type="text/html">
+<div class="manageLayer br" style="margin:0 auto;">
+    <ul>
+      <%if (isReply) {%>
+        <li><a href="javascript:;" btnType="reply">回复</a></li>
+        <li><a href="javascript:;" btnType="delReply">删除</a></li>
+      <% } else {%>
+        <li><a href="javascript:;" btnType="delThread">删除</a></li>
+      <% } %>
+	</ul>
+</div>
+</script>
+
+<form id="delThreadForm" name="delThreadForm" action="{:U('Community/MicroCommunity/delTopic')}" method="post">
+    <input type="hidden" name="CSRFToken" value="dc60d1b9">
+    <input type="hidden" name="tIds[]">
+</form>
+
+        <div onclick="location.href='#'" class="copyRight ht" style="margin-bottom:70px;">微社区，精彩在你身边</div>
+    <script type="application/javascript">g_ts.body_view = new Date();</script>
+
+<script id="tmpl_pageTip" type="text/html">
+<div class="tipInfo" id="showShare">
+    <p class="tipBor"><%=msg || '请点击右上角图标分享'%><span class="arrLeft"></span></p>
+</div>
+</script>
+
+<script src="__PUBLIC__/js/qqapi.js"></script>
+<!-- 页面载入分享js模块和公共模块 begin -->
+<script type="text/javascript">
+var shareUrl = 'http://m.wsq.qq.com/187471671?_wv=1&filterType=&source=custom',
+	shareTitle = '分享自#微动微社区#',
+	shareDesc = '.............||...',
+	shareImgUrl = '{$sinfo.site_logo}';
+g_module.push('module/common', 'module/share');
+</script>
+<!-- 页面载入分享js模块和公共模块 end -->
+<script type="application/javascript">
+var url = '__PUBLIC__/js/seajs-0.1.5.js';
+var node = document.createElement('script');node.onload = function(){g_ts.seajs = new Date();};node.src = url;document.body.appendChild(node);
+if (window.statConf) {
+    setTimeout(function() {
+        window.seajs && seajs.use('lib/stat', function(_a) {
+            _a.init();
+        });
+    }, 2000);
+}
+</script>
+</body>
+</html>

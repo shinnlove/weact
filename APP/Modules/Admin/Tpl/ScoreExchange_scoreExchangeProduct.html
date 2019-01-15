@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/template-native.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>积分商城商品信息管理</title>
+</head>
+
+<body class="easyui-layout" fit="true">
+	<div data-options="region:'center',border:false">
+		<table id="dg" title="积分商城商品信息     —— 温馨提示：点击每条商品左侧加号可看到实时库存，批量移除时可以多选" toolbar="#toolbar"></table>
+	</div>
+	
+	<!-- easyUI的工具条 -->
+	<div id="toolbar">
+		<div class="uptool">
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="removebatch();">批量移除</a>
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="exportProduct();">导出</a>
+			
+			<span class="searchbox">
+				<select id="search_condition" name="search_condition">
+					<option value="product_number" selected="selected">商品编号</option>
+					<option value="product_name">商品名称</option>
+					<option value="storage_amount">库存量低于</option>
+					<option value="sell_amount">卖出量大于</option>
+				</select>
+				<input id="search_content" name="search_content" type="text" class="searchbox-text mysearchbox" placeholder="可选择一个条件查询" />
+				<span class="searchbox-button searchbox-button-hover"></span>
+			</span>
+			<span class="remind-condition">商品分类：</span>
+		</div>
+	</div>
+		
+	<!-- 复制商品链接对话框 begin -->
+	<div id="copy-dialog" class="easyui-window clipwindow" title="商品分享链接" iconCls="icon-edit" data-options="modal:true,closed:true">
+		<div class="easyui-layout" fit="true">
+			<div region="center" border="false" class="link-region">
+				<div class="handle-panel">
+					<div class="link-panel">
+						积分商城商品链接： <input name="outaddress" id="main-shareurl" size="50" value="" />
+						<a href="javascript:;" id="main_clip_button" class="easyui-linkbutton" iconCls="icon-redo" data-clipboard-target="main-shareurl">复制链接</a>
+					</div>
+				</div>
+				
+				<h6 class="tit-sm">商品链接答疑</h6>
+				<div class="question-list">
+					<div class="question">
+						<span class="badge red-answer">Q</span>
+						<span class="badge-list">积分商城链接是什么？</span>
+					</div>
+					<div class="answer">
+						<span class="badge blue">A</span>
+						<span class="badge-list">积分商城链接就是微信用户在积分商城上购物的商品数字陈列URL地址（需在微信中打开）</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 复制商品链接对话框 end -->
+	
+<!-- 商品库存js arttemplate begin -->
+<script type="text/html" id="storageinfotpl">
+<table>
+    <tbody>
+        <tr>
+            <td style="border:0; width:150px;">
+                <p style="font-weight:bold;">商品实时库存信息：</p>
+            </td>
+        </tr>
+        <tr style="border:0;height:30px;">
+            <td class="sku-title">sku序号</td>
+			<td class="sku-title">规格</td>
+			<td class="sku-title">属性</td>
+            <td class="sku-title">当前库存量</td>
+			<td class="sku-title">卖出量</td>
+        </tr>
+		<% for (var i in detaillist) {%>
+			<tr>
+            	<td class="sku-info"><%=i*1+1%></td>
+            	<td class="sku-info"><%=detaillist[i].product_size%></td>
+				<td class="sku-info"><%=detaillist[i].product_color%></td>
+            	<td class="sku-info"><%=detaillist[i].storage_amount-detaillist[i].sell_amount%></td>
+				<td class="sku-info"><%=detaillist[i].sell_amount%></td>
+        	</tr>
+		<% } %>
+    </tbody>
+</table>
+</script>
+<!-- 商品库存js arttemplate end -->
+
+<!-- easyUI上对单个商品操作的按钮区，js模板 begin -->
+<script type="text/html" id="handlebtntpl">
+<table class="handlebtntable">
+    <tr>
+		<td>
+			<a href="javascript:void(0)" class="btn btn-mini" title="编辑商品" onclick="editPro('<%=product_id%>', '<%=product_type%>')">编辑</a>
+			<a href="javascript:void(0)" class="btn btn-mini" title="获取商品链接" onclick="getProLink('<%=nav_id%>', '<%=product_id%>')">链接</a>
+			<a href="javascript:void(0)" class="btn btn-mini" title="移除这件商品" onclick="removePro('<%=product_id%>')">移除</a>
+		</td>
+	</tr>
+</table>
+</script>
+<!-- easyUI上对单个商品操作的按钮区，js模板 end -->
+
+<script type="text/javascript">
+var e_id = '{$e_id}'; // 商家编号
+var dg = $("#dg"); // 全局变量table easyUI
+$(function() {
+	// easyui初始化
+	$('#dg').datagrid({
+		url: "{:U('Admin/ScoreExchangeRequest/getScoreExchangeProduct', '', '')}",
+		singleSelect: false,
+		collapsible: true,
+		method: 'post',
+		fitColumns: true,
+		fit: true,
+		pagination: true,
+		pageSize: 10,
+		pageList: [5, 10, 15],
+		rownumbers: true,
+		idField: 'product_id',
+		columns: [[
+				{ field: 'nav_id', title: '分类编号', width: 100, hidden: true }, 
+				{ field: 'ck', checkbox: 'true', width: 60 }, 
+				{ field: 'micro_path', title : '缩略图', width : 60, align : 'center', sortable: false, formatter : picInit }, 
+				{ field: 'product_number', title: '商品名称编号', width: 120, align:'left', sortable: true, formatter : productNameNo }, 
+				{ field: 'score_type', title: '积分兑换方式', width: 120, align:'left', sortable: true, formatter : scoreTypeInit}, 
+				{ field: 'score_onshelf_time', title: '上架时间', width: 80, align:'center', sortable: true, formatter: scoreOnshelfInit }, 
+				{ field: 'total_storage_left', title: '库存', width: 60, align:'right', sortable: true, formatter: storageInit }, 
+				{ field: 'sell_amount', title: '卖出', width: 60, align:'right', sortable: true }, 
+				{ field: 'storage_warn', title: '预警', width: 60, align:'right', sortable: true, formatter: warningInit }, 
+				{ field: 'product_id', title: '操作', width: 200, align:'center', sortable: false, formatter: handleBtnInit }
+			 ]],
+		view: detailview,
+		detailFormatter: function(index, row) {
+			return '<div class="ddv" id="' + row.product_id + '">' + '</div>';
+		},
+		onExpandRow: function(index, row){
+			$.post('{:U("Admin/ScoreExchangeRequest/getProductStorage", "", "")}',
+					{ pid : row.product_id },
+					function(result){
+						if(result.errCode == 0){
+							var storageinfo = template( 'storageinfotpl', result.data ); // artTemplate渲染模板引擎
+							if (storageinfo == '{Template Error}') {
+								storageinfo = ''; // 如果渲染失败，则detailinfo置空
+								$.messager.alert('温馨提示', '网络繁忙，接收商品库存详情数据错误！', 'error'); // 提示用户出错了
+	                        }
+							$('#'+row.product_id).html(storageinfo); // 写入展开详情中
+							$('#dg').datagrid("fixDetailRowHeight", index); // 该行的详情框高度自适应（非常重要，以前没处理好）
+						} else {
+							$.messager.alert('温馨提示', '网络繁忙，没有查询到该商品的详细库存信息！', 'error');
+						}
+					},'json');	//post
+            $('#dg').datagrid('fixDetailRowHeight', index);
+	    }	// onExpandRow
+	}); //end easyui
+
+	// 指定条件查询，进行商品搜索
+	$('.searchbox-button').click(function() {
+		var searchcondition = $('#search_condition').val().trim(); // 获取搜索条件
+		var searchcontent = $('#search_content').val(); // 获取搜索内容
+		if (searchcontent.trim() == "" || searchcontent == "undefined") {
+			$.messager.alert('温馨提示', '请输入搜索内容！', 'warning');
+			return
+		}
+		$("#dg").datagrid({
+			url: "{:U('Admin/ScoreExchangeRequest/searchProduct', '', '')}",
+			queryParams: {
+				searchcondition: searchcondition,
+				searchcontent: searchcontent
+			}
+		}, 'load');
+		clearSelect(); // 清空潜在选择项
+	});
+	
+	// 复制到剪贴板：鼠标点击时，全选文本框内容
+	$('#main-shareurl').on('click', function(){
+		this.setSelectionRange(0, $(this).val().length);
+	});
+});
+
+/*-------------easyUI初始化部分函数--------------*/
+
+// 初始化商品
+function picInit(val, row){
+	if(row){
+		return '<img src="' + row.micro_path + '" style="width:50px; height:50px; margin-top:5px; border:0; border-radius:5px;" />';
+	} else {
+		return '<img src="" style="width:50px; height:50px; margin-top:5px;" alt="请上传商品缩略图" />'; // 返回一张默认图片，请尽快设定
+	}
+}
+
+// 初始化商品名称和编号
+function productNameNo(val, row){
+	var prohtml = '<span class="pro-label">'+row.product_name+'</span>' + '<span class="pro-label">款号:'+row.product_number+'</span>';
+	// 如果是精选，追加精选标签
+	if (row.is_feature == 1) {
+		prohtml += '<span class="special-mark">精选</span>';
+	}
+	// 如果是新品，追加新品标签
+	if (row.is_new == 1) {
+		prohtml += '<span class="special-mark">新品</span>';
+	}
+	// 如果是折扣，追加折扣标签
+	if (row.is_preferential == 1) {
+		prohtml += '<span class="special-mark">折扣</span>';
+	}
+	return prohtml;
+}
+
+//初始化积分兑换方式 
+function scoreTypeInit(val, row){
+	var prohtml;
+	if(row.score_price == 0){
+		prohtml = '<span class="pro-label">积分 :'+row.score_amount+'分</span>';
+	} else {
+		prohtml = '<span class="pro-label">积分:'+row.score_amount+'分 + 现金:'+row.score_price+"元"+'</span>';
+	}
+	return prohtml;
+}
+
+// 初始化商品上下架显示
+function scoreOnshelfInit(val, row) {
+	if(row.score_onshelf == 0) {
+		return "<span class='grey' style='color:#666;'>商品未上架</span>"; // 未上架返回商品未上架提示
+	} else {
+		return "<span class='green' style='color:#39b868;'>" + row.score_onshelf_time + "</span>"; // 上架返回商品上架积分商城时间
+	}
+}
+
+// 初始化商品预警（使用特别重要的warning字段来区分库存是否报警）
+function storageInit(val, row){
+	if(row.warning == 1){
+		return "<span class='red' style='color:#d00224;'>"+row.total_storage_left+"（sku库存预警）</span>";
+	} else {
+		return "<span class='green' style='color:#39b868;'>"+row.total_storage_left+"</span>";
+	}
+}
+
+// 初始化库存预警数量
+function warningInit(val, row) {
+	if (row.storage_warn > 0) {
+		return "<span class='green' style='color:#39b868;'>"+row.storage_warn+"</span>";
+	} else {
+		return "<span class='grey' style='color:#666;'>未设置</span>"; // 报警数量为0代表未设置
+	}
+}
+
+// 操作区域的按钮初始化
+function handleBtnInit(val, row) {
+	var handlebtntmpl = template("handlebtntpl", row); // 渲染模板
+	return handlebtntmpl;
+}
+
+/*-----------easyUI功能按钮区------------*/
+
+// 共用警示函数：有些调用后不使用此函数可能会存在隐藏错误
+function clearSelect() {
+	dg.datagrid("clearSelections"); // 清除所有选中的行
+}
+
+// 修改商品信息
+function editPro(proid,protype) {
+	clearSelect();
+	window.location.href = "{:U('Admin/ProductManage/editProductDetail', '', '')}?product_id=" + proid + "&product_type=" + protype; // 跳转编辑商品页面
+}
+
+// 移除商品 
+function removePro(proid) {
+	clearSelect();
+	$.messager.confirm('温馨提示', '确定移除选中商品？', function(cf) {
+		if (cf) {
+			MLoading.show('提交中...'); // 显示友好度提示
+			$.post("{:U('Admin/ScoreExchangeRequest/removeProduct', '', '')}", {
+				proid : proid
+			}, function(result) {
+				MLoading.hide(); // 取消友好度提示
+				if (result.errCode == 0) {
+					dg.datagrid('reload'); // 无刷新重载页面数据
+					clearSelect(); // 清空可能潜在选择的商品
+				} else {
+					$.messager.alert('温馨提示', '移除商品失败！'+result.errMsg, 'error');
+				}
+			});
+		}
+	});
+}
+
+//批量移除商品   
+function removebatch()  {
+	var rows = dg.datagrid('getSelections'); // 获取easyUI选中的行数
+	var num = rows.length; // 选中分销导航数量 
+	if (num == 0) {
+		$.messager.alert('温馨提示', '至少选择一条删除！', 'warning');
+	} else if (num > 10) {
+		$.messager.alert('温馨提示', '一次最多选择10件商品移除！', 'warning');
+	} else { 
+		var proidlist = []; 
+		for (var i = 0; i < num; i++) {
+			proidlist.push(rows[i].product_id); // js压栈
+		}
+		// 通过验证，准备打包参数
+		var params = {
+			'proidlist': proidlist.join()
+		}
+		$.messager.confirm('温馨提示', '是否确定移除选中的商品？', function(cf) {
+			if (cf) {
+				$.post("{:U('Admin/ScoreExchangeRequest/removebatch', '', '')}", params, function(result) {
+					if (result.errCode == 0) {
+						$.messager.alert('温馨提示', 'ok ', 'info', function() {
+							dg.datagrid('reload'); // 无刷新重载商品数据
+							clearSelect(); // 清空可能潜在选择的商品 
+						});
+					} else {
+						$.messager.alert('温馨提示', '操作失败 ！' + result.errMsg, 'error');
+					}
+				}, 'json');
+			}
+		});
+	}
+}
+
+// 导出excel数据
+function exportProduct() {
+	$.messager.confirm('温馨提示', '确定要导出所有商品数据?', function(result){
+		if(result) {
+			window.location.href = "{:U('Admin/ScoreExchange/exportProduct', '', '')}";
+		}
+	});
+}
+
+//获取商品链接
+function getProLink(navid, proid){
+	clearSelect();
+	
+	$('#copy-dialog').window('open'); // 打开对话框
+	var onlineurl = "{:U('Home/ProductView/productShow', '', '', '', true)}?e_id=" + window.e_id + "&nav_id=" + navid + "&product_id=" + proid;
+	$("#main-shareurl").val(onlineurl); // 线上商品地址
+	
+	// 点击复制按钮
+	$("#main_clip_button").zclip({
+	    path: "__PUBLIC__/js/ZeroClipboard.swf",
+	    copy: function(){
+	    	return $('#main-shareurl').val();
+	    },
+	    setCSSEffects:false,
+	    beforeCopy:function(){
+	    	/* 复制成功前干嘛 */
+		},
+	    afterCopy:function(){
+	    	/* 复制成功后的操作 */
+	    	var $copysuc = $("<div class='copy-tips'><div class='copy-tips-wrap'>复制成功</div></div>");
+			$("body").find(".copy-tips").remove().end().append($copysuc);
+			$(".copy-tips").fadeOut(3000);
+	    }
+	});
+}
+</script>
+</body>
+</html>

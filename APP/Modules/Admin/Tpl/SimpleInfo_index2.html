@@ -1,0 +1,282 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/ueditor/themes/default/css/ueditor.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/myUniformStyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lhgcalendar/lhgcore.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lhgcalendar/lhgcalendar.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ueditor/lang/zh-cn/zh-cn.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/myUniformCalendar.js"></script>
+<title>分类信息发布</title>
+<style type="text/css">
+.infowrap {
+	padding: 20px;
+}
+
+.editleft {
+	float: left;
+	margin-right: 20px;
+}
+
+.pagetitle {
+	font-weight: bold;
+	color: #000;
+}
+
+.btnfooter {
+	width: 400px;
+	text-align: center;
+	clear: both;
+	margin-top: 10px;
+	margin-bottom: 30px;
+}
+
+.previewright {
+	width: 400px;
+	height: 880px;
+	float: left;
+}
+
+.blankdeco {
+	height: 100px;
+}
+
+.previewphone {
+	width: 360px;
+	height: 700px;
+	margin: 0px auto;
+	background: url(__PUBLIC__/images/preview/preview.png);
+	background-size: cover;
+}
+
+.mainpre {
+	width: 304px;
+	height: 455px;
+	position: relative;
+	top: 125px;
+	left: 30px;
+}
+</style>
+</head>
+
+<body>
+	<div class="infowrap">
+
+		<div class="editleft">
+
+			<div class="control-group pagetitle">
+				<div class="controls controls-row">编辑分类信息发布</div>
+			</div>
+
+			<input id="nav_id" type="hidden" value="" />
+			<input id="simple_info_id" type="hidden" value="" />
+			<input id="cur_state" type="hidden" value="" />
+			<div id="nav_name" class="title" style="width: 100%;">
+				<div style="margin-right: 40px;">
+					<label>导航栏目选择:</label>
+					<input id="ct" class="easyui-combotree" />
+				</div>
+			</div>
+
+			<div class="control-group" style="margin-top: 20px;">
+				<label class="control-label">分类信息标题</label>
+				<div class="controls controls-row">
+					<input type="text" class="uniform mydateinput" id="title" name="title" placeholder="请输入分类信息标题" />
+				</div>
+				<div class="controls controls-row">分类标题不同于导航标题，它会显示在图文信息中，也可以忽略不填。</div>
+			</div>
+
+			<div class="content">
+				<div class="textWriter">
+					<div class="ueditorContainer">
+						<script id="container" type="text/plain" style="width:400px;height:400px;margin:0px;"></script>
+					</div>
+				</div>
+			</div>
+
+			<div class="btnfooter">
+				<div class="submitLayer">
+					<a id="editBtn" href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit">编辑</a>
+					<a id="delBtn" href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" style="display: none">删除</a>
+					<a id="submitBtn" href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" style="margin-left: 20px; display: none">提交</a>
+					<a id="cancelBtn" href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" style="margin-left: 20px; display: none">取消</a>
+				</div>
+			</div>
+
+		</div>
+		<!--editleft结束div-->
+
+		<div class="previewright">
+			<div class="control-group pagetitle">
+				<div class="controls controls-row">当前分类信息预览</div>
+				<div class="blankdeco"></div>
+				<div class="control-group">
+					<label class="control-label">以下是手机上的效果（保存编辑后才能预览）</label>
+				</div>
+				<div class="previewphone">
+					<iframe name="mainpre" id="mainpre" class="mainpre" src="{:U('Home/Index/index','','')}?e_id={$e_id}" frameborder="false" style="border: none; overflow-x: hidden;" allowtransparency="true"></iframe>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--wrap结束div-->
+
+<script type="text/javascript">
+var oldHtmlcontent = '';					//如果原来有信息，则这是原来的html，取消时候用
+var oldTitle = '';							//原标题，同上
+
+$(function(){
+	
+	var ue = UE.getEditor('container',{
+		imageUrl : "{:U('Admin/Simpleinfo/simpleInfoImageHandle')}",
+		imagePath : "__ROOT__",
+		initialContent :'',										//这个属性就是初始化为空
+		readonly:true											//初始化不可编辑
+	});
+	
+	//监听ueditor图片插入，插入前设置图片宽度。
+	ue.addListener('beforeInsertImage', function (t, arg) {
+		 for(i=0; i<arg.length; i++){
+			 arg[i].width = 320;
+		 }
+	});
+	
+	$("#title").attr("disabled",true);
+	
+	function backToInitState(){
+		if(ue.queryCommandState( 'source') == 1){
+			ue.execCommand( 'source');
+		}
+		ue.setDisabled('fullscreen');						//ueditor不能全屏
+		$("#title").attr("disabled",true);					//标题编辑框不可编辑
+		$("#title").val('');								//标题框内容清空
+		ue.setContent('');									//ueditor内容清空
+		$("#submitBtn").hide();								//隐藏提交按钮
+		$("#cancelBtn").hide();								//隐藏取消按钮
+		$("#delBtn").hide();								//隐藏删除按钮
+		$("#editBtn").show();								//显示编辑按钮
+	}
+
+	$('#editBtn').click(function(){
+		var pNavID = $('#nav_id').val().trim();
+		if(pNavID == null || pNavID == ''){
+			alert('亲，请先选择导航栏目，再进行信息发布!');
+			$("#ct").focus();
+		}else{
+			var node = $('#ct').combotree('tree').tree('find', pNavID);
+			if($('#ct').combotree('tree').tree('isLeaf', node.target)){
+				oldHtmlcontent = ue.getContent();
+				$(this).hide();
+				$("#delBtn").show();
+				$("#submitBtn").show();
+				$("#cancelBtn").show();		
+				$("#title").attr("disabled",false);
+				ue.setEnabled();
+			}else{
+				alert('亲，该级导航含有子级导航，无法针对改导航栏目进行发布信息，请选择其子级栏目！');
+				$("#ct").focus();
+			}
+		}
+	});
+	
+	$('#delBtn').click(function(){
+			$.messager.confirm('确定删除', '亲，您确定要删除吗?', function(r) {
+				if (r) {
+					var pNavID = $('#nav_id').val().trim();
+					if(pNavID == null || pNavID == ''){
+						return;
+					}else{
+						$.post('{:U("Admin/Simpleinfo/del","","")}',{nav_id : pNavID, simple_info_id : $("#simple_info_id").val()},
+								function(result) {
+									if (result.success) { 
+										alert( result.msg);
+										backToInitState();
+									}else { alert( result.msg); }
+								}, 'json');
+					}
+				}
+			});
+	});
+	
+	$('#cancelBtn').click(function(){
+		ue.setContent(oldHtmlcontent);
+		$("#submitBtn").hide();
+		$("#delBtn").hide();
+		$(this).hide();
+		$("#editBtn").show();	
+		$("#title").attr("disabled",true);
+		ue.setDisabled('fullscreen');
+	});
+	
+	$('#ct').combotree({
+	    url: "{:U('Admin/NavigationMenu/readWithoutRoot','','')}",
+	    valueField:'id',   
+	    textField:'text',
+	    onSelect: function(node){
+	    	backToInitState();
+			$("#nav_id").val(node.id);
+	    	if($('#ct').combotree('tree').tree('isLeaf', node.target)){
+	    		$.post('{:U("Admin/Simpleinfo/readNavInfo","","")}',{nav_id : node.id, nav_name : node.text},
+		    			function(data){
+		    				$("#nav_id").val(data['nav_id']);
+		    				$("#title").val(data['title']);
+		    				$("#simple_info_id").val(data['simple_info_id']);
+		    				$("#cur_state").val(data['state']);
+		    				ue.setContent(unescape(data['html_content']))
+		    			});
+	    	}
+	    }
+	});
+
+	url_add =  '{:U("Admin/Simpleinfo/add","","")}';
+	url_save =  '{:U("Admin/Simpleinfo/save","","")}';
+	 
+	$("#submitBtn").click(function(){
+		var curstate = $("#cur_state").val();
+		var url =  url_save;
+    	var pNavID = $('#nav_id').val().trim();
+    	var pHTMLContent = escape(ue.getContent());
+		if(curstate == null || curstate == '' || curstate == 'add'){
+			url =  url_add;
+		}
+		if(pNavID == null || pNavID == ''){
+			alert('亲，请先选择导航栏目，再进行信息发布!');
+			$("#ct").focus();
+			return;
+		}
+		var node = $('#ct').combotree('tree').tree('find', pNavID);
+		if($('#ct').combotree('tree').tree('isLeaf', node.target)){
+			$("#title").attr("disabled",true);
+			ue.setDisabled('fullscreen');
+			$("#submitBtn").hide();
+			$("#cancelBtn").hide();
+			$("#editBtn").show();	
+			
+			$.post(url,{html_content: pHTMLContent, nav_id:pNavID, simple_info_id : $("#simple_info_id").val(), title : $("#title").val()},
+					function(result) {
+						if (result.success) {
+							alert( result.msg);
+						} else {
+							alert( result.msg);
+						}
+					}, 'json');
+		}else{
+			alert('亲，无法针对含有子级导航的导航栏目，进行发布信息，请选择导航栏目!');
+			$("#ct").focus();
+		}
+	});
+	
+});
+</script>
+</body>
+</html>

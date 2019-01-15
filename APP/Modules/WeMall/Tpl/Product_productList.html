@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css?v=1.0.0" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/prosearchfav.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>{$title}列表</title>
+<style type="text/css">
+.loadingBox{margin-top: 0px;}
+</style>
+</head>
+
+<body>
+	<input type="hidden" id="storeId" value="88" />
+	
+	<section class="s-options">
+		<ul class="s-items">
+	        <li><a href="javascript:;" class="sort" data-order="current_price"><span>价格<i></i></span></a><hr></li>
+	        <li><a href="javascript:;" class="sort" data-order="onshelf_time"><span>上架时间</span></a><hr></li>
+	    </ul>
+	</section>
+	
+	<div class="tx-c lh30 fc-grey">
+		<span id="keyWords">{$title}</span> 相关商品 共 <span class="total-pro-count">16</span> 款
+	</div>
+	
+	<div class="stockList">
+		<ul></ul>
+	</div>
+	<div class="no-more fn-hide">已显示全部</div>
+	
+	<a href="{:U('WeMall/Cart/shoppingCart', array('sid' => $sid), '')}" class="linkNeedLogin toShoppingCart"></a>
+	<a href="javascript:;" id="gotoTalk" class="toAskSales"></a>
+	
+<!-- product js template begin -->
+<script type="text/html" id="productlisttpl">
+{{each productlist as e i}}
+	<li class="stockBox">
+		<a href="{{e | productDetailURL}}" class="stockLink" data-id="{{e.product_id}}">
+			<div class="stockImg wbox">
+				<img src="{{e.micro_path}}" alt="" />
+			</div>
+			<div class="stockName">{{if e.is_feature == 1}}<b>精选</b>{{else if e.is_new == 1}}<b>新品</b>{{else if e.is_preferential == 1}}<b>特价</b>{{/if}}{{e.product_name}}</div>
+			<div class="stockPrice">
+				{{if e.original_price && e.current_price < e.original_price}}
+				<span class="fc-red fw-bold">¥{{e.current_price}}</span>
+				<del class="block">¥{{e.original_price}}</del>
+				{{else}}
+				<span class="fc-red fw-bold">¥{{e.current_price}}</span>
+				<del class="block white">→</del>
+				{{/if}}
+			</div>
+			<b class="more openFav">···</b>
+			<div class="cover"><div class="fav">收藏</div></div>
+		</a>
+	</li>
+{{/each}}
+</script>
+<!-- product js template end -->
+
+<script type="text/javascript">
+var eid = "{$eid}", 					// 商家编号
+	sid = "{$sid}", 					// 分店编号
+	keyword = "{$keyword}", 			// 自定义搜索时的关键字
+	nid = "{$nid}", 					// 导航类型
+	querytype = {$querytype}, 			// 默认查全部商品
+	querysort = "current_price", 		// 定义默认查询字段current_price
+	queryorder = 0, 					// 查询顺序0代表正常降序查询desc，1代表升序查询asc
+	hasMoreData = true, 				// 本js模块全局变量：后续是否还有数据
+	isLoadingData = false, 				// 本js模块全局变量：本模块正在请求数据标记
+	nextstart = 0, 						// 页面默认下一次请求开始的数据位置
+	curpage = "{:U('WeMall/Store/storeIndex', array('sid' => $sid), '')}", // 当前位置
+	loginurl = "{:U('WeMall/GuestMall/login', array('sid' => $sid), '')}", // 登录地址
+	webchatRequestURL = "{:U('WeMall/GuideChatRequest/initWebChat', '', '')}", // 请求聊天窗URL
+	requestProductListURL = "{:U('WeMall/Product/queryProduct', '', '')}", // 分页请求商品
+	productlistjson = '{$productlistjson}'; // 打开页面一屏orderlistjson信息
+	
+// 页面初始化函数
+$(function(){
+	
+	// 第一次直出渲染模板（默认是上架时间）
+	var productlist = $.parseJSON(window.productlistjson); // 解析页面的json数据（不管是带了反斜杠，还是没有反斜杠，都可以解析json数据） 
+	var tmpl = template('productlisttpl', productlist.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+	var productListObj = $('.stockList ul'); 		// 抓取class为stockList的ul，定义为productListObj对象
+	if (tmpl == '{Template Error}') {
+		tmpl = ""; // 置空tmpl
+	}
+	productListObj.html(tmpl);					// 渲染成功就把模板渲染的信息写入
+	window.nextstart = productlist.nextstart;		// 下一页开始 
+	$(".s-items li a[data-order='current_price']").addClass("curr").removeClass("up").addClass("down"); // 默认上架时间标签被选中，选中的时候默认是降序排列
+	$(".total-pro-count").html(productlist.totalcount); // 写入所有商品数量
+	
+	// 生成DOM结构事件
+	$("body").on("click", ".s-items li a", function(e){
+		// 按序查询商品
+		e.preventDefault();
+		var _t = $(this); // 抓取自身
+		window.querysort = _t.data("order"); // 获取按什么顺序排的
+		if (_t.hasClass("curr")) {
+			// 如果已经是当前页卡
+			if (_t.hasClass("down")) {
+				_t.removeClass("down").addClass("up");
+				window.queryorder = 1; // 已经降序排列则进行升序排列
+			} else {
+				_t.removeClass("up").addClass("down");
+				window.queryorder = 0; // 已经升序排列则进行降序排列
+			}
+		} else {
+			// 如果是切换标签卡
+			_t.parent().siblings().find("a").removeClass("curr").removeClass("up").removeClass("down"); // 先移除兄弟节点的这个curr与其up或down
+			_t.addClass("curr").removeClass("up").addClass("down"); // 自己标签被选中，选中的时候默认是降序排列
+			window.queryorder = 0; // 切换页卡的第一次点击默认是降序排列
+		}
+		getProductList("pull", 0); // 切换/排序页卡，都是相当于是下拉新查询商品（nextstart=0）
+	});
+	
+	// 悬浮按钮聊天窗
+	$("#gotoTalk").click(function(){
+		var param = { 
+				sid : sid, // 分店信息
+		}
+		$.post(webchatRequestURL, param, function(result){
+			if (result.errCode == 0) {
+				location.href = result.data.chaturl; // 跳转顾客与导购聊天窗页面
+			} else if (result.errCode == 20001) {
+				window.location.href = loginurl+"?from="+curpage;
+				return false;
+			} else {
+				mobileAlert(result.errMsg); // 弹出错误信息
+				return false;
+			}
+		}, "json");
+	});
+	
+	// 向上推（到底部才加载）与向下拉（不是很敏感）
+	$(window).scroll(function() {
+		var scrollh = document.body.scrollHeight; // 网页正文全文高
+		var clienth = document.documentElement.clientHeight; // 网页可见区域高度
+		var scrollt = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop; // 网页被卷去的高
+		var limitheight = 50; // 触碰屏幕的距离底部（增加到50px，预留一下）
+		if (scrollt + clienth + limitheight >= scrollh && !isLoadingData && hasMoreData) {
+			isLoadingData = true;
+			getProductList('drag'); // 由本模块内的init方法来调用getProductList方法上推加载下一页
+		}
+		scrollPosition = $(window).scrollTop();
+	}).swipeDown(function(){
+		if (! isLoadingData && document.body.scrollTop <= 1) {
+            isLoadingData = true;
+            getProductList('pull', 0);			// 由本模块内的init方法来调用getProductList方法下拉刷新
+        }
+	});
+	
+});
+
+// 分页获取商品列表
+function getProductList(action, nextstart) {
+	// Step1：定义请求参数
+	var start = 0; // 定义起始页为0
+	if (typeof nextstart == 'undefined') {
+		start = window.nextstart; // 如果没有定义nextstart下一页数据，就用window.nextstart这个值
+	} 
+	var url = requestProductListURL + "?eid=" + eid + "&sid=" + sid + "&nextstart=" + start; // 分页请求数据的地址
+	
+	// Step2：根据不同的请求方式
+	switch (action) {
+		case 'pull':
+			$('.no-more').addClass("fn-hide"); // 默认已显示全部的div隐藏
+			break;
+		case 'drag':
+			// 如果是上推操作
+			MLoading.show('加载中');
+			break;
+		default:
+			MLoading.show('加载中');
+			break;
+	}
+	hasMoreData = true; // 模块开始请求新数据的标记置为true
+	isLoadingData = true; // 模块设置为正在请求数据
+	
+	// 准备请求参数
+	var params = {
+			eid : eid, 					// 商家编号
+			sid : sid, 					// 分店编号
+			keyword : keyword, 			// 自定义搜索时的关键字
+			nid : nid, 					// 导航编号
+			querysort : querysort, 		// 查询的字段
+			queryorder : queryorder, 	// 查询的顺序
+			nextstart : start 			// 下一页店铺开始的位置
+	}
+	// Step3：请求并且完成界面不同显示
+	$.post(url, params, function(result){
+		
+		MLoading.hide(); // 隐藏等待刷新框
+		isLoadingData = false; // 本模块正在loading数据的状态变为false
+		
+		if (result.errCode == 0) {
+			// 如果正确请求到了商品数据
+			var productListObj = $('.stockList ul'); 		// 抓取class为stockList的ul，定义为productListObj对象
+			
+			if (action == 'pull') {
+				// 如果加载数据的动作是下拉，则有新收藏可能已经更新，需要清空原来的
+				productListObj.html('');					// 下拉先清空模板
+				var tmpl = template('productlisttpl', result.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+				if (tmpl == '{Template Error}') {
+					tmpl = ""; // 如果渲染模板出错，置空tmpl
+				} 
+				productListObj.html(tmpl); // 写入新html数据
+			} else {
+				// 上推加载下一页的处理
+				var tmpl = template('productlisttpl', result.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+				if (tmpl == '{Template Error}') {
+					tmpl = ''; // 如果渲染失败，则html置空
+				}
+				productListObj.append(tmpl); // 在文档尾追加新html数据
+				
+				// 如果返回的json数据的data字段的threadList字段里无数据，就不再加载任何数据
+				if (result.data.productlist.length == 0) {
+					hasMoreData = false; // 模块不在加载数据中
+					$('.no-more').removeClass("fn-hide"); // 显示所有数据
+				}
+			}
+			window.nextstart = nextstart = result.nextstart; // 将下一页数据给到nextStart，同时给到window.nextStart
+			// 至此，一次pull或者drag操作所有DOM元素与结构、特效变更结束
+		} else {
+			mobileAlert("请求商品列表失败！");
+			return false; // errCode不为0，有错误码，表示请求数据失败
+		}
+	}, 'json');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,570 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weact.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>我的订单</title>
+</head>
+
+<body>
+	<div class="lay_page page_cat_2" id="page_cat_2">
+        <div class="lay_page_wrap">
+        
+            <div class="lay_header" style="height: 45px">
+	            <div class="lay_toptab mod_tab" id="lay_head">
+	                <div class="tab_item go_back" onclick="window.history.go(-1);">
+	                    <i class="qb_icon icon_goback"></i>
+	                </div>
+	                <a class="tab_item" href='{:U("Home/Index/index", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_home"></i></a>
+	                <a class="tab_item" href='{:U("Home/MemberHandle/customerCenter", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_icenter"></i></a>
+	                <a class="tab_item" href='{:U("Home/Cart/shoppingCart", array("e_id"=>$e_id), "")}'>
+	                	<i class="qb_icon icon_cart"></i>
+	                    <i class="qb_icon icon_number_bubble qb_none" id="cartNum">0</i>
+	                </a>
+	            </div>
+	        </div><!-- lay_header结束div -->
+			
+            <div class="lay_page page_icenter" id="page_icenter">
+            	
+            	<div class="lay_page_wrap">
+					<div class="fn_profile qb_clearfix">
+						<div class="qb_fl">
+							<h2> <span class="profile_name" style="font-size:12px;">欢迎来到订单中心</span> </h2>
+							<div class="profile_detail">
+								<a class="profile_location" href="{:U('Home/MemberHandle/deliveryManage', array('e_id' => $e_id), '')}">
+									<i class="qb_icon icon_profile_location"></i>收货地址管理
+								</a>
+							</div>
+						</div>
+						<div class="qb_fr profile_op"> 
+							<a href="{:U('Home/Coupon/myCoupon', array('e_id' => $e_id), '')}">  <i class="qb_icon icon_profile_coupon"> </i> </a> 
+						</div>
+			    	</div>
+				    
+				    <div class="fn_tab qb_flex mod_mb15" id="tab-list">
+	                    <div data-type="0" class="flex_box current">全部<span index="0" class="mod_color_strong"></span></div>
+	                    <div data-type="1" class="flex_box">待付款<span index="1" class="mod_color_strong"></span></div>
+	                    <div data-type="2" class="flex_box">待发货<span index="2" class="mod_color_strong"></span></div>
+	                    <div data-type="3" class="flex_box">待收货<span index="3" class="mod_color_strong"></span></div>
+	                    <div data-type="4" class="flex_box">待评价<span index="4" class="mod_color_strong"></span></div>
+	                    <!-- <div data-type="5" class="flex_box">已评价<span index="5" class="mod_color_strong"></span></div> -->
+	                    <!-- <div data-type="6" class="flex_box">已关闭<span index="6" class="mod_color_strong"></span></div> -->
+	                </div>
+	            
+	                <div id="itemList">
+	                    <div id="normalList"></div><!-- 订单详情列表 -->
+	                    <div class="noResult fn-hide"></div>
+	                    <div class="show-all" style="display:none;">已显示所有数据</div>
+	                </div>
+				    
+				    <div class="qb_tac qb_none" style="height: 30px;" evttag="loadMore" id="load-more"></div>
+				</div>
+            	
+            </div>
+            
+            <!-- 关闭订单弹窗 begin -->
+			<div class="mobilePrompt">
+				<div class="box">
+					<div class="item">
+						<input type="hidden" name="refund_oid" id="refund_oid" value="" /><!-- 要协商撤销退款的订单编号 -->
+						<textarea class="comment" name="refund_reason" id="refund_reason" placeholder="请输入协商撤销订单的理由"></textarea>
+					</div>
+					<div class="refund-handle">
+						<div class="qb_flex qb_mb10">
+							<span class="mod_btn btn_block btn_strong flex_box refund-confirm">确认</span>
+							<span class="mod_btn btn_block btn_em flex_box refund-cancel">取消</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- 关闭订单弹窗 end -->
+            
+        </div><!--lay_page_wrap结束div-->
+    </div><!--lay_page结束div-->
+    
+	<div class="lay_footer qb_tac qb_fs_s mod_mb15">
+        <div class="fn_quicklinks">
+			<a class="mod_color_weak" href='{:U("Home/Index/index",array("e_id"=>$e_id),"")}'>商户首页</a>
+			<for start="0" end="3" step="1">
+				<span class="mod_color_comment">|</span>
+				<a class="mod_color_weak" href="{$pageinfo [navigation] [foot] [$i] [url]}">{$pageinfo [navigation] [foot] [$i] [nav_name]}</a>
+			</for>
+		</div>
+        <div class="fn_copyright">
+            <div class="mod_color_comment fn_copyright_agreement ui-fz-x-small ui-ta-c"><a href="#">Powered By WeAct</a></div>
+            <div class="mod_color_comment fn_copyright_text">Copyright &copy; 2014 WeAct.<br/>All Rights Reserved. </div>
+            <div class="mod_color_comment fn_copyright_text">微动公司 版权所有</div>
+        </div>
+    </div><!-- lay_footer结束div -->
+    
+<!-- 我的订单 js arttemplate begin -->
+<script type="text/html" id="orderlisttpl">
+{{each orderlist as e i}}
+	<div class="mod_cell qb_mb15">
+		<div class="mod_celltitle" data-oid="{{e.order_id}}">
+			<h3 class="qb_fl">订单编号：{{e.visual_number}}</h3>
+			<span class="order-from">所属：{{if e.mall_type == 1}}云总店{{else if e.mall_type == 2}}微猫商城{{else if e.mall_type == 3}}分销商城{{/if}}</span>
+			<i class="qb_fr qb_icon icon_arrow_right"></i><!--查看订单详情的箭头-->
+		</div>
+		<div class="mod_slider" data-orderid="{{e.order_id}}">
+			<div class="slider_cnt">
+				<ul>
+					{{each e.detailinfo as t j}}
+					<li class="single qb_mb10 qb_bfc bfc_f" data-nid="{{t.nav_id}}" data-pid="{{t.product_id}}">
+						<img src="{{t.micro_path}}" class="bfc_f" width="80" height="80" />
+						<div class="bfc_c ">
+							<p> {{t.product_name}} [ {{t.pro_color}} {{t.pro_size}} ] </p>
+							<p class="qb_fs_s ui_color_weak"> 商品编号：{{t.product_number}} </p>
+						</div>
+					</li>
+					{{/each}}
+				</ul>
+			</div>
+		</div>
+		<div class="mod_cell_hr"></div>
+		<div class="qb_clearfix qb_fs_s qb_mb10 mod_color_weak">
+			<div class="qb_fl">{{e | getOrderStatus}}</div>
+			<div class="qb_fr">
+				共计{{e.detailcount}}件商品 总价:<span class="mod_color_strong"> ¥{{e.total_price}} </span>
+			</div>
+		</div>
+		
+		<div class="order-handle" data-oid="{{e.order_id}}">
+		
+			<!-- 处理订单的不同状态的各类按钮显现 begin -->
+			{{if e.status_flag == 0}}
+				{{if e.normal_status == -2}}
+					<span class="wait-order">商家发货超时</span>
+				{{else if e.normal_status == -1}}
+					<span class="wait-order">支付超时</span>
+				{{else if e.normal_status == 0}}
+					<!-- section one 第一阶段 begin -->
+					<div class="qb_flex qb_mb10 qb_none1">
+						<span class="mod_btn btn_block btn_strong flex_box pay-order">去付款</span>
+						<span class="mod_btn btn_block btn_em flex_box cancel-order">取消订单</span>
+					</div>
+					<!-- section one 第一阶段 end -->
+				{{else if e.normal_status == 1}}
+					<!-- section two 第二阶段已付款待发货 begin -->
+					<div class="qb_flex qb_mb10 qb_none1">
+						<span class="mod_btn btn_block btn_disabled flex_box sign-order">确认收货</span>
+						<span class="mod_btn btn_block btn_em flex_box refund-apply">退货退款</span>
+					</div>
+					<!-- section two 第二阶段已付款未发货 end -->
+				{{else if e.normal_status == 2}}
+					<!-- section two 第二阶段已发货未签收 begin -->
+					<div class="qb_flex qb_mb10 qb_none1">
+						<span class="mod_btn btn_block btn_strong flex_box sign-order">确认收货</span>
+						<span class="mod_btn btn_block btn_em flex_box refund-apply">退货退款</span>
+					</div>
+					<div class="qb_flex qb_mb10 qb_none1">
+						<a href="javascript:;" class="mod_btn btn_block qb_mr10 flex_box view-delivery"> 查看物流 </a>
+					</div>
+					<!-- section two 第二阶段已发货未签收 end -->
+				{{else if e.normal_status == 3}}
+					<!-- section three 第三阶段未评价 begin -->
+					<div class="qb_flex qb_mb10 qb_none1">
+						<span class="mod_btn btn_block btn_strong flex_box appraise-order">去评价</span>
+						<span class="mod_btn btn_block btn_em flex_box delete-order">删除</span>
+					</div>
+					<!-- section three 第三阶段未评价 end -->
+				{{else if e.normal_status == 4}}
+					<!-- section three 第三阶段已评价 begin -->
+					<div class="qb_flex qb_mb10 qb_none1">
+						<span class="mod_btn btn_block btn_em flex_box delete-order">删除</span>
+					</div>
+					<!-- section three 第三阶段已评价 end -->
+				{{else}}
+					<span class="wait-order">未知状态</span>
+				{{/if}}
+			{{else if e.status_flag == 1}}
+				{{if e.refund_status == 1 && e.compel_refund == 0}}
+					<span class="wait-order refund-warning">退款申请中...</span>
+				{{else if e.refund_status == 1 && e.compel_refund == 1}}
+					<!-- 订单可以被顾客点领退款 begin -->
+					<div class="qb_flex qb_mb10 qb_none1">
+						<span class="mod_btn btn_block btn_strong flex_box compel-order">申领退款</span>
+					</div>
+					<!-- 订单可以被顾客点领退款 begin -->
+				{{else if e.refund_status == 2}}
+					<span class="wait-success">商家同意退款，处理中...</span>
+				{{else if e.refund_status == 3}}
+					<span class="wait-order">商家拒绝退款，请致电协商</span>
+				{{else if e.refund_status == 4}}
+					<span class="wait-success">退款成功，订单已关闭</span>
+				{{else if e.refund_status == 5}}
+					<span class="wait-order">退款结束，订单已关闭</span>
+				{{else}}
+					<span class="wait-order">未知状态</span>
+				{{/if}}
+			{{else}}
+				<span class="wait-order">未知状态</span>
+			{{/if}}
+			<!-- 处理订单的不同状态的各类按钮显现 begin -->
+			
+		</div>
+		
+	</div>
+{{/each}}
+</script>
+<!-- 我的订单 js arttemplate end -->
+
+<script type="text/javascript">
+var e_id = "{$e_id}", 					// 商家编号
+	openid = "{$openid}", 				// 订单用户微信号
+	querytype = 0, 						// 默认订单的请求类型为全部（0为全部订单，1为待付款，2为待发货，3为待收货，4为待评价，5为已评价，6为已关闭）
+	hasMoreData = true, 				// 本js模块全局变量：后续是否还有数据
+	isLoadingData = false, 				// 本js模块全局变量：本模块正在请求数据标记
+	nextstart = 0, 						// 页面默认下一次请求开始的数据位置
+	requestOrderListURL = "{:U('Home/Order/queryOrder', '', '')}", // 分页请求订单
+	orderlistjson = '{$orderlistjson}'; // 打开页面一屏orderlistjson信息
+	
+$(function(){
+	
+	// 第一次直出渲染模板（渲染的必定是全部订单）
+	var orderlist = $.parseJSON(window.orderlistjson); 
+	var tmpl = template('orderlisttpl', orderlist.data); 
+	var orderListObj = $('#normalList'); 
+	if (tmpl == '{Template Error}') {
+		tmpl = ""; 
+		$(".noResult").removeClass("fn-hide").html("好像出了点问题，请联系管理员。"); 
+	} else if (tmpl == "") {
+		tmpl = ""; 
+		$(".noResult").removeClass("fn-hide").html("没有订单数据，逛逛商城吧。"); 
+	}
+	orderListObj.html(tmpl); 
+	window.nextstart = orderlist.nextstart;		// 下一页开始
+	$(".mod_color_strong:eq("+window.querytype+")").html(orderlist.totalcount); // 处理标签卡上的数字
+	
+	// 绑定DOM结构事件$("body")
+	$(window).on("tap", "#tab-list .flex_box", function(e) {
+		// 切换不同的订单状态
+		e.preventDefault();
+		if ($(this).hasClass("current")) {
+			return false;
+		}
+		$(".flex_box").removeClass("current"); 		// 先移除所有tab菜单选中的状态
+		$(".mod_color_strong").html(""); 			// 清空所有订单数量的数字
+		$(this).addClass("current"); 				// 点击的tab菜单要添加选中状态
+		window.querytype = $(this).data("type"); 	// 获取点击的是哪个页卡（非常关键）
+		getOrderList("pull", 0); 					// 重新获取订单
+	}).on("click", ".single", function(e){
+		// 跳转商品详情
+		e.stopPropagation();
+		var _t = $(this), nid = _t.data("nid"), pid = _t.data("pid");
+		window.location.href = "{:U('Home/ProductView/productShow', array('e_id' => $e_id), '')}?nav_id="+nid+"&product_id="+pid;
+	}).on("click", ".view-delivery", function(e){
+		e.stopPropagation();
+		scscms_alert("商家未标注快递或物流公司接口繁忙，请稍后再试！", "ok", "", 3);	
+	}).on("tap", ".mod_celltitle", function(e){
+		// 订单详情
+		e.stopPropagation();
+		var _t = $(this), oid = _t.data("oid");
+		location.href = "{:U('Home/Order/orderInfo', array('e_id' => $e_id), '')}?oid="+oid;
+	}).on("tap", ".cancel-order", function(e){
+		// 取消订单
+		e.stopPropagation();
+		var _t = $(this), oid = _t.closest(".order-handle").data("oid"), order = _t.closest(".mod_cell");
+		var params = {
+				oid : oid, 
+				e_id : e_id 
+		}
+		scscms_alert("取消订单将不能恢复，是否继续？", "confirm", function() {
+			MLoading.show('提交中...'); 
+			_t.attr('disabled',true); 
+			$.post("{:U('Home/OrderRequest/cancelOrder', '', '')}", params, function(result){
+				MLoading.hide(); 
+				_t.removeAttr('disabled'); 
+				if (result.errCode == 0) {
+					scscms_alert("取消订单成功！", "ok", "", 2);	
+					order.remove(); 
+					setTimeout(function(){
+						location.reload(); // 1秒后刷新
+					},1000);
+				} else {
+					scscms_alert(result.errMsg, "error", "", 3); 
+				}
+			}, "json");
+		});
+	}).on("tap", ".pay-order", function(e){
+		// 去付款
+		e.preventDefault();
+		var _t = $(this), payoid = _t.closest(".order-handle").data("oid");
+		var params = {
+				oid : payoid, 	// 当前点击要支付的订单编号
+				method : 2, 	// 这里默认2是微信支付（以后建议可以用支付宝）
+				openid : window.openid, // 微信用户的openid
+				e_id : e_id 
+		}; // 准备提交参数
+		scscms_alert("用微信支付为该笔订单付款？", "confirm", function() {
+			MLoading.show('提交中...'); 
+			_t.attr('disabled',true); 
+			$.post("{:U('Home/OrderRequest/wechatPay', '', '')}", params, function(result) {
+				MLoading.hide(); 
+				_t.removeAttr('disabled'); 
+				if (result.errCode == 0) {
+					var payurl = "{:U('Home/WeChatPay/wechatPayV3', '', '')}?wcpid="+result.data.wcpid+"&redirecturi="+result.data.redirecturi+"&showwxpaytitle=1";
+					scscms_alert("即将开启微信支付，请及时确认支付!", "ok", "", 2);	// 定时2秒后关闭窗口
+					setTimeout(function() {
+						// to do 2.5秒后调起微信支付
+						window.location.href = payurl;
+					}, 2500);
+				} else{
+					scscms_alert(result.errMsg, "error", "", 3);
+				}
+			});
+		});
+	}).on("tap", ".sign-order", function(e){
+		// 确认收货
+		e.preventDefault();
+		var _t = $(this), oid = _t.closest(".order-handle").data("oid"), order = $(this).closest(".mod_cell"); // 获得订单编号、获得该条订单的区域
+		if (_t.hasClass("btn_disabled")) {
+			return false; // 按钮灰色不能点
+		}
+		var params = {
+				oid : oid, 	// 当前点击要支付的订单编号（要确认收货的订单编号）
+				e_id : e_id 
+		}
+		scscms_alert("请在真正收到货的时候才确认收货，是否继续？", "confirm", function() {
+			MLoading.show('提交中...'); 
+			_t.attr('disabled',true); 
+			$.post("{:U('Home/OrderRequest/signReceiveOrder', '', '')}", params, function(result){
+				MLoading.hide(); 
+				_t.removeAttr('disabled'); 
+				if (result.errCode == 0) {
+					scscms_alert("确认收货成功！", "ok", "", 3);	
+					setTimeout(function(){
+						if (typeof querytype != "undefined" && querytype != -1 && querytype != 3) {
+							// 在订单标签卡页面，而并不是全部订单的情况下，才需要移除该标签卡下的订单（全部订单不需要移除）
+							order.remove(); 
+						} else {
+							location.reload(); // 如果不是标签卡页面，重新刷新下页面，就可以将该笔订单显示成已收货（因为数据初始化了）
+						}
+					},500);
+				} else {
+					scscms_alert(result.errMsg, "error", "", 3); 
+				}
+			}, "json");
+		});
+	}).on("tap", ".refund-apply", function(e){
+		// 订单协商退款申请（弹窗）
+		e.stopPropagation();
+		var _t = $(this), oid = _t.closest(".order-handle").data("oid");
+		scscms_alert("若非情况所需不建议撤销，已谨慎考虑确定协商退款？", "confirm", function() {
+			$("#refund_oid").val(oid); 	// 写入要退款的订单编号
+			$("#refund_reason").val("");// 清空协商撤销退款理由
+			$(".mobilePrompt").show(); 	// 弹出关闭订单输入框
+		});
+	}).on("tap", ".refund-confirm", function(e){
+		var _t = $(this);
+		// 订单协商撤销确认
+		e.stopPropagation();
+		var reason = $("#refund_reason").val(); // 协商撤销退款理由
+		if (reason == "") {
+			scscms_alert("请输入协商撤销订单的原因！", "warn", "", 2); 
+			$("#refund_reason").focus();
+			return false;
+		}
+		var params = {
+				oid : $("#refund_oid").val(), // 要退款的订单编号
+				reason : reason, 
+				e_id : e_id 
+		}
+		scscms_alert("确认协商撤销理由填写无误并提交给商家？", "confirm", function() {
+			MLoading.show('提交中...'); 
+			_t.attr('disabled',true); 
+			$.post("{:U('Home/OrderRequest/refundApplyOrder', '', '')}", params, function(result){
+				MLoading.hide(); 
+				_t.removeAttr('disabled'); 
+				$("#refund_reason").val(""); 	// 不管提交成功与否，清空协商撤销退款理由
+				$(".mobilePrompt").hide(); 		// 不管提交成功与否，都隐藏关闭订单输入框
+				// 处理结果
+				if (result.errCode == 0) {
+					scscms_alert("提交协商撤销申请成功，请等待商家与您取得联系！", "ok", "", 2); 
+					setTimeout(function(){
+						location.reload(); // 1秒后刷新
+					},800);
+				} else {
+					scscms_alert(result.errMsg, "error", "", 3); 
+				}
+			}, "json");
+		});
+	}).on("tap", ".refund-cancel", function(e){
+		// 订单协商退款申请取消（关闭弹窗）
+		$(".mobilePrompt").hide(); // 隐藏关闭订单输入框
+	}).on("tap", ".appraise-order", function(e){
+		// 交易完成评价订单
+		e.preventDefault();
+		var _t = $(this), oid = _t.closest(".order-handle").data("oid");
+		window.location.href = "{:U('Home/Comment/GuideProduct', array('e_id' => $e_id), '')}?oid=" + oid;
+	}).on("tap", ".delete-order", function(e){
+		// 删除订单
+		e.stopPropagation();
+		var _t = $(this), oid = _t.closest(".order-handle").data("oid"), order = _t.closest(".mod_cell");
+		var params = {
+				oid : oid, 
+				e_id : e_id 
+		}
+		scscms_alert("删除订单将不能恢复，是否继续？", "confirm", function() {
+			MLoading.show('提交中...'); 
+			_t.attr('disabled',true); 
+			$.post("{:U('Home/OrderRequest/deleteOrder', '', '')}", params, function(result){
+				MLoading.hide(); 
+				_t.removeAttr('disabled'); 
+				if (result.errCode == 0) {
+					scscms_alert("删除订单成功！", "ok", "", 2);	
+					order.remove(); 
+					setTimeout(function(){
+						location.reload(); // 1秒后刷新
+					},1000);
+				} else {
+					scscms_alert(result.errMsg, "error", "", 3); 
+				}
+			}, "json");
+		});
+	}).on("tap", ".compel-order", function(e){
+		// 申领退款按钮
+		var _t = $(this), oid = _t.closest(".order-handle").data("oid");
+		if (_t.hasClass("btn_disabled")) {
+			return false;
+		}
+		var params = {
+				oid : oid, 
+				e_id : e_id 
+		}
+		scscms_alert("确定要取消这笔订单并申领退款吗？", "confirm", function() {
+			MLoading.show('提交中...'); 
+			_t.addClass("btn_disabled"); 
+			$.post("{:U('Home/OrderRequest/agreeRefund', '', '')}", params, function(result){
+				MLoading.hide(); 
+				_t.removeClass("btn_disabled"); 
+				if (result.errCode == 0) {
+					scscms_alert("退单并申领退款成功！", "ok", "", 2);	
+					order.remove(); 
+					setTimeout(function(){
+						location.reload(); // 1秒后刷新
+					},1000);
+				} else {
+					scscms_alert(result.errMsg, "error", "", 3); 
+				}
+			}, "json");
+		});
+	});
+	
+	// 向上推（到底部才加载）与向下拉（不是很敏感）
+	$(window).scroll(function() {
+		var scrollh = document.body.scrollHeight; // 网页正文全文高
+		var clienth = document.documentElement.clientHeight; // 网页可见区域高度
+		var scrollt = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop; // 网页被卷去的高
+		var limitheight = 100; // 触碰屏幕的距离底部100像素
+		if (scrollt + clienth + limitheight >= scrollh && !isLoadingData && hasMoreData) {
+			isLoadingData = true;
+			getOrderList('drag'); 
+		}
+		scrollPosition = $(window).scrollTop();
+	}).swipeDown(function(){
+		if (! isLoadingData && document.body.scrollTop <= 1) {
+	        isLoadingData = true;
+	        getOrderList('pull', 0); 
+	    }
+	});
+
+});
+
+// 分页请求订单函数
+function getOrderList(action, nextstart) {
+	// Step1：定义请求参数
+	var start = 0; // 定义起始页为0
+	if (typeof nextstart == 'undefined') {
+		start = window.nextstart; // 如果没有定义nextStart下一页数据，就用window.nextStart这个值
+	} 
+	var url = requestOrderListURL + "?e_id=" + e_id + "&nextstart=" + start; // 分页请求数据的地址
+	if (window.querytype) {
+		url += "&querytype" + window.querytype; // 加上查询条件
+	}
+	
+	// Step2：根据不同的请求方式
+	switch (action) {
+		case 'pull':
+			$('.show-all').hide(); // 默认已显示全部的div隐藏
+			break;
+		case 'drag':
+			// 如果是上推操作
+			MLoading.show('加载中');
+			break;
+		default:
+			MLoading.show('加载中');
+			break;
+	}
+	hasMoreData = true; // 模块开始请求新数据的标记置为true
+	isLoadingData = true; // 模块设置为正在请求数据
+	if($(".loading-bottom").length == 0){
+	    $("#itemList").append('<div class="loading-bottom">加载中...</div>'); // 添加正在加载中
+	}
+	
+	// 准备请求参数
+	var params = {
+			e_id : e_id,
+			nextstart : start,
+			querytype : window.querytype
+	}
+	// Step3：请求并且完成界面不同显示
+	$.post(url, params, function(result){
+		MLoading.hide(); 
+		isLoadingData = false; 
+		$(".loading-bottom").remove(); 
+		
+		if (result.errCode == 0) {
+			// 如果正确请求到了订单数据
+			var orderListObj = $('#normalList');
+			if (action == 'pull') {
+				// 如果加载数据的动作是下拉，则有新收藏可能已经更新，需要清空原来的
+				orderListObj.html('');					// 渲染成功就把模板渲染的信息写入
+				$(".noResult").addClass("fn-hide"); 	// 先隐藏没有数据
+				
+				var tmpl = template('orderlisttpl', result.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+				if (tmpl == '{Template Error}') {
+					tmpl = ""; // 如果渲染模板出错，置空tmpl
+					$(".noResult").removeClass("fn-hide").html("好像出了点问题，请联系管理员。"); // 如果渲染模板出错，更换样式
+				} else if (tmpl == "") {
+					tmpl = ""; // 置空tmpl
+					$(".noResult").removeClass("fn-hide").html("没有订单数据，逛逛商城吧。"); // 如果渲染模板为空，更换样式
+				}
+				orderListObj.html(tmpl); // 写入新html数据
+			} else {
+				// 上推加载下一页的处理
+				var tmpl = template('orderlisttpl', result.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+				if (tmpl == '{Template Error}') {
+					tmpl = ''; 
+				}
+				orderListObj.append(tmpl); // 在文档尾追加新html数据
+				
+				// 如果返回的json数据的data字段的threadList字段里无数据，就不再加载任何数据
+				if (result.data.orderlist.length == 0) {
+					hasMoreData = false; 
+					$(".show-all").show(); // 显示所有数据
+				}
+			}
+			window.nextstart = nextstart = result.nextstart; // 将下一页数据给到nextStart，同时给到window.nextStart
+			$(".mod_color_strong:eq("+window.querytype+")").html(result.totalcount); // 处理标签卡上的数字
+		} else {
+			scscms_alert("请求订单数据失败！", "error", "", 2);
+			return false; 
+		}
+	}, 'json');
+}
+</script>
+</body>
+</html>

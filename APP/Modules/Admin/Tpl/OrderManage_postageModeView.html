@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" /><!-- 控制easyUI每一行按钮等样式 -->
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/template-native.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>邮费模板信息管理</title>
+</head>
+
+<body class="easyui-layout" fit="true">
+	<div data-options="region:'center',border:false">
+		<table id="dg" title="邮费模板信息" toolbar="#toolbar" style="width: 100%; height: 100%;"></table>
+	</div>
+	<!-- easyUI的工具条 -->
+	<div id="toolbar" style="height:30px; padding-top:5px;">
+		<span>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addMode();">添加邮费模板</a> 
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editMode();">查看/编辑</a> 
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delMode();">删除模板</a>
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-redo" plain="true" onclick="statusChange('on');">批量开启模板</a> 
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="statusChange('off');">批量关闭模板</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="cancelSelect();">取消选择</a>
+			<a href="javascript:location.reload();" class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
+		</span>
+		
+		<span class="searchbox" style="float: right; margin-right: 30px; height: 25px; text-align: center;">
+			<select id="search_condition" name="search_condition">
+				<option value="mode_name" selected="selected">模板名称</option>
+			</select>
+			<input id="search_content" name="search_content" type="text" class="searchbox-text mysearchbox" placeholder="可选择一个条件查询" />
+			<span class="searchbox-button searchbox-button-hover"></span>
+		</span>
+		
+		<span class="searchbox">
+			<select id="category_search" name="category_search" style="width:105px;">
+				<option value="-1" selected="selected">全部物流</option>
+                <option value="CNEMS" >中国邮政EMS</option>
+				<option value="CNST" >申通快递</option>
+				<option value="CNTT" >天天快递</option>
+				<option value="CNYT" >圆通速递</option>
+				<option value="CNSF" >顺丰速运</option>
+				<option value="CNYD" >韵达快递</option>
+				<option value="CNZT" >中通速递</option>
+				<option value="CNLB" >龙邦物流</option>
+				<option value="CNZJS" >宅急送</option>
+				<option value="CNQY" >全一快递</option>
+				<option value="CNHT" >汇通速递</option>
+				<option value="CNMH" >民航快递</option>
+				<option value="CNYF" >亚风速递</option>
+				<option value="CNKJ" >快捷速递</option>
+				<option value="DDS" >DDS快递</option>
+				<option value="CNHY" >华宇物流</option>
+				<option value="CNZY" >中铁快运</option>
+				<option value="FEDEX" >FedEx</option>
+				<option value="UPS" >UPS</option>
+				<option value="DHL" >DHL</option>
+				<option value="OTHER" >其它</option>
+			</select>
+		</span>
+		<span class="remind-condition">物流公司：</span>
+		
+	</div>
+
+<!-- 展开easyUI上加号，订单详情js模板 begin -->
+<script type="text/html" id="detailinfotpl">
+<table>
+    <tbody >
+        <tr>
+            <td style="border:0; width:150px;">
+                <p style="font-weight:bold;">本模板指定地区详情：</p>
+            </td>
+        </tr>
+        <tr style="height:30px;">
+            <td style="font-weight:bold; width:70px; text-align:center;">序号</td>
+			<td style="font-weight:bold; width:300px; text-align:center;">配送地区</td>
+            <td style="font-weight:bold; width:100px; text-align:center;">首重费用（元）</td>
+			<td style="font-weight:bold; width:100px; text-align:center;">续重费用（元）</td>
+        </tr>
+		<% for (var i in detaillist) {%>
+			<tr>
+            	<td style="width:70px; line-height:24px; text-align:center;"><%=i*1+1%></td>
+				<td style="width:200px; line-height:24px; text-align:center;"><%=detaillist[i].designated_area%></td>
+            	<td style="width:100px; line-height:24px; text-align:center;"><%=detaillist[i].first_fee%></td>
+				<td style="width:100px; line-height:24px; text-align:center;"><%=detaillist[i].added_fee%></td>
+        	</tr>
+		<% } %>
+		<tr style="border:0; height:20px;"></tr>
+    </tbody>
+</table>
+</script>
+<!-- 展开easyUI上加号，订单详情js模板 end -->
+	
+<script type="text/javascript">
+
+//定义PHP框架需要的全局变量（引用将无法识别，必不可少！）
+var selectURL = "{:U('Admin/OrderManageRequest/read','','')}"; 	//查询客户信息的控制器action处理函数地址
+var url;                                               		//提交的url地址
+
+//初始化easyUI表格
+$(function() {
+	$('#dg').datagrid({
+		url: selectURL,						           		//读取邮费的url地址
+		singleSelect: false,			               		//可多选
+		collapsible: true,					           		//datagrid可滑动展开
+		method: 'post',						           		//post提交类型
+		pagination: true,					           		//开启分页
+		rownumbers: true,					           		//显示行号
+		fitColumns: true,					           		//自适应列宽
+		fit: true,							           		//datagrid整屏适应
+		pageSize: 10,						           		//默认一页10条记录
+		pageList: [10, 20, 30],				           		//可供选择的有一页10条、20条、30条、50条记录（50条貌似没必要，1080高的也不能显示完全30条，何况50条）
+		idField: 'mode_id',					           		//主键字段是mode_id
+		columns: [
+			[{ field: 'mode_id', title: '模板编号', sortable: true, hidden: true }, 
+			 { field : 'ck', checkbox : 'true', width : 100 },
+			 { field : 'mode_name', title : '模板名称', width : 100, align : 'center' },
+			 { field : 'exp_company', title: '物流公司', width : 100, sortable: true, formatter : initCompany }, 
+			 { field: 'first_weight', title: '首重（公斤）', width : 70, sortable: true }, 
+			 { field: 'added_weight', title: '续重（公斤）', width : 70, sortable: true }, 
+			 { field: 'status', title: '模板状态', width : 70, sortable: true, formatter : initStatus },
+			 { field: 'add_time', title: '添加时间', width : 100, sortable: true },
+			 { field: 'remark', title: '备注', width : 140, sortable: true }]
+		],
+		view: detailview,
+		detailFormatter: function(index, row) {
+			return '<div class="ddv" id="' + row.mode_id + '">' + '</div>';
+		},
+		onExpandRow: function(index, row){
+			$.post('{:U("Admin/OrderManageRequest/getModeDetail", "", "")}',
+					{ mid : row.mode_id },
+					function(result){
+						if(result.errCode == 0){
+							var detailinfo = template( 'detailinfotpl', result.data ); 			// artTemplate渲染模板引擎
+							if (detailinfo == '{Template Error}') {
+								detailinfo = ''; 												// 如果渲染失败，则detailinfo置空
+								$.messager.alert('温馨提示', '网络繁忙，接收模板详情数据错误！', 'error'); 	// 提示用户出错了
+	                        }
+							$('#'+row.mode_id).html(detailinfo); 								// 写入展开详情中
+							$('#dg').datagrid("fixDetailRowHeight", index); 					// 该行的详情框高度自适应（非常重要，以前没处理好）
+						} else {
+							$.messager.alert('温馨提示', '网络繁忙，没有查询到该模板详细信息！', 'error');
+						}
+					},'json');	//post
+            $('#dg').datagrid('fixDetailRowHeight', index);
+	    }	// onExpandRow
+	});
+	
+	// 按所选物流公司搜索 
+	$('#category_search').change(function() {
+		var searchcondition = 'exp_company';
+		var searchcontent = $('#category_search').val(); // 要搜索的导航名称
+		$("#dg").datagrid({
+			url: "{:U('Admin/OrderManageRequest/searchMode', '', '')}",
+			queryParams: {
+				searchcondition: searchcondition,
+				searchcontent: searchcontent
+			}
+		}, 'load');
+		clearSelect(); // 清空潜在选择项
+	});
+	
+	// 指定条件查询，进行商品搜索
+	$('.searchbox-button').click(function() {
+		var searchcondition = $('#search_condition').val().trim(); // 获取搜索条件
+		var searchcontent = $('#search_content').val(); // 获取搜索内容
+		if (searchcontent.trim() == "" || searchcontent == "undefined") {
+			$.messager.alert('温馨提示', '请输入搜索内容！', 'warning');
+			return
+		}
+		$("#dg").datagrid({
+			url: "{:U('Admin/OrderManageRequest/searchMode', '', '')}",
+			queryParams: {
+				searchcondition: searchcondition,
+				searchcontent: searchcontent
+			}
+		}, 'load');
+		clearSelect(); // 清空潜在选择项
+	});
+});
+
+/*-----------------------easyUI数据表操作-----------------------*/
+//添加邮费模板操作
+function addMode() {
+	window.location.href = "{:U('Admin/OrderManage/addPostageMode')}";
+}
+
+//编辑邮费模板操作
+function editMode() {
+	var rows = $("#dg").datagrid('getSelections');       //获取选中的行（已经绑定过主键cate_id列）
+	if (rows.length == 0) {
+		$.messager.alert('温馨提示','请选择一条模板信息进行编辑');				
+	}else if (rows.length > 1) {
+		$.messager.alert('警告','只能选择一条模板信息进行编辑');			
+	}else if(rows.length == 1){
+		var mid = rows[0].mode_id;
+		window.location.href = "{:U('Admin/OrderManage/editPostageMode')}?mode_id="+mid;
+	}
+}
+
+//删除所选邮费模板
+function delMode(){
+	var rows = $("#dg").datagrid('getSelections');
+	var rowdata = [];
+	if (rows.length == 0) {
+		$.messager.alert('温馨提示','至少需要选择一条模板进行删除！');				
+	}else{
+		$.messager.confirm('温馨提示','确定删除选中的模板吗？',function(cf){
+			if(cf){
+				for(var i=0;i<rows.length;i++){
+					rowdata.push(rows[i].mode_id);
+				}
+				MLoading.show('提交中...'); // 显示友好度提示
+				$.post( "{:U('Admin/OrderManageRequest/delPostageMode')}",
+					{
+						rowdata:rowdata.join(',')
+					},
+					function(result){
+						MLoading.hide(); // 取消友好度提示
+						if(result.errCode == 0){
+							$("#dg").datagrid('reload'); // 无刷新重载页面数据
+							clearSelect(); // 清空可能潜在选择的商品
+						}else{
+							$.messager.alert('温馨提示', '删除模板失败！'+result.errMsg, 'error');
+						}
+				});
+			}
+		});
+	}
+}
+
+//取消选择
+function cancelSelect() {
+	$('#dg').datagrid('unselectAll');
+}
+
+//物流公司初始化
+function initCompany(val, row) {
+	if (row.exp_company == 'CNEMS'){
+		return "中国邮政EMS";
+	} else if (row.exp_company == 'CNST') {
+		return "申通快递";
+	} else if (row.exp_company == 'CNTT') {
+		return "天天快递";
+	} else if (row.exp_company == 'CNYT') {
+		return "圆通速递";
+	} else if (row.exp_company == 'CNSF') {
+		return "顺丰速运 ";
+	} else if (row.exp_company == 'CNYD'){
+		return "韵达快递";
+	} else if (row.exp_company == 'CNZT'){
+		return "中通速递";
+	} else if (row.exp_company == 'CNLB'){
+		return "龙邦物流";
+	} else if (row.exp_company == 'CNZJS'){
+		return "宅急送";
+	}else if (row.exp_company == 'CNQY') {
+		return "全一快递";
+	} else if (row.exp_company == 'CNHT') {
+		return "汇通速递";
+	} else if (row.exp_company == 'CNMH') {
+		return "民航快递";
+	} else if (row.exp_company == 'CNYF') {
+		return "亚风速递";
+	} else if (row.exp_company == 'CNKJ'){
+		return "快捷速递";
+	} else if (row.exp_company == 'DDS'){
+		return "DDS快递";
+	} else if (row.exp_company == 'CNHY'){
+		return "华宇物流";
+	} else if (row.exp_company == 'CNZY'){
+		return "中铁快运";
+	} else if (row.exp_company == 'FEDEX'){
+		return "FedEx";
+	} else if (row.exp_company == 'UPS'){
+		return "UPS";
+	} else if (row.exp_company == 'DHL'){
+		return "DHL";
+	} else if (row.exp_company == 'OTHER'){
+		return "其它";
+	} 
+}
+
+//判断模板状态是否开启
+function initStatus(val, row) {
+	if (row.status == 1) {
+		return "<span class='green' style='color:#39b868;'>开启</span>";
+	}else {
+		return "<span class='grey' style='color:#666;'>关闭</span>";
+	}
+}
+
+//批量切换模板开闭状态
+function statusChange(type){
+	var rows = $("#dg").datagrid('getSelections');
+	var rowdata = []; 										// 要进行标注操作的商品数组
+	
+	if (rows.length == 0) {
+		$.messager.alert('温馨提示', '至少需要选择一个模板进行状态切换操作！', 'warning');
+	} else if (rows.length > 10) {
+		$.messager.alert('温馨提示', '一次最多选择10个模板进行状态切换操作！', 'warning');
+	} else {
+		var flag = 0; 										// 所选商品通过验证的标记（要标注的商品不能包含已标注、要取消标注商品不能包含未标注）
+		for (var i = 0; i < rows.length; i++) {
+			if (type == "on") {
+				if (rows[i].status != 0) {
+					flag = 1;
+					break;
+				} else {
+					rowdata.push(rows[i].mode_id);  
+				}
+			}else if (type == "off") {
+				if (rows[i].status == 0) {
+					flag = 1;
+					break;
+				} else {
+					rowdata.push(rows[i].mode_id);
+				}
+			}
+		}
+		
+		if (flag == 0) {
+			MLoading.show("提交中...");						// 增加等待
+			$.post('{:U("Admin/OrderManageRequest/changeStatus", "", "")}', {
+				rowdata: rowdata.join(','),
+				type: type
+			}, function(result) {
+				MLoading.hide();							// 友好撤销等待
+				if (result.errCode == 0) {
+					$.messager.alert('温馨提示', '状态切换成功！', 'info');
+					$("#dg").datagrid('reload'); 			// 无刷新重载页面数据
+					clearSelect(); 							// 清空可能潜在选择的商品
+				} else {
+					$.messager.alert('温馨提示', '状态切换失败！'+result.errMsg, 'warning');
+				}
+			});
+		} else {
+			if (type == "on") {
+				$.messager.alert('温馨提示', '只能开启已关闭状态的模板！', 'warning');
+			}else if (type == "off") {
+				$.messager.alert('温馨提示', '只能关闭已开启状态的模板！', 'warning');
+			}
+		}
+	}
+}
+
+//共用警示函数：有些调用后不使用此函数可能会存在隐藏错误
+function clearSelect() {
+	$("#dg").datagrid("clearSelections"); // 清除所有选中的行
+}
+
+</script>	
+</body>
+</html>

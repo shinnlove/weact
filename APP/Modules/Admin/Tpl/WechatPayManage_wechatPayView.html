@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" /><!-- 魔幻表单 -->
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiColorButtonStyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactAdminStyle.css" /><!-- 控制easyUI每一行按钮等样式 -->
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/myUniformStyle.css" /><!-- 魔幻表单样式自控 -->
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script><!-- 魔幻表单必须js -->
+<script type="text/javascript" src="__PUBLIC__/lhgcalendar/lhgcore.min.js"></script><!-- 日历核心js -->
+<script type="text/javascript" src="__PUBLIC__/lhgcalendar/lhgcalendar.min.js"></script><!-- 日历核心js -->
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script><!-- 页脚中文包支持 -->
+<title>微支付通知信息管理</title>
+<style type="text/css">
+/*重写 bootstrap对control的样式*/
+.control-label { width:100px !important; }
+.controls { margin-left:120px !important; }
+</style>
+</head>
+
+<body class="easyui-layout">
+	<div data-options="region:'center',border:false">
+		<table id="wechatpayinfo" title="所有微信支付通知信息一览" toolbar="#toolbar"></table>
+	</div>
+	
+	<!-- easyUI的工具条 -->
+	<div id="toolbar" style="height:60px;">
+		<div class="uptool">
+			<a href="javascript:location.reload();" class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新所有</a>
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delwechatPay();">批量删除</a>
+		</div>
+		
+		<div class="search-tool">
+			<div class="diy-search">
+				<div style="float:left;">
+					<select id="search_condition" class="uniform diy-select">
+						<option value="visual_number" selected="selected">订单编号</option>
+					</select>
+				</div>
+				<div style="float:left;">
+					<input type="text" class="uniform mysearchinput" id="search_content" name="search_content" placeholder="可选择一个条件查询" value="" required />
+					<span id="composite-search" class="searchbox-button searchbox-button-hover uni-search"></span>
+				</div>
+			</div>
+		
+			<div class="diy-search">
+				<span class="left-label">日期范围：</span>
+				<input type="text" class="uniform mysearchinput" id="search-starttime" name="search-starttime" placeholder="请选择日期" value="" />
+				<span class="middle-label">到</span>
+				<input type="text" class="uniform mysearchinput" id="search-endtime" name="search-endtime" placeholder="请选择日期" value="" />
+				<span id="period-search" class="searchbox-button searchbox-button-hover uni-search"></span>
+			</div>
+		</div>
+	</div>
+	
+<script type="text/javascript">
+$(function() {
+	$(".uniform").uniform(); // 魔幻表单初始化
+	/*活动日期的日历呼出*/
+	J(function(){
+		J('#send-time').calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+		$("#lhgcalendar").css("z-index", 9999); // 要更改其css，否则被easyUI挡住了
+		// 搜索框日期查询
+		J('#search-starttime').calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+		J('#search-endtime').calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+	});
+	
+	wpi = $('#wechatpayinfo').datagrid({
+		url : "{:U('Admin/WechatPayManageRequest/getOrderPayInfo')}",
+		singleSelect: false,
+		collapsible: true,
+		method: 'post',
+		fitColumns: true,
+		fit: true,
+		pagination: true,
+		pageSize: 10,
+		pageList: [5, 10, 15],
+		rownumbers: true,
+		idField : 'notify_id',
+		columns : [ [ 
+					  { field : 'notify_id', title : '通知编号', width : 100, hidden: true},
+		              { field : 'time_end', title : '交易时间', width : 100, sortable : true, align : 'center'},
+		              { field : 'device', title : '设备号', width : 50, align : 'center'},
+		              { field : 'mchid', title : '商户号', width : 50, align : 'center'},
+		              { field : 'sub_mch_id', title : '子商户号', width : 100 },
+		              { field : 'transaction_id', title : '微信订单号', width : 100},
+		              { field : 'openid', title : '用户标识', width : 100 },
+		              { field : 'trade_type', title : '交易类型', width : 50},
+		              { field : 'result_code', title : '交易状态', width : 50 },
+		              { field : 'bank_type', title : '付款银行', width : 80 },
+		              /* { field : 'fee_type', title : '货币种类', width : 100}, */ 
+		              { field : 'total_fee', title : '总金额（元）', width : 80, formatter: totalInit },
+		              { field : 'coupon_fee', title : '代金券（元）', width : 80, formatter: couponInit },
+		              { field : 'subbranch_id', title : '所属分店', width : 100, sortable : true },
+		              { field : 'guide_id', title : '所属导购', width : 100 },
+		              { field : 'visual_number', title : '订单编号', width : 100}, 
+		              { field : 'out_trade_no', title : '订单详情', align : 'center', formatter: getPayDetailInit },
+		               
+		          ] ],
+	});
+	
+	//根据下单时间段查询
+	$("#period-search").click(function() {
+		var sst = $("#search-starttime");
+		var set = $("#search-endtime");
+		if(sst.val() == '' && set.val() == '' ){
+			$.messager.alert('温馨提示', '请输入账单日期查询范围！','warning', function(){
+				sst.focus();												//注意聚焦和return的顺序！
+			});
+			return;
+		}else if(sst.val() != '' && set.val() != '' && sst.val() > set.val()){
+			$.messager.alert('温馨提示', '账单日期查询中起始时间不能大于截止时间！','warning', function(){
+				sst.focus();												//注意聚焦和return的顺序！
+			});
+			return;
+		}
+		var params = {
+				searchcondition : 'time_end',
+				startsearchcontent : sst.val(),
+				endsearchcontent : set.val(),
+		}; // 定义查询参数
+		wpi.datagrid({
+			url:"{:U('Admin/WechatPayManageRequest/conditionSearchPay', '', '')}",
+			queryParams : params
+		},'load');
+		clearSelect(); // 清除一些潜在所选择的行
+	});
+	
+	// 指定条件查询
+	$("#composite-search").click(function() {
+		var params = {
+				searchcondition : $("#search_condition").val().trim(),
+				searchcontent : $("#search_content").val()
+		}; // 定义查询参数
+		wpi.datagrid({
+			url:"{:U('Admin/WechatPayManageRequest/conditionSearchPay', '', '')}",
+			queryParams : params
+		},'load');
+		clearSelect(); // 清除一些潜在所选择的行
+	});
+});
+
+//微支付返回金额单位为分，所以初始化总金额单位为元
+function totalInit(val,row){
+	var totalfee = (row.total_fee/100).toFixed(2); 
+	return totalfee; 
+}
+
+//初始化代金券
+function couponInit(val,row){
+	var couponfee = (row.coupon_fee/100).toFixed(2); 
+	return couponfee; 
+}
+
+//初始化订单详情标签
+function getPayDetailInit(val, row){
+	var url = "/weact/Admin/OrderManage/orderDetail?showtype=1&orderid="+row.out_trade_no;
+	return "<a href='"+url+"'><font color='blue'>查看</font></a>"; 
+}
+
+//删除账单信息函数
+function delwechatPay() {
+	var rows = wpi.datagrid('getSelections');
+	var rowdata = [];
+	if (rows.length == 0) {
+		$.messager.alert('温馨提示','至少需要选择一条账单信息进行删除！');				
+	}else{
+		$.messager.confirm('温馨提示','确定删除选中的对账单吗？',function(cf){
+			if(cf){
+				for(var i=0;i<rows.length;i++){
+					rowdata.push(rows[i].notify_id);
+				}
+				MLoading.show('提交中...'); // 显示友好度提示
+				$.post( "{:U('Admin/WechatPayManageRequest/delwechatPay', '', '')}",
+					{
+						rowdata:rowdata.join(',')
+					},
+					function(result){
+						MLoading.hide(); // 取消友好度提示
+						if(result.errCode == 0){
+							wpi.datagrid('reload'); // 无刷新重载页面数据
+							clearSelect(); // 清空可能潜在选择的商品
+						}else{
+							$.messager.alert('温馨提示', '删除账单失败！'+result.errMsg, 'error');
+						}
+				});
+			}
+		});
+	}
+}
+
+//共用警示函数：有些调用后不使用此函数可能会存在隐藏错误
+function clearSelect() {
+	wpi.datagrid("clearSelections"); // 清除所有选中的行
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/guideappstyle.css" />
+<script src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script src="__PUBLIC__/js/highcharts.js"></script>
+<title>提效神器</title>
+</head>
+
+<body>
+	<!-- 月度目标：{$data.monthTarget}--本月已完成：{$data.monthFinish}--本月剩余：{$data.monthLeft}
+	<br /> 本月剩余天数：{$data.daysHave}--每日目标：{$data.daysTarget}
+	<br /> 平均日业绩:{$data.averDayFinish}
+	<br /> 今日完成业绩：{$data.todayFinish}--今日还需完成：{$data.todayLeft}
+	<br /> -->
+	
+	<div class="wrap kpiwrap">
+    	<div class="kpi-title">本月业绩销售目标</div>
+        <div class="kpi-amount"><span class="kpi-target">{$data.monthTarget}</span>元</div>
+        <div class="date">今天是<span class="today">{$data.today}</span>，截止目前</div>
+        <div class="calculation">
+        	<div class="upper-calculation">
+            	<div class="left-indicator">
+                	<div class="content-title"><span>本月已完成</span></div>
+                    <div class="content-number"><span>{$data.monthFinish}</span>元</div>
+                </div>
+                <div class="right-indicator">
+                	<div class="content-title"><span>还需完成</span></div>
+                    <div class="content-number"><span>{$data.monthLeft}</span>元</div>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div class="under-calculation">
+            	<div class="left-indicator">
+                	<div class="content-title"><span>平均日业绩</span></div>
+                    <div class="content-number"><span>{$data.averDayFinish}</span>元</div>
+                </div>
+                <div class="right-indicator">
+                	<div class="content-title"><span>本月剩余</span></div>
+                    <div class="content-number"><span>{$data.monthLeft}</span>元</div>
+                </div>
+                <div class="clear"></div>
+            </div>
+            <div class="under-calculation">
+            	<div class="left-indicator">
+                	<div class="content-title"><span>今日完成业绩</span></div>
+                    <div class="content-number"><span>{$data.todayFinish}</span>元</div>
+                </div>
+                <div class="right-indicator">
+                	<div class="content-title"><span>今日还需完成</span></div>
+                    <div class="content-number"><span>{$data.todayLeft}</span>元</div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div class="pie-charts">
+        	<div id="container" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
+        </div>
+    </div>
+	
+<script type="text/javascript">
+$(function() {
+	Highcharts.getOptions().colors = Highcharts.map(Highcharts.getOptions().colors, function(color) {
+		return {
+			radialGradient: {
+				cx: 0.5,
+				cy: 0.3,
+				r: 0.7
+			},
+			stops: [
+				[0, color],
+				[1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
+			]
+		};
+	});
+	$('#container').highcharts({
+		chart: {
+			plotBackgroundColor: null,
+			plotBorderWidth: null,
+			plotShadow: false
+		},
+		colors: ['#69a3da', //第一个颜色
+		'#7edc6b', //第二个颜色
+		'#d325f3' //第三个颜色
+		],
+		title: {
+			text: '业绩效率图'
+		},
+		tooltip: {
+			pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+		},
+		plotOptions: {
+			pie: {
+				allowPointSelect: true,
+				cursor: 'pointer',
+				dataLabels: {
+					enabled: true,
+					color: '#000000',
+					connectorColor: '#000000',
+					formatter: function() {
+						return '<b>' + this.point.name + '</b>: ' + Highcharts.numberFormat(this.percentage, 2) + ' %';
+					}
+				}
+			}
+		},
+		series: [{
+			type: 'pie',
+			name: 'Browser share',
+			data: [
+				['A', {$pieData.lastFinishPer}],
+				['B', {$pieData.leftPer}],
+				{
+					name: 'C',
+					y: {$pieData.todayFinishPer},
+					sliced: true,
+					selected: true
+				}]
+		}]
+	});
+	
+	$("#container rect").attr("fill", "transparent"); // 去除饼状图的背景
+});		
+</script>
+</body>
+</html>

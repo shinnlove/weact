@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weact.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>购物车</title>
+</head>
+
+<body>
+	<div class="lay_page page_cat_2" id="page_cat_2">
+        <div class="lay_page_wrap">
+        	
+            <div class="lay_header" style="height: 45px">
+                <div class="lay_toptab mod_tab" id="lay_head">
+                    <div class="tab_item go_back" onclick="window.history.go(-1);">
+                        <i class="qb_icon icon_goback"></i>
+                    </div>
+                    <a class="tab_item" href='{:U("Home/Index/index", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_home"></i></a>
+                    <a class="tab_item" href='{:U("Home/MemberHandle/customerCenter", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_icenter"></i></a>
+                    <a class="tab_item" href='{:U("Home/Cart/shoppingCart", array("e_id"=>$e_id), "")}'>
+                    	<i class="qb_icon icon_cart"></i>
+                        <i class="qb_icon icon_number_bubble qb_none" id="cartNum">0</i>
+                    </a>
+                </div>
+            </div><!-- lay_header结束div -->
+            
+            <div class="lay_page current">
+                <div class="lay_page_wrap">
+                    <input type="hidden" id="items-len" value="2" />
+					
+                    <section id="content">
+                    	<!-- 购物车无内容 -->
+                    	<section id="empty-cart">
+                    		<div class="qb_gap qb_tac qb_pt10" style="padding: 70px 0 5px; margin-bottom: 0px;">
+			                    <img src="__PUBLIC__/images/icon_cart_empty.png" width="81" class="qb_mb10" />
+			                    <p class="qb_fs_xl mod_color_comment">你的购物车空空如也哦</p>
+			                </div>
+			                <div class="qb_tac qb_gap">
+			                    <a href="{:U('Home/Index/index', array('e_id'=>$e_id), '')}" class="mod_btn">去逛逛</a>
+			                </div>
+                    	</section>
+		                <!-- 购物车无内容 -->
+		                
+                    	<!-- 购物车有内容 -->
+                        <section id="item-sec" class="qb_hide">
+							<div class="cart-list"></div>
+                        	
+                            <div class="mod_cell ui_mt15 qb_mb15 ui_pt10">
+                                <div class="ui_pb10 ui_clearfix qb_fs_s">
+                                    <div class="qb_fl">
+                                        <span class="ui_mr30 ui_pt10"><i class="qb_icon icon_checkbox" id="choose-all"></i>全选</span>
+                                        总价：<span class="ui_color_strong">￥<span id="total">0.00</span></span>
+                                    </div>
+                                    <span class="mod_btn qb_fr confirm_order">去结算</span>
+                                </div>
+                            </div><!--mod_cell的ui_mt15结束div-->
+                        </section>
+                        <!-- 购物车有内容 -->
+                    </section>
+                </div>
+            </div>
+            <div class="qb_quick_tip qb_none" id="bubble"></div>
+            <div class="mod_dialog qb_none" id="message-notice">
+                <div class="dialog_mask"></div>
+                <div class="dialog_main qb_br qb_tac">
+                    <div class="dialog_bd" id="notice-content"></div>
+                    <div class="dialog_ft qb_flex"><a href="javascript:void(0);" class="flex_box" id="notice-cancel">取消</a><a href="javascript:void(0);" class="flex_box" id="notice-sure">确定</a></div>
+                </div>
+            </div>
+            
+        </div><!--lay_page_wrap结束div-->
+    </div><!--lay_page结束div-->
+    
+	<div class="lay_footer qb_tac qb_fs_s mod_mb15">
+        <div class="fn_quicklinks">
+			<a class="mod_color_weak" href='{:U("Home/Index/index",array("e_id"=>$e_id),"")}'>商户首页</a>
+			<for start="0" end="3" step="1">
+				<span class="mod_color_comment">|</span>
+				<a class="mod_color_weak" href="{$pageinfo [navigation] [foot] [$i] [url]}">{$pageinfo [navigation] [foot] [$i] [nav_name]}</a>
+			</for>
+		</div>
+        <div class="fn_copyright">
+            <div class="mod_color_comment fn_copyright_agreement ui-fz-x-small ui-ta-c"><a href="#">Powered By WeAct</a></div>
+            <div class="mod_color_comment fn_copyright_text">Copyright &copy; 2014 WeAct.<br/>All Rights Reserved. </div>
+            <div class="mod_color_comment fn_copyright_text">微动公司 版权所有</div>
+        </div>
+    </div><!-- lay_footer结束div -->
+	
+<!-- 购物车 cart js template begin -->
+<script type="text/html" id="cartprotpl">
+{{each cartlist as e i}}
+	<div class="mod_cell ui_plr0 ui_mt15 qb_mb15 item" data-eid="{{e.e_id}}" data-cartid="{{e.cart_id}}" price="{{e.current_price}}" last-count="{{e.amount}}" data-pid="{{e.product_id}}" data-nid="{{e.nav_id}}" data-pronum="{{e.product_number}}" data-skuid="{{e.sku_id}}">
+		<div class="mod_celltitle qb_fs_s ui_plr10">
+			<h3 class="qb_fl"><i class="qb_icon icon_checkbox" price="{{e.current_price}}" index="0" name="cart_checkbox"></i> 云总店</h3>
+		</div>
+		<div class="ui_plr10">
+			<ul class="mod_list mod_list_hr qb_fs_s">
+				<li class="list_item qb_mb10 qb_bfc">
+					<a href="{{e | productDetailURL}}" class="bfc_f"><img class="cart-img" src="{{e.micro_path}}" /></a>
+					<div class="bfc_c">
+						<p><span class="product-name">{{e.product_name}}</span>[ <span class="product-color">{{if e.product_color}}{{e.product_color}}{{else}}默认{{/if}}</span> <span class="product-size">{{e.product_size}}</span> ]</p>
+						<p>单价：<span class="ui_color_strong">￥{{e.current_price}}元</span></p>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="qb_tar ui_p10 qb_fs_s ui_bg_color_weak ui-bt">
+			<i class="qb_icon icon_trash ui_mr30 icon_delete"></i>数量：<input type="tel" class="ui_textinput ui_textinput_tiny count" value="{{e.amount}}" data-max="{{e.sku_storage_left}}" data-limit="0" />
+			<span class="qb_tof" style="width: 100px">共计：<span class="ui_color_strong single-total">￥{{e.current_price*e.amount}}元</span></span>
+		</div>
+		<input type="hidden" class="cmdy-data" supportcod="true" num="{{e.amount}}" limit="0" storenum="{{e.sku_storage_left}}" ic="71021" mid="188625" sa="颜色:{{e.product_color}}|尺码:{{e.product_size}}" />
+	</div><!--mod_cell的last-count结束div-->
+{{/each}}
+</script>
+<!-- 购物车 cart js template end -->
+
+<script type="text/javascript">
+var e_id = "{$e_id}", 					// 商家编号
+	openid = "{$openid}", 				// 订单用户微信号
+	cartlistjson = '{$cartinfojson}'; 	// 打开页面一屏cartinfojson信息
+	
+$(function(){
+	
+	// 第一次直出渲染模板（渲染的必定是全部订单）
+	var cartlist = $.parseJSON(window.cartlistjson); 
+	var tmpl = template('cartprotpl', cartlist);
+	if (tmpl == '{Template Error}') {
+		tmpl = ""; 
+		$("#item-sec").addClass("qb_none"); // 隐藏购物车
+		$("#empty-cart").removeClass("qb_none"); 
+		$("#empty-cart").children(".mod_color_comment").html("好像出了点问题，请联系管理员"); // 字样式是购物车渲染模板出问题 
+	} else if (tmpl == "") {
+		$("#item-sec").addClass("qb_none"); // 隐藏购物车
+		$("#empty-cart").removeClass("qb_none"); 
+		$("#empty-cart").children(".mod_color_comment").html("你的购物车空空如也哦"); // 字样式是购物车空
+	} else {
+		$("#item-sec").removeClass("qb_none"); // 展现购物车
+		$("#empty-cart").addClass("qb_none"); 
+	}
+	$('.cart-list').html(tmpl);	
+	
+	// 绑定DOM结构事件
+	
+	// checkbox自身变化
+	$("#item-sec").find(".icon_checkbox").on("click", function(){
+		if ($(this).hasClass("icon_checkbox_checked")) {
+			$(this).removeClass("icon_checkbox_checked");
+		} else {
+			$(this).addClass("icon_checkbox_checked");
+		}
+	});
+	
+	// 单个商品checkbox变化
+	$(".cart-list").find("i[name=cart_checkbox]").on("click", function(){
+		// 具体某件商品勾选框触发事件（单个商品勾选是否引起全选）
+		var notchecklen = $(".cart-list").find("i[name=cart_checkbox]").not(".icon_checkbox_checked").length; // 找到购物车所有单件商品选择框
+		if (notchecklen == 0) {
+			$("#choose-all").addClass("icon_checkbox_checked"); 	// 如果所有商品都勾中了，全选
+		} else {
+			$("#choose-all").removeClass("icon_checkbox_checked"); 	// 还有商品没勾中，就不全选
+		}
+		getPayment(); // 计算价格
+	});
+	
+	$("#choose-all").on("click", function(){
+		// 总店购物车全选勾选框点击触发事件
+		var cartAllSelect = $(".cart-list").find("i[name=cart_checkbox]"); // 找到购物车所有单件商品选择框
+		if ($(this).hasClass("icon_checkbox_checked")) {
+			cartAllSelect.addClass("icon_checkbox_checked"); // 如果全选是勾中的，则所有商品全部勾中
+		} else {
+			cartAllSelect.removeClass("icon_checkbox_checked"); // 如果全选是不勾中的，则所有商品取消勾中
+		}
+		getPayment(); // 计算价格
+	});
+	
+	// 数量框失去焦点
+	$(".count").on("blur", function(){
+		var _t = $(this),
+			cid = _t.closest(".item").data("cartid"),
+			price = _t.closest(".item").attr("price"),
+			count = ~~_t.val(), 				// 当前购买数量
+			maxCount = ~~_t.data("max"), 		// 最大购买数量
+			limitBuyCount = ~~_t.data("limit"); // 每人限购数量
+		if (limitBuyCount) {
+			// 限购获取库存和限购数量的最小值
+			if (count > Math.min(limitBuyCount, maxCount)) {
+				count = Math.min(limitBuyCount, maxCount); // 限购|最大库存数量
+				// 提醒一下最大限购超过
+				if (count > 0) {
+					utils.showBubble("购买数量超过限购数量，最多允许购买"+count+"件");
+				} else {
+					utils.showBubble("所选购商品库存不足！");
+				}
+			}
+		} else {
+			// 未限购
+			if (count > maxCount) {
+				count = maxCount; // 超过最大的数量，只能是最大的数量
+				// 提醒一下最大库存超过
+				if (count > 0) {
+					utils.showBubble("购买数量超过库存数量，最多允许购买"+count+"件");
+				} else {
+					utils.showBubble("所选购商品库存不足！");
+				}
+			}
+		}
+		// 允许更改的情况下
+		if (count < 1) {
+			count = 1; // 如果数量比1小，直接为1
+		} 
+		var params = {
+				cid : cid,
+				amount : count,
+				e_id : e_id
+		}
+		$.post("{:U('Home/CartRequest/updateCart', '', '')}", params, function(result){
+			if (result.errCode == 0) {
+				_t.val(count); 	// 更新成功，数量框正常变更写入
+				_t.parent().find(".single-total").html("￥"+price*count+"元");
+				getPayment(); 	// 更改完了计算总价
+			} else {
+				utils.showBubble(result.errMsg);
+				setTimeout(function(){
+					location.reload(); // 防止出错
+				},800);
+			}
+		}, "json");
+	});
+	
+	// 删除购物车
+	$(".icon_delete").on("click", function(){
+		var _t = $(this), removecart = _t.closest(".item"), cartid = removecart.data("cartid"); 
+		var params = { e_id : e_id, cid : cartid }; 
+		scscms_alert("确定移除这件商品？", "confirm", function() {
+			$.post("{:U('Home/CartRequest/deleteCart', '', '')}", params, function(result){
+				if (result.errCode == 0) {
+					removecart.remove(); 
+					getPayment(); 
+					// 如果最后一件商品，去掉全选框、去掉可以去结算的按钮、然后setTimeout跳转空购物车页面（2015/06/25最新更新）
+					var cartlen = $(".cart-list").children(".item").length; // 获取还剩下的商品数目（加强体验）
+					if (cartlen == 0) {
+						$("#choose-all").removeClass("icon_checkbox_checked"); 	// 去除全选
+						$(".confirm_order").removeClass("btn_strong"); 			// 取消结账按钮
+						$("#item-sec").addClass("qb_none"); 					// 隐藏购物车
+						$("#empty-cart").removeClass("qb_none"); 
+						$("#empty-cart").children(".mod_color_comment").html("你的购物车空空如也哦"); // 字样式是购物车空
+					}
+				} else {
+					utils.showBubble(result.errMsg);
+					return false;
+				}
+			}, "json");
+		});
+	});
+	
+	// 总店开单
+	$(".confirm_order").on("click", function(){
+		var _t = $(this);
+		if(!_t.hasClass("btn_strong")) {
+			return false; // 如果没有可以去结算的标记，直接返回
+		}
+		// 特别注意：云总店不比门店，是淘宝不是天猫，所以没有到店自提，要到店自提，去线下系统拍，所以不考虑快递与到店自提的关系
+		var cartlist = []; // 购物车
+		$("#item-sec .item").each(function(i, e) {
+			if($(e).children().find("i[name=cart_checkbox]").hasClass("icon_checkbox_checked")) {
+				var stockItem = {
+					"img": $(e).children().find(".cart-img").attr("src"), 	// 商品图片路径
+					"e_id": $(e).data("eid"), 								// 商家编号
+					"cartId": $(e).data("cartid"), 							// 购物车编号
+					"nav_id": $(e).data("nid"), 							// 商品导航编号
+					"product_id": $(e).data("pid"), 						// 商品编号(id)
+					"productNum": $(e).data("pronum"), 						// 商品编号(吊牌编号)
+					"name": $(e).find(".product-name").text(), 				// 商品名称
+					"skuId": $(e).data("skuid"), 							// SKU的编号
+					"size": $(e).find(".product-size").html(), 				// 尺码
+					"color": $(e).find(".product-color").html(), 			// 颜色
+					"amount": $(e).children().find(".count").val(), 		// 购物车该SKU的数量
+					"price": $(e).attr("price") // 价格
+				};
+				cartlist.push(stockItem); // 压栈商品信息
+			}
+		});
+		sessionStorage.cartList = JSON.stringify({cartlist:cartlist}); 		// 存入cartList中后跳转
+		//console.log(sessionStorage.cartList); // 比对预订单需要的信息
+		//return
+		location.href = "{:U('Home/Order/preOrder', array('e_id' => $e_id), '')}"; 
+	});
+	
+});
+
+// 计算价格
+function getPayment() {
+	pricetotal = 0; // 默认总价格为0
+	// 所勾选的每个对象
+	$("#item-sec .item").each(function(i, e) {
+		if($(e).children().find("i[name=cart_checkbox]").hasClass("icon_checkbox_checked")) {
+			var perprice = $(e).attr("price"); // 商品价格
+			var amount = $(e).children().find(".count").val(); // 该商品数量
+			pricetotal += ( parseFloat(perprice) * parseFloat(amount) ) || 0; // 计算单价乘以数量或没有价格
+		}
+	});
+	$("#total").html(pricetotal.toFixed(2)); 	// 转2位小数
+	if (pricetotal == 0) {
+		$(".confirm_order").removeClass("btn_strong").attr("disabled", "disabled"); // 没有价格不能结算
+	} else {
+		$(".confirm_order").addClass("btn_strong").removeAttr("disabled"); // 有价格可以结算	
+	}
+}
+</script>
+</body>
+</html>

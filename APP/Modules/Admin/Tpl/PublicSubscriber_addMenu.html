@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<title>添加新菜单信息</title>
+</head>
+
+<body>
+	<div class="wrap">
+		<form class="form-horizontal" id="reply_form" class="form-horizontal uniform" style="margin-left: 20px;">
+			<input type="hidden" name="current_father_id" value="-1" />
+			<div class="control-group">
+	            <div class="controls controls-row"><h2>新增<font class="menu_type"></font></h2></div>
+	            <div class="controls controls-row">
+		        	<font style="font-weight:bold; color:#666;">当前父级菜单：</font><font class="father_menu" style="color:highlight; line-height:22px;"></font><br />
+					<font style="font-weight:bold; color:#666;">当前菜单类型：</font><font class="menu_type" style="color:highlight; line-height:22px;"></font><br />
+				</div>
+	        </div>
+			
+			<div class="control-group">
+				<label class="control-label">
+					新菜单名称<span class="text-error">(*)</span>
+				</label>
+				<div class="controls controls-row">
+					<input type="text" id="menu_name" name="menu_name" class="uniform briefinput" style="width: 220px;" placeholder="请输入菜单名字" required="required" value="{$menuinfo.name}" />
+				</div>
+				<div class="controls controls-row">
+					一级菜单最多输入<strong>4</strong>个汉字（2个半角英文算1个汉字），<br /> 二级菜单最多输入<strong>7</strong>个汉字（2个半角英文算1个汉字）。
+				</div>
+			</div>
+			
+			<hr />
+
+			<div class="handle-action">
+				<div class="control-group">
+					<a id="save-btn" class="large ui-color-button light-green" href="javascript:void(0)">保存</a>
+					&nbsp;&nbsp; 
+					<a id="cancel-btn" class="large ui-color-button blue" href="javascript:void(0)">取消</a>
+				</div>
+			</div>
+		</form>
+	</div>
+
+<script type="text/javascript">
+var cmid = "{$mid}", // 当前父级菜单信息
+	cmname = "{$mname}"; // 当前父级菜单名字
+	
+$(function() {
+	$(".uniform").uniform(); // 文本框的uniform格式化，必不可少
+
+	// 初始化父级菜单名字和新增菜单的类型
+	$("input[name='current_father_id']").val(cmid); // 写入当前要新增的父级菜单的值
+	$(".father_menu").text(cmname); // 写入新增菜单名字
+	var mtype = (cmid == "-1") ? "父级菜单" : "子级菜单"; // 判断菜单类型
+	$(".menu_type").text(mtype); // 写入新增菜单类型
+	
+	// 保存新增菜单按钮
+	$("#save-btn").click(function() {
+		//准备工作：
+		var father_menu_limit = 8; // 父级菜单字数限制（半角）
+		var child_menu_limit = 14; // 子级菜单字数限制（全角）
+		var nametxt = $("#menu_name"); // 抓取DOM对象
+		var menuname = nametxt.val(); // 获取当前用户编辑的菜单名字
+		
+		// Step1：验证菜单是否为空
+		if (menuname == "" || menuname == "undefined") {
+			$.messager.alert('温馨提示', '请输入菜单名字！', 'warning', function() {
+				nametxt.focus(); // 聚焦菜单名字文本框
+			});
+			return false;
+		}
+		// Step2：验证菜单字数
+		if (cmid == "-1") {
+			if (getStringLen(menuname) > father_menu_limit) {
+				$.messager.alert('温馨提示', '一级菜单最多输入4个汉字（2个半角英文算1个汉字）！', 'warning', function() {
+					nametxt.focus();
+				});
+				return;
+			}
+		} else {
+			if (getStringLen(menuname) > child_menu_limit) {
+				$.messager.alert('温馨提示', '二级菜单最多输入7个汉字（2个半角英文算1个汉字）！', 'warning', function() {
+					nametxt.focus();
+				});
+				return;
+			}
+		}
+		
+		//Step3:在此处进行确认的post提交，如果成功，回调函数里刷新父框架中的菜单树对应的节点
+		$.post("{:U('Admin/PublicSubscriber/addMenuConfirm', '', '')}", {
+			fid: cmid,
+			name: menuname
+		}, function(result) {
+			if (result.errCode == 0) {
+				$.messager.alert('温馨提示', '添加新菜单成功，请及时发布到公众号以保持一致！', 'info', function() {
+					//刷新父框架中的菜单树
+					setTimeout(function(){
+						parent.location.reload(); // 父框架刷新
+					},500);
+				});
+			} else {
+				$.messager.alert('温馨提示', '新增菜单失败，' + result.errMsg, 'error');
+			}
+		}, "json");
+	});
+});
+
+//统计菜单字数
+function getStringLen(Str) {
+	var i, len, code;
+	if (Str == null || Str == "") return 0;
+	len = Str.length;
+	for (i = 0; i < Str.length; i++) {
+		code = Str.charCodeAt(i);
+		if (code > 255) len++;
+	}
+	return len;
+}
+</script>
+</body>
+</html>

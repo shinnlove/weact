@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uploadstyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/webuploader.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/diywebuploader.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/PCASClass.js"></script>
+<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=0915c96d31d25a43decd812514605c9e"></script>
+<title>企业基本信息</title>
+</head>
+
+<body>
+	<div class="widget">
+		<div class="widget-head">
+			<div class="pull-left">
+            	<span class="text-success">微信服务信息</span> <span class="text-success">已设置</span>
+			</div>
+            <div class="clearfix"></div>
+		</div>
+        
+		<div class="widget-content">
+			<div class="padd">
+            
+                <form name="myform" class="form-horizontal uniform" method="post" action="">
+                    
+					<div class="control-group">
+						<div class="controls controls-row"><h2>商家基本信息</h2></div>
+				        <div class="controls controls-row">
+				        	<font style="font-weight:bold; color:#666;">说明：</font><font style="color:highlight; line-height:22px;">此处设置商家基本信息，带<span class="text-error">(*)</span>为必填信息！</font><br />
+				        	<br />
+				        </div>
+					</div>
+					
+					<hr />
+					
+					<div class="control-group">
+						<label class="control-label">微信帐号<span class="text-error">(*)</span></label>
+						<div class="controls controls-row">
+							<input type="text" class="uniform myinput" name="wechataccount" placeholder="请填写微信账号" required value="{$einfo.wechat_account}" />
+						</div>
+                    </div>
+                    
+                    <div class="control-group">
+						<label class="control-label">公众帐号名称<span class="text-error">(*)</span></label>
+						<div class="controls controls-row">
+							<input type="text" class="uniform myinput" name="publicaccountname" placeholder="请填写公众号名称" required value="{$einfo.wechat_name}" />
+						</div>
+                    </div>
+                    
+                    <div class="control-group">
+						<label class="control-label">商家名称<span class="text-error">(*)</span></label>
+						<div class="controls controls-row">
+							<input type="text" class="uniform myinput" name="enterprisename" placeholder="请输入企业名称" required value="{$einfo.e_name}" />
+                        </div>
+                    </div>
+                    
+                    <div class="control-group">
+						<label class="control-label">所属行业<span class="text-error">(*)</span></label>
+						<div class="controls controls-row">
+							<select id="industryinvolved" class="uniform" onchange="industrySelected(this)">
+								<option value='0'>其他</option>
+								<option value='1' selected="selected">服装</option>
+								<option value='2'>家政</option>
+								<option value='3'>旅游</option>
+								<option value='4'>文化</option>
+								<option value='5'>科技</option>
+							</select>
+							<input type="hidden" id="industry_selected" name="industry_selected" value="{$einfo.industry}" />
+						</div>
+                    </div>
+                    
+                    <div class="control-group">
+						<label class="control-label"> 站点名称 </label>
+						<div class="controls controls-row">
+							<input type="text" class="uniform myinput" name="sitename" placeholder="给站点取个好听的名字吧" value="{$einfo.site_name}" />
+						</div>
+                    </div>
+                    
+                    <div class="control-group">
+						<label class="control-label">关注跳转网页 </label>
+						<div class="controls controls-row">
+							<input type="text" class="uniform myinput" name="attentionjumppage" placeholder="关注后推送图文的链接网页" value="{$einfo.focus_url}" />
+                        </div>
+                        <div class="controls controls-row">用户首次关注后，推送图文跳转链接页面</div>
+                    </div>
+                    
+                    <div class="control-group" style="display:none;">
+						<label class="control-label">地图网址 </label>
+						<div class="controls controls-row">
+							<input type="text" class="uniform myinput" id="mapurl" name="mapurl" placeholder="" value="" />
+							<a href="http://map.sogou.com" target="_blank">搜狗地图</a>（找到地址后通过分享按钮获得地址） 
+                        </div>
+					</div>
+                    
+                    <div class="control-group">
+				       	<label class="control-label">公众号正方形LOGO</label>
+				        <div class="controls controls-row">
+					        <input type="hidden" id="CSRFtoken" name="CSRFtoken" value="123456" /><!-- （可选参数）图片防注入提交 -->
+							<input type="hidden" id="imgPath1" name="imgPath1" value="" /><!-- （必选参数）单次上传的图片path1 -->
+						
+							<!-- 一个webuploader begin -->
+							<div class="webUploaderWrap ui-sortable" id="uploadWrap">
+						        <div id="previewsquarelogo" class="webuploader-container">点击上传</div>
+					    	</div>
+					    	<!-- 一个webuploader end -->
+				    	</div>
+				    	<div class="controls controls-row" style="margin-top:10px;">
+							<img id="squarelogoimg" name="squarelogoimg" src="{$einfo.e_square_logo}" style="width:200px;" alt="" />
+						</div>
+				    	<div class="controls controls-row" style="margin-top:10px;">
+				           	温馨提示：推荐最佳300*300像素，品质100KB，png格式最佳。正方形LOGO用于展示企业形象。
+				        </div>
+				   	</div>
+                    
+			        <div class="control-group">
+				       	<label class="control-label">公众号矩形LOGO</label>
+				        <div class="controls controls-row">
+					        <input type="hidden" id="CSRFtoken" name="CSRFtoken" value="123456" /><!-- （可选参数）图片防注入提交 -->
+							<input type="hidden" id="imgPath2" name="imgPath2" value="" />
+						
+							<!-- 一个webuploader begin -->
+							<div class="webUploaderWrap ui-sortable" id="uploadWrap">
+						        <div id="previewrectlogo" class="webuploader-container">点击上传</div>
+					    	</div>
+					    	<!-- 一个webuploader end -->
+				    	</div>
+				    	<div class="controls controls-row" style="margin-top:10px;">
+							<img id="rectlogoimg" name="rectlogoimg" src="{$einfo.e_rect_logo}" style="width:200px;" alt="" />
+						</div>
+				    	<div class="controls controls-row" style="margin-top:10px;">
+				           	温馨提示：推荐最佳400*200像素，品质80KB，png格式最佳。矩形LOGO用于会员中心、4格主页等。
+						</div>
+				   	</div>
+			        
+			        <div class="control-group">
+				       	<label class="control-label">公众号二维码 </label>
+				        <div class="controls controls-row">
+					        <input type="hidden" id="CSRFtoken" name="CSRFtoken" value="123456" /><!-- （可选参数）图片防注入提交 -->
+							<input type="hidden" id="imgPath3" name="imgPath3" value="" /><!-- （必选参数）单次上传的图片path1 -->
+						
+							<!-- 一个webuploader begin -->
+							<div class="webUploaderWrap ui-sortable" id="uploadWrap">
+						        <div id="previewqrcode" class="webuploader-container">点击上传</div>
+					    	</div>
+					    	<!-- 一个webuploader end -->
+				    	</div>
+				    	<div class="controls controls-row" style="margin-top:10px;">
+							<img id="qrcodeimg" name="qrcodeimg" src="{$einfo.qr_code}" style="width:200px;" alt="" />
+						</div>
+				    	<div class="controls controls-row" style="margin-top:10px;">
+				           	温馨提示：推荐最佳500*500像素，品质120KB，JPG格式。
+				        </div>
+				   	</div>
+				   	
+				   	<div class="control-group">
+						<label class="control-label">联系电话 </label>
+						<div class="controls controls-row">
+							<input type="text" class="uniform myinput" name="phone" placeholder="请填写企业联系人的电话" value="{$einfo.e_contact_person}" />
+						</div>
+                    </div>
+                    
+				   	<div class="control-group">
+						<label class="control-label">联系地址<span class="text-error">(*)</span></label>
+			        	<div class="controls controls-row">
+							<select name="province" class="uniform myselected province-select"></select>
+							<select name="city" class="uniform myselected city-select"></select>
+							<select name="area" class="uniform myselected area-select"></select>
+						</div>
+						<div class="controls controls-row">
+							<input type="text" name="shop_addr" style="width:420px;" class="uniform" id="newaddress" placeholder="请输入街道等详细地址" value="{$einfo.e_address}">
+							<input type="hidden" class="uniform myinput" id="addressKeyword" placeholder="请输入街道等详细地址">
+							<a id="searchOnMap" class="small ui-color-button green" href="javascript:void(0)">搜索</a>
+			           		<div class="fn-tip">点击地图选取地址，地图支持鼠标拖拽，鼠标滚轮放大/缩小</div>
+			           		<div id="mapContainer"></div>
+			       			<input type="hidden" id="lngX" name="longitude" value="{$einfo.e_longitude}">
+			       			<input type="hidden" id="latY" name="latitude" value="{$einfo.e_latitude}">
+						</div>
+					</div>
+				   	
+                    <hr />
+                    
+                    <div class="handle-action">
+                        <a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">提交</a>
+                        &nbsp;&nbsp;
+                        <a id="resetbtn" class="large ui-color-button blue" href="javascript:void(0)">重置</a>
+                        <a href="javascript:history.go(-1);">
+			                <img style="width:50px; float:right;" src="__PUBLIC__/images/goback.png" alt="返回" />
+			            </a>
+                    </div>
+				</form>
+			</div><!--包裹form的div class="padd"的结束div-->
+
+		</div><!--widget-head结束div-->
+	</div><!--widget结束div-->
+
+<script type="text/javascript">
+var serverhandleimg = '{:U("Admin/EnterpriseSetRequest/singleUploadHandle", "", "")}'; //上传logo图片的地址
+
+var ewa = "{$einfo.wechat_account}", // 页面打开时的微信账号
+	ewn = "{$einfo.wechat_name}", // 页面打开时的微信名称
+	een = "{$einfo.e_name}", // 页面打开时的企业名称
+	ein = "{$einfo.industry}", // 页面打开时的所属行业
+	esn = "{$einfo.site_name}", // 页面打开时的站点名称
+	ecp = "{$einfo.e_contact_person}", // 页面打开时的联系人
+	eprov = "{$einfo.e_province}",
+	ecity = "{$einfo.e_city}",
+	earea = "{$einfo.e_county}",
+	eaddr = "{$einfo.e_address}", // 页面打开时的联系地址
+	elngx = '{$einfo.e_longitude}';
+	elaty = '{$einfo.e_latitude}';
+	efu = "{$einfo.focus_url}", // 页面打开时的关注跳转URL
+	squarelogo = "{$einfo.e_square_logo}", // 企业原始方形LOGO路径
+	rectlogo = "{$einfo.e_rect_logo}", // 企业原始矩形LOGO路径
+	qrcode = "{$einfo.qr_code}"; // 企业原始二维码路径
+
+// 页面初始化函数
+$(function(){
+	new PCAS("province","city","area",eprov,ecity,earea);//初始化商家地理位置
+	
+	$(".uniform").uniform();
+	
+	//初始化方形logo
+	$("#previewsquarelogo").singleImgUploader({
+		width : 300,
+		height : 300, 
+		limitSizeLarger : true, 
+		imgPathInput : $("#imgPath1"), 
+		imgPreview : $("#squarelogoimg"), 
+	});
+	$("#previewsquarelogo").css("background-image", "url('"+squarelogo+"')"); 
+	$("#imgPath1").val(squarelogo);
+
+	//初始化矩形logo
+	$("#previewrectlogo").singleImgUploader({
+		width : 400,
+		height : 200, 
+		limitSizeLarger : true, 
+		imgPathInput : $("#imgPath2"), 
+		imgPreview : $("#rectlogoimg"), 
+	});
+	$("#previewrectlogo").css("background-image", "url('"+rectlogo+"')"); 
+	$("#imgPath2").val(rectlogo);
+	
+	//初始化二维码
+	$("#previewqrcode").singleImgUploader({
+		width : 500,
+		height : 500, 
+		limitSizeLarger : true, 
+		imgPathInput : $("#imgPath3"), 
+		imgPreview : $("#qrcodeimg"), 
+	});
+	$("#previewqrcode").css("background-image", "url('"+qrcode+"')"); 
+	$("#imgPath3").val(qrcode);
+	
+	// 初始化行业选择框
+	$("#industryinvolved").val($("#industry_selected").val());	//取行业值
+	$("#industryinvolved").change();							//行业选择框值改变
+	
+	//省市区三级联动处理
+	$(".province-select").change(function(){
+		$(".city-select").change();
+	});
+	
+	$(".city-select").change(function(){
+		$(".area-select").change();
+	});
+	
+	//在地图上选取商家位置
+	var lngX=$("#lngX").val(),
+    latY=$("#latY").val();
+	var mapObj = new AMap.Map('mapContainer',{
+		resizeEnable: true,
+		view: new AMap.View2D({
+			center:(lngX && latY) ? new AMap.LngLat(lngX,latY) : "",
+			zoom: 15
+		})
+	}); 
+	if(!lngX || !latY){
+		$("#lngX").val(mapObj.getCenter().lng);
+		$("#latY").val(mapObj.getCenter().lat);
+	}
+	var marker = new AMap.Marker({
+		position:mapObj.getCenter()
+	});
+	marker.setMap(mapObj);
+	var clickEventListener=AMap.event.addListener(mapObj,'click',function(e){
+		lngX = e.lnglat.getLng();
+		latY = e.lnglat.getLat(); 
+		marker.setPosition(new AMap.LngLat(lngX,latY));
+		$("#lngX").val(lngX);
+		$("#latY").val(latY);
+	});
+	$("#searchOnMap").on("click",function(e){
+		e.preventDefault();
+		var addr = $("#addressKeyword").val();
+		geocoder(addr);
+	})
+	function geocoder(addr) {
+		var MGeocoder;
+		//加载地理编码插件
+		AMap.service(["AMap.Geocoder"], function() {        
+			MGeocoder = new AMap.Geocoder({ 
+				radius:1000 //范围，默认：500
+			});
+			//返回地理编码结果 
+			//地理编码
+			MGeocoder.getLocation(addr, function(status, result){
+				if(status === 'complete' && result.info === 'OK'){
+					var geocode = new Array();
+					geocode = result.geocodes;  
+					lngX = geocode[0].location.getLng();
+					latY = geocode[0].location.getLat(); 
+					marker.setPosition(new AMap.LngLat(lngX,latY));
+					$("#lngX").val(lngX);
+					$("#latY").val(latY);
+					mapObj.setFitView();
+				}
+			});
+		});
+	}
+	$("input[name=shop_addr]").blur(function(){
+		var address=$("select[name='province']").val()+$("select[name='city']").val()+$("select[name='area']").val()+$(this).val();
+		$("#addressKeyword").val(address);
+		$("#searchOnMap").trigger("click");
+	}) 
+	
+	// 抓取DOM对象更快操作
+	var wa = $("input[name=wechataccount]"); 		//微信账号，必填项,当前要传
+	var pan = $("input[name=publicaccountname]"); 	//公众账号名称，必填项 ,当前要传
+	var en = $("input[name=enterprisename]"); 		//商家名称，必填项,当前要传
+	var inse = $("#industry_selected");				//所选择行业
+	var ii = $("#industryinvolved");				//所属行业，必填项
+	var sn = $("input[name=sitename]"); 			//站点名称,当前要传
+	var ph = $("input[name=phone]"); 				//联系电话,当前要传
+	var ajp = $("input[name=attentionjumppage]"); 	//关注跳转网页
+	var prov = $("select[name='province']");
+	var city = $("select[name='city']");
+	var area = $("select[name='area']");
+	var addr = $("#newaddress");
+	var lngx = $("#lngX");
+	var laty = $("#latY");
+	var psl = $("#imgPath1");						//公众号正方形LOGO
+	var prl = $("#imgPath2");						//公众号矩形LOGO
+	var pq = $("#imgPath3");						//公众号 二维码
+	
+	//页面上隐藏的变量（日后可能添加弹出地图选择位置功能）
+	//var mu = $("#mapurl");						//地图链接
+	// 表单提交按钮
+	$("#submitbtn").click(function(){
+		// 检查微信账号是否输入
+	  	if(wa.val()==""){
+	  		$.messager.alert('温馨提示', '请输入微信账号！','warning', function(){
+	  			wa.focus();							//注意聚焦和return的顺序！
+	  		});
+	  		return									//注意聚焦和return的顺序！
+	  	}
+		// 检查微信公众账号名称
+	  	if(pan.val()==""){
+	  		$.messager.alert('温馨提示', '请输入公众账号名称！','warning', function(){
+	  			pan.focus();						//注意聚焦和return的顺序！
+	  		});
+	  		return									//注意聚焦和return的顺序！
+	  	}
+	  	// 检查商家名称
+	  	if(en.val()==""){
+	  		$.messager.alert('温馨提示', '请输入商家名称！','warning', function(){
+	  			en.focus();							//注意聚焦和return的顺序！
+	  		});
+	  		return									//注意聚焦和return的顺序！
+	  	}
+		//判断联系方式是否为正确格式
+		if(ph.val()!="" && !isTel(ph.val())){
+			$.messager.alert('温馨提示', '请输入正确格式的手机或电话号码！','warning', function(){
+				ph.focus();							
+	  		});
+	  		return		
+		}
+		//判断店铺所在地址是否正确输入
+		if(prov.val() == '' || prov.val() == null || prov.val() == 'undefined'){
+			$.messager.alert('温馨提示', '请选择企业所在省市区!', 'warning');
+	  		return                                 
+		}
+		
+		if(addr.val() == ''){
+			$.messager.alert('温馨提示', '请填写企业详细街道地址!', 'warning', function(){
+				addr.focus();                        
+	  		});
+	  		return                                 
+		} 
+		// 定义要post的参数
+		var params = {
+			wa : wa.val(), 		// 微信账号
+			inse: inse.val(),
+			pan: pan.val(), 	// 微信公众账号
+			en: en.val(), 		// 商家名称
+			sn: sn.val(), 		// 站点名称
+			ph: ph.val(), 		// 联系电话
+			ajp: ajp.val(), 	// 关注跳转网页
+			squarelogo : psl.val(),	// 抓取图片的地址
+			rectlogo : prl.val(),
+			qrcode : pq.val(),
+			prov : prov.val(),
+			city : city.val(),
+			area : area.val(),
+			addr: addr.val(), 		// 联系地址
+			lngx : lngx.val(),
+			laty : laty.val()
+		};
+		// js验证通过，确认要用户提交
+		$.messager.confirm('温馨提示', '确定提交修改信息吗？', function(cf) {
+			if (cf) {
+				//控制器目前需要的是en,wa,pan,sn,ph,ad
+				$.post("{:U('Admin/EnterpriseSetRequest/editInfoConfirm', '', '')}", params, function(result) {
+					if (result.errCode == 0) {
+						$.messager.alert('温馨提示', '信息更新成功！', 'info', function() {
+							window.location.reload(); //重载页面，避免在同一个页面更新信息后修改再重置其他信息，造成页面新信息内容清空被重置的错觉     
+						})
+					} else {
+						$.messager.alert('温馨提示', '信息更新失败！' + result.errMsg, 'error');
+					}
+				}, 'json');
+			}
+		});
+	});
+	
+	// 表单重置按钮
+	$("#resetbtn").click(function(){
+ 		$.messager.confirm('温馨提示', '确定放弃编辑的信息并重置？', function(cf){
+ 			if(cf){
+ 				wa.val(ewa); 		// 回撤微信账号
+				pan.val(ewn); 		// 回撤公众账号
+				en.val(een); 		// 回撤商家名称
+				
+				inse.val(ein); 
+				ii.val(ein);
+				ii.change(); 		// 改变下选择框
+				
+				sn.val(esn); 		// 回撤站点名称
+				ph.val(ecp); 		// 回撤联系电话
+				ajp.val(efu); 		// 回撤关注跳转网页
+				
+				$("select[name='province']").val(eprov);
+				$("select[name='province']").change();
+				$("select[name='city']").val(ecity);
+				$("select[name='city']").change();
+				$("select[name='area']").val(earea);
+				$("select[name='area']").change();
+				addr.val(eaddr); 		// 回撤联系地址
+				// 注意回撤图片路径
+				$("#previewsquarelogo").css("background-image", "url('"+squarelogo+"')"); 
+				$("#imgPath1").val(squarelogo);
+				$('#squarelogoimg').attr('src', squarelogo);
+				$("#previewrectlogo").css("background-image", "url('"+rectlogo+"')"); 
+				$("#imgPath2").val(rectlogo);
+				$('#rectlogoimg').attr('src', rectlogo);
+				$("#previewqrcode").css("background-image", "url('"+qrcode+"')"); 
+				$("#imgPath3").val(qrcode); 
+				$('#qrcodeimg').attr('src', qrcode);
+				
+				$.messager.alert('温馨提示', '信息重置成功!', 'info');		
+ 			}
+ 		});
+ 	});
+});  
+
+// 行业选择框改变，将值写到数据库里
+function industrySelected(obj){	
+	$('#industry_selected').val(obj.options[obj.selectedIndex].value);		//获取option的value，并写入input里
+}
+
+//判断联系方式是否为正确的手机号码/电话号码格式
+function isTel(str) {
+	var reg = /^([0-9]|[\-])+$/g;
+	if (str.length < 7 || str.length > 18) {
+		return false;
+	} else {
+		return reg.exec(str);
+	}
+}
+</script>
+</body>
+</html>

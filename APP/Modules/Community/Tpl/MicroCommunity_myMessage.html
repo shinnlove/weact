@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head time='1418198533'>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="format-detection" content="telephone=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="description" content="" />
+<meta name="keywords" content="" />
+<link rel="shortcut icon" href="" />
+<title>微社区</title>
+<script type="text/javascript">
+    window.g_module = [];
+    var STATIC_DOMAIN = '__PUBLIC__',
+        ARS_TIME = '',
+        IMG_LOADING = 'data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==';
+    
+    var g_tsBase = new Date(),g_ts = {};
+    var PathUtil = {
+        getCPath: function() {
+        	return STATIC_DOMAIN + '/js/';
+        }
+    };
+    
+    g_ts.css_start=new Date();
+    var pageName = '';
+</script>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/profile.css" />
+        <!--debug-->
+        <script type="text/javascript">
+        var sId = 0,
+            tId = 0,
+            uId = '105339320',
+            isNullNick = '0' | false,
+            isManager = 0,
+            authUrl = '',
+            siteLogo = '',
+            CSRFToken = "dc60d1b9",
+            debug = '' | false,
+            DOMAIN = 'http://m.wsq.qq.com/',
+            _speedMark = new Date(),
+            isWX = '' | false,
+            isMQ = '' | false,
+            isAppBar = '' | false,
+            isQQBrowser = '' | false,
+            isWeixinLink = '' | false,
+                        newMsgCount = '0',
+            isFriendSite = '0',
+            enabledSmiley = '';
+        
+        window.addEventListener("DOMContentLoaded", function() {g_ts.domready = new Date();});
+        window.addEventListener("load", function() {g_ts.domload = new Date();});
+        document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+            WeixinJSBridge.call('hideToolbar');
+            WeixinJSBridge.call('showOptionMenu');
+        });
+</script>
+</head>
+
+<body class="pb">
+	<div class="warp">
+        <div class="container pesonInfo">
+              <div class="piTime f11 c9">2014-09-01 19:12</div>
+        <div class="topicBox piCon" id="m_2" sId="187471671" parentId="0" tId="140" pId="143" floorPId="147" toFloorPId="0">
+          <div class="topicList infoCon">
+            <ul>
+              <li>
+                <a class="f14 c3" href="/profile/95933699">
+                  <img width="20" height="20" alt="头像" class="sImg brBig pa db" src="http://q3.qlogo.cn/g?b=qq&amp;k=eSVfrwJ4OPFUy7uqLib8TbA&amp;s=40&amp;t=1384049815?max-age=1296000">
+                                        <span class="c7">诺言：</span>1111
+                                    <!-- <i class=""></i> -->
+                  </a>
+              </li>
+            </ul>
+          </div>
+          <p class="piInfo brBig c9 wot">回复：你好，小万。</p>
+          <div class="piSource c9 pr">
+            话题来自：
+            <a href="/187471671">TOPMEN男装网</a>
+            <span class="iconArrowR db pa c9 cf"></span>
+          </div>
+        </div>
+              <div class="piTime f11 c9">2014-09-01 19:12</div>
+        <div class="topicBox piCon" id="m_1" sId="187471671" parentId="0" tId="140" pId="144" floorPId="146" toFloorPId="0">
+          <div class="topicList infoCon">
+            <ul>
+              <li>
+                <a class="f14 c3" href="/profile/95933699">
+                  <img width="20" height="20" alt="头像" class="sImg brBig pa db" src="http://q3.qlogo.cn/g?b=qq&amp;k=eSVfrwJ4OPFUy7uqLib8TbA&amp;s=40&amp;t=1384049815?max-age=1296000">
+                                        <span class="c7">诺言：</span>哈哈哈
+                                    <!-- <i class=""></i> -->
+                  </a>
+              </li>
+            </ul>
+          </div>
+          <p class="piInfo brBig c9 wot">回复：哥哥来看你啦<img class="expimg" src="http://dzqun.gtimg.cn/quan/images/smiley/default/e104.gif" /></p>
+          <div class="piSource c9 pr">
+            话题来自：
+            <a href="/187471671">TOPMEN男装网</a>
+            <span class="iconArrowR db pa c9 cf"></span>
+          </div>
+        </div>
+            <a class="db f12 personMore" id="historyInfo" next="2" href="javascript:;" style="margin-top:10px;">查看历史消息</a>
+      <div class="loading" id="showAll" style="display:none;">已显示全部</div>
+    </div>
+</div>
+<script id="tmpl_sideBar" type="text/html">
+<div class="sideBar" style="display:none;">
+    <div class="searchContent evtSearchWrap">
+        <div class="sInputIn br">
+            <i class="searchInco cf pa db"></i>
+            <div class="f12 sInput2" style="line-height: 20px">搜索</div>
+        </div>
+    </div>
+    <div class="sideBarCon" id="sideBarCon">
+        <h3 class="sideTit f14 fn c2">话题筛选</h3>
+        <ul style="position: relative;">
+            <li class="filter<%if (!filterType) {%> on<%}%>"><a class="<%if (!filterType) {%>iconSucc cf s_succ db<%} else {%>c9<%}%>" href="javascript:;">全部</a></li>
+            <li class="filter<%if (filterType == 'hot') {%> on<%}%>" labelId="hot"><a class="<%if (filterType == 'hot') {%>iconSucc cf s_succ db<%} else {%>c9<%}%>" href="javascript:;">热门</a></li>
+            <li class="filter<%if (filterType == 'showPic') {%> on<%}%>" labelId="showPic"><a class="<%if (filterType == 'showPic') {%>iconSucc cf s_succ db<%} else {%>c9<%}%>" href="javascript:;">晒图</a></li>
+        </ul>
+        <div class="loading pd10" id="customTagWait">
+            <div class="loadicon">
+                <span class="blockG" id="rotateG_01"></span>
+                <span class="blockG" id="rotateG_02"></span>
+                <span class="blockG" id="rotateG_03"></span>
+                <span class="blockG" id="rotateG_04"></span>
+                <span class="blockG" id="rotateG_05"></span>
+                <span class="blockG" id="rotateG_06"></span>
+                <span class="blockG" id="rotateG_07"></span>
+                <span class="blockG" id="rotateG_08"></span>
+            </div>
+            正在加载...
+        </div>
+        <div class="customTag" id="customTag">
+        </div>
+        <ul class="sidePerMan">
+            <li id="sideProfile"><a href="javascript:;" class="iconPrfile  f16 c9 cf"><i class="db numP" id="sideMsgNum"<%if (newMsgCount < 1) {%> style="display:none;"<%}%>><%if (newMsgCount < 100) {%><%=newMsgCount%><%}else{%>99+<%}%></i>个人主页</a></li>
+            <li id="sideUnfollow" sid="<%=sId%>"<%if (isLiked != 1) {%> style="display:none;"<%}%>><a href="javascript:;" class="iconExit f16 c9 cf">退出社区</a></li>
+        </ul>
+    </div>
+</div>
+</script>
+<script id="tmpl_customTag" type="text/html">
+<div>
+<% for (var i in labelList) { %>
+    <a href="javascript:;" class="f12 filter<%if (filterType == labelList[i].labelId) {%> on<%}%>" labelId="<%=labelList[i].labelId%>"><%=labelList[i].labelName%></a>
+<%}%>
+</div>
+</script>
+<!-- <div class="topBar">
+    <div class="topBarCon pr">
+        <a href="javascript:;" class="qBackBtn" id="goback"><i class="upBtn cf db"></i>返回</a>
+        <h2 class="qTitle">我的消息</h2>
+        <a href="javascript:;" id="mqOption" isSite="2" class="moreC qMore db"><i class="iconPrfile f18 c2 cf"></i><i class="db numP" id="navMsgNum" style="display:none;"></i></a>
+	</div>
+</div> -->
+<div class="bottomBar">
+    <div class="bottomBarCon pr">
+        <a href="javascript:;" class="backBtn" id="goback"><i class="iconAnswer cf back db"></i></a><!-- 如果少了back，方向就会反 -->
+        <!-- <h2 class="title">我的消息</h2> -->
+        <a href="javascript:;" id="mqOption" isSite="2" class="moreC qMore db"><i class="iconPrfile f18 c2 cf"></i><i class="db numP" id="navMsgNum" style="display:none;"></i></a>
+	</div>
+</div>
+<script type="text/javascript">
+var isForceReload = '0',
+    isLiked = '0',
+    inviteUrl = '#';
+//g_module.push('module/topBar');
+g_module.push('module/navBar');
+</script>    
+<script id="tmpl_msg" type="text/html">
+
+<% for (var i in dataList) { %>
+    <% if (!isDOMExist('m_' + dataList[i].msgId)) { %>
+        <div class="piTime f11 c9"><%= dataList[i].hCreatedTime %></div>
+
+        <div class="topicBox piCon" id="m_<%= dataList[i].msgId %>" sId="<%=dataList[i].sId%>" parentId="<%=dataList[i].parentId%>" tId="<%=dataList[i].tId%>" pId="<%=dataList[i].pId%>" floorPId="<%=dataList[i].floorPId%>" toFloorPId="<%=dataList[i].toFloorPId%>">
+            <div class="topicList infoCon">
+                <ul>
+                  <li>
+                    <a class="f14 c3" href="/profile/<%= dataList[i].authorUid %>">
+                      <img width="20" height="20" alt="头像" class="sImg brBig pa db" src="<%= dataList[i].avatar %>">
+                      <% if (dataList[i].msgType == 1 || dataList[i].msgType == 3) { %>
+                        <span class="c7"><%= dataList[i].author %>：</span><%== dataList[i].content %>
+                      <% } else if (dataList[i].msgType == 2 || dataList[i].msgType == 4) { %>
+                        <span class="c7"><%= dataList[i].author %></span> <% if (dataList[i].count > 1) { %>等<%= dataList[i].count %>人<% } %><%== dataList[i].content %>
+                      <% } %>
+                    </a>
+                  </li>
+                </ul>
+
+            </div>
+            <p class="piInfo brBig c9 wot"><%if (dataList[i].floorPId) {%>回复<% } else {%>话题<%i } %>：<%== dataList[i].quote %></p>
+            <div class="piSource c9 pr">
+              话题来自：
+              <a href="/<%= dataList[i].sId %>"><%== dataList[i].site.sName %></a>
+              <span class="iconArrowR db pa c9 cf"></span>
+            </div>
+        </div>
+    <% } %>
+<% } %>
+</script>
+
+<script type="text/javascript">
+g_module.push('module/myMsg');
+</script>
+        <div onclick="location.href='#'" class="copyRight ht" style="margin-bottom:50px;">微社区，精彩在你身边</div><!-- 这里有点小问题，加上距离底部50px的内联样式比较好 -->
+    <script type="application/javascript">g_ts.body_view = new Date();</script>
+<script id="tmpl_pageTip" type="text/html">
+
+<div class="tipInfo" id="showShare">
+    <p class="tipBor"><%=msg || '请点击右上角图标分享'%><span class="arrLeft"></span></p>
+</div>
+
+</script>
+<script src="__PUBLIC__/js/qqapi.js"></script>
+<script type="text/javascript">
+var shareUrl = 'http://m.wsq.qq.com/my/message?_wv=1&source=custom',
+shareTitle = '快来看看我的话题',
+shareDesc = '我在微社区玩呢，快来看看吧...',
+shareImgUrl = 'http://qlogo1.store.qq.com/qzone/306086640/306086640/100';
+    g_module.push('module/common', 'module/share');
+</script>
+<script type="application/javascript">
+var url = '__PUBLIC__/js/seajs-0.1.5.js';
+var node = document.createElement('script');node.onload = function(){g_ts.seajs = new Date();};node.src = url;document.body.appendChild(node);
+if (window.statConf) {
+    setTimeout(function() {
+        window.seajs && seajs.use('lib/stat', function(_a) {
+            _a.init();
+        });
+    }, 2000);
+}
+</script>
+</body>
+</html>

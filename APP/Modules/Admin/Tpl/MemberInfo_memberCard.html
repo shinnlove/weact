@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiColorButtonStyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/myUniformStyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<title>会员卡设置</title>
+</head>
+
+<body class="easyui-layout">
+
+	<div id="card_tab" class="easyui-tabs" data-options="region:'center',border:false"><!-- easyUI总的TAB菜单分页 -->
+		<div data-options="region:'center',title:'系统卡片样式',border:false"><!-- easyUI的TAB菜单分页1；自定义设置分页标题title -->
+			<div style="margin: 10px;">
+
+				<form id="scform" name="scform" class="form-horizontal uniform" method="post" action="{:U('Admin/MemberInfoRequest/cardSelectConfirm','','')}">
+					<!--  暂时不用，如果使用表单提交再用 <input type="hidden" id="finalselect" name="finalselect" value="" />表单最终选中的系统名片id
+					<input type="hidden" id="finalpath" name="finalpath" value="" />最终选中系统名片路径 -->
+					
+					<div class="control-group">
+			            <div class="controls controls-row" style="font-weight:bold; color:#666;">
+			                <h2>会员中心名片</h2>
+			            </div>
+			            <div class="controls controls-row">
+							<font style="font-weight:bold; color:#666;">说明：</font><font style="color:highlight; line-height:22px;">系统名片样式简洁直观、适合没有自定义名片的商家。</font><br />
+						</div>
+			        </div>
+					
+					<hr />
+					
+					<div class="control-group">
+						<label class="control-label">系统卡片<span class="text-error">(*)</span>：</label>
+						<div class="controls controls-row" style="background:#fff;">
+							<div class="selectCard">
+								<ul>
+									<foreach name="card" item="ca">
+									<li>
+										<div class="memberCardStyle">
+											<img id="img{$ca.template_id}" src="{$ca.template_path}" width="200" alt="" /><!-- 展示系统名片的img标签 -->
+										</div>
+										<div class="memberCardSelected" style="text-align: center;">
+											<input id="{$ca.template_id}" type="radio" value="{$ca.template_name}" class="radio" name="cardstyle" />{$ca.template_name}
+											<input type="hidden" name="cardselected" value="{$ca['selected']}" />
+										</div>
+									</li>
+									</foreach>
+								</ul>
+							</div>
+						</div>
+					</div>
+					
+					<div style="clear:both;"></div>
+					
+					<div class="form-actions no-margin" style="margin-bottom:0px; background:#fff; border-bottom:1px solid #DDD;">
+						<a id="scsubmit" class="large ui-color-button light-green" href="javascript:void(0)">保存</a>
+						<a href="javascript:history.go(-1);">
+							<img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/images/goback.png" />
+						</a>
+					</div>
+				</form>
+			</div><!-- 调整边距的div -->
+		</div><!-- easyUI的TAB菜单分页1结束div -->
+		
+		<div data-options="region:'center',title:'自定义卡片样式',border:false"><!-- easyUI的TAB菜单分页2；自定义设置分页标题title -->
+			<div style="margin: 10px;">
+				<form id="myForm" name="myForm" class="form-horizontal uniform" method="post" action="{:U('Admin/MemberInfoRequest/addCardConfirm','','')}" enctype="multipart/form-data">
+					<div class="control-group">
+			            <div class="controls controls-row" style="font-weight:bold; color:#666;">
+			                <h2>自定义名片</h2>
+			            </div>
+			            <div class="controls controls-row">
+							<font style="font-weight:bold; color:#666;">说明：</font><font style="color:highlight; line-height:22px;">如果您有自定义的名片，请点击上传并保存，名片尺寸最佳为540 × 320。</font><br />
+						</div>
+			        </div>
+					
+					<hr />
+                    
+                    <div class="control-group">
+						<label class="control-label">DIY会员名片<span class="text-error">(*)</span>：</label>
+						<div class="controls controls-row" style="background:#fff;">
+							<input type="text" class="uniform myinput" id="membercardimagesrc" name="membercardimagesrc" placeholder="请点击按钮选择要上传的自定义会员卡" value="{$diypath}" required="required" />
+							<br />
+							<div class="btn">
+								<span style="font-size:12px;">添加附件:</span>
+								<input type="file" name="membercardpicture" class="uniform membercardpicture" />
+							</div>
+							<div class="membercard_img" style="margin-top: 20px;">
+								<img id="membercardimage" name="membercardimage" src="{$diypath}" alt="" style="width:260px;" />
+							</div>
+						</div>
+					</div>
+					<div style="clear: both;"></div>
+					
+					<div class="form-actions no-margin" style="margin-bottom:0px; background:#fff; border-bottom:1px solid #DDD;">
+						<a id="diysubmit" class="large ui-color-button light-green" href="javascript:void(0)">保存</a>
+						<a href="javascript:history.go(-1);">
+							<img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/images/goback.png" />
+						</a>
+					</div>
+				</form>
+			</div><!-- 调整边距的div -->
+		</div><!-- easyUI的TAB菜单分页2结束div -->
+	</div><!-- easyUI的TAB菜单容器结束div -->
+	
+<script type="text/javascript">
+var defaultflag = {$defaultflag};					//默认使用系统卡片标记
+$(function(){
+	$(".uniform").uniform();						//初始化uniform，文本框的uniform格式化
+	
+	if(defaultflag){
+		$("#card_tab").tabs("select","系统卡片样式");	//让easyUI的tab菜单选中当前所选的系统卡片样式tab菜单
+	}else{
+		$("#card_tab").tabs("select","自定义卡片样式");	//让easyUI的tab菜单选中当前所选的自定义卡片样式tab菜单
+	}
+	
+	$("input[name='cardselected'][value='1']").parent().find(".radio").attr("checked","true");	//默认执行一遍，反正如果没使用系统默认，也不会选中
+	
+	$('#scsubmit').click(function(){  				//表单一的提交，系统图片
+		var finalcard = $('input[type="radio"]:checked').attr("id");
+		if(!finalcard){
+			$.messager.alert('温馨提示', '请选择您要使用的系统名片!', 'warning');
+			return;
+		}else{
+			//$('#finalselect').val(finalcard);		//把最终选中的id放入标签里
+			var imgfinal = '#img'+finalcard;
+			var finalpath = $(imgfinal).attr("src");
+			//$('#finalpath').val(finalpath);
+			//用静态提交方式post
+			$.post("{:U('Admin/MemberInfoRequest/cardSelectConfirm','','')}",
+					{ finalselect : finalcard, finalpath : finalpath },
+					function(data){
+						if (data.status == 1) {
+							$.messager.alert('温馨提示', '保存成功!', 'info');
+						}else{
+							$.messager.alert('温馨提示', '保存失败!'+data.msg, 'error');
+						}
+					},'json');
+		}
+	});
+	
+	$('#diysubmit').click(function(){   			//表单二的提交，自定义图片
+		var ss = $(".membercardpicture");
+		if(ss.val() == "" || ss.val() == null){
+			$.messager.alert('温馨提示', '请选择您要上传的自定义名片！', 'warning', function(){
+				$('#membercardimagesrc').focus();	//图片路径框聚焦
+			})
+			return
+		}
+		$.messager.confirm('温馨提示', '是否确定要添加这张自定义名片？', function(result){
+			if(result){								//用户确认
+				$('#myForm').submit();				//提交form表单给控制器，注意设置Action的URL
+			}else{
+				return								//用户取消提交
+			}
+	  　});
+	});
+});
+$(".membercardpicture").change(function(e) {
+	var src = e.target || window.event.srcElement; //获取事件源，兼容chrome/IE
+	if(e.target != null && e.target != ''){
+		if(e.originalEvent && e.originalEvent.srcElement && e.originalEvent.srcElement.files
+				&& e.originalEvent.srcElement.files.length > 0){
+			var file = e.originalEvent.srcElement.files[0];
+			var reader = new FileReader();
+			reader.onloadend = function(e) {
+				$('#membercardimage').attr('src',reader.result);			//读的是二进制
+				$('#membercardimagesrc').val($('.membercardpicture').val());
+	        };
+	        reader.readAsDataURL(file);
+		}
+	}else{
+		$('#membercardimage').attr('src','');
+		$('#membercardimagesrc').val($('.membercardpicture').val());
+	}
+});
+</script>
+</body>
+</html>

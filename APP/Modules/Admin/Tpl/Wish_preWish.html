@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>用户愿望管理</title>
+</head>
+
+<body class="easyui-layout">
+   <div data-options="region:'center',title:'用户愿望',border:false">
+	    <table id="wish" toolbar="#toolbar"></table>
+   </div>
+   <!-- easyUI的工具条 -->
+	<div id="toolbar">
+		<span>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="deleteProduct();">删除</a>
+			<a href="javascript:location.reload();" class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
+		</span>
+		<span class="searchbox" style="float:right;margin-top: 5px;margin-right:30px;height: 25px;text-align: center;">
+			<select  id="pro_search_condition" name="pro_search_condition" style="border:0px;width: 80px;height: 25px;text-align: center;">
+				<option value=customer_name selected="selected">用户姓名</option>
+				<option value="account">用户账号</option>
+				<option value="wisher">许愿昵称</option>
+				<option value="wish_content">愿望</option>
+			</select>
+			<input id="pro_search_content" name="pro_search_content" type="text" class="searchbox-text" style="width: 200px;height: 24px;border:0px;"></input>
+			<span>
+				<span style="height: 25px;width:30px;border-left: 1px solid #CCC;"  id="search_pro_btn" class="searchbox-button searchbox-button-hover"></span>
+			</span>
+		</span>
+	</div>
+
+<script type="text/javascript">
+$(function(){
+	var wish = $('#wish').datagrid({
+		    url:"{:U('Admin/WishRequest/read','','')}",
+		    method : 'post',
+			fitColumns : true,
+			fit : true,
+			pagination : true,
+			rownumbers : true,
+			idField : 'wish_id',
+			striped : true,
+		    columns:[[
+		        {
+	    		    field:'customer_name',
+	    		    title:'用户姓名',
+	    		    width:100
+	    		},{
+		        	field:'account',
+		        	title:'用户账号',
+		        	sortable : true,
+		        	width:100
+		        },{
+		        	field:'wisher',
+		        	title:'用户许愿使用昵称',
+		        	width:100
+		        },{
+		        	field:'wish_content',
+		        	title:'许愿内容',
+		        	sortable : true,
+		        	width:300
+		        },{
+		        	field:'wish_time',
+		        	title:'许愿时间',
+		        	sortable : true,
+		        	width:100
+		        }
+		    ]]
+	});
+	
+	$('#search_pro_btn').click(function(){
+		var searchcondition = $('#pro_search_condition').val();
+		var searchcontent = $('#pro_search_content').val().trim();
+		if(searchcontent.trim() == "" || searchcontent == null){
+			$.messager.alert('警告','搜索内容不能为空！');
+		}
+    	$("#wish").datagrid({
+    		url:"{:U('Admin/WishRequest/read','','')}",
+    		queryParams:{ 
+    			searchcondition:searchcondition,
+    			searchcontent:searchcontent
+    		}
+    	},'load');
+	});
+});
+
+function deleteProduct() {
+	var rows = $("#wish").datagrid('getSelections');
+	var rowdata = [];
+	if (rows.length == 0) {
+		$.messager.alert('警告', '至少需要选择一个愿望！');
+	} else {
+		$.messager.confirm('警告', '确定删除愿望？', function(cf) {
+			if (cf) {
+				for (var i = 0; i < rows.length; i++) {
+					rowdata.push(rows[i].wish_id);
+				}
+				$.post('{:U("Admin/WishRequest/delWish","","")}', {
+					rowdata: rowdata.join(',')
+				}, function(data) {
+					if (data.status == '1') {
+						$("#wish").datagrid('reload');
+						$.messager.show({
+							title: '提示',
+							msg: '删除成功！',
+							timeout: 3000,
+							showType: 'slide'
+						});
+					} else {
+						$.messager.alert('警告', '删除失败！');
+					}
+				});
+			}
+		});
+
+	}
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/select2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lhgcalendar/lhgcore.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lhgcalendar/lhgcalendar.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/plugins/select2/select2.min.js"></script>
+<title>编辑导购</title>
+</head>
+
+<body>
+    <form id="guideInfo" class="form-horizontal uniform" method="post" action="#">
+        <div class="control-group">
+            <div class="controls controls-row"><h2>编辑导购信息</h2></div>
+            <div class="controls controls-row">
+                <font style="font-weight:bold; color:#666;">说明：</font><font style="color:highlight; line-height:22px;">此处可以修改更新导购基本信息，带<span class="text-error">(*)</span>为必填。</font><br />
+            </div>
+        </div>
+        
+        <hr />
+        <input type="hidden" class="uniform mybriefinput" id="g_id" name="g_id" placeholder="请填写导购编号" required readonly value="{$ginfo.guide_id}" />
+        
+        <div class="control-group">
+			<label class="control-label">登录账号<span class="text-error">(*)</span>：</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="gaccount" name="gaccount" placeholder="请输入登录账号" required readonly value="{$ginfo.account}" />
+                <font style="color:#666;">&nbsp;&nbsp;注：作为导购登录账号和初始密码，不可编辑</font>
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">姓名<span class="text-error">(*)</span>：</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="gname" name="gname" placeholder="请输入导购姓名" required value="{$ginfo.guide_name}" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">昵称：</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="gnick" name="gnick" placeholder="请输入导购昵称" value="{$ginfo.nickname}" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">性别<span class="text-error">(*)</span>：</label>
+            <div class="controls controls-row">
+            	<select id="gsex_select" class="uniform myselected">
+                    <option value="-1">请选择性别</option>
+                    <option value="1">男</option>
+                    <option value="2">女</option>
+                </select>
+			</div>
+            <input type="hidden" id="current_gsex" name="current_gsex" value="{$ginfo.sex}" /><!--当前选择的性别-->
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">身份证号<span class="text-error">(*)</span>：</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="gcard" name="gcard" placeholder="请输入导购身份证号码" required value="{$ginfo.id_card}" />
+            </div>
+        </div>
+        
+         <div class="control-group">
+			<label class="control-label">出生年月：</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="gbirth" name="gbirth" placeholder="单击选择出生年月" value="{$ginfo.birthday}" /><!--id或者class配合日历的初始化-->
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">导购工号：</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="gnum" name="gnum" placeholder="请输入导购工号" value="{$ginfo.guide_number}" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">联系号码<span class="text-error">(*)</span>：</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="gphone" name="gphone" placeholder="请输入导购联系号码" required value="{$ginfo.cellphone}" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">导购等级<span class="text-error">(*)</span>：</label>
+            <div class="controls controls-row">
+            	<select id="glevel_select" class="uniform myselected">
+                    <option value="-1">请选择导购等级</option>
+                    <option value="0">普通</option>
+                    <option value="1">中级</option>
+                    <option value="2">高级</option>
+                </select>
+			</div>
+            <input type="hidden" id="current_glevel" name="current_glevel" value="{$ginfo.guide_level}" />
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">导购类型<span class="text-error">(*)</span>：</label>
+            <div class="controls controls-row">
+            	<select id="gtype_select" class="uniform myselected">
+                    <option value="-1">请选择导购类型</option>
+                    <option value="0">普通导购</option>
+                    <option value="1">大堂经理</option>
+                </select>
+			</div>
+            <input type="hidden" id="current_gtype" name="current_gtype" value="{$ginfo.guide_type}" /><!--当前选择的导购类型-->
+        </div>
+        
+        <div class="control-group">
+        	<label class="control-label">
+            	所属分店<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row" style="padding-top:2px;">
+            	<!--让搜索下拉框对齐到标签，此div必须加上style="padding-top:2px;"-->
+            	<div class="span7" style="margin-left:0px; width:230px;">
+                	<!--span7标签在bootstrap2.2里有一个margin-left:20px，这里去掉，并且规定搜索下拉框长度为230px最好看-->
+                    <select name="select" id="search_select" style="width: 100%; display: none;" disabled="disabled">
+                        <option value="0">请选择所属分店...</option>
+                        <foreach name="sinfo" item="si">
+                        	<option value="{$si.subbranch_id}">{$si.subbranch_name}</option>
+                        </foreach>
+                    </select>
+                </div>
+            </div>
+            <div class="info-tip controls controls-row">温馨提示：导购信息已生成，不可再更改所属分店。</div>
+            <input type="hidden" id="current_shop" name="current_shop" value="{$ginfo.subbranch_id}" /><!--存档当前导购所在门店-->
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">头像： </label>
+			<div class="controls controls-row">
+				<input type="hidden" class="uniform myinput" id="ghead_path" name="ghead_path" value="{$ginfo.headimg}" />
+                <div class="btn">
+                    <span style="font-size:12px;">添加附件:</span>
+                    <input type="file" name="headimage" class="uniform headimage"/>
+                </div>
+                <div class="info-tip controls-row">温馨提示：推荐最佳头像尺寸（比例）：300px * 300px，100k以内，jpg、png格式。</div>
+                <div class="headimagepreview" style="margin-top:10px;">
+                	<img id="himg" name="himg" src="{$ginfo.headimg}" alt="" style="width:150px;" />
+                </div>
+			</div>
+        </div>
+        
+        <hr />
+                    
+		<div class="handle-action">
+        	<a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">提交</a>
+        	&nbsp;&nbsp;
+            <a id="resetbtn" class="large ui-color-button blue" href="javascript:void(0)">重置</a>
+            <a href="javascript:history.go(-1);">
+                <img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/images/goback.png" />
+            </a>
+        </div>
+	</form>
+
+<script type="text/javascript">
+var uploadUrl = "{:U('Admin/GuideManageRequest/headImgUpload', '', '')}"; // 提交封面图片的地址
+var ggid='{$ginfo.guide_id}';
+var ggac='{$ginfo.account}';
+var ggna='{$ginfo.guide_name}';
+var ggni='{$ginfo.nickname}';
+var ggcs='{$ginfo.sex}';
+var ggic='{$ginfo.id_card}';
+var ggbd='{$ginfo.birthday}';
+var ggnu='{$ginfo.guide_number}';
+var ggph='{$ginfo.cellphone}';
+var gcgl='{$ginfo.guide_level}';
+var gcgt='{$ginfo.guide_type}';
+var gcus='{$ginfo.subbranch_id}';
+var gghp='{$ginfo.headimg}';
+
+//初始化日历的js
+J(function(){
+    J('#gbirth').calendar({ format:'yyyy-MM-dd' });
+});
+
+//页面初始化函数
+$(function (){
+	var gid = $("#g_id");							//抓取导购编号
+	var gic = $("#gcard");							//抓取导购身份证号
+	var gac = $("#gaccount");						//抓取导购登录帐号
+	var gnu = $("#gnum");							//抓取导购工号
+	var gna = $("#gname");							//抓取导购姓名
+	var gni = $("#gnick");							//抓取导购昵称
+	var gss = $("#gsex_select");					//抓取导购性别
+	var gcs = $("#current_gsex");
+	var gbd = $("#gbirth");							//抓取导购出生年月
+	var gph = $("#gphone");							//抓取导购手机号码
+	var gls = $("#glevel_select");					//抓取导购等级
+	var cgl = $("#current_glevel");
+	var gts = $("#gtype_select");					//抓取导购类型
+	var cgt = $("#current_gtype");
+	var ghp = $("#ghead_path");						//抓取导购头像路径
+	var ssl = $("#search_select");
+	var cus = $("#current_shop");
+	
+	$(".uniform").uniform();						//uniform表单初始化
+	
+	$("#search_select").select2();					//带搜索的选择框初始化
+	
+	//所有下拉选择框的初始化
+	gss.val(gcs.val());
+	gss.change();
+	
+	gls.val(cgl.val());
+	gls.change();
+	
+	gts.val(cgt.val());
+	gts.change();
+	
+	ssl.val(cus.val());
+	ssl.change();
+	
+	//所属分店选择框更改事件
+	ssl.change(function(){
+		cus.val($(this).val());						//获取option选中的subbranch_id的value，并写入input里
+	});
+	
+	//导购性别选择框更改事件
+	gss.change(function(){
+		gcs.val($(this).val());						//获取option选中的sex的value，并写入input里
+	});
+	
+	//导购等级选择框更改事件
+	gls.change(function(){
+		cgl.val($(this).val());						//获取option选中的guide_level的value，并写入input里
+	});
+	
+	//导购类型选择框更改事件
+	gts.change(function(){
+		cgt.val($(this).val());						//获取option选中的guide_type的value，并写入input里
+	});
+	
+	//提交按钮处理
+	$("#submitbtn").click(function(){
+		var btnObj = $(this);
+		//Step1：判断登录账号是否填写
+		if (gac.val() == ''){
+			$.messager.alert('温馨提示', '请填写导购app登录帐号!', 'warning', function(){
+				gac.focus();						//注意聚焦和return的顺序！
+	  		});
+	  		return									//注意聚焦和return的顺序！
+		}
+		//Step2：判断导购姓名是否填写
+		if (gna.val() == ''){
+			$.messager.alert('温馨提示', '请填写导购姓名!', 'warning', function(){
+				gna.focus();
+	  		});
+	  		return
+		}
+		//Step3：判断导购性别是否选择
+		if(gcs.val() == '-1'){
+			$.messager.alert('温馨提示', '请选择导购性别!', 'warning', function(){
+				gcs.focus();
+	  		});
+	  		return
+		}
+		//Step4：判断身份证号是否填写
+		if (gic.val() == ''){
+			$.messager.alert('温馨提示', '请填写导购身份证号!', 'warning', function(){
+				gic.focus();						//注意聚焦和return的顺序！
+	  		});
+	  		return									//注意聚焦和return的顺序！
+		}
+		//Step5：判断导购联系方式是否填写（重要）
+		if(gph.val() == ''){
+			$.messager.alert('温馨提示', '请填写导购联系号码!', 'warning', function(){
+				gph.focus();
+	  		});
+	  		return
+		}else if(!isTel(gph.val())){
+			$.messager.alert('温馨提示', '请填写标准的7~18位电话号码格式!', 'warning', function(){
+				gph.focus();
+	  		});
+			return
+		}
+		//Step6：判断导购等级是否选择
+		if(cgl.val() == '-1'){
+			$.messager.alert('温馨提示', '请选择导购等级!', 'warning', function(){
+				cgl.focus();
+	  		});
+	  		return
+		}
+		//Step7：判断导购类型是否选择
+		if(cgt.val() == '-1'){
+			$.messager.alert('温馨提示', '请选择导购类型!', 'warning', function(){
+				cgt.focus();
+	  		});
+	  		return
+		}
+		
+		//Step8：判断是否选择导购所属分店,"-1"为直属总店
+		if(cus.val() == '0'){
+			$.messager.alert('温馨提示', '请选择导购所属分店，若暂无分店请先至店铺分店管理中添加门店信息!', 'warning', function(){
+				cus.focus();
+	  		});
+	  		return
+		}
+		
+		//验证通过，post提交
+		$.messager.confirm('温馨提示', '确定保存所编辑的导购信息吗？', function(result){
+			if(result){
+				// 准备ajax参数
+				var params = {
+						gid : gid.val(),
+						gic : gic.val(),
+						gac : gac.val(),
+						gnu : gnu.val(),
+						gna : gna.val(),
+						gni : gni.val(),
+						gss : gcs.val(),
+						gbd : gbd.val(),
+						gph : gph.val(),
+						gls : cgl.val(),
+						gts : cgt.val(),
+						gsi : cus.val(),
+						ghp : ghp.val()
+				}
+				MLoading.show("提交中..."); // 出现提交等待框，友好度
+				btnObj.attr('disabled',true); // 冻结按钮防止重复点
+				$.post("{:U('Admin/GuideManageRequest/editGuideCfm', '', '')}", params, function(result){
+					MLoading.hide(); // 隐藏等待提醒框
+					btnObj.removeAttr('disabled'); // 恢复按钮
+					if(result.errCode == 0){
+						$.messager.alert('温馨提示','导购信息更新成功','info',function(){
+							setTimeout(function(){
+								window.location.href = "{:U('Admin/GuideManage/guideView', '', '')}";
+							},500);
+						});
+					} else {
+						$.messager.alert('温馨提示', '导购信息更新失败！' + result.errMsg, 'error');
+					}
+				},"json");
+			}
+		});
+	});
+	
+	//重置按钮单击事件
+	$("#resetbtn").click(function(){
+		$.messager.confirm('温馨提示', '确定重置吗?', function(result){
+				if(result){
+					gic.val(ggic),
+					gac.val(ggac),
+					gnu.val(ggnu),
+					gna.val(ggna),
+					gni.val(ggni),
+					gcs.val(ggcs),
+					gss.val(ggcs),
+					gss.change(),
+					gbd.val(ggbd),
+					gph.val(ggph),
+					cgl.val(gcgl),
+					gls.val(gcgl),
+					gls.change(),
+					cgt.val(gcgt),
+					gts.val(gcgt),
+					gts.change(),
+					cus.val(gcus),
+					ssl.val(gcus),
+					ssl.change(),
+					ghp.val(gghp),
+					$(".uploader span[class='filename']").html('未选择文件');
+					$('#himg').attr('src', gghp);
+					$.messager.alert('温馨提示', '重置成功!', 'info');
+				}
+			
+		});
+	});
+	
+	// js创建XHR上传图片并获得图片预览路径
+	$("#guideInfo").find("input[name=headimage]").on("change", function(e){
+		var loadfun = $(this).attr("name")+"complete";
+		e = e || window.event;
+        var fileList = e.target.files;
+        if (!fileList.length) return false; 						//没有文件返回 
+        
+		//创建表单数据
+		var formData = new FormData();
+		formData.append('gid', $("#g_id").val()); 					//导购编号附加到name为gid表单字段中
+		formData.append('picture', fileList[0]); 					//图片文件数据附加到name为pic中
+		// 创建 ajax 请求
+        var xhr = new XMLHttpRequest();
+		xhr.addEventListener("load", window[loadfun], false);		//监听XMLHttpRequest的load事件，使用模块内complete函数响应（注意使用window[某js函数名]）
+		xhr.addEventListener("abort", abort, false);				//监听XMLHttpRequest的abort事件，使用模块内abort函数响应
+		xhr.addEventListener("error", failed, false);				//监听XMLHttpRequest的error事件，使用模块内failed函数响应
+		xhr.open("POST", uploadUrl + '?time=' + Date.now());		//打开静态POST提交，并加上时间作为参数，打开一个GET请求
+		xhr.send(formData);											//使用ajax请求 发送表单
+	});
+});
+
+//头像上传完成时的函数
+var headimagecomplete = function (e) {
+    var result = $.parseJSON(e.target.response);					//解析服务器返回的json数据为result
+    if (result.errCode == 0) {
+    	$("input[name=ghead_path]").val(result.data.uploadpath); 	//没有经过组装的原始路径
+        $("#himg").attr("src", result.data.nowifipath); 			//预览写入图片路径
+    } else {
+        $.messager.alert("温馨提示", result.errMsg, "error");
+    }
+}
+
+// 上传失败函数
+var failed = function() {
+	$.messager.alert("温馨提示", "上传文件失败！", "error");
+}
+
+// 上传终止函数
+var abort = function() {
+	$.messager.alert("温馨提示", "上传已取消！", "error");
+}
+
+// 判断联系方式是否为正确的手机号码/电话号码格式
+function isTel(str){
+    var reg=/^([0-9]|[\-])+$/g ;
+    if(str.length<7 || str.length>18){
+		return false;
+    } else {
+      return reg.exec(str);
+    }
+}
+</script>
+</body>
+</html>

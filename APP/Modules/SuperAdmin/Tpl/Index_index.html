@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>品牌管理系统</title>
+<!-- Bootstrap -->
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css" media="screen">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap-responsive.min.css" media="screen">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/assets/styles.css" media="screen">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/ui-dialog.css">
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+<script type="text/javascript" src="__PUBLIC__/vendors/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/vendors/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artdialog/dialog-min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonutil.js"></script>
+<style type="text/css">
+body { margin:0px; padding:0px; background:#418bdb; }
+</style>
+</head>
+
+<body id="login">
+	<div class="container">
+		<form class="form-signin">
+			<h2 class="form-signin-heading">品牌管理系统</h2>
+			<input type="text" name="account" class="input-block-level" placeholder="请输入账号" MaxLength ="24"> 
+			<input type="password" name="password" class="input-block-level" placeholder="请输入密码" MaxLength ="18"> 
+			<label class="checkbox"> <input type="checkbox" value="remember-me">记住账号</label>
+			<button class="btn btn-large btn-primary" type="button" id="loginBtn">登录</button>
+		</form>
+	</div><!-- /container -->
+	
+<script type="text/javascript">
+$(function(){
+	$("body").on("click", "#loginBtn", function(result){
+		var acc = $("input[name=account]").val().trim();
+		var pwd = $("input[name=password]").val().trim();
+		
+		if (acc == "") {
+			util.alert("请输入账号");
+			$("input[name=account]").focus();
+			return false;
+		}
+		if (pwd == "") {
+			util.alert("请输入密码");
+			$("input[name=password]").focus();
+			return false;
+		}
+		
+		var params = {
+				acc:acc,
+				pwd:pwd
+		}
+		MLoading.show("登录中...");
+		$.post("{:U('SuperAdmin/IndexRequest/loginCheck', '', '')}", params, function(result){
+			MLoading.hide();
+			if (result.errCode == 0) {
+				util.alert("欢迎您，超级管理员");
+				setTimeout(function(){
+					location.href = "{:U('SuperAdmin/SAService/main', '', '')}";
+				},1000);
+			} else {
+				util.alert(result.errMsg);
+			}
+		}, "json");
+		
+	});
+});
+</script>
+</body>
+</html>

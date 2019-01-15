@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta HTTP-EQUIV="pragma" CONTENT="no-cache" />
+<meta HTTP-EQUIV="Cache-Control" CONTENT="no-cache, must-revalidate" />
+<meta HTTP-EQUIV="expires" CONTENT="0">
+<meta name="keywords" content="{$sainfo.shareinfo.title}" />
+<meta name="description" content="{$sainfo.shareinfo.description}" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta http-equiv="Expires" content="-1" />
+<meta http-equiv="pragram" content="no-cache" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/extend/reset.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/extend/app.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/extend/animation.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/extend/units.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/extend/modules.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/extend/page.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/extend/arrow.css"/>
+<script type="text/javascript" src="__PUBLIC__/js/extend/seajs/sea.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/extend/offline.js"></script>
+<!--移动端兼容适配 begin -->
+<script type="text/javascript">
+if(/Android (\d+\.\d+)/.test(navigator.userAgent)){
+    var version = parseFloat(RegExp.$1);
+    if(version>2.3){
+        var phoneScale = parseInt(window.screen.width)/640;
+        document.write('<meta name="viewport" content="width=640, minimum-scale = '+ phoneScale +', maximum-scale = '+ phoneScale +', target-densitydpi=device-dpi">');
+    }else{
+        document.write('<meta name="viewport" content="width=640, target-densitydpi=device-dpi">');
+    }
+}else{
+    document.write('<meta name="viewport" content="width=640, user-scalable=no, target-densitydpi=device-dpi">');
+}
+//微信去掉下方刷新栏
+if(navigator.userAgent.indexOf('MicroMessenger') >= 0){
+    document.addEventListener('WeixinJSBridgeReady', function() {
+        WeixinJSBridge.call('hideToolbar');
+    });
+}
+</script>
+<!--移动端兼容适配 end -->
+<title>{$sainfo.shareinfo.title}</title>
+<head>
+
+<body class="app">
+	<!--app loading-->
+	<div id="app-loading" class="app-loading">
+		<div class="cycleWrap">
+			<span class="cycle cycle-1"></span>
+			<span class="cycle cycle-2"></span>
+			<span class="cycle cycle-3"></span>
+			<span class="cycle cycle-4"></span>
+		</div>
+		<div class="lineWrap">
+			<span class="line line-1"></span>
+			<span class="line line-2"></span>
+			<span class="line line-3"></span>
+		</div>
+	</div>
+	<!--app loading end-->
+	
+	<!--app header-->
+	<header class="app-header">
+		<a href="javascript:void(0);" class="u-globalAudio">
+			<i class="icon-music"></i>
+			<audio src="{$sainfo.music.0.resource_url}" autoplay="autoplay" loop></audio>
+		</a>
+	</header>
+	<!--app header end-->
+
+	<!--app content-->
+	<section class="app-content">
+            
+        <!--启动页page-->
+        <section class="page page-index z-current" data-plugin-type="info_front">
+            <section class="page-content">
+                <!--动画背景图-->
+                <img class="m-foregroundImg" src="{$sainfo[image][common][0][resource_url]}">
+            </section>
+        </section>
+        <!--启动页page end-->
+        
+        <!-- 大图文正文 begin -->
+       	<for start="1" end="$sainfo[image][commoncount] - 1" step="1">
+			<if condition = "$sainfo[image][common][$i][video_url] eq ''">
+				<!-- 判断：视频地址是空的，是正常图文 -->
+				<!-- 继续判断是否为普通图文还是相册 -->
+				<if condition = "$sainfo[image][common][$i][0] neq null">
+					<section class="page page-teletext" data-plugin-type="info_list" style="background:#000;">
+			            <section class="page-content">
+			                <ul class="m-cascadingTeletext">
+			                    <foreach name = "sainfo[image][common][$i]" item = "sa">
+			                    <li>
+			                        <img src="{$sa['resource_url']}" />
+			                        <div class="imgText">
+			                        <p class="p1"><br /></p>
+			                        </div>
+			                    </li>
+			                    </foreach>
+			                </ul>
+			                <div class="animateYl animateYl01">
+			                    <span class="shou"><img src="__PUBLIC__/images/extend/shou.png" alt="" /></span>
+			                    <span class="cyyle"><img src="__PUBLIC__/images/extend/cycle02.png" alt="" /></span>
+			                    <span class="bg"></span>
+			                </div>
+			                <a href="javascript:void(0);" class="u-guidePrev z-move">prev</a>
+			                <a href="javascript:void(0);" class="u-guideNext z-move">next</a>
+			            </section>
+			        </section>
+				<else />
+					<section class="page page-link" data-plugin-type="info_link" style="background-image: url({$sainfo.image.common.$i.resource_url});">
+			            <section class="page-content">
+			                <div class="f-hide">
+			                    <div class="u-maskLayer m-weixinShareLayer z-hide"> 
+			                        <img src="__PUBLIC__/images/extend/weixin-share-guide.png" /> 
+			                    </div>
+			                </div>
+			            </section>
+			        </section>
+				</if>
+			<elseif condition = "$sainfo[image][common][$i][video_url] neq ''" />
+				<!-- 判断：视频地址不是空的，是正常图文+视频 -->
+				<!--视频展示 page begin-->
+		        <section class="page page-video" data-plugin-type="video_brand" style="background-image: url({$sainfo.image.common.$i.resource_url});">
+		            <section class="page-content">
+		                <!-- 优酷视频 -->
+		                <a href="javascript:void(0);" class="m-btnPlay a-bouncein">
+		                    <i></i>
+		                    <div></div>
+		                </a>
+		                <div class="u-maskLayer m-youkuVideoLayer z-hide">
+		                    <div class="m-youkuVideo" data-devid="" data-src="{$sainfo.image.common.$i.video_url}"></div>
+		                </div>
+		            </section>
+		        </section>
+		        <!--视频展示 page end-->
+			</if>
+		</for>
+        
+        <!--最终结束页page end-->
+        <section class="page page-link" data-plugin-type="info_link" style="background-image: url({$sainfo [image] [common] [$sainfo[image][commoncount] - 1] [resource_url]});">
+            <section class="page-content">
+                <div class="f-hide">
+                    <div class="u-maskLayer m-weixinShareLayer z-hide"> 
+                        <img src="__PUBLIC__/images/extend/weixin-share-guide.png" /> 
+                    </div>
+                </div>
+                <div class="link-to" data-url="{$sainfo [extra_url]}" style="width:400px; height:280px; margin:0px auto; position:relative; top:60%;"></div>
+            </section>
+        </section>
+		<!--最终结束页page end-->
+
+	</section>
+	<!--app content end-->
+    
+	<input type="hidden" value="{$sainfo.shareinfo.img_url}" data-share-pic><!--被分享的图片-->
+</body>
+</html>

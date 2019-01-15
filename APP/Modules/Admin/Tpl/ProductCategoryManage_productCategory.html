@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>商品分类管理</title>
+</head>
+
+<body class="easyui-layout" fit="true">
+  	 <div id="toolbar">
+     		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addProductCategory();">添加分类</a>
+    			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editProductCategory();">编辑</a>
+     		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="deleteProductCategory();">删除</a>
+			 	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="cancelSelect();">取消选择</a>
+			 	<a href="javascript:history.go(-1);" class="easyui-linkbutton" iconCls="icon-back" plain="true">后退</a>
+			 	<a href="javascript:location.reload();" class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
+			 </div>
+		<div data-options="region:'center',border:false">
+  	<table id='tg' title="分类列表" style="height:100%;width: 100%;"  class="easyui-treegrid" toolbar="#toolbar"
+  		data-options="
+          url: '{:U('Admin/ProductCategoryManage/readProductCategory')}',
+          rownumbers: true,
+          fitColumns:true,
+          fit:true,
+          singleSelect:true,
+          pagination: true,
+          pageSize: 10,
+          pageList: [5,10,20],
+          idField: 'nav_id',
+          treeField: 'nav_name',
+          onBeforeLoad: function(row,param){
+              if (!row) {    // load top level rows
+                  param.id = '-1';    // set id=0, indicate to load new page rows
+              }
+          }
+      ">
+
+  		<thead>
+	        <tr>
+	       		<th field="father_nav_id" width="180px;" hidden>FatherID</th>
+	         	<th field="nav_id" width="180px;" hidden>ID</th>
+	         	<th field="ck" width="100px;" checkbox="true" ></th>
+	            <th field="nav_name" width="180px;">名称</th>
+	            <th field="nav_image_path" width="180px;">图标</th>
+	            <th field="nav_order" width="180px;">顺序</th>
+	            <th field="description" width="180px;">描述</th>
+	        </tr>
+	   	</thead>
+	</table>
+</div>
+
+<script type="text/javascript">
+	function cancelSelect() {
+		$('#tg').datagrid('unselectAll');
+	}
+
+	function editProductCategory(){
+		var row = $('#tg').treegrid('getSelected');
+		if(row == null){
+			$.messager.alert('警告','请选择一个分类');
+		}else{
+			var nav_id = row.nav_id;
+			var father_nav_id = row.father_nav_id;
+
+			window.location.href="{:U('Admin/ProductCategoryManage/editProductCategory','','')}?nav_id="+nav_id;
+		}
+		
+	}
+	
+	function addProductCategory(){
+		
+		window.location.href="{:U('Admin/ProductCategoryManage/addProductCategory','','')}";
+	}
+	
+	function deleteProductCategory(){
+		var row = $('#tg').treegrid('getSelected');
+		if(row == null){
+			$.messager.alert('警告','请选择一个分类');
+		}else{
+			var nav_id = row.nav_id;
+			var father_nav_id = row.father_nav_id;
+			$.post('{:U("Admin/ProductCategoryManage/checkDelCondition","","")}',
+					{nav_id:nav_id,father_nav_id:father_nav_id},
+					function(data){
+						if(data.status == '0'){
+							$.messager.alert('要删除的分类有子级分类，不能删除!');
+						}
+						
+						if(data.status == '1'){
+							var flag = window.confirm('要删除的分类有下有商品，且无同级分类，若继续当前分类下的商品将会被移动到上级分类下，是否继续？');
+							if(flag == true){
+								$.post('{:U("Admin/ProductCategoryManage/deleteProductCategory","","")}',
+										{nav_id:nav_id,father_nav_id:father_nav_id,hasPro:'1'},
+										function(data){
+											if(data.status == '0'){
+												$.messager.alert('删除失败！');
+											}else{
+												window.location.reload();
+											}
+										});
+							}else{
+								return false;
+							}
+						}
+						
+						if(data.status == '2'){
+							$.messager.alert('要删除的分类有下有商品，且有同级子类，不能删除!');
+						}
+						if(data.status == '3'){
+							var flag = window.confirm('确定要删除该分类，是否继续？');
+							if(flag == true){
+								$.post('{:U("Admin/ProductCategoryManage/deleteProductCategory","","")}',
+										{nav_id:nav_id,father_nav_id:father_nav_id,hasPro:'0'},
+										function(data){
+											if(data.status == '0'){
+												$.messager.alert('删除失败！');
+											}else{
+												window.location.reload();
+											}
+										});
+							}else{
+								return false;
+							}
+						}
+					});
+		}
+
+	}
+</script>
+</body>
+</html>

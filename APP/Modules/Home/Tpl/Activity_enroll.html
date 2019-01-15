@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/bootstrap/js/bootstrap.min.js"></script> 
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.yiiactiveform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>活动报名</title>
+<style type="text/css">
+body {
+	background: url('__PUBLIC__/images/activityenroll/activitybkg.jpg');
+	background-size:100% 100%;
+	font-family: "微软雅黑","黑体";
+	font-size: 14px; 
+}
+
+.container {
+	margin-top:30px;
+	width:96%;
+}
+
+.around {
+	border: 1px solid #C6C6C6;
+	background-color: rgba(255, 255, 255, 0.9);
+	text-align: left;
+	font-size: 14px;
+	line-height: 24px;
+	border-radius: 5px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-moz-box-shadow: 0 1px 1px #f6f6f6;
+	-webkit-box-shadow: 0 1px 1px #f6f6f6;
+	box-shadow: 0 1px 1px #f6f6f6;
+	margin-bottom: 11px;
+	display: block;
+}
+
+span.required {
+	color: red;
+}
+
+.errorMessage {
+	color: red;
+}
+
+.uploader{
+	width:169px !important;
+}
+
+.rules { clear:both; width:90%; margin:0px auto; margin-bottom:10px; padding:10px; border:1px dotted #DDD; border-radius:10px; }
+.activity-rule { font-size:16px; font-weight: bold; text-align:center; }
+.info-title { font-weight:bold;}
+.info-content { text-indent:24px; font-size:12px; }
+.copyright { margin-top:5px; font-size:12px; color:#666; text-align:center; }
+</style>
+</head>
+
+<body>
+    <div class="container">
+        <form class="form-horizontal" action="{:U('Home/Activity/enrollConfirm')}" enctype="multipart/form-data" method="post" onsubmit="return checkInput();">
+            <input type="hidden" name="e_id" value="{$e_id}" />
+            <div class="row around">
+            	<div class="alert alert-danger text-center">S.Life情人节《一爱倾诚》<br/>专题活动报名</div>
+                <div class="col-xs-12">
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label required" for="uname" style="display:block;width:69px;">
+                            姓名<span class="required">*</span>
+                        </label>
+                        <div class="col-xs-10">
+                            <input class="form-control" placeholder="您的名字" name="username" id="uname" type="text" maxlength="10" />
+                            <div class="errorMessage" id="SignupForm_name_em_" style="display:none"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label required" for="uphone" style="display:block;width:69px;">
+                            手机<span class="required">*</span>
+                        </label>
+                        <div class="col-xs-10">
+                            <input class="form-control" placeholder="您的手机号码" name="tel" id="uphone" type="tel" maxlength="11" />
+                            <div class="errorMessage" id="SignupForm_telphone_em_" style="display:none"></div>
+                        </div>
+                    </div>
+                    <!-- <div class="form-group">
+                        <label class="col-xs-2 control-label required" for="uqqnum" style="display:block;width:69px;">
+                            QQ<span class="required">*</span>
+                        </label>
+                        <div class="col-xs-10">
+                            <input class="form-control" placeholder="您的QQ号码" name="qq" id="uqqnum" type="tel" maxlength="10" />
+                            <div class="errorMessage" id="SignupForm_qq_em_" style="display:none"></div>
+                        </div>
+                    </div> -->
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label required" for="uwish" style="display:block;width:69px;">
+                            宣言<span class="required">*</span>
+                        </label>
+                        <div class="col-xs-10">
+                            <textarea rows="6" cols="50" class="form-control" placeholder="您的爱情宣言（文体内容不限，请君随意发挥喔:)，150字以内）" name="wish" id="uwish"></textarea>
+                            <div class="errorMessage" id="SignupForm_wish_em_" style="display:none"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label required" for="uphoto" style="display:block;width:69px;">
+                            照片<span class="required">*</span>
+                        </label>
+                        <div class="col-xs-10">
+                            <input type="file" class="uniform" name="enrollphoto" id="uphoto" />
+                            <div class="errorMessage" id="SignupForm_photo_em_" style="display:none"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="rules">
+                	<div class="activity-rule">S.Life《一爱倾“诚”》活动规则</div>
+            		<div class="activity-info">
+            			<div class="info-title">礼品设置：</div>
+            			<div class="info-content">1、免费赠送巨型玫瑰一支（进口、空运、全城限量）；</div>
+            			<div class="info-content">2、免费拍摄制作2015情人节纪念VCR一段（可自选定制为U盘永久保存）。</div>
+            		</div>
+            		<div class="activity-info">
+            			<div class="info-title">参与方式：</div>
+            			<div class="info-content">上传您与恋人的甜蜜合照一张，并撰写您的爱情宣言（150字以内）。</div>
+            		</div>
+            		<div class="activity-info">
+            			<div class="info-title">评选规则：</div>
+            			<div class="info-content">1、报名与投票截止日期为2015年2月3日；</div>
+            			<div class="info-content">2、赞数最高的前19位可获得巨型玫瑰；</div>
+            			<div class="info-content">3、赞数最高的前3位同时可获得巨型玫瑰与纪念VCR。</div>
+            		</div>
+            		<div class="activity-info">
+            			<div class="info-title">注意事项：</div>
+            			<div class="info-content">1、请完整填写您的真实资料，以便获奖后与您取得联系；</div>
+            			<div class="info-content">2、报名后即可开始收集点赞投票，一天只能为同一用户点赞一次。</div>
+            		</div>
+            		<div class="copyright">本次活动最终解释权为S.life所有。<br />2015-01~2015-02 ® All Rights Reserved</div>
+            	</div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="form-group buttons">
+                        <input class="btn-block btn btn-primary btn-lg" type="submit" name="submit" value="提交" />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    
+<script type="text/javascript">
+var e_id="{$e_id}",
+	shareData = {
+		appid: "{$pageinfo [shareinfo] [appid]}", // 分享的商家编号
+	    img_url: "{$pageinfo [shareinfo] [img_url]}", // 分享的图片
+	    img_width: "160", // 宽度
+	    img_height: "160", // 高度
+	    title: "{$pageinfo [shareinfo] [title]}", // 分享的标题
+	    desc: "{$pageinfo [shareinfo] [desc]}", // 分享的描述
+	    link: "{$pageinfo [shareinfo] [link]}", // 分享的超链接
+	    fakeid : "{$openid}",																		//分享用户的id
+	    callback:function(result){
+	    	if(result != 'send_app_msg:cancel' && result != 'share_timeline:cancel' && result != 'share_weibo:cancel' && result != 'share_fb:cancel'){
+	    		$.post("{:U('Home/MobileCommon/shareRecord','','')}",
+	    				{ e_id : e_id, link : shareData.link, openid : shareData.fakeid },			//分享的时候传3个参数：1、商家编号；2、链接地址（区分授权和不授权两种）；3、分享的微信号（只有开启授权登录才有）
+	    				function(data){
+	    					if(data.status == 1){
+	    						scscms_alert("谢谢您的分享!", "ok", "", 2);//定时关闭窗口
+	    					}else{
+	    						scscms_alert("服务器繁忙，请稍后再试!"+data.msg, "warning", "", 2);//定时关闭窗口
+	    					}
+	    				},
+	    				'json');
+	    	}else{
+	    		scscms_alert("下次记得分享噢!", "ok", "", 2);//定时关闭窗口
+	    	}
+	    }	/*分享后的回调函数，发送给朋友的类型分为send_app_msg:confirm或send_app_msg:cancel；对应发送给朋友、分享到朋友圈、分享到腾讯微博、分享到facebook都有4种类型*/
+	};
+
+$(function(){
+	$(".uniform").uniform();
+	
+	$("#uname").click(function(){
+		$("#SignupForm_name_em_").css("display","none");
+	});
+	$("#uphone").click(function(){
+		$("#SignupForm_telphone_em_").css("display","none");
+	});
+	/* $("#uqqnum").click(function(){
+		$("#SignupForm_qq_em_").css("display","none");
+	}); */
+	$("#uwish").click(function(){
+		$("#SignupForm_wish_em_").css("display","none");
+	});
+	$("#uphoto").click(function(){
+		$("#SignupForm_photo_em_").css("display","none");
+	});
+});
+
+function checkInput(){
+	// 验证姓名
+	if($("#uname").val().trim()==''){
+		$("#SignupForm_name_em_").css("display","block").html("亲！您怎么称呼呢?");
+		return false;
+	}
+	// 验证手机
+	var p=$("#uphone").val().trim();
+	r = p.match(/\d+/);
+	if(r==null){
+		$("#SignupForm_telphone_em_").css("display","block").html("亲！我们怎么联系您呢?");
+		return false;
+	}
+	// 验证QQ号
+	/* var q=$("#uqqnum").val().trim();
+	rq = q.match(/\d+/);
+	if(rq==null){
+		$("#SignupForm_qq_em_").css("display","block").html("亲！请输入您的QQ号码.");
+		return false;
+	} */
+	// 验证祝福
+	if($("#uwish").val().trim()==''){
+		$("#SignupForm_wish_em_").css("display","block").html("亲！请输入您的祝福.");
+		return false;
+	}
+	// 验证照片
+	if($("#uphoto").val().trim()==''){
+		$("#SignupForm_photo_em_").css("display","block").html("亲！请上传您的照片.");
+		return false;
+	}
+	return true;
+}
+</script>
+</body>
+</html>

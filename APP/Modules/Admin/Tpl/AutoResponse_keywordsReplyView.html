@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/template-native.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>关键字回复</title>
+</head>
+
+<body class="easyui-layout" fit="true">
+	<input type="hidden" id="eid" value="{$_SESSION['curEnterprise']['e_id']}" />
+	<div data-options="region:'center',border:false">
+		<table id="allkeywords" title="所有关键字回复信息一览" toolbar="#toolbar" style="width: 100%; height: 100%;"></table>
+	</div>
+	
+	<!-- easyUI的工具条 -->
+	<div id="toolbar">
+		<span>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addKeyword();">添加关键字</a> 
+			<a href="javascript:location.reload();" class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
+		</span>
+	</div>
+
+<script type="text/html" id="handlebtntpl">
+<table class="handlebtntable">
+    <tr>
+		<td>
+			<a href="javascript:void(0)" class="btn btn-mini" title="编辑关键字回复内容" onclick="editKeyword('<%=autoresponse_id%>')">查看/编辑</a>
+			<a href="javascript:void(0)" class="btn btn-mini" title="删除该关键字信息" onclick="delKeyword('<%=autoresponse_id%>')">一键删除</a>
+		</td>
+	</tr>
+</table>
+</script>
+
+<script type="text/javascript">
+$(function() {
+	
+	allkeywords = $('#allkeywords').datagrid({
+		url : "{:U('Admin/AutoResponseRequest/readAllKeywords', '', '')}",
+		singleSelect: true,
+		collapsible: true,
+		method: 'post',
+		fitColumns: true,
+		fit: true,
+		pagination: true,
+		pageSize: 10,
+		pageList: [5, 10, 15],
+		rownumbers: true,
+		idField : 'autoresponse_id',
+		columns : [ [ 
+		              { field : 'keyword', title : '关键字', width : 100 },
+		              { field : 'response_function', title : '回复类型', width : 100, formatter : responseTypeInit },
+		              //{ field : 'response_content_id', title : '回复内容', width : 140},
+		              { field : 'add_response_time', title : '添加时间', sortable : true, width : 140 }, 
+		              { field : 'autoresponse_id', title : '操作', width : 100, formatter : handleBtnInit } 
+		          ] ],
+	});
+});
+
+//操作区域的按钮初始化
+function handleBtnInit(val, row) {
+	var handlebtntmpl = template("handlebtntpl", row); // 渲染模板
+	return handlebtntmpl;
+}
+
+//初始化回复类型
+function responseTypeInit(val, row){
+	var rtype = row.response_function;
+	if(rtype == 'responsetext'){
+		return '文本（或链接）';
+	}else if(rtype == 'responseimage'){
+		return '图片';
+	}else if(rtype == 'responsevoice'){
+		return '语音';
+	}else if(rtype == 'responsevideo'){
+		return '视频';
+	}else if(rtype == 'responsenews'){
+		return '图文';
+	}else {
+		return '其他';
+	}
+}
+
+function addKeyword(){
+	location.href = "{:U('Admin/AutoResponse/addKeyword', '', '')}";
+}
+
+function editKeyword(aid){
+	location.href = "{:U('Admin/AutoResponse/editKeyword', '', '')}?aid="+aid;
+}
+
+function delKeyword(aid){
+	if(aid){
+		$.messager.confirm('温馨提示', '确定删除该条关键字信息吗?', function(cf){
+			if(cf) {
+				$.post("{:U('Admin/AutoResponseRequest/delKeyword','','')}",
+						{ aid : aid},
+						function(result){
+							if(result.errCode == 0){
+								$.messager.alert('温馨提示', '关键字信息删除成功！', 'info');
+								allkeywords.datagrid('clearSelections');                 //清除datagrid选项记录
+								allkeywords.datagrid('reload');
+							}else{
+								$.messager.alert('温馨提示', '关键字信息删除失败！'+result.errMsg, 'warning');
+							}
+						},"json"); 
+			}
+		});
+	}
+}
+</script>
+</body>
+</html>

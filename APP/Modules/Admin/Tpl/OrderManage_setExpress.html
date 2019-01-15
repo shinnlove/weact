@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=7" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/enterpriseMainStyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/dialog.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactAdminStyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>编辑邮费信息</title>
+</head>
+
+<body>
+  <div class="pad-10">
+    <div class="col-tab">
+      <ul class="tabBut cu-li">
+        <li id="tab_setting_1" class="on">基本信息</li>
+      </ul>
+      <div id="div_setting_1"  class="contentList pad-10">
+      	<div class="add-Exf"><input id="addExf" type="button" value="增加快递类型"></input></div>
+        <table width="100%" cellpadding="2" cellspacing="1" class="table_form">
+	        <tr>
+	        	<th>类型</th>
+	        	<th>邮费</th>
+	        	<th>备注</th>
+	        	<th>操作</th>
+	        </tr>
+	        <foreach name="expressfee" item="exf">
+	        <tr>
+	        	<td><span>{$exf.express_type}</span></td>
+	        	<td><span>￥{$exf.express_fee}</span></td>
+	        	<td><span>{$exf.remark}</span></td>
+	        	<td><a href="javascript:void(0)" onclick="modifyExf('{$exf.expressfee_id}','{$exf.express_type}','{$exf.express_fee}','{$exf.remark}')">修改</a>&nbsp;&nbsp;<a href="javascript:void(0)" onclick="delExf('{$exf.expressfee_id}',this)">删除</a></td>
+	        </tr>
+	        </foreach>
+        </table>
+      </div>
+      <div class="bk15"></div>
+    </div>
+  </div>
+  <div id="w1" class="easyui-window" title="增加邮费类型" data-options="modal:true,closed:true" style="width:500px;height:300px;padding:10px;">
+            <table>
+                <tr>
+                    <th style="color:#8F9695; width:80px;font-size: 15px;">类型:</th>
+                    <td><input id="aexpress_type" style="width: 250px;height: 25px;" class="easyui-validatebox" type="text"  data-options="required:true"></input></td>
+                </tr>
+                <tr style="height: 15px;"></tr>
+                <tr>
+                    <th style="color:#8F9695;width:80px;font-size: 15px;">邮费:</th>
+                    <td><input id="aexpress_fee" style="width: 250px; height: 25px;" class="easyui-numberbox" type="text"  data-options="min:0,precision:2,required:true"></input></td>
+                </tr>
+                <tr style="height: 15px;"></tr>
+                <tr>
+                    <th style="color:#8F9695;width:80px;font-size: 15px;">备注:</th>
+                    <td><textarea id="aremark" rows="3" cols="60">无</textarea></td>
+                </tr>
+            </table>
+        <div style="text-align:center;margin-top:15px;">
+            <a href="javascript:void(0)"  class="easyui-linkbutton" onclick="addExpressFee()">&nbsp;确定&nbsp;</a>
+        </div>
+  </div>
+  <div id="w2" class="easyui-window" title="修改邮费" data-options="modal:true,closed:true" style="width:500px;height:300px;padding:10px;">
+           <input type="hidden" value="" id="eexpressfee_id"></input>
+            <table>
+                <tr>
+                    <th style="color:#8F9695; width:80px;font-size: 15px;">类型:</th>
+                    <td><input id="eexpress_type" style="width: 250px;height: 25px;" class="easyui-validatebox" type="text"  data-options="required:true"></input></td>
+                </tr>
+                <tr style="height: 15px;"></tr>
+                <tr>
+                    <th style="color:#8F9695;width:80px;font-size: 15px;">邮费:</th>
+                    <td><input id="eexpress_fee" style="width: 250px; height: 25px;" class="easyui-numberbox" type="text"  data-options="min:0,precision:2,required:true"></input></td>
+                </tr>
+                <tr style="height: 15px;"></tr>
+                <tr>
+                    <th style="color:#8F9695;width:80px;font-size: 15px;">备注:</th>
+                    <td><textarea id="eremark" rows="3" cols="60">无</textarea></td>
+                </tr>
+            </table>
+        <div style="text-align:center;margin-top:15px;">
+            <a href="javascript:void(0)"  class="easyui-linkbutton" onclick="editExpressFee()">&nbsp;确定&nbsp;</a>
+        </div>
+  </div>
+
+<script type="text/javascript">
+	function modifyExf(expressfee_id,express_type,express_fee,remark){
+		$('#eexpressfee_id').val(expressfee_id);
+		$('#eexpress_type').val(express_type);
+		$('#eexpress_fee').val(express_fee);
+		$('#eremark').val(remark);
+		$('#w2').window('open');
+	}
+
+	function delExf(expressfee_id,obj){
+		$.messager.confirm('警告', '确定删除？', function(cf){
+			if(cf){
+				$.post('{:U("Admin/OrderManage/delExfee","","")}',
+						{expressfee_id:expressfee_id},
+						function(data){
+							if(data.status == '1'){
+								$(obj).parent().parent().remove();
+							}else{
+								$.messager.alert('警告','操作失败！')
+								window.location.reload();
+							}
+						});
+			}
+		});
+	}
+	
+	$('#addExf').click(function(){
+		$('#w1').window('open');
+	});
+	
+	function addExpressFee(){
+		$express_type = $('#aexpress_type').val();
+		$express_fee = $('#aexpress_fee').val();
+		$remark = $('#aremark').val();
+		$.post('{:U("Admin/OrderManage/addExfee","","")}',
+				{express_type:$express_type,express_fee:$express_fee,remark:$remark},
+				function(data){
+					if(data.status == '1'){
+						$('#w1').window('close');
+						window.location.reload();
+					}else{
+						$.messager.alert('警告','操作失败！');
+						return false;
+					}
+				});
+	}
+	
+	function editExpressFee(){
+		$expressfee_id = $('#eexpressfee_id').val();
+		$express_type = $('#eexpress_type').val();
+		$express_fee = $('#eexpress_fee').val();
+		$remark = $('#eremark').val();
+		$.post('{:U("Admin/OrderManage/editExfee","","")}',
+				{expressfee_id:$expressfee_id,express_type:$express_type,express_fee:$express_fee,remark:$remark},
+				function(data){
+					if(data.status == '1'){
+						$('#w2').window('close');
+						window.location.reload();
+					}else if(data.status == '2'){
+						$.messager.alert('警告','数据没有发生改变！')
+						return false;
+					}else{
+						$.messager.alert('警告','操作失败！')
+						return false;
+					}
+				});
+	}
+</script>
+</body>
+</html>

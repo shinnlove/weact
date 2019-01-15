@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactAdminStyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>自动文本回复</title>
+</head>
+<body class="easyui-layout" fit="true">
+	
+	<div class="easyui-tabs" data-options="region:'center',border:false">
+		
+		<div data-options="region:'center',title:'文本回复一览',border:false"><!-- easyUI的TAB菜单分页1；自定义设置分页标题title -->
+		    <table id="ardg" class="easyui-datagrid" title="所有文本回复" toolbar="#artoolbar" data-options="region:'center'"></table>
+			<!-- easyUI的工具条 -->
+			<div id="artoolbar">
+	        	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addResponseText()">添加回复</a>
+	       		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="">编辑回复</a>
+	        	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delResponseText()">删除</a>
+				<a href="javascript:location.reload();" class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
+				<a href="javascript:history.go(-1);" class="easyui-linkbutton" iconCls="icon-back" plain="true">后退</a>
+	   		</div>
+
+<script type="text/javascript">
+var ardg = $("#ardg");
+$(function() {
+	ardg.datagrid({
+		url : "{:U('Admin/CustomerService/getresponseText','','')}",
+		singleSelect : true,
+		collapsible : true,
+		method : 'post',
+		fitColumns : true,
+		fit : true,
+		pagination : true,					//是否开启分页
+		pageSize: 10,						//默认初始化每页几行
+        pageList: [5,10,20,50],				//可供选择的一页几行列表
+		rownumbers : true,					//开启行编号
+		idField : 'autoresponse_id',		//绑定主键字段
+		columns : [ [ 						//定义表格字段：field→数据库字段；title→表头显示中文字段
+					{ field : 'autoresponse_id', title : 'autoresponse_id', width : 100, hidden:true },	//主键字段不显示
+					{ field : 'keyword', title : '关键字', sortable:true, width : 150 }, 
+					{ field : 'response_function', title : '回复形式', sortable:true, width : 100, formatter: formatterstatus},
+					{ field : 'response_content_id', title : '回复文本编号', sortable:true, width : 100 }, 
+					{ field : 'add_response_time', title : '回复时间', sortable:true, width : 150 }, 
+					{ field : 'remark', title : '备注', sortable:true, width : 100 }, 
+					{ field : 'is_del', title : '是否删除', sortable:true, width : 100 }
+				] ],
+		view : detailview,
+		detailFormatter : function(rowIndex, rowData) {
+			return '<div id="autoresponse_' + rowIndex + '" style="padding:5px 10px;background:#efefef;"></div>';
+		},
+		onExpandRow: function(rowIndex, rowData){
+			$.post('{:U("Admin/CustomerService/getDetailRt","","")}',
+					{ arid : rowData.autoresponse_id },
+					function(data){
+					if(rowData.response_function == 'responsetext'){ //以文本形式回复的显示
+						
+						if(data){
+							var detailinfo = '<table>'
+								+ '<tr>'
+								+ 	'<td style="border:0">'
+								+		'<p style="font-weight:bold;">' + data.content + '</p>'
+								+	'</td>'
+								+ '</tr>'
+								+'</table>';
+								
+							$('#autoresponse_'+rowIndex).html(detailinfo);	
+						}
+						else{  
+							//如果没有回复信息，提示用户添加消息
+							var detailinfoempty = '<table>'
+								+ '<tr>'
+								+ 	'<td style="border:0">'
+								+		'<p style="font-weight:bold;"> 还没有任何回复文本内容，请添加！</p>'
+								+	'</td>'
+								+ '</tr>'
+								+'</table>';
+								
+							$('#autoresponse_'+rowIndex).html(detailinfoempty);
+								
+						};
+					}
+					else if(rowData.response_function == 'responsenews'){ //以新闻形式回复的显示
+						
+						if(data){
+							
+							var detailinfo = '<table>'
+								+ '<tr>'
+								+ 	'<td style="border:0">'
+									
+							for(var i=0 ; i<data.length; i++){
+								detailinfo = detailinfo	
+								+		'<p style="font-weight:bold;">' + 'title:'+ data[i].title + '</p>'
+								+ 		'<p>'+ 'image:' + data[i].cover_image + '</p>'
+								+		'<p>'+ 'content:' + data[i].main_content + '</p>'
+							}
+							
+							detailinfo = detailinfo
+							+ 	'</td>'
+							+ '</tr>'
+							+'</table>';
+							
+							$('#autoresponse_'+rowIndex).html(detailinfo);	
+						}
+						else{  
+							var detailinfoempty = '<table>'
+								+ '<tr>'
+								+ 	'<td style="border:0">'
+								+		'<p style="font-weight:bold;"> 还没有任何回复新闻内容，请添加！</p>'
+								+	'</td>'
+								+ '</tr>'
+								+'</table>';
+								
+							$('#autoresponse_'+rowIndex).html(detailinfoempty);
+								
+						};
+						
+					}
+					else{
+						//以其他形式回复的显示，此后可以添加其他的回复形式	
+						var detailinfoempty = '<table>'
+							+ '<tr>'
+							+ 	'<td style="border:0">'
+							+		'<p style="font-weight:bold;"> 还没有任何回复内容，请添加！</p>'
+							+	'</td>'
+							+ '</tr>'
+							+'</table>';
+							
+						$('#autoresponse_'+rowIndex).html(detailinfoempty);
+						
+					}
+				},'json');
+	    }
+	});
+});
+
+function formatterstatus(val, row){
+	if(row.response_function == 'responsetext'){
+		return "<span'>回复文本消息</span>";
+	}
+	else if(row.response_function == 'responsenews'){
+		return "<span'>回复新闻消息</span>";
+	}
+	else{
+		return "<span'>默认回复形式 </span>";
+	}
+};
+
+function addResponseText(){
+	//添加文本回复
+	window.location.href = "{:U('Admin/CustomerService/addResponseText','','')}";
+}
+function delResponseText(){
+	var rows = ardg.datagrid('getSelections');
+	var rowdata = [];
+	if (rows.length == 0) {
+		$.messager.alert('温馨提示','请选择要删除的回复！','warning');				
+	}else{
+		$.messager.confirm('温馨提示','确定要删除这条回复吗？',function(cf){
+			if(cf){
+				$.post('{:U("Admin/CustomerService/delResponseText","","")}',
+						{ cpaid : rows[0].autoresponse_id },
+						function(data){
+							if(data.status == '1'){
+								$.messager.alert('温馨提示', '删除回复成功！', 'info', function(){
+									window.location.reload();
+								})
+							}else{
+								$.messager.alert('温馨提示','删除回复失败！这条回复已经过期！','error');
+							}
+						},'json');
+			}
+		});	
+	}
+}
+</script>
+</body>	
+</html>

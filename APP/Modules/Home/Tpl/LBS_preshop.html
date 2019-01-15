@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/MobileCommonStyle.min.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript">
+    var data,x,y;
+	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(locationSuccess,
+				locationError, {
+					// 指示浏览器获取高精度的位置，默认为false
+					enableHighAcuracy : true,
+					// 指定获取地理位置的超时时间，默认不限时，单位为毫秒
+					timeout : 1000,
+					// 最长有效期，在重复获取地理位置时，此参数指定多久再次获取位置。
+					maximumAge : 3000
+				});
+	} else {
+		getLocation();
+		alert("您的浏览器不支持定位哦");
+	}
+	//html5定位失败
+	function locationError(error) {
+		getLocation();
+		return;
+		switch (error.code) {
+		case error.TIMEOUT:
+			showError("定位超时,请重试");
+			break;
+		case error.POSITION_UNAVAILABLE:
+			showError('Sorry,我们不能定位您的位置');
+			break;
+		case error.PERMISSION_DENIED:
+			showError('请让我们定位您的位置,为您提供更好的服务');
+			break;
+		case error.UNKNOWN_ERROR:
+			showError('未知错误');
+			break;
+		}
+	}
+	//定位成功
+	function locationSuccess(position) {
+		var coords = position.coords;
+		x = coords.latitude;
+		y = coords.longitude;
+		appendHtml();
+		console.info('html5: x='+x+";y="+y);
+	}
+	//显示错误
+	function showError(error) {
+		$("#location").html(error+"<a href='javascript:void(0)' onclick='javascript:window.location.reload()'>刷新</a>");
+	}
+	//根据ip定位
+	function getLocation(){
+		var url = "{:U('Home/LBS/getNearByShop')}";
+		$.post(url,{},function(json){
+			var l = json;
+			x = l.y;
+			y = l.x;
+			console.info('ip: x='+x+";y="+y);
+			appendHtml();
+		});
+	}
+	//显示隐藏栏目
+	function getall(){
+		var flag = $('#getordel').val();
+		if(flag == '0'){
+			$('#detailshop').show();
+			$('#getmore').text('收起');
+			$('#getordel').val('1');
+		}else{
+			$('#detailshop').hide();
+			$('#getmore').text('查看更多的店铺');
+			$('#getordel').val('0');
+		}
+	}
+	//获取店铺信息
+	function appendHtml(){
+		var e_id = $("#e_id").val();
+		var url = "{:U('Home/LBS/getshop')}";
+		var url1 = "{:U('Home/LBS/map')}";
+		console.info("x="+x+";y="+y);
+		if(x == null || y == null){
+			$("#location").html("<p>定位失败，请确认是否开启GPS或位置分享...</p><p>您可以先去看看我们<a href=\"javascript:history.back(-1)\">商城的商品</a>.</p>");
+			return false;
+		}
+		$.post(url, {
+			x : x,
+			y : y,
+			e_id : e_id
+		}, function(shop) {
+			//alert(shop);
+			data = shop;
+			if(data.total == 0){
+				$("#location").html("<p>您的附近暂时还没有我们的实体店,我们正在努力开分店...</p><p>您可以先去看看我们<a href=\"javascript:history.back(-1)\">商城的商品</a>.</p>");
+			}else{
+			$("#location").html('');
+			url1 = url1+"?x="+data.shop[0].x+"&y="+data.shop[0].y+"&location_id="+data.shop[0].location_id+"&e_id={$e_id}";
+			var val1 = "<h4 style ='color:grey'>离你最近的店铺</h4><p> <font style ='color:grey'>店铺名：</font><a href='"+url1+"'>" + data.shop[0].title 
+			+ "</a></p><p><font style ='color:grey'>地址：</font>"
+			+ data.shop[0].address + "</p><font style ='color:grey'>距离：</font>离您大概有"+data.shop[0].distance+"米</li><p><font style ='color:grey'>简介：</font></p><p>"
+			+data.shop[0].location_description+"</p>";
+			$("#location").append(val1);
+			$("#location").append("<hr><a id = 'getmore' href = 'javascript:void(0)' onclick='getall()'>查看更多店铺>></a>");
+			for (var i = 1; i < data.total; i++) {
+				var url2 = url1+"?x="+data.shop[i].x+"&y="+data.shop[i].y+"&location_id="+data.shop[i].location_id;
+				var val = "<p> <font style ='color:grey'>店铺名：</font><a href='"+url2+"'>" + data.shop[i].title + "</a></p><p><font style ='color:grey'>地址：</font>"
+						+ data.shop[i].address + "</p><p><font style ='color:grey'>距离：</font>离您大概有"
+						+data.shop[i].distance+"米</p><hr>"
+				$("#detailshop").append(val);
+			}
+		}
+		});
+	}
+</script>
+<title>获取附近的店铺</title>
+</head>
+
+<body style="background:#efefef;">
+	<div id="wrap" class="wrap">
+		<div class="head">{$einfo.brand}</div>
+		<div class="content">
+			<input type="hidden" id="e_id" value="{$e_id}"/>
+			<div class="p_mod o_address">
+			    <input id="getordel" value="0" type="hidden"/>
+				<div id="location">正在精准定位中...</div>
+				<div id ="detailshop" style="display:none"></div>
+			</div>
+			<div class="decoBottom" style="width:100%;height:10px;"></div>
+		</div>
+		{:W('Footer', array('e_id' => $e_id))}<!--footer-->
+    </div><!--wrap-->
+</body>
+</html>

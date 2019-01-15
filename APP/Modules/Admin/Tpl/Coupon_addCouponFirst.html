@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/ui-dialog.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artdialog/dialog-min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<title>设置优惠券类别</title>
+</head>
+
+<body>
+    <form name="myCoupon" class="form-horizontal uniform" method="post" action="#">
+        <div class="control-group">
+            <div class="controls controls-row"><h2>设置优惠券类别</h2></div>
+            <div class="controls controls-row">
+                <font style="font-size:1.17em; font-weight:bold; color:highlight;">步骤：第1步，共4步</font>
+            </div>
+            <div class="controls controls-row">
+                <font style="font-size:1.17em; font-weight:bold; color:highlight;">说明：选择优惠券适用类别，并描述其使用规则</font>
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="control-group">
+			<label class="control-label">
+            	优惠券种类<span class="text-error">(*)</span>： 
+            </label>
+            <div class="controls controls-row" style="margin-top:3px;">
+            	<select id="coupon_select" class="uniform myselected">
+                    <option value="-1">请选择优惠券种类</option>
+                    <option value="1">抵扣券</option>
+                    <option value="2">折扣券</option>
+                </select>
+			</div>
+            <input type="hidden" id="coupon_type" name="coupon_type" value="-1" /><!--所选择优惠券的种类-->
+            <div class="controls controls-row deduction" style="display:none;">
+            	抵扣券：消费时抵扣一定金额，可设起始额度
+            </div>
+            <div class="controls controls-row discount" style="display:none;">
+            	折扣券：消费时直接打折
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	O2O类别<span class="text-error">(*)</span>： 
+            </label>
+            <div class="controls controls-row" style="margin-top:3px;">
+            	<select id="o2o_select" class="uniform myselected">
+                    <option value="-1">请选择优惠券O2O类别</option>
+                    <option value="1">线下优惠券</option>
+                    <option value="2">线上优惠券</option>
+                    <option value="3">通用优惠券</option>
+                </select>
+			</div>
+            <input type="hidden" id="current_type" name="current_type" value="-1" /><!--所选择优惠券O2O类别-->
+            <div class="controls controls-row off_coupon" style="display:none;">
+            	线下优惠券仅用于线下购物，门店柜台出示即可用
+            </div>
+            <div class="controls controls-row on_coupon" style="display:none;">
+            	线上优惠券仅用于线上购物
+            </div>
+            <div class="controls controls-row general_coupon" style="display:none;">
+            	通用优惠券既可用于线上购物，亦可用于线下购物。<br />线下购物中在门店柜台出示该券即可用。
+            </div> 
+        </div> 
+        
+        <div class="control-group application_cate" style="display:none" >
+			<label class="control-label">
+            	通用类别<span class="text-error">(*)</span>： 
+            </label>
+            <div class="controls controls-row" style="margin-top:3px;">
+            	<select id="category_select" class="uniform myselected">
+                    <option value="-1">请选择通用类别</option>
+                    <option value="1">全国各店通用</option>
+                    <option value="2">全国各店独立使用</option>
+                    <option value="3">部分门店通用</option>
+                    <option value="4">部分门店独立使用</option>
+                </select>
+			</div>
+            <input type="hidden" id="current_category" name="current_category" value="-1" /><!--当前选择的分店-->
+            <div class="controls controls-row">
+            	如果选择部分门店（通用 / 独立使用），还需在下一步选择发行优惠券的门店。
+            </div>
+        </div> 
+        
+        <div class="control-group">
+			<label class="control-label">
+            	价格限制<span class="text-error">(*)</span>： 
+            </label>
+            <div class="controls controls-row" style="margin-top:3px;">
+            	<select id="price_select" class="uniform myselected">
+                    <option value="-1">请选择价格限制</option>
+                    <option value="1">所有商品适用</option>
+                    <option value="2">仅限正价商品</option>
+                </select>
+			</div>
+            <div class="controls controls-row">
+            	请选择优惠券适用的价格限制。
+            </div>
+            <input type="hidden" id="price_limited" name="price_limited" value="-1" /><!--当前选择的价格限制-->
+        </div>
+        
+        <hr />
+        
+        <div class="handle-action">
+            <a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">下一步</a>
+            &nbsp;&nbsp;
+            <a id="resetbtn" class="large ui-color-button blue" href="javascript:void(0)">重置</a>
+            <a href="javascript:history.go(-1);">
+                <img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/images/goback.png" />
+            </a>
+        </div>
+	</form>
+    
+<script type="text/javascript">
+$(function (){
+	$(".uniform").uniform();											//初始化uniform，文本框的uniform格式化
+	
+	// 优惠券性质种类改变函数
+	$("#coupon_select").change(function(){
+		var selected_type = $(this).val();								//获得选中的选项的value
+		if(selected_type == 1){
+			$('.deduction').css('display','block'); 
+			$('.discount').css('display','none'); 
+		}else if(selected_type == 2){
+			$('.deduction').css('display','none');	
+			$('.discount').css('display','block');			
+		}else{
+			$('.deduction').css('display','none');	
+			$('.discount').css('display','none');											
+		}
+		$('#coupon_type').val(selected_type);							//获取option的value，并写入input里，用作提交的时候判断	
+	});
+	
+	// 优惠券O2O类别改变函数
+	$("#o2o_select").change(function(){
+		var o2o_type = $(this).val();									//获得选中的选项的value
+		if(o2o_type == 1){
+			$('.off_coupon').css('display','block');		
+			$('.on_coupon').css('display','none');	
+			$('.general_coupon').css('display','none');
+			$('.application_cate').css('display','block');						
+		}else if(o2o_type == 2){
+			$('.off_coupon').css('display','none'); 
+			$('.on_coupon').css('display','block');		
+			$('.general_coupon').css('display','none'); 
+			$('.application_cate').css('display','none');			
+		}else if(o2o_type == 3){
+			$('.off_coupon').css('display','none'); 
+			$('.on_coupon').css('display','none');		
+			$('.general_coupon').css('display','block'); 
+			$('.application_cate').css('display','none');			
+		}else{
+			$('.off_coupon').css('display','none');		
+			$('.on_coupon').css('display','none');	
+			$('.general_coupon').css('display','none'); 
+			$('.application_cate').css('display','none');									
+		}
+		$('#current_type').val(o2o_type);								//获取option的value，并写入input里，用作提交的时候判断
+		$("#category_select").val('-1');
+		$("#category_select").change();	
+	});
+	
+	//优惠券通用类别选择框更改事件
+	$("#category_select").change(function(){
+		$("#current_category").val($(this).val());						//获取option选中的通用类别的value，并写入input里
+	});
+	
+	//优惠券商品价格限制选择框变动事件
+	$("#price_select").change(function(){
+		$("#price_limited").val($(this).val());							//获取option选中商品价格限制的value写入input框里
+	});
+	
+	// 后退信息的回显
+	if (sessionStorage.stepfirstinfo) {
+		var firststep = JSON.parse(sessionStorage.stepfirstinfo);
+		
+		// 优惠券类别
+		$("#coupon_type").val(firststep.ctype);
+		$("#coupon_select").val(firststep.ctype);
+		$("#coupon_select").change();
+		
+		// 当前的O2O类别
+		$("#current_type").val(firststep.o2otype);
+		$("#o2o_select").val(firststep.o2otype);
+		$("#o2o_select").change();
+		
+		// 要不要显示线下店铺通用类别
+		if (firststep.o2otype == 1) {
+			$("#current_category").val(firststep.o2oshoptype);
+			$("#category_select").val(firststep.o2oshoptype);
+			$("#category_select").change();
+		}
+		
+		// 优惠券适用的价格限制
+		$("#price_limited").val(firststep.pricelimit);
+		$("#price_select").val(firststep.pricelimit);
+		$("#price_select").change();
+	}
+	
+	//提交信息：下一步
+	$("#submitbtn").click(function(){
+		//抓取优惠券类别设置的所有DOM对象
+		var csel = $("#coupon_select");         
+		var ctyp = $("#coupon_type");		    //抓取优惠券性质文本框
+		var ts = $("#o2o_select");         
+		var ct = $("#current_type");		    //抓取优惠券O2O类别文本框
+		var cs = $("#category_select");
+		var cc = $("#current_category");	    //抓取优惠券当前通用类别文本框
+		var ps = $("#price_select");
+		var pl = $("#price_limited");			//抓取优惠券价格限制的文本框
+		
+		//Step1：判断优惠券性质类别是否选择
+		if(ctyp.val() == '-1'){
+			$.messager.alert('温馨提示', '请选择优惠券种类!', 'warning', function(){
+				ctyp.focus();
+	  		});
+	  		return
+		}
+		//Step2：判断优惠券O2O类别是否选择
+		if(ct.val() == '-1'){
+			$.messager.alert('温馨提示', '请选择优惠券O2O类别!', 'warning', function(){
+				ct.focus();
+	  		});
+	  		return
+		}
+		//Step3：判断优惠券额通用类别是否选择
+		if (ts.val() == "1" && cc.val() == "-1"){
+			$.messager.alert('温馨提示', '请选择线下优惠券的门店通用类别!', 'warning', function(){
+	  			cc.focus();
+	  		});
+	  		return
+		}
+		//Step4：判断优惠券的价格限制是否选择
+		if(pl.val() == '-1'){
+			$.messager.alert('温馨提示', '请选择优惠券的价格限制!', 'warning', function(){
+				pl.focus();
+	  		});
+	  		return
+		}
+		
+		var cinfostep1 = { 
+				ctype : ctyp.val(), // 优惠券种类
+				o2otype : ct.val(), // 优惠券的O2O类别
+				pricelimit : pl.val(), // 价格限制
+		}
+		if (cinfostep1.o2otype == "1") {
+			cinfostep1.o2oshoptype = cc.val(); // 如果是线下优惠券，记录线下优惠券的通用类别
+		}
+		//console.log(JSON.stringify(cinfostep1));
+		//return
+		sessionStorage.stepfirstinfo = JSON.stringify(cinfostep1); // 打包第一步的优惠券信息到本地H5存储
+		// 根据不同的步骤跳转不同的添加优惠券类别页面
+		if (cinfostep1.ctype == 1) {
+			location.href = "{:U('Admin/Coupon/addCouponSecond1')}"; // 跳转添加抵扣券第二步
+		} else {
+			location.href = "{:U('Admin/Coupon/addCouponSecond2')}"; // 跳转添加折扣券第二步
+		}
+	});	
+	
+	// 重置按钮
+	$("#resetbtn").click(function(){
+		$.messager.confirm('温馨提示', '确定重置吗?', function(result){
+			if(result) {
+				//重置所有
+				$("#coupon_type").val('-1');
+				$("#coupon_select").val('-1');
+				$("#coupon_select").change();
+				
+				$("#current_type").val('-1');
+				$("#o2o_select").val('-1');
+				$("#o2o_select").change();
+				
+				$("#current_category").val('-1');
+				$("#category_select").val('-1');
+				$("#category_select").change();
+				
+				$("#price_limited").val('-1');
+				$("#price_select").val('-1');
+				$("#price_select").change();
+				
+				sessionStorage.removeItem("stepfirstinfo"); // 移除H5缓存
+			}
+		});
+	});
+});
+</script>
+</body>
+</html>

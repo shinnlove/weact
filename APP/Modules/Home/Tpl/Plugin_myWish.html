@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/MobileCommonStyle.min.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>我的许愿</title>
+</head>
+
+<body style="background:#efefef;">
+	<div class="wrap">
+		<div class="head">{$einfo.brand}</div>
+		<div class="content">
+			<div class="main">
+				<div class="p_mod o_address">
+					<h2 class="p_mod_title">我的愿望</h2>
+				    <div>
+				        <ul>
+				            <if condition="$wishlist neq null">
+					            <for start="0" end="$wishcount" step="1">
+					            	<li>
+						            	<div><font size="3">{$i+1}.{$wishlist[$i].wish_content}</font></div>
+						                <div><font color="grey">{$wishlist[$i].wish_time|substr=0,10}</font>
+						                <a class="u_btn1 ts1" href="{:U('Home/Plugin/delwish')}?wish_id={$wishlist[$i].wish_id}&e_id={$e_id}">删除</a></div>
+					                </li>
+					            </for>
+							</if>
+							<if condition="$wishlist eq null">
+								<li>
+						        	<div><font class="no-wish">没有任何记录</font></div>
+						        </li>
+							</if>
+				        </ul>
+				    </div>
+				</div>
+			</div>
+			<div class="o_btn clearfix">
+				<input type="button" class="o_btn_submit ts1" value="我要许愿" onClick="addWish()" style="width: 100%;margin-bottom:10px;"/>
+				<input type="button" class="o_btn_back ts1" onclick="returnCenter()" value="返回"> 
+			</div>
+			<div class="bottom">
+				<div class="weActName">微信公众名称：{$einfo.e_name}</div>
+				<div class="weActNumber">微信号：{$einfo.wechat_account}</div>
+				<div class="weActProducer">Powered by <a href="#">WeAct</a></div>
+				<div class="weact-deco"></div>
+	        </div>
+		</div>
+        {:W('Footer', array('e_id' => $e_id))}<!--footer-->
+	</div>
+
+<script type="text/javascript">
+function addWish(){
+	window.location = "{:U('Home/Plugin/addWish')}?e_id={$e_id}";
+}
+function returnCenter(){
+	window.location = "{:U('Home/MemberHandle/customerCenter')}?e_id={$e_id}";
+}
+</script>
+</body>
+</html>

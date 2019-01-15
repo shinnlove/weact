@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/MobileCommonStyle.min.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=kGDlUjiY8pDoPSAjRZKLmGR9"></script>
+<script type="text/javascript">
+$(function() {
+	if (navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(showPosition);
+	} else {
+		alert("您的浏览器不支持定位哦,换个浏览器试试");
+	}
+});
+
+function showPosition(position) {
+	alert("Latitude: " + position.coords.latitude + "<br />Longitude: " + position.coords.longitude);
+}
+</script>
+<title>附近店铺详情</title>
+<style type="text/css">
+.special{
+	font-size:12px;
+}
+#allmap {width: 100%;height: 90%;overflow: hidden;margin:0;}
+body, html{width: 100%;height: 100%;overflow: hidden;margin:0;}
+</style>
+</head>
+
+<body>
+	<div id="allmap"></div>
+	<div id="shop">
+	    x:{$shoplist[0]->location[0]}
+	    y:{$shoplist[0]->location[1]}
+	</div>
+
+<script type="text/javascript">
+//百度地图API功能
+var sContent = "<h4 style='margin:0 0 5px 0;padding:0.2em 0'>天安门</h4>" + "<img style='float:right;margin:4px' id='imgDemo' src='http://app.baidu.com/map/images/tiananmen.jpg' width='139' height='104' title='天安门'/>" + "<p style='margin:0;line-height:1.5;font-size:13px;text-indent:2em'>天安门坐落在中国北京市中心,故宫的南侧,与天安门广场隔长安街相望,是清朝皇城的大门...</p>" + "</div>";
+var map = new BMap.Map("allmap");
+var point = new BMap.Point(116.404, 39.915);
+var marker = new BMap.Marker(point);
+var infoWindow = new BMap.InfoWindow(sContent); // 创建信息窗口对象
+map.centerAndZoom(point, 15);
+map.addOverlay(marker);
+marker.addEventListener("click", function() {
+	this.openInfoWindow(infoWindow);
+	//图片加载完毕重绘infowindow
+	document.getElementById('imgDemo').onload = function() {
+		infoWindow.redraw(); //防止在网速较慢，图片未加载时，生成的信息框高度比图片的总高度小，导致图片部分被隐藏
+	}
+});
+</script>
+</body>
+</html>

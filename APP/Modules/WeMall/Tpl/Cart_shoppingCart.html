@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>我的购物车</title>
+<style type="text/css">
+.storeMsg .wbox-1 a { float: left; width: auto; }
+.storeMsg .wbox-1 a.action { font-size: 12px; color: #e04241; padding-left: 5px; }
+.size40 { border-radius:5px; }
+</style>
+</head>
+
+<body>
+	<div class="cartwrap"></div>
+	
+	<input type="hidden" id="noTalking" />
+	<!--底部 begin -->
+	<footer style="height: 55px;">
+		<div class="ft-cart">
+			<span class="l_b">合计：共<span class="fcf3b bold" id="pricetotal">0</span>元</span>
+			<btn disabled="disabled" id="gotoPay" class="r_b">立即结算</btn>
+		</div>
+	</footer>
+	<!--底部 end -->
+	
+	<a href="{:U('WeMall/Cart/shoppingCart', array('sid' => $sid), '')}" class="linkNeedLogin toShoppingCart"></a>
+	<a href="javascript:;" id="gotoTalk" class="toAskSales"></a>
+	
+<!-- 店铺购物车 js artTemplate begin -->
+<script type="text/html" id="shopcarttpl">
+{{each cartlist as e i}}
+	<!-- {{e[0].subbranch_name}} 店铺的购物车 begin ^_^ -->
+	<section class="cart-list" data-store="{{e[0].subbranch_id}}" data-sales="">
+		<div class="storeMsg wbox">
+			<input name="checkProduct" type="checkbox" value="" class="yes" />
+			<div class="wbox-1">
+				<a href="#" class="" data-id="{{e[0].subbranch_id}}">{{e[0].subbranch_name}}</a><!--跳转店铺首页-->
+				<a href="#" class="action">联系导购</a><!--跳转店铺详情带导购列表页面-->
+			</div>
+			<a class="edit" href="#">编辑</a>
+		</div>
+		<div class="list">
+			{{each e as t j}}
+			<dl class="wbox">
+				<dt>
+					<label class="block">
+						<input name="checkProduct" type="checkbox" class="yes {{if t.logistics == 0}}delivery{{else}}selfDelivery{{/if}}" /><!-- 控制到店自提商品不能和物流商品混合结算（邮费） -->
+					</label>
+				</dt>
+				<dd data-cartid="{{t.cart_id}}" data-skuid="{{t.sub_sku_id}}" data-id="{{e[0].subbranch_id}}" data-proid="{{t.product_id}}" data-pronum="{{t.product_number}}" data-subproid="{{t.sub_pro_id}}" data-sid="{{t.subbranch_id}}" class="stockInfo wbox-1">
+					<a href="{{t | productDetailURL}}" class="block">
+						<div class="wbox">
+							<img src="{{t.micro_path}}" class="size40" />
+							<div class="wbox-1 detail">
+								<div class="d-plus fn-hide">
+									<button class="jian">-</button>
+									<input name="" class="count" type="number" value="{{t.amount}}" data-max="{{t.sub_sku_storage_left}}" data-limit="0" />
+									<button class="jia">+</button>
+								</div>
+								<div class="name">{{t.product_name}}</div>
+								<div class="fc-grey">
+									<span class="size">{{t.product_size}}</span> / <span class="color">{{if t.product_color}}{{t.product_color}}{{else}}默认{{/if}}</span>
+								</div>
+							</div>
+						</div>
+					</a>
+				</dd>
+				<dd class="action">
+					<div href="#" class="remove fn-hide" data-id="{{t.cart_id}}"></div>
+					<div class="money">
+						<p>￥<span class="price">{{t.current_price}}</span></p>
+						<p>x <span class="shopCount">{{t.amount}}</span></p>
+					</div>
+				</dd>
+			</dl>
+			{{/each}}
+		</div>
+	</section>
+	<!-- {{e[0].subbranch_name}} 店铺的购物车 end ^_^ -->
+{{/each}}
+</script>
+<!-- 店铺购物车 js artTemplate end -->
+	
+<script type="text/javascript">
+var eid = "{$eid}", 					// 商家编号
+	sid = "{$sid}", 					// 分店编号
+	webchatRequestURL = "{:U('WeMall/GuideChatRequest/initWebChat', '', '')}", // 请求聊天窗URL
+	curpage = "{:U('WeMall/Cart/shoppingCart', array('sid' => $sid), '')}", // 当前位置
+	loginurl = "{:U('WeMall/GuestMall/login', array('sid' => $sid), '')}", // 登录地址
+	pricetotal = 0, 					// 购物车总价格
+	cartjsondata = '{$cartinfo}'; 		// 购物车数据
+	
+// 页面ready函数
+$(function(){
+	// 页面直出渲染
+	var cartjson = $.parseJSON(cartjsondata);
+	var cartlistobj = $(".cartwrap");
+	var tmpl = template("shopcarttpl", cartjson);
+	if (tmpl == "{Template Error}") {
+		tmpl = "";
+	}
+	cartlistobj.html(tmpl); // 写入购物车DOM
+	
+	$("input.yes").prop("checked", false); // 商品选择框默认不选中
+	
+	// 生成DOM结构事件
+	$("body").on("click", ".storeMsg .yes", function(){
+		// 某个店铺的全选勾选框点击触发事件
+		var thisStoreAllSelect = $(this).closest(".cart-list").find('input[name="checkProduct"]'); // 找到最近一个店铺section区域里边所有的checkProduct勾选框
+		if ($(this).prop("checked")) {
+			thisStoreAllSelect.prop("checked", true); // 如果全选是勾中的，则所有商品全部勾中
+		} else {
+			thisStoreAllSelect.prop("checked", false); // 如果全选是取消的，则所有商品取消勾中
+		}
+	}).on("click", ".list .yes, .storeMsg .yes", function(){
+		// 店铺勾选框或者单个商品勾选框点击触发事件(不允许跨店铺结账和到店自提与快递一起结账)
+		if ($(this).prop("checked")) {
+			var otherStore = $(this).closest(".cart-list").siblings().find('input[name="checkProduct"]:checked'); // 获取临近店铺商品勾选情况
+			if (otherStore.length > 0) {
+				mobileAlert("暂不支持跨店铺一并结算，请联系当前商家开通全国联购。");
+				otherStore.prop("checked", false); // 取消其他店铺的勾选状况
+			}
+			if ($(this).closest(".cart-list").find("input.selfDelivery:checked").length > 0 && $(this).closest(".cart-list").find("input.delivery:checked").length > 0) {
+				$(this).closest(".cart-list").find("input.selfDelivery").prop("checked", false); // 到店自提的钩子取消
+				mobileAlert("到店自提的商品请单独下单");
+			}
+		}
+		getPayment(); // 计算价格
+	}).on("click", ".list .yes", function(){
+		// 具体某件商品勾选框触发事件（单个商品勾选是否引起全选）
+		if ($(this).closest(".list").find('input[name="checkProduct"]').not("input:checked").length == 0) {
+			$(this).closest(".cart-list").find(".storeMsg .yes").prop("checked", true); 	// 如果所有商品都勾中了，全选
+		} else {
+			$(this).closest(".cart-list").find(".storeMsg .yes").prop("checked", false); 	// 还有商品没勾中，就不全选
+		}
+	}).on("blur", ".d-plus .count", function(){
+		//数量框加减失去焦点
+		var count = ~~$(this).val(), // 当前购买数量
+			maxCount = ~~$(this).data("max"), // 最大购买数量
+			limitBuyCount = ~~$(this).data("limit"); // 每人限购数量
+		if (limitBuyCount) {
+			// 限购获取库存和限购数量的最小值
+			if (count > Math.min(limitBuyCount, maxCount)) {
+				$(this).val(Math.min(limitBuyCount, maxCount));
+				return false;
+			}
+		} else {
+			// 未限购
+			if (count > maxCount) {
+				$(this).val(maxCount); // 超过最大的数量，只能是最大的数量
+				return false;
+			}
+		}
+		// 允许更改的情况下
+		if (count < 1) {
+			$(this).val("1"); // 如果数量比1小，直接为1
+		} else {
+			$(this).val(count);
+		}
+		getPayment(); // 更改完了计算总价
+	}).on("click", ".d-plus .jia, .d-plus .jian", function(e){
+		//数量框加减点击事件
+		var countInput = $(this).parent().find(".count"), // 找到当前的数量
+			priceSingle = $(this).closest(".list").find(".price").text(), // 找到单价
+			max = ~~countInput.data("max"), // 找到最大允许购买量
+			limitBuyCount = ~~countInput.data("limit"); // 找到最大限购量
+		if ($(this).hasClass("jia")) {
+			// 如果点的是加号
+			if (limitBuyCount) {
+				// 如果限购
+				if (~~countInput.val() >= Math.min(limitBuyCount, max)) {
+					return false;
+				}
+			} else {
+				// 不限购看数量是否超标
+				if (~~countInput.val() >= max) {
+					return false;
+				}
+			}
+			// 允许加的情况下
+			pricetotal = pricetotal + parseFloat(priceSingle); // 总价再加上一个物品的单价
+			countInput.val(~~countInput.val() + 1); // 数量+1
+		} else {
+			// 如果点的是减号
+			if (~~countInput.val() <= 1) return false;
+			pricetotal = pricetotal - parseFloat(priceSingle); // 总价减去一个物品的单价
+			countInput.val(~~countInput.val() - 1); // 数量-1
+		}
+		getPayment(); // 更改完了计算总价
+	}).on("click", ".storeMsg .edit", function(e){
+		// 编辑按钮点击事件
+		e.preventDefault();
+		if (!$(this).hasClass("doing")) {
+			$(this).text("完成").addClass("doing").closest(".cart-list").find(".d-plus, .remove").show(); // 编辑变成完成，增加修改状态，一并显示该店铺的所有数量框操作与删除
+			$(this).closest(".cart-list").find(".money").hide(); // 价格与数量隐藏
+		} else {
+			$(this).text("编辑").removeClass("doing").closest(".cart-list").find(".d-plus, .remove").hide(); // 完成变成编辑，去掉修改状态，一并隐藏该店铺所有数量框操作与删除
+			$(this).closest(".cart-list").find(".money").show(); // 价格与数量展现
+			
+			// 定义参数变量
+			var cartidlist = []; 	// 这家店铺的购物车编号数组
+			var amountlist = []; 	// 这家店铺的商品对应数量数组
+			var editshopid = $(this).closest(".cart-list").data('store'); // 获取完成编辑购物车的店铺
+			
+			// 对每一条商品可能变更的数量，重新写入class = money的数量框中
+			$(this).closest(".cart-list").find(".shopCount").each(function(i, e) {
+				var cid = $(this).closest("dl").find(".stockInfo").data("cartid"); 	// 购物车编号
+				var amount = $(this).closest("dl").find("input.count").val(); 		// 购物车数量
+				cartidlist.push(cid); // 压栈
+				amountlist.push(amount); // 压栈
+				$(e).html(amount); // 写入最新的数量
+			})
+			
+			// 用post刷回数据库最新的数量
+			var params = {
+					sid : sid, 						// 当前顾客所处的分店编号（不要和编辑店铺编号弄混）
+					editsid : editshopid, 			// 编辑的店铺
+					cartidlist : cartidlist.join(), // 某家编辑店铺内的购物车编号
+					amountlist : amountlist.join() 	// 每个cid的数量
+			}; // 定义参数
+			$.post("{:U('WeMall/CartRequest/updateCart', '', '')}", params, function(result){
+				if (result.errCode == 0) {
+					// 也可以把第一第二两句话放到这里
+				} else if (result.errCode == 20001) {
+					window.location.href = loginurl+"?from="+curpage;
+					return false;
+				} else {
+					mobileAlert(result.errMsg); // 弹出错误信息
+					setTimeout(function(){
+						window.location.reload(); // 刷新购物车页面，防止出错
+					},1200);
+					return false;
+				}
+			}, "json");
+		}
+	}).on("click", ".d-plus", function(e){
+		// 编辑数量时，自身防误点，禁止跳转商品详情
+		e.preventDefault();
+	});
+	
+	// 购物车移除商品时间：（连写方式safari点击不响应，所以单独绑定事件）
+	$(".cart-list .remove").click(function(e){
+		e.stopPropagation(); // 阻止事件传播
+		var _t = $(this), removecart = _t.closest(".cart-list"), cartid = _t.data("id"); // 获取自身与购物车主键编号
+		var handleshopid = removecart.data('store'); 									// 获取顾客操作购物车删除商品的店铺编号
+		var params = { sid : sid, handleshopid : handleshopid, cid : cartid }; 			// 准备参数（这里sid只是一个通行证的作用，handleshopid才是真正操作删除的购物车）
+		$.post("{:U('WeMall/CartRequest/deleteCart', '', '')}", params, function(result){
+			if (result.errCode == 0) {
+				_t.closest("dl").remove(); // 删除成功移除这一商品选项
+				// 还要加一层判断，如果这是最后一件商品，移除这个分店的购物车（2015/05/28最新更新）
+				var prolen = removecart.children(".list").find(".wbox").length; // 获取还剩下的商品数目（加强体验）
+				if (prolen == 0) {
+					removecart.remove(); // 没有商品了，一并移除这家店铺的购物车
+				}
+			} else if (result.errCode == 20001) {
+				window.location.href = loginurl+"?from="+curpage; // 未登录就去登录
+				return false;
+			} else {
+				mobileAlert(result.errMsg); // 弹出错误信息
+				return false;
+			}
+		}, "json");
+	});
+	
+	// 去结算按钮：（连写方式safari点击不响应，所以单独绑定事件）
+	$("#gotoPay").click(function(e){
+		e.stopPropagation(); // 阻止事件传播
+		// 去结算按钮事件
+		if (!$(this).attr("disabled")) {
+			var stockArray = [], // 准备打包的商品库存数据
+				tit = $('.list .yes:checked:first').closest(".cart-list").find(".storeMsg").find("a"); // 店铺title
+			var stockMsg = {
+					"storeId": tit.data("id"), 		// 预结算的购物车的分店编号（当前选中结算的购物车所属的商家编号，并不是用户所在的商家编号）
+					"storeName": tit.text(), 		// 预结算购物车的分店名称
+					"stockList": [], 				// 将要结算的cartidlist（勾选方式）
+					"delivery": $('.list .yes:checked:first').hasClass("delivery") ? 0 : 1 // 0是默认快递，1是到店自提
+			}
+			// （对当前结算的购物车进行循环操作），将被勾选的商品加入stockList信息
+			Zepto.each($('.list .yes:checked'), function(i, e) {
+				var dd = $(e).closest("dl").find(".stockInfo"); // 找到购物车商品信息
+				var stockItem = {
+					"subbranch_id": dd.data("sid"), 			// 该商品所在分店编号
+					"img": dd.find(".size40").attr("src"), 		// 商品图片路径
+					"name": dd.find(".name").text(), 			// 商品图片名称
+					"id": dd.data("id"), 						// 商品所属分店编号
+					"cartId": dd.data("cartid"), 				// 购物车编号
+					"product_id": dd.data("proid"), 			// 商品编号(id)
+					"product_number": dd.data("pronum"), 		// 商品编号(吊牌编号)
+					"skuId": dd.data("skuid"), 					// SKU的编号
+					"size": dd.find(".size").text(), 			// 尺码
+					"color": dd.find(".color").text(), 			// 颜色
+					"count": dd.find(".count").val(), 			// 购物车该SKU的数量
+					"price": dd.siblings(".action").find(".price").text() // 价格
+				};
+				stockMsg.stockList.push(stockItem); // 压栈商品信息
+			});
+			stockArray.push(stockMsg); // 压栈stockMsg
+			sessionStorage.stockInfo = JSON.stringify(stockArray); // 将字符串存入sessionStorage的stockInfo中（跳转的时候可以不过购物车）
+			window.location.href = "{:U('WeMall/Order/preOrder', array('sid' => $sid), '')}";
+		}
+	});
+	
+	// 悬浮按钮聊天窗
+	$("#gotoTalk").click(function(){
+		var param = { 
+				sid : sid, // 分店信息
+		}
+		$.post(webchatRequestURL, param, function(result){
+			if (result.errCode == 0) {
+				location.href = result.data.chaturl; // 跳转顾客与导购聊天窗页面
+			} else if (result.errCode == 20001) {
+				window.location.href = loginurl+"?from="+curpage;
+				return false;
+			} else {
+				mobileAlert(result.errMsg); // 弹出错误信息
+				return false;
+			}
+		}, "json");
+	});
+	
+});
+
+// 勾中商品计算总价格函数
+function getPayment() {
+	pricetotal = 0; // 默认总价格为0
+	// 所勾选的每个对象
+	Zepto.each($('.list .yes:checked'), function(i, e) {
+		var dl = $(e).closest("dl"); // 找到dl
+		pricetotal += (parseFloat(dl.find(".price").text()) * parseFloat(dl.find(".count").val())) || 0; // 单价乘以数量或没有价格
+	});
+	$("#pricetotal").html(pricetotal.toFixed(2)); 	// 转2位小数
+	if (pricetotal == 0) {
+		$("#gotoPay").attr("disabled", "disabled"); // 没有价格不能结算
+	} else {
+		$("#gotoPay").removeAttr("disabled"); 		// 有价格可以结算
+	}
+}
+</script>
+</body>
+</html>

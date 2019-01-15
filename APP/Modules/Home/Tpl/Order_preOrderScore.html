@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weact.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>积分商城确认订单</title>
+</head>
+
+<body>
+	<div class="lay_header" style="height: 45px">
+        <div class="lay_toptab mod_tab" id="lay_head">
+            <div class="tab_item go_back" onclick="window.history.go(-1);">
+                <i class="qb_icon icon_goback"></i>
+            </div>
+            <a class="tab_item" href='{:U("Home/Index/index", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_home"></i></a>
+            <a class="tab_item" href='{:U("Home/MemberHandle/customerCenter", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_icenter"></i></a>
+            <a class="tab_item" href='{:U("Home/Cart/shoppingCart", array("e_id"=>$e_id), "")}'>
+            	<i class="qb_icon icon_cart"></i>
+                <i class="qb_icon icon_number_bubble qb_none" id="cartNum">0</i>
+            </a>
+        </div>
+    </div><!-- lay_header结束div -->
+    
+    <div class="lay_page page_order current" id="page_order">
+        <div class="lay_page_wrap">
+            
+            <ul id="addressSel" evttag="toAddrList" class="mod_addresslist ui_mt15">
+                <li class="address_item arrow" evttag="toAddrList">
+                    <div class="address_detail" evttag="toAddrList">
+                    	 配送信息<span id="goaddlist" evttag="toAddrList" style="display: none" addr=""></span>
+                    </div>
+                </li>
+            </ul>
+            
+            <div class="mod_cell ui_gap delivery-info" data-did="">
+                <dl class="mod_dl dl_tabel">
+                    <dt class="ui_color_weak">姓名：</dt><dd class="receive-person"></dd>
+                    <dt class="ui_color_weak">电话：</dt><dd class="receive-cellphone"></dd>
+                    <dt class="ui_color_weak">地址：</dt>
+                    <dd class="receive-address"><p class="address qb_fs_m"></p></dd>
+                </dl>
+            </div>
+            
+            <div class="mod_cell ui_gap">
+                <dl class="mod_dl dl_tabel">
+                    <dt class="ui_color_weak">配送方式：</dt>
+                    <dd class="">
+                        <div class="mod_select select_block flex_box">
+                            <select evttag="sendType" id="sendType">
+                            	<option value="-1" selected="selected">请选择配送方式</option>
+                            	<option value="0" mtype="2906" ptype="0">快递</option>   
+                            </select>
+                        </div>
+                    </dd>
+                </dl>
+            </div>
+            
+            <div class="mod_cell">
+                <div class="mod_celltitle">商品信息</div>
+                <div class="ui_color_weak qb_mb10"></div>
+                <ul class="mod_list">
+                    <!-- 购物车商品预览 -->
+                </ul>
+                <div class="mod_cell_hr"></div>
+                <div class="ui_mb10">
+                    <p class="ui_align_right qb_none" id="free-div"></p>
+                    <p class="ui_align_right qb_none" id="dealoff-div">优惠金额：<strong class="mod_color_strong"><span id="dealoff-price"></span></strong></p>
+                </div>
+            </div>
+			
+			
+			
+            <div class="mod_cell ui_gap">
+                <dl class="mod_dl dl_tabel">
+                    <dt class="ui_color_weak">我的留言：</dt>
+                    <dd class="">
+                        <textarea id="memo" rows="2" evttag="memoinput" style="width: 100%; height:50px; overflow: hidden; border: 1px solid #eaeaea; font-size:14px;" placeholder="如您有特殊需要，可在此备注"></textarea>
+                    </dd>
+                </dl>
+            </div>
+			
+            <div class="ui_gap">
+                <a id="submit-order" class="mod_btn btn_block">提交订单</a>
+            </div>
+        </div>
+    </div>
+    <div class="qb_quick_tip qb_none" id="bubble"></div>
+    <div class="mod_dialog qb_none" id="message-notice">
+        <div class="dialog_mask"></div>
+        <div class="dialog_main qb_br qb_tac">
+            <div class="dialog_bd" id="notice-content"></div>
+            <div class="dialog_ft qb_flex"><a href="javascript:void(0);" class="flex_box" id="notice-cancel">取消</a><a href="javascript:void(0);" class="flex_box" id="notice-sure">确定</a></div>
+        </div>
+    </div>
+    
+	<div class="lay_footer qb_tac qb_fs_s mod_mb15">
+        <div class="fn_quicklinks">
+			<a class="mod_color_weak" href='{:U("Home/Index/index",array("e_id"=>$e_id),"")}'>商户首页</a>
+			<for start="0" end="3" step="1">
+				<span class="mod_color_comment">|</span>
+				<a class="mod_color_weak" href="{$pageinfo [navigation] [foot] [$i] [url]}">{$pageinfo [navigation] [foot] [$i] [nav_name]}</a>
+			</for>
+		</div>
+        <div class="fn_copyright">
+            <div class="mod_color_comment fn_copyright_agreement ui-fz-x-small ui-ta-c"><a href="#">Powered By WeAct</a></div>
+            <div class="mod_color_comment fn_copyright_text">Copyright &copy; 2014 WeAct.<br/>All Rights Reserved. </div>
+            <div class="mod_color_comment fn_copyright_text">微动公司 版权所有</div>
+        </div>
+    </div><!-- lay_footer结束div -->
+    
+<!-- cartprotpl js arttemplate begin -->
+<script type="text/html" id="cartprotpl">
+{{each cartlist as e i}}
+	<li class="list_item qb_mb10 qb_bfc" data-link="{{e | productDetailURL}}">
+		<a href="javascript:;" class="bfc_f"><img src="{{e.img}}" width="100" height="100" alt=""></a>
+		<div class="bfc_c">
+    		<p>{{e.name}}[ {{e.color}} {{e.size}} ]</p>
+    		<p class="qb_fs_s ui_color_weak">所需积分：<span class="mod_color_strong">{{e.score_amount}}分</span>&nbsp;数量: {{e.amount}}</p>
+		</div>
+	</li>
+{{/each}}
+</script>
+<!-- cartprotpl js arttemplate end -->
+
+<script type="text/javascript">
+var e_id = "{$e_id}", 					// 商家编号
+	openid = "{$openid}", 				// 订单用户微信号
+	frompage = "{$frompage}"; 			// 本页面上一个页面的位置
+	
+$(function(){
+	
+	// 如果页面ready的时候，有收货地址编号和收货地址名称的，也可以去支付了
+	if (sessionStorage.receiveInfo && sessionStorage.deliveryId) {
+		var dinfo = JSON.parse(sessionStorage.receiveInfo); // 解析字符串成结构体
+		$(".delivery-info").find(".receive-person").html(dinfo.receivePerson); 
+		$(".delivery-info").find(".receive-cellphone").html(dinfo.receiveCellphone); 
+		$(".delivery-info").find(".receive-address .address").html(dinfo.receiveAddress); 
+		$(".delivery-info").data("did", sessionStorage.deliveryId); // id写在标签上
+		$("#submit-order").addClass("btn_strong"); // 有收货地址也可以解禁提交订单的按钮
+	}
+	
+	
+	// 配送、支付和备注的回显
+	if (sessionStorage.preSelectMsg) {
+		$("#sendType").val(sessionStorage.preSelectMsg.getParam("delivery")); 
+		$("#payType").val(sessionStorage.preSelectMsg.getParam("pay"));
+		$("#memo").val(sessionStorage.preSelectMsg.getParam("mark"));
+	}
+	
+	// 地址选择
+	$("#addressSel").on("click", function() {
+		sessionStorage.preSelectMsg = "&delivery=" + $("#sendType").val() + "&pay=" + $("#payType").val() + "&mark=" + $("#memo").val(); 
+		location.href = "{:U('Home/MemberHandle/deliveryManage', array('e_id' => $e_id), '')}?from=order&isscore=1"; 
+	});
+	
+	// 如果是购物车跳过来的
+	if (sessionStorage.cartList) {
+		var cartInfo = JSON.parse(sessionStorage.cartList), totalcartprice = 0; // 购物车总价
+		
+		// 渲染购物车提交的商品SKU模板
+		var tmpl = template('cartprotpl', cartInfo);
+		if (tmpl == '{Template Error}') {
+			tmpl = ""; // 置空tmpl
+		}
+		$(".mod_list").html(tmpl); 
+		
+		// 计算价格
+		$.each(cartInfo.cartlist, function(i, e) {
+			totalcartprice += e.price*e.amount; // 价格叠加：单价×数量
+		});
+		$("#total-price").html(cartInfo.score_amount); 
+		// console.log(shoppingListArray); // 记录日志
+		
+		var couponParam = {
+				e_id : e_id, 
+				payment: totalcartprice, 	// 线上总店为订单原价
+				shoppingListJson: cartInfo 	// 购物车数据（一并提交过去给后台判断优惠券是否可用）
+		};
+		
+	}
+	
+	// 点击商品跳转详情预览
+	$(".list_item").on("click", function(){
+		var detailurl = $(this).data("link");
+		location.href = detailurl;
+	});
+	
+	// 提交订单点击
+	$("#submit-order").on("click", function() {
+		var _t = $(this);
+		if(!_t.hasClass("btn_strong")) {
+			return false; // 如果没有可以去结算的标记，直接返回
+		}
+		if (!sessionStorage.deliveryId) {
+			utils.showBubble("请选择收货人信息");
+			return false;
+		} 
+		if ($("#sendType").val() == "-1") {
+			utils.showBubble("请选择配送方式");
+			return false;
+		} 
+		// 通过检验，允许提交
+		// 准备订单的参数
+		var cartlist = JSON.parse(sessionStorage.cartList).cartlist;// 抽取出cartlist里的部分
+		var params = {
+				totalprice:$("#total-price").text(), 				// 订单原总价
+				payment: $("#real-price").text(), 					// 所支付的价格
+				deliveryId: $(".delivery-info").data("did"), 		// 配送方式地址（快递配送方式是0有效）
+				sendType: $("#sendType").val(), 					// 配送类型
+				receiveName: $(".receive-person").text(), 			// 收货人姓名
+				receiveCellphone: $(".receive-cellphone").text(), 	// 收货人手机
+				shoppingListJson: JSON.stringify(cartlist), 		// 购物车信息
+				specialMark: $("#memo").val(), 						// 订单特殊备注
+				e_id: e_id,
+		}
+		//$("body").append(JSON.stringify(params));
+		//return
+		// 请求下订单（也可以先检查下价格，变化就就location.reload()刷新页面，否则就提交）
+		MLoading.show('提交中...'); 
+		_t.removeClass("btn_strong");
+		$.post("{:U('Home/ExchangeOrder/orderConfirm')}", params, function(result){
+			MLoading.hide(); 
+			_t.addClass("btn_strong");
+			if (result.errCode == 0) {
+				utils.showBubble("订单提交成功。"); 
+				setTimeout(function(){
+					window.location.href = "{:U('Home/MemberHandle/customerScoreShop', array('e_id' => $e_id), '')}";
+				},800);
+			} else {
+				utils.showBubble(result.errMsg); // 弹出错误信息
+				setTimeout(function(){
+					window.location.reload(); // 刷新页面（防止价格变动）
+				},1200);
+				return false;
+			}
+		},"json");
+	});
+});
+
+</script>
+</body>
+</html>

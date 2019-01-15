@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>微信平台用户</title>
+</head>
+
+<body class="easyui-layout" fit="true">
+	<div data-options="region:'center',border:false">
+		<table id="dg" title="当前分组:{$gname}" toolbar="#toolbar" style="width: 100%; height: 100%;"></table>
+	</div>
+
+	<!-- easyUI的工具条 -->
+	<div id="toolbar" style="height:30px; padding-top:5px;">
+		<span>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="cancelSelect();">取消选择</a>
+			<a href="javascript:history.go(-1);" class="easyui-linkbutton" iconCls="icon-back" plain="true">后退</a> 
+			<a href="javascript:location.reload();" class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
+		</span>
+		<span class="searchbox" style="float: right; margin-right: 30px; height: 25px; text-align: center;">
+			<select id="subbranch_search_condition" name="subbranch_search_condition" style="border: 0px; width: 80px; height: 25px; text-align: center;">
+				<option value="subbranch_name" selected="selected">昵称</option>
+				<option value="openid">微信号</option>
+				<option value="country">国家</option>
+				<option value="province">省市</option>
+				<option value="city">县区</option>
+			</select>
+			<input id="search_content" name="search_content" type="text" class="searchbox-text mysearchbox" /> 
+			<span>
+				<span id="search_btn" class="searchbox-button searchbox-button-hover mysearchspan"></span>
+			</span>
+		</span>
+	</div>
+	
+<script type="text/javascript">
+$(function() {
+	var gid = "{$gid}";
+	var subbranchdg = $('#dg').datagrid({
+		url : "{:U('Admin/WechatUserRequest/readGroupUser', '', '')}",
+		queryParams : {
+			gid : gid
+		},
+		singleSelect : false,
+		collapsible : true,
+		method : 'post',
+		fitColumns : true,
+		fit : true,
+		pagination : true,
+		pageSize: 10,
+        pageList: [10, 20, 30],
+		rownumbers : true,
+		idField : 'user_info_id',
+		columns : [ [ 
+		              { field : 'user_info_id', title : '微动平台编号', width : 100, hidden : true }, 
+		              { field : 'enterprise_wechat', title : 'original_id', width : 100, hidden : true }, 
+		              { field : 'ck', checkbox : 'true', width : 100 }, 
+		              { field : 'head_img_url', title : '用户头像', width : 80, align : 'center', formatter : headImageInit }, 
+		              { field : 'openid', title : '用户微信号（加密唯一）', width : 150, align : 'center', sortable : true },
+		              { field : 'nickname', title : '昵称', width : 100, align : 'center', sortable : true },
+		              { field : 'sex', title : '性别', width : 70, align : 'center', sortable : true,formatter:sexInit },
+		              { field : 'language', title : '语言', width : 70, align : 'center', sortable : true },
+		              { field : 'city', title : '县区', width : 70, align : 'center', sortable : true },
+		              { field : 'province', title : '省市', width : 70, align : 'center', sortable : true },
+		              { field : 'country', title : '国家', width : 70, align : 'center', sortable : true },
+		              { field : 'subscribe_time', title : '关注时间', width : 100, align : 'center', sortable : true },
+		              { field : 'add_time', title : '首次录入时间', width : 100, align : 'center', sortable : true }
+		          ] ],
+		view : detailview,
+		detailFormatter : function(rowIndex, rowData) {
+			var subbranch_description = rowData.subbranch_description == null ? '' : rowData.subbranch_description;
+			return '<table>'
+			+ '<tr><td style="border:0">'
+			+ '<p>微信用户描述信息:</p><p>'
+			+ subbranch_description + '</p>'
+			+ '</td>' + '</tr></table>';
+		}
+	});
+	
+	$('#search_subbranch_btn').click(function(){
+		var searchcondition = $('#subbranch_search_condition').val().trim();
+		var searchcontent = $('#subbranch_search_content').val();
+		if(searchcontent.trim() == "" || searchcontent == null){
+			$.messager.alert('警告','搜索内容不能为空！');
+			return
+		}
+       	$("#dg").datagrid({
+       		url:"{:U('Admin/Coupon/searchSubbranch','','')}",
+       		queryParams:{ 
+       			searchcondition:searchcondition,
+       			searchcontent:searchcontent
+       		}
+       	},'load');
+	});
+});
+
+function headImageInit(val, row) {
+	if(row.head_img_url != '' && row.head_img_url != null){
+		return '<img src="' + row.head_img_url + '" style="width:50px; height:50px; margin-top:5px;" />';
+	}else{
+		return '<img src="' + row.head_img_url + '" style="width:50px; height:50px; margin-top:5px;" />';
+	}
+}
+
+function sexInit(val,row){
+	switch(val){
+	case '0':
+		return '未知';
+	case '1':
+		return '男';
+	case '2':
+		return '女';
+	}
+}
+
+function cancelSelect() {
+	$('#dg').datagrid('unselectAll');
+}
+
+function getAllSelected() {
+	return $('#dg').datagrid('getSelections');
+}
+
+function selectSingleRow(index){
+	$('#dg').datagrid('checkRow', index);
+}
+
+function selectMultipleRow(subbranches) {
+	for(var i=0; i<subbranches.length; i++){
+		$('#dg').datagrid('selectRecord', subbranches[i]);
+	}
+}
+</script>
+</body>
+</html>

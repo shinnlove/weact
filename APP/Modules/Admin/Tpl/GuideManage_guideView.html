@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/template-native.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>导购信息一览</title>
+</head>
+
+<body class="easyui-layout">
+	<div data-options="region:'center',border:false">
+		<table id="dg" class="easyui-datagrid" title="所有导购信息一览" toolbar="#toolbar" data-options="region:'center'"></table>
+	</div>
+	<!-- easyUI的工具条 -->
+	<div id="toolbar">
+		<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addGuide();">添加导购</a>
+		<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editGuide();">编辑导购</a>
+		<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delGuide(delURL);">删除导购</a>
+		<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="findAll(findAllURL);">所有导购</a>
+		<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-redo" plain="true" onclick="createqrcode();">生成二维码</a>
+		<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="exportGuide();">导出记录</a>
+		<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="exportGuideCustomer();">导出粉丝</a>
+		<span class="searchbox">
+			<select id="search_condition" name="search_condition">
+				<option value="account" selected="selected">登录账号</option>
+				<option value="guide_number">工号</option>
+				<option value="guide_name">姓名</option>
+				<option value="cellphone">联系号码</option>
+			</select>
+			<input id="search_content" name="search_content" type="text" class="searchbox-text mysearchbox" placeholder="可选择一个条件查询" />
+			<span class="searchbox-button searchbox-button-hover"></span>
+		</span>
+		<span class="searchbox">
+			<select id="category_search" name="category_search" style="width:125px;">
+				<option value="-1" selected="selected">所有店铺</option>
+				<foreach name="sublist" item="sl">
+					<option value="{$sl['subbranch_name']}">{$sl['subbranch_name']}</option>
+				</foreach>
+			</select>
+		</span>
+		<span class="remind-condition">所属店铺：</span>
+		
+	</div>
+
+<script type="text/html" id="guideordertpl">
+<table>
+	<tbody>
+        <tr>
+            <td style="border:0; width:150px;">
+                <p style="font-weight:bold;">最近订单记录：</p>
+            </td>
+        </tr>
+        <tr style="border:0;height:30px;">
+            <td class="gco-title">序号</td>
+			<td class="gco-title">订单编号</td>
+			<td class="gco-title">顾客姓名</td>
+			<td class="gco-title" style="border:0; width:150px; text-align:center;">下单时间</td>
+            <td class="gco-title">总价</td>
+			<td class="gco-title">支付方式</td>
+        </tr>
+		<% for (var i in detaillist) {%>
+			<tr>
+            	<td class="gco-info"><%=i*1+1%></td>
+            	<td class="gco-info"><%=detaillist[i].visual_number%></td>
+				<td class="gco-info"><%=detaillist[i].customer_name%></td>
+            	<td style="border:0; width:150px; text-align:center;"><%=detaillist[i].order_time%></td>
+				<td class="gco-info"><%=detaillist[i].total_price%></td>
+				<td class="gco-info"><%=detaillist[i].pay_method%></td>
+        	</tr>
+		<% } %>
+    </tbody>
+</table>
+</script>
+<script type="text/javascript">
+//定义PHP框架需要的全局变量（引用将无法识别，必不可少！）
+var delURL = "{:U('Admin/GuideManageRequest/del','','')}"; 						//删除导购的控制器action处理函数地址
+var findAllURL = "{:U('Admin/GuideManageRequest/read','','')}"; 					//查询所有导购的控制器action处理函数地址
+
+//--------读取页面经常使用的DOM元素
+var dg = $('#dg');
+var url; //提交的url地址
+
+//初始化easyUI表格
+$(function() {
+	dg.datagrid({
+		url: findAllURL,					//读取导购信息的url地址
+		singleSelect: false,				//可多选
+		collapsible: true,					//datagrid可滑动展开
+		method: 'post',						//post提交类型
+		fitColumns: true,					//自适应列宽
+		fit: true,							//datagrid整屏适应
+		pagination: true,					//开启分页
+		rownumbers: true,					//显示行号
+		pageSize: 10,						//默认一页10条记录
+		pageList: [10, 20, 30],				//可供选择的有一页10条、20条、30条、50条记录（50条貌似没必要，1080高的也不能显示完全30条，何况50条）
+		idField: 'guide_id',				//主键字段是guide_id
+		columns: [
+			[{ field: 'guide_id', title: '导购编号', sortable: true, hidden: true },
+			 { field: 'ck', checkbox: 'true', width: 60 },
+			 { field: 'headimg', title : '头像', width : 60, align : 'center', formatter: picInit }, 
+			 { field: 'dimension_code', title : '二维码名片', width : 60, align : 'center', formatter: qrcodeInit }, 
+			 { field: 'subbranch_name', title: '所属店铺', width : 120 },
+			 { field: 'guide_number', title: '工号', width : 80 }, 
+			 { field: 'account', title: '登录账号', width : 100 }, 
+			 { field: 'guide_name', title: '姓名', width : 70 },
+			 /* { field: 'nickname', title: '昵称', width : 70 }, */
+			 { field: 'sex', title: '性别', width : 70, align : 'center', formatter: sexInit }, 
+			 { field: 'id_card', title: '身份证号', width : 120 },
+			 { field: 'birthday', title: '出生年月', width : 90 }, 
+			 { field: 'guide_level', title: '等级', width : 70, align : 'center', sortable: true, formatter: glevelInit }, 
+			 { field: 'guide_type', title: '类型', width : 70, align : 'center', sortable: true, formatter: gtypeInit }, 
+			 { field: 'cellphone', title: '联系号码', width : 100 }, 
+			 { field: 'add_time', title: '添加时间', width : 100, align : 'center', sortable: true }, 
+			 { field: 'busy_status', title: '在线状态', width : 80, align : 'center', sortable: true, formatter: statusInit }] 
+		],
+		
+		view: detailview,
+		detailFormatter: function(index, row) {
+			return '<div class="ddv" id="' + row.guide_id + '">' + '</div>';
+		},
+		onExpandRow: function(index, row){
+			$.post('{:U("Admin/GuideManageRequest/getGuideOrder", "", "")}',
+					{ gid : row.guide_id },
+					function(result){
+						if(result.errCode == 0){
+							var orderinfo = template( 'guideordertpl', result.data ); 	// artTemplate渲染模板引擎
+							if (orderinfo == '{Template Error}') {
+								orderinfo = ''; 										// 如果渲染失败，则detailinfo置空
+								$.messager.alert('温馨提示', '网络繁忙，接收导购最近成交订单详情数据错误！', 'error'); // 提示用户出错了
+	                        }
+							$('#'+row.guide_id).html(orderinfo); 						// 写入展开详情中
+							$('#dg').datagrid("fixDetailRowHeight", index); 			// 该行的详情框高度自适应（非常重要，以前没处理好）
+						} else {
+							$('#'+row.guide_id).html('<table>' 
+									+ '<tr>'
+									/* + '<td rowspan=2 style="border:0;height:50px;width:50px"></td>' */ 
+									+ '<td style="border:0">' + '<p><strong>最近订单记录:</strong></p><p>该导购最近没有订单成交记录~</p>' + '</td>' 
+									+ '</tr>'
+									+ '</table>'); 										// 写入展开详情中
+							$('#dg').datagrid("fixDetailRowHeight", index); 			// 该行的详情框高度自适应（非常重要，以前没处理好）
+							//$.messager.alert('温馨提示', '网络繁忙，没有查询到该导购最近成交订单详情！', 'error');
+						}
+					},'json');// post
+            $('#dg').datagrid('fixDetailRowHeight', index);
+	     }	// onExpandRow
+	});
+	
+	// 按所属店铺搜索 
+	$('#category_search').change(function() {
+		var searchcondition = 'subbranch_name';
+		var searchcontent = $('#category_search').val(); // 要搜索的导航名称
+		$("#dg").datagrid({
+			url: "{:U('Admin/GuideManageRequest/searchGuide', '', '')}",
+			queryParams: {
+				searchcondition: searchcondition,
+				searchcontent: searchcontent
+			}
+		}, 'load');
+		clearSelect(); // 清空潜在选择项
+	});
+	
+	// 指定条件查询，进行导购搜索
+	$('.searchbox-button').click(function() {
+		var searchcondition = $('#search_condition').val().trim(); // 获取搜索条件
+		var searchcontent = $('#search_content').val(); // 获取搜索内容
+		if (searchcontent.trim() == "" || searchcontent == "undefined") {
+			$.messager.alert('温馨提示', '请输入搜索内容！', 'warning');
+			return
+		}
+		$("#dg").datagrid({
+			url: "{:U('Admin/GuideManageRequest/searchGuide', '', '')}",
+			queryParams: {
+				searchcondition: searchcondition,
+				searchcontent: searchcontent
+			}
+		}, 'load');
+		clearSelect(); // 清空潜在选择项
+	});
+	
+});
+
+/*----------------------------easyUI初始化的数据-----------------------------*/
+
+// 初始化头像
+function picInit(val, row){
+	if(row.headimg){
+		return '<img src="' + row.headimg + '" class="guide-img" />';
+	} else {
+		return '<img src="__PUBLIC__/images/defaulthead.jpg" class="guide-img" alt="请上传导购头像" />';  // 返回一张默认图片，请尽快设定
+	}
+}
+
+// 初始化二维码名片
+function qrcodeInit(val, row){
+	if(row.dimension_code){
+		return '<img src="' + row.dimension_code + '" class="guide-img" />';
+	} else {
+		return '<img src="__PUBLIC__/images/defaulthead.jpg" class="guide-img" alt="请生成导购二维码" />'; // 返回一张无二维码名片图片，请尽快生成
+	}
+}
+
+//性别初始化
+function sexInit(val, row) {
+	if (row.sex == 1) {
+		return "男";
+	} else if (row.sex == 2) {
+		return "女";
+	} 
+}
+
+//导购等级初始化
+function glevelInit(val, row) {
+	if (row.guide_level == 0) {
+		return "普通";
+	} else if (row.guide_level == 1) {
+		return "中级";
+	} else if (row.guide_level == 2) {
+		return "高级";
+	} 
+}
+
+//导购类型初始化
+function gtypeInit(val, row) {
+	if (row.guide_type == 0) {
+		return "普通导购";
+	} else if (row.guide_type == 1) {
+		return "大堂经理";
+	} 
+}
+
+function statusInit(val, row) {
+	if (row.busy_status == 0) {
+		return "<span class='green' style='color:#39b868;'>在线</span>";
+	} else {
+		return "<span class='grey' style='color:#666;'>挂起</span>";
+	}
+}
+
+/*-----------------------easyUI数据表操作-----------------------*/
+//添加导购操作
+function addGuide() {
+	window.location.href = "{:U('Admin/GuideManage/addGuideInfo')}";
+}
+
+//编辑导购操作
+function editGuide() {
+	var rows = dg.datagrid('getSelections'); 	//获取选中的行（已经绑定过主键customer_id列）
+	if (rows.length == 0) {
+		$.messager.alert('温馨提示', '请选择一条您要编辑的导购信息！', 'warning');
+	} else if (rows.length >= 2) {
+		$.messager.alert('温馨提示', '一次只能编辑一条导购信息！', 'warning');
+	} else if (rows.length >= 1) {
+		var gid = rows[0].guide_id;
+		window.location.href = "{:U('Admin/GuideManage/editGuideInfo')}?gid="+gid;
+	}
+}
+
+//删除导购信息操作
+function delGuide(delURL) {
+	var rows = dg.datagrid('getSelections');
+	var rowgdata = []; 							// 定义要删除的idlist数组，用push和join去处理
+	var rowcdata = []; 							// 定义要删除的idlist数组，用push和join去处理
+	if (rows.length == 0) {
+		$.messager.alert('温馨提示', '请至少选择一条您要删除的导购信息！', 'warning');
+		return;
+	} else {
+		$.messager.confirm('温馨提示', '确定删除选中的导购信息？', function(cf) {
+			if (cf) {
+				for (var i = 0; i < rows.length; i++) {
+					rowgdata.push(rows[i].guide_id);
+				}
+				$.post("{:U('Admin/GuideManageRequest/del', '', '')}", {
+					rowgdata: rowgdata.join(','),rowcdata: rowcdata.join(',')
+				}, function(result) {
+					if (result.errCode == 0) {
+						dg.datagrid('reload'); 	// 无刷新重载页面数据
+						clearSelect(); 			// 清空可能潜在选择的商品
+					} else {
+						$.messager.alert('温馨提示', '删除导购失败！'+result.errMsg, 'error');
+					}
+				});
+			}
+		});
+	}
+}
+
+//取消选择
+function cancelSelect() {
+	$('#dg').datagrid('unselectAll');
+}
+
+//查看所有客户信息操作
+function findAll(findAllURL) {
+	dg.datagrid({
+		url: findAllURL
+	});
+}
+
+//导出excel数据
+function exportGuide() {
+	$.messager.confirm('温馨提示', '确定要导出所有导购数据?', function(result){
+		if(result) {
+			window.location.href = "{:U('Admin/GuideManage/exportGuide', '', '')}";
+		}
+	});
+}
+
+//共用警示函数：有些调用后不使用此函数可能会存在隐藏错误
+function clearSelect() {
+	dg.datagrid("clearSelections"); 			// 清楚所有选中的行
+}
+
+// 生成二维码（特别注意：生成后reload一下，并且取消选择）
+function createqrcode() {
+	var rows = $("#dg").datagrid('getSelections'); // 获取easyUI选中的行
+	if (rows.length == 0) {
+		$.messager.alert('温馨提示', '请选择要生成二维码名片的导购！', 'warning');
+	} else if (rows.length >= 2) {
+		$.messager.alert('温馨提示', '每次只能选择生成一个导购的二维码名片！', 'warning');
+	} else {
+		var params = {
+				gid : rows[0].guide_id
+		}
+		MLoading.show("生成中，请等待...");
+		$.post("{:U('Admin/GuideManageRequest/appendGuideQRCode', '', '')}", params, function(result){
+			MLoading.hide();
+			if (result.errCode == 0) {
+				$.messager.alert('温馨提示', '生成导购二维码名片成功！', 'info', function(){
+					dg.datagrid('reload'); // 无刷新重载页面数据
+					clearSelect(); // 清空可能潜在选择的商品
+				});
+			} else {
+				$.messager.alert('温馨提示', '生成导购二维码名片失败！'+result.errMsg, 'error');
+			}
+		}, "json");
+	}
+}
+
+//导出excel数据
+function exportGuideCustomer() {
+	$.messager.confirm('温馨提示', '确定要导出所有粉丝数据?', function(result){
+		if(result) {
+			window.location.href = "{:U('Admin/GuideManage/exportGuideCus', '', '')}";
+		}
+	});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/template-native.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>代理导航信息管理</title>
+</head>
+
+<body class="easyui-layout" fit="true">
+	<div data-options="region:'center',border:false">
+		<table id="dg" title="代理导航信息     —— 温馨提示：删除代理导航时可以多选" toolbar="#toolbar"></table>
+	</div>
+	
+	<!-- easyUI的工具条 -->
+	<div id="toolbar">
+		<div class="uptool">
+			<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="adddistributornav();">添加</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="deletedistributornav()">删除</a>
+			<span class="searchbox">
+				<select id="search_condition" name="search_condition">
+					<option value="chinese_name" selected="selected">中文名 </option>
+					<option value="english_name">英文名 </option>
+				</select>
+				<input id="search_content" name="search_content" type="text" class="searchbox-text mysearchbox" placeholder="可选择一个条件查询" />
+				<span class="searchbox-button searchbox-button-hover"></span>
+			</span>
+			<span class="remind-condition">代理导航分类：</span>
+		</div>
+	</div>
+	
+<!-- easyUI上对单个商品操作的按钮区，js模板 begin -->
+<script type="text/html" id="handlebtntpl">
+<table class="handlebtntable">
+    <tr>
+		<td>
+			<a href="javascript:void(0)" class="btn btn-mini" title="编辑导航" onclick="editNav('<%=nav_id%>')">编辑</a>
+            <a href="javascript:void(0)" class="btn btn-mini" title="查看该代理导航下商品" onclick="lookNav('<%=nav_id%>')">查看</a>
+		</td>
+	</tr>
+</table>
+</script>
+<!-- easyUI上对单个商品操作的按钮区，js模板 end -->
+
+<script type="text/javascript">
+var e_id = '{$e_id}'; // 商家编号
+var dg = $("#dg"); // 全局变量table easyUI
+$(function() {
+	// easyui初始化
+	$('#dg').datagrid({
+		url: "{:U('Admin/DistributorManageRequest/getAllDistributor ', '', '')}",
+		singleSelect: false,
+		collapsible: true,
+		method: 'post',
+		fitColumns: true,
+		fit: true,
+		pagination: true,
+		pageSize: 10,
+		pageList: [5, 10, 15],
+		rownumbers: true,
+		idField: 'nav_id',
+		columns: [[
+				{ field: 'ck', checkbox: 'true', width: 60 }, 
+				{ field: 'image_path', title: '商品图片 ', width: 60, align:'center', sortable: false, formatter : picInit}, 
+				{ field: 'chinese_name', title: '中文名 ', width: 60, align:'left', sortable: false }, 
+				{ field: 'english_name', title : '英文名 ', width : 60, align : 'left', sortable: false }, 
+				{ field: 'first_benefit_rate', title: '一级受益方利润 ', width: 60, align:'right', sortable: true ,formatter:benefitInit}, 
+				{ field: 'second_benefit_rate', title: '二级受益方利润 ', width: 60, align:'right', sortable: true ,formatter:benefitInit}, 
+				{ field: 'third_benefit_rate', title: '三级受益方利润 ', width: 60, align:'right', sortable: true,formatter:benefitInit }, 
+				{ field: 'fourth_benefit_rate', title: '四级受益方利润 ', width: 60, align:'right', sortable: true ,formatter:benefitInit},
+				{ field: 'sibling_order', title: '导航排序 ', width: 60, align:'right', sortable: true },
+				{ field: 'add_time', title: '添加时间 ', width: 80, align:'center', sortable: true, formatter: onNavInit}, 
+				{ field: 'nav_id', title: '操作', width: 60, align:'center', sortable: false, formatter: handleBtnInit }
+			 ]],
+	}); //end easyui
+
+	// 指定条件查询，进行分销导航搜索
+	$('.searchbox-button').click(function() {
+		var searchcondition = $('#search_condition').val().trim(); // 获取搜索条件
+		var searchcontent = $('#search_content').val(); // 获取搜索内容
+		if (searchcontent.trim() == "" || searchcontent == "undefined") {
+			$.messager.alert('温馨提示', '请输入搜索内容！', 'warning');
+			return
+		}
+		$("#dg").datagrid({
+			url: "{:U('Admin/DistributorManageRequest/searchDistributor', '', '')}",
+			queryParams: {
+				searchcondition: searchcondition,
+				searchcontent: searchcontent
+			}
+		}, 'load');
+		clearSelect(); // 清空潜在选择项
+	});
+});
+
+/*-------------easyUI初始化部分函数--------------*/
+
+// 初始化分销导航图标 
+function picInit(val, row){
+	if(row){
+		return '<img class="easyui-img img-round" src="' + row.image_path + '" />';
+	} else {
+		return '<img class="easyui-img img-round" src="" alt="请上传商品缩略图" />'; // 返回一张默认图片，请尽快设定
+	}
+}
+
+//初始化导航添加时间显示
+function onNavInit(val, row) {
+		return "<span class='green' style='color:#39b868;'>" + row.add_time + "</span>"; // 返回添加导航时间
+}
+
+//初始化受益方利益 
+function benefitInit(val, row){
+	return val+"%";
+}
+
+// 操作区域的按钮初始化
+function handleBtnInit(val, row) {
+	var handlebtntmpl = template("handlebtntpl", row); // 渲染模板
+	return handlebtntmpl;
+}
+
+/*-----------easyUI功能按钮区------------*/
+
+// 共用警示函数：有些调用后不使用此函数可能会存在隐藏错误reload后用
+function clearSelect() {
+	dg.datagrid("clearSelections"); // 清除所有选中的行
+}
+
+// 添加分销导航 
+function adddistributornav(){
+	window.location.href = "{:U('Admin/DistributorManage/addDistributorNav', '', '')}"; // 跳转添加页面 
+}
+
+//删除分销导航  
+function deletedistributornav()  {
+	var rows = dg.datagrid('getSelections'); // 获取easyUI选中的行数
+	var num = rows.length; // 选中分销导航数量 
+	if (num == 0) {
+		$.messager.alert('温馨提示', '至少选择一条删除！', 'warning');
+	} else if (num > 10) {
+		$.messager.alert('温馨提示', '一次最多选择10条分销导航 ！', 'warning');
+	} else { 
+		var navidlist = []; 
+		for (var i = 0; i < num; i++) {
+			navidlist.push(rows[i].nav_id); // js压栈
+		}
+		// 通过验证，准备打包参数
+		var params = {
+			'navidlist': navidlist.join()
+		}
+		$.messager.confirm('温馨提示', '是否确定删除选中的代理导航 ？', function(cf) {
+			if (cf) {
+				$.post("{:U('Admin/DistributorManageRequest/deleteNavConfirm', '', '')}", params, function(result) {
+					if (result.errCode == 0) {
+						$.messager.alert('温馨提示', 'ok ', 'info', function() {
+							dg.datagrid('reload'); // 无刷新重载分销导航数据
+							clearSelect(); // 清空可能潜在选择的分销导航 
+						});
+					} else {
+						$.messager.alert('温馨提示', '操作失败 ！' + result.errMsg, 'error');
+					}
+				}, 'json');
+			}
+		});
+	}
+}
+
+// 修改分销导航信息 
+function editNav(navid) {
+	clearSelect(); 
+	window.location.href = "{:U('Admin/DistributorManage/editDistributorNav', '', '')}?navid=" + navid ; // 跳转编辑分销导航页面
+}
+
+//查看分销导航下的商品 
+function lookNav(navid){
+	clearSelect(); 
+	window.location.href = "{:U('Admin/DistributorManage/distributorProduct', '', '')}?p2pnavid=" + navid ; // 跳转代理导航下商品页面
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/appmsgview.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/emotion.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/emotion.js"></script>
+<title>首次关注回复</title>
+</head>
+
+<body>
+	<div class="widget">
+		<div class="widget-head">
+			<div class="pull-left">
+				<span class="text-success">首次关注信息</span> <span class="text-warning">已启用</span>
+			</div>
+			<div class="clearfix"></div>
+		</div>
+
+		<div class="widget-content">
+			<div class="padd">
+
+				<form class="form-horizontal" id="reply_form" style="margin-left: 20px;">
+
+					<div class="control-group">
+						<div class="controls controls-row">
+							<h2>首次关注自动回复</h2>
+						</div>
+						<div class="controls controls-row">
+							说明：对于首次关注的客户，可在此设定推送给他们的信息。
+						</div>
+					</div>
+					
+					<hr />
+					
+					<fieldset>
+
+						<div class="control-group">
+							<label class="control-label" for="answertype"> 自动回复类型:</label>
+							<div class="controls controls-row">
+								<select id="answertype" name="answertype" class="uniform myselected">
+									<option value='text' selected>文字</option>
+									<option value='news'>图文</option>
+									<option value='link'>链接</option>
+								</select>
+							</div>
+							<input type="hidden" id="current_type" name="current_type" value="" />
+							<!-- 记录类型选择框选择的类型，供提交时候用 -->
+						</div>
+
+						<!-- 回复文本区块开始 -->
+						<div class="control-group" id="textreply">
+							<label class="control-label" for="reply">自动回复内容:</label>
+							<div class="controls">
+
+								<div class="txtArea">
+									<div class="functionBar">
+										<div class="opt">
+											<a class="icon18C iconEmotion block" href="javascript:;" style="text-decoration: none; height: 20px; font-size: 16px;">
+												<font style="font-size: 14px;">表情</font>
+											</a>
+										</div>
+										<div class="tip"></div>
+										<div class="emotions">
+											<script type="text/javascript">
+												var mood = $('.emotions');		//取得emotion的div
+												var mood_content = '<table cellspacing="0" cellpadding="0"><tbody>';
+												var total = 105;				//总共的表情数目
+												var start_position = 0;
+												for(var j=0; j<7; j++){
+													mood_content += '<tr>';
+													for(var i=0; i<15; i++){
+														//循环15次拼接表情
+														mood_content += '<td><div class="eItem" style="background-position: '+ ( (j*15 + i)*(-24) ) +'px 0;" data-title="'+ Emotion.data[j*15 + i] +'" data-gifurl="images/emotion/'+ (j*15 + i) +'.gif"></div></td>';
+													}
+													mood_content += '</tr>';
+												}
+												mood_content += '</tbody></table>';
+												mood.html(mood_content);
+											</script>
+											<div class="emotionsGif"></div>
+										</div>
+										<div class="clr"></div>
+									</div>
+									<div class="editArea">
+										<textarea id="welcome" name="welcome" style="display: none;"></textarea>
+										<div contenteditable="true" style="overflow-y: auto; overflow-x: hidden; height: 150px;"></div>
+									</div>
+								</div>
+
+								<span class="maroon">*</span>
+								<span class="help-inline">必填,用户添加您的时候自动回复语 &nbsp;&nbsp;<font style="color:#F20;">请手动编辑，不要复制html代码，微信回复并不支持html标签。</font></span>
+							</div>
+						</div>
+						<!-- 回复文本区块结束 -->
+
+						<!-- 回复图文区块开始 -->
+						<div class="control-group" id="multiArticle">
+
+							<div class="control-group">
+								<label class="control-label" for="answertype"> 选择现有图文:</label>
+								<div class="controls controls-row">
+									<select id="newsopt" name="newsopt" class="uniform myselected">
+										<foreach name="option_news" item="on">
+										<option value='{$on.msgnews_id}'>{$on.title}</option>
+										</foreach>
+									</select>
+								</div>
+								<input type="hidden" id="current_news" name="current_news" value="" />
+								<!-- 记录当前所选图文的主键，供提交时候用 -->
+							</div>
+
+							<div class="control-group">
+								<label class="control-label" for="answertype">所选图文预览:</label>
+								<div class="controls controls-row">
+
+									<div class="none-news" style="display: none;">
+										<font style="font-size: 12px; font-weight: bold;">还没有设置图文信息，请先设置图文信息。</font>
+									</div>
+
+									<div class="has-news b-dib vt msg-col">
+
+										<div class="msg-item-wrapper">
+											<!--特别注意：这里是多图文！-->
+											<div class="msg-item">
+												<!-- 此处为图文显示区域 -->
+											</div>
+											<div class="msg-opr">
+												<!-- 此处为图文操作区域 -->
+											</div>
+										</div><!--msg-item-wrapper结束div-->
+
+									</div><!--b-dib vt msg-col结束div-->
+
+								</div><!--controls controls-row结束div-->
+							</div><!--control-group结束div-->
+
+
+						</div><!--multiArticle结束div-->
+						<!-- 回复图文区块结束 -->
+
+						<!-- 回复链接区块开始 -->
+						<div id="responseURL">
+							<div class="control-group">
+								<label class="control-label"> 
+								链接地址<span class="text-error">(*)</span><br />
+								</label>
+								<div class="controls controls-row">
+									<input type="text" class="uniform myinput" id="focus_url" name="focus_url" placeholder="请输入关注跳转的URL地址，请以http://开头" required="required" value="" />
+								</div>
+								<div class="controls controls-row">
+									说明：输入的链接必须以&nbsp;
+									<font style="font-size: 12px; font-weight: bold; color: #F20;">http://</font>
+									&nbsp;开头，用户关注后，公众号会第一时间向其发送设置的链接地址。<br />
+								</div>
+							</div>
+						</div>
+						<!-- 回复链接区块结束 -->
+
+						<hr />
+
+						<div class="handle-action">
+							<a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">保存</a>
+						</div>
+
+					</fieldset>
+				</form>
+			</div><!--包裹form的div class="padd"的结束div-->
+
+		</div><!--widget-head结束div-->
+	</div><!--widget结束div-->
+
+<script type="text/javascript">
+var response_type = '{$responseinfo.option_value}';			//回复的类型
+var selected_news = '{$responseinfo.selected_news}';		//选中的图文编号
+var text_info = '{$responseinfo.text_info}';				//回复文本的信息（如果response_type是news，弃置不用）
+var $textarea = $(".editArea textarea");
+var $contentDiv = $(".editArea div");
+
+$(function(){
+	$(".uniform").uniform();					/*文本框的uniform格式化，必不可少*/
+	
+	//回复类型切换界面，绑定更换委托
+	$("#reply_form").delegate("#answertype", "change", function() {
+		var type = $("#answertype").val();		//获取当前选择的类型
+		$("#current_type").val(type);			//重要：将当前类型写入input框内
+		if (type == 'text') {
+			$("div#textreply").show();			//文本回复展现
+			$("div#multiArticle").hide();
+			$("div#responseURL").hide();
+		} else if(type == 'news'){
+			$("div#textreply").hide();
+			$("div#multiArticle").show();		//多图文展现
+			$("div#responseURL").hide();
+		} else if(type == 'link'){
+			$("div#textreply").hide();
+			$("div#multiArticle").hide();
+			$("div#responseURL").show();		//链接地址展现
+		}else{
+			//初始化页面时
+			$("div#textreply").show();
+			$("div#multiArticle").hide();
+			$("div#responseURL").hide();
+		}
+	});
+	
+	//下拉框变动函数
+	$("#newsopt").change(function(){
+		requestNews($("#newsopt option:selected").val());	//请求展示选中图文函数
+	});
+	
+	//初始化response_type选择，及selected_news的信息
+	$("#answertype").val(response_type);			//类型选择框初始化类型
+	$("#current_type").val(response_type);			//初始化：将选中的类型type写入隐藏框中
+	$("#answertype").change();						//类型选择框改变
+	if(response_type == 'text'){
+		//只在回复类型为文本，才写入第一个框
+		$contentDiv.html(text_info);				//将默认的欢迎语写入文本框内
+	}else if(response_type == 'link'){
+		//只在回复类型为链接的时候，才写入超链接的框
+		$("#focus_url").val(text_info);				//将默认的欢迎语写入文本框内
+	}else{
+		$contentDiv.empty();						//不是图文信息，则清空文本框里的内容
+		$("#focus_url").val()						//不是链接信息，清空链接框里的内容
+	}
+	$("#newsopt").val(selected_news);				//图文选择预设的那一条
+	$("#newsopt").change();							//图文选择框改变
+	$("#current_news").val(selected_news);			//初始化：将选中的图文id写入隐藏框中
+	
+	//保存按钮
+	$("#submitbtn").click(function() {
+		//在此写入提交首次关注的类型和信息
+		var type_confirm = $("#answertype").val();	//获取回复类型
+		var news_confirm = '-1';					//初始化选中图文id为-1
+		var text_confirm = '';						//初始化文本信息
+		if(type_confirm == 'text'){
+			text_confirm = $contentDiv.html();		//获取文本内容
+		}else if(type_confirm == 'news'){
+			news_confirm = $("#current_news").val();//获取选中的新闻
+		}else if(type_confirm == 'link'){
+			var reg = /^(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/; // 匹配网址的正则表达式
+			text_confirm = $("#focus_url").val();
+			if(!text_confirm.match(reg)){
+				$.messager.alert('温馨提示', '网址不合法！','warning', function(){
+		  			
+		  		});
+				return;
+			}
+		}
+		
+		text_confirm = Emotion.replaceInput(text_confirm); // 进行emotion表情的替换
+		var params = {
+				type : type_confirm, 
+				news : news_confirm, 
+				text : text_confirm 
+		}
+		//在此处进行确认的post提交
+		$.post("{:U('Admin/AutoResponseRequest/firstFocusConfirm','','')}", params, function(data){
+			if(data.status == 1){
+				$.messager.alert('温馨提示', '首次关注信息设置成功！', 'info');
+			}else{
+				$.messager.alert('温馨提示', '首次关注信息设置失败！', 'warning');
+			}
+		}, "json");
+	});
+	
+});
+
+//下拉框变动请求图文函数
+function requestNews(news_id){
+	$("#current_news").val(news_id);						//将选中的图文id写入隐藏框中
+	if(news_id!=null && news_id!=''){
+		//图文信息id不空才发送post请求
+		$.post("{:U('Admin/AutoResponseRequest/requestInfoInit','','')}",
+				{ rt : 'news' , cid : news_id },
+				function(data){ newsDisplay(data); },
+				"json");
+	}else{
+		newsDisplay(null);
+	}
+}
+
+//图文展现函数newsDisplay
+function newsDisplay(data){
+	if(data && data.msg =='ok'){
+		var count = data.article_count;
+		
+		//先设置主图文
+		var main_news = '<div class="appmsgItem"><!--主图文-->'
+					+		'<h4 class="msg-t"><a href="'+data.content[0].link_url+'" class="i-title" target="_blank">'+data.content[0].title+'</a></h4>'
+					+		'<p class="msg-meta" style="text-indent:16px;"><span class="msg-date">'+data.main_news.add_time+'</span></p>'
+					+		'<div class="cover">'
+					+			'<p class="default-tip" style="display:none">封面图片</p>'
+					+			'<img src="'+data.content[0].cover_image+'" class="i-img" alt="" />'
+					+		'</div>'
+					+		'<p class="msg-text"></p>'
+					+	'</div>';
+		//再设置子图文（如果有）
+		if(count > 1){
+			for(var i=1; i<count; i++){
+				main_news = main_news 
+						+	'<div class="rel sub-msg-item appmsgItem"><!--子图文-->'
+						+		'<span class="thumb">'
+						+			'<img src="'+data.content[i].cover_image+'" class="i-img" alt="" />'
+						+		'</span> '
+						+		'<h4 class="msg-t"><a href="'+data.content[i].link_url+'" target="_blank" class="i-title">'+data.content[i].title+'</a></h4>'
+						+	'</div>';
+			}
+		}
+		//拼接编辑和删除
+		var newsbar = '';
+		newsbar = newsbar
+				//+	'<div class="msg-opr">' 
+				+ 		'<ul class="f0 msg-opr-list">'
+				+			'<li class="b-dib opr-item">'
+				+				'<a data-mul="' + data.main_news.msg_category + '" class="block tc opr-btn edit-btn" href="javascript:void(0);" data-mid="' + data.main_news.msgnews_id + '">' 
+				+					'<span class="th vm dib opr-icon edit-icon">编辑</span>'
+				+				'</a>'
+				+			'</li>'
+				+			'<li class="b-dib opr-item">'
+				+				'<a class="block tc opr-btn del-btn" href="javascript:void(0);" data-mid="' + data.main_news.msgnews_id + '">'
+				+					'<span class="th vm dib opr-icon del-icon">删除</span>'
+				+				'</a>'
+				+			'</li>'
+				+		'</ul>';
+				//+	'</div>';
+		//写入内容
+		$(".msg-item").empty();								//先清空图文信息
+		$(".msg-item").html(main_news);						//再写入图文信息
+		//写入对图文的编辑和删除
+		$(".msg-opr").empty();								//先清空编辑和删除条
+		$(".msg-opr").html(newsbar);						//再写入新的编辑和删除条
+		//生成编辑事件
+		$(".msg-opr").find('.opr-item .edit-icon').on("click", function(){
+			var target = $(this).parent(".opr-item a");		//抓取有属性的a标签
+			if(target.attr("data-mul") == 1){
+				//编辑多图文，此处自己定义微动的跳转url
+				location.href = "{:U('Admin/MaterialManage/editMultipleNews', '', '')}?mid="+target.attr("data-mid");
+			} else{
+				//编辑单图文，此处自己定义微动的跳转url
+				location.href = "{:U('Admin/MaterialManage/editSingleNews', '', '')}?mid="+target.attr("data-mid");
+			}
+		});
+		//生成删除事件
+		$(".msg-opr").find('.opr-item .del-btn').on("click", function(){
+			var $delTarget = $(this);					//先抓取对象
+			$.messager.confirm('温馨提示', '确定删除本图文？', function(cf){
+				if(cf){
+					$.post("{:U('Admin/MaterialManageRequest/delNewsConfirm', '', '')}",
+							{ mid : $delTarget.attr("data-mid") },
+							function(data){
+								if(data.status == 1){
+									$.messager.alert('温馨提示', '操作成功! '+data.msg, 'info', function(){
+										$delTarget.closest(".msg-item-wrapper").remove();
+									});
+								}else{
+									if(100 == data.errorCode || 101 == data.errorCode || 102 == data.errorCode){
+										//这个地方换成微动的图文删除，要特别注意，必须取消关联才能删除！
+										$.messager.alert('温馨提示', '删除图文失败! '+data.errorMsg, 'warning');
+									}else{
+										$.messager.alert('温馨提示', '删除图文信息失败!', 'error');
+									}
+								}
+							},"json");
+				}
+			});
+		});
+		//页面其他操作
+		$(".has-news").show();								//用于展示整个图文的b-dib vt msg-col的div先显示
+		$(".none-news").hide();								//空图文提示框隐藏
+	}else{
+		$(".has-news").hide();								//用于展示整个图文的b-dib vt msg-col的div先隐藏
+		$(".none-news").show();								//空图文提示框显示
+	}
+}
+
+/*-----------------------以下关于emotion的表情js------------------------------*/
+$(".functionBar .iconEmotion").click(function(){
+	//Emotion.saveRange();
+	$(".emotions").show();
+});
+$(".emotions").hover(function(){
+
+},function(){
+	$(".emotions").fadeOut();
+});
+
+$(".emotions .eItem").mouseenter(function(){
+	$(".emotionsGif").html('<img src="__PUBLIC__/'+$(this).attr("data-gifurl")+'">');	//特别注意这里噢~!__PUBLIC__/
+}).click(function(){
+	Emotion.insertHTML('<img src="__PUBLIC__/' + $(this).attr("data-gifurl") + '"' + 'alt="mo-' + $(this).attr("data-title") + '"' + "/>");		//特别注意这里噢~!__PUBLIC__/
+	$(".emotions").fadeOut();
+	$textarea.trigger("contentValueChange");
+});
+
+$contentDiv.bind("keyup",function(){
+	$textarea.trigger("contentValueChange");
+	Emotion.saveRange();
+}).bind("keydown",function(e){
+    switch (e.keyCode) {
+    case 8:
+        var t = Emotion.getSelection();
+        t.type && t.type.toLowerCase() === "control" && (e.preventDefault(), t.clear());
+        break;
+    case 13:
+        e.preventDefault(),
+        Emotion.insertHTML("<br/>");
+        Emotion.saveRange();
+    }
+}).bind("mouseup",function(e){
+	e.stopPropagation();
+	var content = $(this).html();
+	if(content == "请选择用户首次关注的响应方式，或直接在此输入欢迎文字。") {
+		$(this).html('');
+	}
+}).bind("mouseout",function(e){
+	e.stopPropagation();
+	var content = $(this).html();
+	if(content == "") {
+		$(this).html("请选择用户首次关注的响应方式，或直接在此输入欢迎文字。");
+	}
+});
+
+/* bind("mouseup",function(e){
+    Emotion.saveRange();
+    if ($.browser.msie && />$/.test($contentDiv.html())) {
+        var n = Emotion.getSelection();
+        n.extend && (n.extend(cursorNode, cursorNode.length), n.collapseToEnd()),
+        Emotion.saveRange();
+        Emotion.insertHTML(" ");
+    }
+}); */
+$textarea.bind("contentValueChange",function(){
+	$(this).val(Emotion.replaceInput($contentDiv.html()));
+});
+$contentDiv.html(Emotion.replaceEmoji($contentDiv.html()));
+</script>
+</body>
+</html>

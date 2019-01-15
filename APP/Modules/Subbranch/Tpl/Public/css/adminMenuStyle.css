@@ -1,0 +1,87 @@
+@charset "utf-8";
+/* CSS Document */
+
+.frame_left{
+	position: absolute;
+	top: 120px;
+	left: 20px;
+	width: 260px;
+	border-right: 1px solid #DDD;
+	overflow-y: auto;
+}
+
+.frame_right{
+	position: absolute;
+	top: 120px;
+	left: 300px;
+	overflow: auto;
+}
+
+.tree-menu{
+	float: right;
+}
+.tree-menu span{
+	margin-left: 6px;
+}
+.tree-menu span i{
+	cursor: pointer;
+}
+.icon-plus {
+	background-position: -408px -96px;
+}
+.icon-remove {
+	background-position: -312px 0;
+}
+.icon-edit {
+	background-position: -96px -72px;
+}
+[class^="icon-"], [class*=" icon-"] {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	line-height: 14px;
+	vertical-align: text-top;
+	background-image: url("../images/platformimage/glyphicons-halflings.png");
+	background-repeat: no-repeat;
+	margin-top: 1px;
+}
+#menu_tree{
+	margin-right: 20px;
+}
+.right iframe{
+	height: 100%;
+	width: 100%;
+	z-index: 20;
+	border: 0;
+	margin: 0 auto;
+	display: block;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	border-radius: 10px;
+}
+li{
+	line-height: 16px;
+}
+.om-tree-node a{
+	display: inline-block;
+	*display: inline;
+	*zoom: 1;
+	width: 115px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+#vip_tip{
+	text-align: center;
+}
+.actions{
+	position: absolute;
+	bottom: 20px;
+	left: 10px;
+	width: 268px;
+	border-right: 1px solid #CCC;
+	height: 60px;
+}
+.actions .btn{
+	position: relative;
+	top: 30px;
+}

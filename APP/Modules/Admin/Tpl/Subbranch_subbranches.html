@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/template-native.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>店铺信息一览</title>
+</head>
+
+<body class="easyui-layout" fit="true">
+	<div data-options="region:'center',border:false">
+		<table id="subbranches" title="所有店铺信息一览" toolbar="#toolbar" style="width: 100%; height: 100%;"></table>
+	</div>
+	
+	<!-- easyUI的工具条 -->
+	<div id="toolbar">
+		<span>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addSubbranch();">添加分店</a> 
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editSubbranch();">查看/编辑</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="isCloseSubbranch();">开/关店铺</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delSubbranch();">删除</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-redo" plain="true" onclick="copyCommonURL();">复制常用URL</a>
+			<a href="javascript:location.reload();" class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
+		</span>
+		<span class="searchbox" style="float:right;margin-right:30px;height: 25px;text-align: center;">
+			<select id="sub_search_condition" name="sub_search_condition" style="border:0px;width: 80px;height: 25px;text-align: center;">
+				<option value="subbranch_name" selected="selected">店铺名称</option>
+				<option value="subbranch_address">店铺地址</option>
+				<option value="subbranch_code">店铺编码</option>
+			</select>
+			<input id="sub_search_content" name="sub_search_content" type="text" class="searchbox-text mysearchbox"></input>
+			<span>
+				<span id="search_sub_btn" class="searchbox-button searchbox-button-hover mysearchspan"></span>
+			</span>
+		</span>
+	</div>
+	<!-- 复制店铺链接对话框 begin -->
+	<div id="copy-dialog" class="easyui-window clipwindow" title="获取店铺链接" iconCls="icon-edit" data-options="modal:true,closed:true">
+		<div class="easyui-layout" fit="true">
+			<div region="center" border="false" class="link-region">
+				<div class="handle-panel">
+					店铺地址链接： <input name="outaddress" id="shareurl" size="50" value="" />
+					<a href="javascript:;" id="clip_button" class="easyui-linkbutton" iconCls="icon-redo" data-clipboard-target="shareurl">复制链接</a>
+				</div>
+				<h6 class="tit-sm">店铺链接答疑</h6>
+				<div class="question-list">
+					<div class="question">
+						<span class="badge red-answer">Q</span>
+						<span class="badge-list">店铺链接的具体内容导向是什么？</span>
+					</div>
+					<div class="answer">
+						<span class="badge blue">A</span>
+						<span class="badge-list">点击店铺链接，进入相应的店铺主页。</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 复制店铺链接对话框end -->
+	
+	<!-- 复制常用链接对话框 begin -->
+	<div id="commoncopy" class="easyui-window clipwindow" title="获取店铺常用链接" iconCls="icon-edit" data-options="modal:true,closed:true" style="height:560px;">
+		<div class="easyui-layout" fit="true">
+			<div region="center" border="false" class="link-region">
+				<div class="handle-panel">
+					<div class="link-panel">
+						店铺主页： <input name="outaddress" id="shareurlone" size="50" value="" />
+						<a href="javascript:;" id="one_clip_button" class="easyui-linkbutton" iconCls="icon-redo" data-clipboard-target="shareurlone">复制链接</a>
+					</div>
+					<div class="link-panel">
+						商品分类： <input name="outaddress" id="shareurltwo" size="50" value="" />
+						<a href="javascript:;" id="two_clip_button" class="easyui-linkbutton" iconCls="icon-redo" data-clipboard-target="shareurltwo">复制链接</a>
+					</div>
+					<div class="link-panel">
+						我的账户： <input name="outaddress" id="shareurlthree" size="50" value="" />
+						<a href="javascript:;" id="three_clip_button" class="easyui-linkbutton" iconCls="icon-redo" data-clipboard-target="shareurlthree">复制链接</a>
+					</div>
+					<div class="link-panel">
+						新品上架： <input name="outaddress" id="shareurlfour" size="50" value="" />
+						<a href="javascript:;" id="four_clip_button" class="easyui-linkbutton" iconCls="icon-redo" data-clipboard-target="shareurlfour">复制链接</a>
+					</div>
+					<div class="link-panel">
+						特价促销： <input name="outaddress" id="shareurlfive" size="50" value="" />
+						<a href="javascript:;" id="five_clip_button" class="easyui-linkbutton" iconCls="icon-redo" data-clipboard-target="shareurlfive">复制链接</a>
+					</div>
+					<div class="link-panel">
+						全部商品： <input name="outaddress" id="shareurlsix" size="50" value="" />
+						<a href="javascript:;" id="six_clip_button" class="easyui-linkbutton" iconCls="icon-redo" data-clipboard-target="shareurlsix">复制链接</a>
+					</div>
+					<div class="link-panel">
+						我的导购： <input name="outaddress" id="shareurlseven" size="50" value="" />
+						<a href="javascript:;" id="seven_clip_button" class="easyui-linkbutton" iconCls="icon-redo" data-clipboard-target="shareurlseven">复制链接</a>
+					</div>
+					<div class="link-panel">
+						门店列表： <input name="outaddress" id="shareurleight" size="50" value="" />
+						<a href="javascript:;" id="eight_clip_button" class="easyui-linkbutton" iconCls="icon-redo" data-clipboard-target="shareurleight">复制链接</a>
+					</div>
+					<div class="link-panel">
+						我的订单： <input name="outaddress" id="shareurlnine" size="50" value="" />
+						<a href="javascript:;" id="nine_clip_button" class="easyui-linkbutton" iconCls="icon-redo" data-clipboard-target="shareurlnine">复制链接</a>
+					</div>
+					<div class="link-panel">
+						我的购物车： <input name="outaddress" id="shareurlten" size="50" value="" />
+						<a href="javascript:;" id="ten_clip_button" class="easyui-linkbutton" iconCls="icon-redo" data-clipboard-target=shareurlten>复制链接</a>
+					</div>
+					<div class="link-panel">
+						我的收藏： <input name="outaddress" id="shareurleleven" size="50" value="" />
+						<a href="javascript:;" id="eleven_clip_button" class="easyui-linkbutton" iconCls="icon-redo" data-clipboard-target="shareurleleven">复制链接</a>
+					</div>
+					<div class="link-panel">
+						我的优惠券： <input name="outaddress" id="shareurltwelve" size="50" value="" />
+						<a href="javascript:;" id="twelve_clip_button" class="easyui-linkbutton" iconCls="icon-redo" data-clipboard-target="shareurltwelve">复制链接</a>
+					</div>
+					<div class="link-panel">
+						收货地址： <input name="outaddress" id="shareurlthirteen" size="50" value="" />
+						<a href="javascript:;" id="thirteen_clip_button" class="easyui-linkbutton" iconCls="icon-redo" data-clipboard-target="shareurlthirteen">复制链接</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 复制店铺链接对话框end -->
+	
+	
+<!-- easyUI上对单个店铺操作的按钮区，js模板 begin -->
+<script type="text/html" id="handlebtntpl">
+<table class="handlebtntable">
+    <tr>
+		<td>
+			<a href="javascript:void(0)" class="btn btn-mini" title="获取店铺链接" onclick="getSubLink('<%=subbranch_id%>')">链接</a>
+			<a href="javascript:void(0)" class="btn btn-mini" title="下载店铺二维码" onclick="subDimension('<%=subbranch_id%>')">扫码</a>
+		</td>
+	</tr>
+</table>
+</script>
+
+<script type="text/javascript">
+var e_id = '{$e_id}';
+$(function() {
+	subbranches = $('#subbranches').datagrid({
+		url : "{:U('Admin/SubbranchRequest/readSubbranches')}",
+		singleSelect: true,
+		collapsible: true,
+		method: 'post',
+		fitColumns: true,
+		fit: true,
+		pagination: true,
+		pageSize: 10,
+		pageList: [5, 10, 15],
+		rownumbers: true,
+		idField : 'subbranch_id',
+		columns : [ [ 
+		              /* { field : 'subbranch_id', title : '店铺编号', width : 100, hidden: true }, */ 
+		              { field : 'image_path', title : '店铺LOGO', width : 60, align : 'center', formatter : initPic },
+		              { field : 'subbranch_code', title : '店铺编码', sortable : true, width : 70 },
+		              { field : 'subbranch_name', title : '店铺名称', width : 100 },
+		              { field : 'manager', title : '负责人', width : 80 },
+		              { field : 'contact_number', title : '联系方式', width : 80 },
+		              { field : 'subbranch_address', title : '店铺详细地址', width : 260, formatter : addrInit }, 
+		              { field : 'add_time', title : '添加时间', width : 130, sortable : true},
+		              { field : 'subbranch_type', title : '店铺性质', width : 80, sortable : true, formatter : typeInit },
+		              { field : 'closed_status', title : '店铺开闭状态', width : 80, sortable : true, formatter : closedInit },
+		              { field : 'examine_status', title : '地址审核状态', width : 80, formatter : formatstatus },
+		              { field: 'subbranch_id', title: '操作', width: 100, align:'center', sortable: false, formatter: handleBtnInit }
+		          ] ],
+		view : detailview,
+		detailFormatter : function(rowIndex, rowData) {
+			var description = rowData.subbranch_description == null ? '' : rowData.subbranch_description;
+			return '<table><tr><td><font color=\'red\'>说明：</font>' + description + '<td></tr></table>';
+		}
+	});
+	
+	//搜索框按钮单击事件
+	$('#search_sub_btn').click(function(){
+		var searchcondition = $('#sub_search_condition').val().trim();
+		var searchcontent = $('#sub_search_content').val();
+		if(searchcontent.trim() == "" || searchcontent == null){
+			$.messager.alert('警告','搜索内容不能为空！');
+			return
+		}
+		$('#subbranches').datagrid({
+    		url:"{:U('Admin/SubbranchRequest/searchSubbranch','','')}",
+    		queryParams:{ 
+    			searchcondition:searchcondition,
+    			searchcontent:searchcontent
+    		}
+    	},'load');
+	});
+	
+	// 复制到剪贴板：鼠标点击时，全选文本框内容
+	$('#shareurlone, #shareurltwo,#shareurlthree,#shareurlfour,#shareurlfive,#shareurlsix,#shareurlseven,#shareurleight,#shareurlnine,#shareurlten,#shareurleleven,#shareurltwelve,#shareurlthirteen').on('click', function(){
+		this.setSelectionRange(0, $(this).val().length);
+	});
+});
+
+//获取店铺常用链接
+function copyCommonURL(){
+	var row = subbranches.datagrid('getSelected');
+	if(!row){
+		$.messager.alert('提示', '请先选择您要复制链接的店铺', 'info');
+	} else {
+		$('#commoncopy').window('open'); // 打开对话框
+		var comurlone = "{:U('WeMall/Store/storeIndex', '', '', '', true)}/sid/" + row.subbranch_id;
+		var comurltwo = "{:U('WeMall/Product/allCategory', '', '', '', true)}/sid/" + row.subbranch_id;
+		var comurlthree = "{:U('WeMall/CustomerCenter/myCenter', '', '', '', true)}/sid/" + row.subbranch_id;
+		var comurlfour = "{:U('WeMall/Product/productList', '', '', '', true)}/sid/" + row.subbranch_id + "&querytype=2";
+		var comurlfive = "{:U('WeMall/Product/productList', '', '', '', true)}/sid/" + row.subbranch_id + "&querytype=3";
+		var comurlsix = "{:U('WeMall/Product/productList', '', '', '', true)}/sid/" + row.subbranch_id;
+		var comurlseven = "{:U('WeMall/CustomerCenter/myGuide', '', '', '', true)}/sid/" + row.subbranch_id;
+		var comurleight = "{:U('WeMall/Store/storeList', '', '', '', true)}/sid/" + row.subbranch_id;
+		var comurlnine = "{:U('WeMall/Order/myOrder', '', '', '', true)}/sid/" + row.subbranch_id;
+		var comurlten = "{:U('WeMall/Cart/shoppingCart', '', '', '', true)}/sid/" + row.subbranch_id;
+		var comurleleven = "{:U('WeMall/CustomerCenter/myCollection', '', '', '', true)}/sid/" + row.subbranch_id;
+		var comurltwelve = "{:U('WeMall/CustomerCenter/myCoupon', '', '', '', true)}/sid/" + row.subbranch_id;
+		var comurlthirteen = "{:U('WeMall/CustomerCenter/deliveryManage', '', '', '', true)}/sid/" + row.subbranch_id;
+		$("#shareurlone").val(comurlone);
+		$("#shareurltwo").val(comurltwo);
+		$("#shareurlthree").val(comurlthree);
+		$("#shareurlfour").val(comurlfour);
+		$("#shareurlfive").val(comurlfive);
+		$("#shareurlsix").val(comurlsix);
+		$("#shareurlseven").val(comurlseven);
+		$("#shareurleight").val(comurleight);
+		$("#shareurlnine").val(comurlnine);
+		$("#shareurlten").val(comurlten);
+		$("#shareurleleven").val(comurleleven);
+		$("#shareurltwelve").val(comurltwelve);
+		$("#shareurlthirteen").val(comurlthirteen);
+		
+		// 点击复制按钮
+		$("#one_clip_button").zclip({
+		    path: "__PUBLIC__/js/ZeroClipboard.swf",
+		    copy: function(){
+		    	return $('#shareurlone').val();
+		    },
+		    setCSSEffects:false,
+		    beforeCopy:function(){},
+		    afterCopy:function(){
+		    	/* 复制成功后的操作 */
+		    	var $copysuc = $("<div class='copy-tips'><div class='copy-tips-wrap'>复制成功</div></div>");
+				$("body").find(".copy-tips").remove().end().append($copysuc);
+				$(".copy-tips").fadeOut(3000);
+		    }
+		});
+		
+		$("#two_clip_button").zclip({
+		    path: "__PUBLIC__/js/ZeroClipboard.swf",
+		    copy: function(){
+		    	return $('#shareurltwo').val();
+		    },
+		    setCSSEffects:false,
+		    beforeCopy:function(){},
+		    afterCopy:function(){
+		    	var $copysuc = $("<div class='copy-tips'><div class='copy-tips-wrap'>复制成功</div></div>");
+				$("body").find(".copy-tips").remove().end().append($copysuc);
+				$(".copy-tips").fadeOut(3000);
+		    }
+		});
+		
+		$("#three_clip_button").zclip({
+		    path: "__PUBLIC__/js/ZeroClipboard.swf",
+		    copy: function(){
+		    	return $('#shareurlthree').val();
+		    },
+		    setCSSEffects:false,
+		    beforeCopy:function(){},
+		    afterCopy:function(){
+		    	var $copysuc = $("<div class='copy-tips'><div class='copy-tips-wrap'>复制成功</div></div>");
+				$("body").find(".copy-tips").remove().end().append($copysuc);
+				$(".copy-tips").fadeOut(3000);
+		    }
+		});
+		
+		$("#four_clip_button").zclip({
+		    path: "__PUBLIC__/js/ZeroClipboard.swf",
+		    copy: function(){
+		    	return $('#shareurlfour').val();
+		    },
+		    setCSSEffects:false,
+		    beforeCopy:function(){},
+		    afterCopy:function(){
+		    	var $copysuc = $("<div class='copy-tips'><div class='copy-tips-wrap'>复制成功</div></div>");
+				$("body").find(".copy-tips").remove().end().append($copysuc);
+				$(".copy-tips").fadeOut(3000);
+		    }
+		});
+		
+		$("#five_clip_button").zclip({
+		    path: "__PUBLIC__/js/ZeroClipboard.swf",
+		    copy: function(){
+		    	return $('#shareurlfive').val();
+		    },
+		    setCSSEffects:false,
+		    beforeCopy:function(){},
+		    afterCopy:function(){
+		    	var $copysuc = $("<div class='copy-tips'><div class='copy-tips-wrap'>复制成功</div></div>");
+				$("body").find(".copy-tips").remove().end().append($copysuc);
+				$(".copy-tips").fadeOut(3000);
+		    }
+		});
+		
+		$("#six_clip_button").zclip({
+		    path: "__PUBLIC__/js/ZeroClipboard.swf",
+		    copy: function(){
+		    	return $('#shareurlsix').val();
+		    },
+		    setCSSEffects:false,
+		    beforeCopy:function(){},
+		    afterCopy:function(){
+		    	var $copysuc = $("<div class='copy-tips'><div class='copy-tips-wrap'>复制成功</div></div>");
+				$("body").find(".copy-tips").remove().end().append($copysuc);
+				$(".copy-tips").fadeOut(3000);
+		    }
+		});
+		
+		$("#seven_clip_button").zclip({
+		    path: "__PUBLIC__/js/ZeroClipboard.swf",
+		    copy: function(){
+		    	return $('#shareurlseven').val();
+		    },
+		    setCSSEffects:false,
+		    beforeCopy:function(){},
+		    afterCopy:function(){
+		    	var $copysuc = $("<div class='copy-tips'><div class='copy-tips-wrap'>复制成功</div></div>");
+				$("body").find(".copy-tips").remove().end().append($copysuc);
+				$(".copy-tips").fadeOut(3000);
+		    }
+		});
+		
+		$("#eight_clip_button").zclip({
+		    path: "__PUBLIC__/js/ZeroClipboard.swf",
+		    copy: function(){
+		    	return $('#shareurleight').val();
+		    },
+		    setCSSEffects:false,
+		    beforeCopy:function(){},
+		    afterCopy:function(){
+		    	var $copysuc = $("<div class='copy-tips'><div class='copy-tips-wrap'>复制成功</div></div>");
+				$("body").find(".copy-tips").remove().end().append($copysuc);
+				$(".copy-tips").fadeOut(3000);
+		    }
+		});
+		
+		$("#nine_clip_button").zclip({
+		    path: "__PUBLIC__/js/ZeroClipboard.swf",
+		    copy: function(){
+		    	return $('#shareurlnine').val();
+		    },
+		    setCSSEffects:false,
+		    beforeCopy:function(){},
+		    afterCopy:function(){
+		    	var $copysuc = $("<div class='copy-tips'><div class='copy-tips-wrap'>复制成功</div></div>");
+				$("body").find(".copy-tips").remove().end().append($copysuc);
+				$(".copy-tips").fadeOut(3000);
+		    }
+		});
+		
+		$("#ten_clip_button").zclip({
+		    path: "__PUBLIC__/js/ZeroClipboard.swf",
+		    copy: function(){
+		    	return $('#shareurlten').val();
+		    },
+		    setCSSEffects:false,
+		    beforeCopy:function(){},
+		    afterCopy:function(){
+		    	var $copysuc = $("<div class='copy-tips'><div class='copy-tips-wrap'>复制成功</div></div>");
+				$("body").find(".copy-tips").remove().end().append($copysuc);
+				$(".copy-tips").fadeOut(3000);
+		    }
+		});
+		
+		$("#eleven_clip_button").zclip({
+		    path: "__PUBLIC__/js/ZeroClipboard.swf",
+		    copy: function(){
+		    	return $('#shareurleleven').val();
+		    },
+		    setCSSEffects:false,
+		    beforeCopy:function(){},
+		    afterCopy:function(){
+		    	var $copysuc = $("<div class='copy-tips'><div class='copy-tips-wrap'>复制成功</div></div>");
+				$("body").find(".copy-tips").remove().end().append($copysuc);
+				$(".copy-tips").fadeOut(3000);
+		    }
+		});
+		
+		$("#twelve_clip_button").zclip({
+		    path: "__PUBLIC__/js/ZeroClipboard.swf",
+		    copy: function(){
+		    	return $('#shareurltwelve').val();
+		    },
+		    setCSSEffects:false,
+		    beforeCopy:function(){},
+		    afterCopy:function(){
+		    	var $copysuc = $("<div class='copy-tips'><div class='copy-tips-wrap'>复制成功</div></div>");
+				$("body").find(".copy-tips").remove().end().append($copysuc);
+				$(".copy-tips").fadeOut(3000);
+		    }
+		});
+		
+		$("#thirteen_clip_button").zclip({
+		    path: "__PUBLIC__/js/ZeroClipboard.swf",
+		    copy: function(){
+		    	return $('#shareurlthirteen').val();
+		    },
+		    setCSSEffects:false,
+		    beforeCopy:function(){},
+		    afterCopy:function(){
+		    	var $copysuc = $("<div class='copy-tips'><div class='copy-tips-wrap'>复制成功</div></div>");
+				$("body").find(".copy-tips").remove().end().append($copysuc);
+				$(".copy-tips").fadeOut(3000);
+		    }
+		});
+	}
+}
+	
+/* function standardtime(val, row){
+	return new Date(parseInt(row.add_time) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
+} */
+
+//logo图片初始化
+//缩略图初始化
+function initPic(val, row){
+	if(row){
+		return '<img src="' + row.image_path + '" style="width:50px; height:50px; margin-top:5px; border-radius:5px;" />';
+	}
+}
+
+//操作区域的按钮初始化
+function handleBtnInit(val, row) {
+	var handlebtntmpl = template("handlebtntpl", row); // 渲染模板
+	return handlebtntmpl;
+}
+
+function addrInit(val, row) {
+	var prov = row.province;
+	var city = row.city;
+	var area = row.county;
+	if(prov == '-1') prov='';
+	if(city == '市辖区' || city == '-1') city='';
+	if(area == '市辖区'|| area == '-1') area='';
+	return prov+city+area+val;
+	
+}
+
+function typeInit(val, row) {
+	if (val == -1) { return "/"; }
+	else if (val == 1) { return "直营店"; }
+	else if (val == 2) { return "加盟店"; }
+}
+
+function closedInit(val, row, index) {
+	if (val == 0) { return "<font color='green'>开店中</font>"; }
+	else{
+		return "<font color='red'>已闭店</font>";
+	} 
+}
+
+function formatstatus(val, row) {
+	if (val == 0) { return "正在审核中"; }
+	else if (val == 1) { return "<font color='green'>审核已通过</font>"; }
+	else if (val == 2) { return "<font color='red'>地址审核失败</font>"; }
+}
+
+function addSubbranch(){
+	window.location.href = "{:U('Admin/Subbranch/addSubbranch')}";
+}
+
+function editSubbranch() {
+	var row = subbranches.datagrid('getSelected');
+	if (!row) {
+		$.messager.alert('提示', '请先选择您要编辑的店铺', 'info');
+	} else {
+		window.location.href = "{:U('Admin/Subbranch/editSubbranch')}?sid="+row.subbranch_id;
+	}
+}
+
+function delSubbranch() {
+	var row = subbranches.datagrid('getSelected');
+	if (!row) {
+		$.messager.alert('温馨提示', '请先选择您要删除的店铺!', 'warning');
+	} else {
+		$.messager.confirm('温馨提示', '确定要删除该店铺吗？若该分店下尚存在导购，请先行删除导购！', function(cf) {
+			if (cf) {
+				var subbranch_id = row.subbranch_id;
+				var url = "{:U('Admin/SubbranchRequest/delSubbranch')}";
+				$.post(url, {
+					sid : subbranch_id
+				}, function(result) {
+					if (result.errCode == 0) {
+						$.messager.alert('温馨提示', '店铺删除成功！', 'info');
+						subbranches.datagrid('clearSelections');                 //清除datagrid选项记录
+						subbranches.datagrid('reload');
+					} else {
+						$.messager.alert('温馨提示', '删除失败!'+result.errMsg, 'error');
+					}
+				});
+			}
+		});
+	}
+}
+
+function isCloseSubbranch(){
+	var row = subbranches.datagrid('getSelected');
+	if (!row) {
+		$.messager.alert('温馨提示', '请先选择要切换开闭状态的店铺!', 'warning');
+	} else {
+		$.messager.confirm('温馨提示', '确定要切换该家店铺状态吗？', function(cf) {
+			if (cf) {
+				var subbranch_id = row.subbranch_id;
+				var url = "{:U('Admin/SubbranchRequest/closeSubbranch')}";
+				$.post(url, {
+					sid : subbranch_id
+				}, function(data) {
+					if (data.status == 1) {
+						subbranches.datagrid('reload');
+					} else {
+						$.messager.alert('提示', '操作失败，刷新页面试试', 'error');
+					}
+				});
+			}
+		});
+	}
+}
+
+//获取店铺链接
+function getSubLink(subid){
+	$('#copy-dialog').window('open');
+	var surl = "{:U('WeMall/Store/storeIndex','','','',true)}?sid="+ subid;
+	$("#shareurl").val(surl);
+	// 复制到剪贴板：鼠标点击时，全选文本框内容
+	$('#shareurl').on('click', function(){
+		this.setSelectionRange(0, $(this).val().length);
+	});
+	$("#clip_button").zclip({
+	    path: "__PUBLIC__/js/ZeroClipboard.swf",
+	    copy: function(){
+	    	return $('#shareurl').val();
+	    },
+	    setCSSEffects:false,
+	    beforeCopy:function(){
+	    	/* 复制成功前干嘛 */
+			//$(this).css('background','#449d44');
+		},
+	    afterCopy:function(){
+	    	/* 复制成功后的操作 */
+	    	var $copysuc = $("<div class='copy-tips'><div class='copy-tips-wrap'>复制成功</div></div>");
+			$("body").find(".copy-tips").remove().end().append($copysuc);
+			$(".copy-tips").fadeOut(3000);
+	    }
+	});
+}
+
+//下载店铺二维码
+function subDimension(subid){
+	// 准备请求参数
+	var params = {
+			subid : subid, 								// 要生成下载的店铺二维码
+			direct2browser : 0 							// 直接输出到浏览器
+	}
+	MLoading.show("请稍候，生成中..."); 						// 压缩文件时的等待框
+	$.post("{:U('Admin/SubbranchRequest/appendSubQRCode', '', '')}", params, function(result){
+		if (result.errCode == 0) {
+			MLoading.hide(); 							// 得到响应取消等待框
+			if (result.errCode == 0) {
+				var filepath = result.data.zipfilepath; // 获得文件地址（如果有路径值，才去下载）
+				if (typeof filepath != "undefined" && filepath != "") {
+					$.messager.confirm('温馨提示', '生成二维码压缩包成功，是否现在下载?', function(cf){
+						if(cf) {
+							setTimeout(function(){
+								window.location.href = filepath;
+							},1000);
+						}
+					});
+				}
+			} else {
+				$.messager.alert( '温馨提示', '下载二维码出错，'+result.errMsg, 'error' );
+			}
+		}
+	}, "json");
+}
+</script>
+</body>
+</html>

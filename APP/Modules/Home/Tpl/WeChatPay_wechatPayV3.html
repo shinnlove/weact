@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weact.css" /><!--新版式的css样式-->
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/wechatpaystyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>微信安全支付</title>
+</head>
+
+<body>
+	<div align="center">
+    	<div class="safepaytitle">
+        	<div class="titledeco"></div>
+        	<div class="safeok"></div>
+            <div class="payfont">微信支付</div>
+        </div>
+    	<hr class="hr_microshop4" />
+    	<div class="enterprise">{$einfo.wechat_account} {$einfo.wechat_name}</div>
+        <hr class="hr_microshop4" />
+        <div class="paycontent">
+        	<ul>
+            	<li>
+                	<div class="textlabel">商品</div>
+                	<div class="textinfo">微信支付订单</div>
+                </li>
+                <li>
+                	<div class="textlabel">交易单号</div>
+                	<div class="textinfo">{$payinfo.body}</div>
+                </li>
+                <li>
+                	<div class="textlabel">交易时间</div>
+                	<div class="textinfo">{$payinfo.time_start}</div>
+                </li>
+                <li>
+                	<div class="textlabel">当前状态</div>
+                	<div class="textinfo paystatus">等待支付</div>
+                </li>
+            </ul>
+        </div>
+        <hr class="hr_microshop4" />
+		<div class="totalprice">
+        	<div class="pricereal">￥ {$payinfo.visual_fee} 元</div>
+        </div>
+        <hr class="hr_microshop4" />
+        <div class="payconfirm">
+        	<a id="btn_submit" href="javascript:;" class="large ui-color-button green" onclick="callpay()">立即支付</a>
+        </div>
+        <div class="lay_footer qb_tac qb_fs_s mod_mb15">
+            <div class="fn_copyright">
+                <div class="mod_color_comment fn_copyright_agreement ui-fz-x-small ui-ta-c">
+                	<a href="#">Powered By WeAct</a>
+                </div>
+                <div class="mod_color_comment fn_copyright_text">Copyright &copy; 2014 WeAct.<br/>All Rights Reserved. </div>
+                <div class="mod_color_comment fn_copyright_text">微动公司 版权所有</div>
+            </div>
+        </div><!-- lay_footer结束div -->
+	</div>
+
+<script type="text/javascript">
+// 应该要有成功回调地址和失败回调地址
+// 调用微信JS api 支付
+var redirecturi = '{$redirecturi}'; // 微信支付后回跳地址
+function jsApiCall() {
+	WeixinJSBridge.invoke('getBrandWCPayRequest', {$jsApiParameters}, function(res) {
+		WeixinJSBridge.log(res.err_msg);
+		if(res.err_msg == "get_brand_wcpay_request:ok") {
+			scscms_alert("支付成功!", "ok", "", 2); // 处理支付成功
+		} else {
+			scscms_alert("您不满足支付条件或取消支付，稍后可重新发起支付!", "warn", "", 3); // 统一处理取消和失败
+		}
+		setTimeout(function(){
+			window.location.href = redirecturi+'?code='+res.err_code+'&desc='+res.err_desc+'&msg='+res.err_msg;
+		}, 3000);
+	});
+}
+
+function callpay() {
+	if (typeof WeixinJSBridge == "undefined") {
+		if (document.addEventListener) {
+			document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+		} else if (document.attachEvent) {
+			document.attachEvent('WeixinJSBridgeReady', jsApiCall);
+			document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+		}
+	} else {
+		jsApiCall(); // 调起微信支付
+	}
+}
+</script>
+</body>
+</html>

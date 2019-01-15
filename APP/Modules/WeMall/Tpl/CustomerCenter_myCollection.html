@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css?v=1.0.0" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>我的收藏</title>
+<style type="text/css">
+.products-list { padding-top: 10px; }
+</style>
+</head>
+
+<body>
+	<!-- 收藏商品部分 begin -->
+	<section class="products-list">
+		<ul class="x-clearfix"></ul>
+	</section>
+	<!-- 收藏商品部分 end -->
+	
+	<!-- 没有收藏 begin -->
+	<section class="noResult fn-hide">
+		<span class="search">没有收藏记录</span>
+	</section>
+	<!-- 没有收藏 end -->
+	
+	<div class="loadingBox wbox fn-hide"><a href="javascript:;">正在加载中···</a></div>
+	<div class="no-more fn-hide">已显示全部</div>
+	
+	<input type="hidden" id="noTalking" />
+	
+	<div class="clearfix"></div>
+	
+<!-- 收藏夹 js arttemplate begin -->
+<script type="text/html" id="collectiontpl">
+{{each collectionlist as e i}}
+	<li class="mask" data-cid="{{e.collection_id}}">
+		<div class="item-list">
+			<div class="img">
+				<a href="{{e | productDetailURL}}"><img src="{{e.macro_path}}" /></a>
+			</div>
+			<div class="des">
+				<p class="tit">{{if e.is_feature}}<b>精选</b>{{else if e.is_new}}<b>新品</b>{{else if e.is_preferential}}<b>特价</b>{{/if}}<a href="{{e | productDetailURL}}">{{e.product_name}}</a></p>
+				{{if e.original_price && e.current_price < e.original_price}}
+				<p class="other-info">￥{{e.current_price}}</p>
+				<p class="price"><del>￥{{e.original_price}}</del></p>
+				{{else}}
+				<!-- <span class="fc-red fw-bold">¥{{e.current_price}}</span> -->
+				<span class="fc-red fw-bold">¥{{e.current_price}}</span>
+				<del class="block white">→</del>
+				{{/if}}
+				<p class="more openFav"></p>
+			</div>
+			<div class="cover"><div data-id="{{e.product_id}}" class="fav faved">已收藏</div></div>
+		</div>
+	</li>
+{{/each}}
+</script>
+<!-- 收藏夹 js arttemplate end -->
+
+<script type="text/javascript">
+var eid = "{$eid}", 				// 商家编号
+	sid = "{$sid}", 				// 分店编号
+	curpage = "{:U('WeMall/Store/storeIndex', array('sid' => $sid), '')}", // 当前页
+	hasMoreData = true, 			// 本js模块全局变量：后续是否还有数据
+	isLoadingData = false, 			// 本js模块全局变量：本模块正在请求数据标记
+	nextstart = 0, 					// 页面默认下一次请求开始的数据位置
+	requestCollectionURL = "{:U('WeMall/CustomerCenter/queryCollection', '', '')}", // 收藏夹请求分页
+	deleteCollectionURL = "{:U('WeMall/CustomerRequest/deleteCollection', '', '')}", // 删除收藏请求地址
+	jsondata = '{$collectionjson}'; // 打开页面一屏collectionjson信息
+	
+// 页面初始化函数
+$(function(){
+	// 第一次直出渲染模板
+	var collectionlist = $.parseJSON(window.jsondata); // 解析页面的json数据（不管是带了反斜杠，还是没有反斜杠，都可以解析json数据） 
+	var tmpl = template('collectiontpl', collectionlist.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+	var collectionListObj = $('.products-list ul'); 	// 抓取class为products-list的ul，定义为collectionListObj对象
+	if (tmpl == '{Template Error}') {
+		tmpl = ""; // 置空tmpl
+		$(".noResult").removeClass("fn-hide").find(".search").html("好像出了点问题，请联系管理员。"); // 如果渲染模板出错，更换样式
+	} else if (tmpl == "") {
+		tmpl = ""; // 置空tmpl
+		$(".noResult").removeClass("fn-hide").find(".search").html("收藏夹空空如也，快去逛逛吧。"); // 如果渲染模板为空，更换样式
+		$(".search").append('<div><a href="'+curpage+'" class="btn btn-red" style="display:inline-block;background:#e04241;">立即去添加</a></div>');
+	}
+	collectionListObj.html(tmpl);						// 渲染成功就把模板渲染的信息写入
+	window.nextstart = collectionlist.nextstart;		// 下一页开始
+	
+	// 向上推（到底部才加载）与向下拉（zepto不是很敏感）
+	$(window).scroll(function() {
+		var scrollh = document.body.scrollHeight; // 网页正文全文高
+		var clienth = document.documentElement.clientHeight; // 网页可见区域高度
+		var scrollt = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop; // 网页被卷去的高
+		var limitheight = 30; // 触碰屏幕的距离底部（增加到30px，预留一下）
+		if (scrollt + clienth + limitheight >= scrollh && !isLoadingData && hasMoreData) {
+			isLoadingData = true;
+			getCollection('drag'); // 由本模块内的init方法来调用getCollection方法上推加载下一页
+		}
+		scrollPosition = $(window).scrollTop();
+	}).swipeDown(function(){
+		if (! isLoadingData && document.body.scrollTop <= 1) {
+            isLoadingData = true;
+            getCollection('pull', 0);			// 由本模块内的init方法来调用getCollection方法下拉刷新
+        }
+	});
+	
+	// 生成DOM结构事件
+	
+	// 打开喜欢层
+	$(".openFav").click(function(){
+		$(this).closest(".item-list").find(".cover").show();
+	});
+	
+	// 取消收藏
+	$(".cover .fav").click(function(e){
+		var _t = $(this), cid = _t.closest(".mask").data("cid"); // 取当前商品的id编号
+		var params = { 
+				sid : sid, // 分店编号
+				cid : cid // 收藏夹编号
+		};
+		$.post(deleteCollectionURL, params, function(result){
+			if (result.errCode == 0) {
+				_t.removeClass("faved").text("已取消收藏");
+				setTimeout(function() {
+					_t.closest(".mask").hide(300);
+				}, 1000);
+			} else if (result.errCode == 20001) {
+				var curpage = "{:U('WeMall/CustomerCenter/myCollection', array('sid' => $sid), '')}";
+				window.location.href = "{:U('WeMall/GuestMall/login', array('sid' => $sid), '')}?from="+curpage;
+			} else {
+				mobileAlert(result.errMsg); // 弹出错误信息
+				return false;
+			}
+		},"json");
+	});
+	
+	// 喜欢收藏的遮罩层点击，隐藏遮罩（没点中收藏心的情况）
+	$(".cover").click(function(e){
+		e.stopPropagation(); // 阻止事件传播
+		if (e.target == this) {
+			$(this).hide();
+		}
+		return false;
+	});
+	
+});
+
+// 分页请求收藏夹函数
+function getCollection(action, nextstart) {
+	// Step1：定义请求参数
+	var start = 0; // 定义起始页为0
+	if (typeof nextstart == 'undefined') {
+		start = window.nextstart; // 如果没有定义nextStart下一页数据，就用window.nextStart这个值
+	} 
+	var url = requestCollectionURL + "?eid=" + eid + "&sid=" + sid + "&nextstart=" + start; // 分页请求数据的地址
+	
+	// Step2：根据不同的请求方式
+	switch (action) {
+		case 'pull':
+			$('.no-more').addClass("fn-hide"); // 默认已显示全部的div隐藏
+			break;
+		case 'drag':
+			// 如果是上推操作
+			MLoading.show('加载中');
+			$(".loadingBox").removeClass("fn-hide");
+			break;
+		default:
+			MLoading.show('加载中');
+			$(".loadingBox").removeClass("fn-hide");
+			break;
+	}
+	hasMoreData = true; // 模块开始请求新数据的标记置为true
+	isLoadingData = true; // 模块设置为正在请求数据
+	
+	var params = {
+			eid : eid,
+			sid : sid,
+			nextstart : start
+	}
+	// Step3：请求并且完成界面不同显示
+	$.post(url, params, function(result){
+		
+		$(".loadingBox").addClass("fn-hide"); // 正在加载中隐藏
+		MLoading.hide(); // 隐藏等待刷新框
+		isLoadingData = false; // 本模块正在loading数据的状态变为false
+		
+		if (result.errCode == 0) {
+			var collectionListObj = $('.products-list ul'); 	// 抓取class为products-list的ul，定义为collectionListObj对象
+			
+			if (action == 'pull') {
+				// 如果加载数据的动作是下拉，则有新收藏可能已经更新，需要清空原来的
+				collectionListObj.html('');
+				var tmpl = template('collectiontpl', result.data); // 使用result的data数据渲染art模板引擎得到渲染后的html结构
+				if (tmpl == '{Template Error}') {
+					tmpl = ""; // 如果渲染模板出错，置空tmpl
+					$(".noResult").removeClass("fn-hide").find(".search").html("好像出了点问题，请联系管理员。"); // 如果渲染模板为空，更换样式
+				} else if (tmpl == "") {
+					tmpl = ""; // 置空tmpl
+					$(".noResult").removeClass("fn-hide").find(".search").html("收藏夹空空如也，快去逛逛吧。"); // 如果渲染模板为空，更换样式
+				}
+				collectionListObj.html(tmpl); // 写入新html数据
+			} else {
+				// 上推加载下一页的处理
+				var tmpl = template('collectiontpl', result.data); // 使用result的data数据渲染art模板引擎得到渲染后的html结构
+				if (tmpl == '{Template Error}') {
+					tmpl = ''; // 如果渲染失败，则html置空
+				}
+				collectionListObj.append(tmpl); // 在文档尾追加新html数据
+				
+				// 如果返回的json数据的data字段的threadList字段里无数据，就不再加载任何数据
+				if (result.data.collectionlist.length == 0) {
+					hasMoreData = false; // 模块不在加载数据中
+					$('.no-more').removeClass("fn-hide"); // 显示所有数据
+				}
+			}
+			window.nextstart = nextstart = result.nextstart; // 将下一页数据给到nextStart，同时给到window.nextStart
+			// 至此，一次pull或者drag操作所有DOM元素与结构、特效变更结束
+		} else {
+			// 出错的话，模块也不请求数据
+			mobileAlert("加载收藏夹商品列表失败，网络繁忙，请稍后再试！");
+			return false; // errCode不为0，有错误码，表示请求数据失败
+		}
+	}, 'json');
+}
+</script>
+</body>
+</html>

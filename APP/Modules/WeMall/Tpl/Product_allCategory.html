@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/prosearchfav.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>商品分类</title>
+<style>
+body { padding-top: 40px; }
+.allCat { display: block; height: 40px; line-height: 40px; border-bottom: solid 1px #e4e4e4; font-weight: bold; font-size: 15px;}
+.s-options { position: fixed; top: 0; z-index: 105;}
+</style>
+</head>
+
+<body>
+	<section class="s-options">
+		<ul class="s-items static">
+			<li><a href="{:U('WeMall/Store/storeIndex', array('sid' => $sid), '')}"><span>店铺精选</span></a><hr></li>
+			<li><a class="curr" href="javascript:;"><span>商品分类</span></a><hr></li>
+			<li><a href="{:U('WeMall/CustomerCenter/myCenter', array('sid' => $sid), '')}"><span>我的账户</span></a><hr></li>
+		</ul>
+	</section>
+	
+	<div class="searchBox stock">
+		<form action="{:U('WeMall/Product/productList', array('sid' => $sid), '')}" class="wbox">
+			<div class="wbox-1 cont">
+				<input type="search" class="search" name="keyword" placeholder="搜索店内的商品" /> 
+				<button type="submit" class="s-btn"></button>
+			</div>
+			<button type="reset" class="s-cancel fn-hide">取消</button>
+		</form>
+	</div>
+	
+	<div class="searchCover fn-hide">
+		<ul class="history"></ul><!-- 历史搜索列表 -->
+	</div>
+	
+	<div class="stockList"></div><!-- 商品分类列表 -->
+	
+	<!-- <a href="{:U('WeMall/Cart/shoppingCart', array('sid' => $sid), '')}" class="linkNeedLogin toShoppingCart"></a>
+	<a href="javascript:;" id="gotoTalk" class="toAskSales sales"></a> -->
+	
+<!-- 商品类别列表 js arttemplate begin -->
+<script type="text/html" id="cascadenavtpl">
+{{each navlist as e i}}
+	<section class="categoryItem">
+		<div class="wbox family">
+			<div class="wbox-1">{{e.nav_name}}</div>
+			<a data-id="{{e.nav_id}}" href="{{e | productListURL}}" class="block fw-nom fc-red">查看全部</a>
+		</div>
+		<ul class="">
+			{{each e.children as t j}}
+				<li class="item">
+					<a href="{{t | productListURL}}">{{t.nav_name}} ({{t.nav_product_count}}) </a>
+				</li>
+			{{/each}}
+		</ul>
+	</section>
+{{/each}}
+</script>
+<!-- 商品类别列表 js arttemplate end -->
+
+<script type="text/javascript">
+var eid = '{$eid}', // 商家编号 
+	sid = '{$sid}', // 分店编号
+	curpage = "{:U('WeMall/Store/storeIndex', array('sid' => $sid), '')}", // 当前位置
+	loginurl = "{:U('WeMall/GuestMall/login', array('sid' => $sid), '')}", // 登录地址
+	navlistjson = '{$navlistjson}'; // 导航与商品数量的json信息
+
+// 页面初始化函数
+$(function(){
+	
+	// 第一次直出渲染模板
+	var navproductlist = $.parseJSON(window.navlistjson); // 解析页面的json数据（不管是带了反斜杠，还是没有反斜杠，都可以解析json数据） 
+	var tmpl = template('cascadenavtpl', navproductlist); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+	var navProductListObj = $('.stockList'); 		// 抓取class为stockList，定义为navProductListObj对象
+	if (tmpl == '{Template Error}') {
+		tmpl = ""; // 置空tmpl
+	}
+	navProductListObj.html(tmpl);					// 渲染成功就把模板渲染的信息写入
+	
+});
+</script>
+</body>
+</html>

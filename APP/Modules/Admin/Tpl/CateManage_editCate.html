@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/ueditor/themes/default/css/ueditor.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiColorButtonStyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/myUniformStyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ueditor/lang/zh-cn/zh-cn.js"></script>
+<title>编辑餐饮商品信息</title>
+</head>
+
+<body>
+    <form id="myCate" name="myCate" class="form-horizontal uniform" method="post" action="{:U('Admin/CateManageRequest/editCateConfirm')}" enctype="multipart/form-data" style="margin:0px; padding:10px;background:#fafafa;border:1px solid #DDD;min-width:800px;">
+        <div class="control-group">
+            <div class="controls controls-row"><h2>编辑餐饮商品</h2></div>
+            <div class="controls controls-row">
+				<font style="font-weight:bold; color:#666;">说明：</font><font style="color:highlight; line-height:22px;">带<span class="text-error">(*)</span>的为必填项</font><br />
+			</div>
+            
+        </div>
+        
+        <hr />
+        
+        <input type="hidden" id="c_id" name="c_id" value="{$cinfo.cate_id}" /><!-- 隐藏框：餐饮的id编号，可以让店铺按类别分文件夹 -->
+        
+        <div class="control-group">
+			<label class="control-label">
+            	餐饮类别<span class="text-error">(*)</span>： 
+            </label>
+            <div class="controls controls-row" style="margin-top:3px;">
+            	<select id="ctype_select" class="uniform myselected">
+            		<option value="-1">请选择餐饮类别</option>
+                    <option value="0">食品类</option>
+                    <option value="1">饮料类</option>
+                    <option value="2">其他类</option>
+                </select>
+			</div>
+            <input type="hidden" id="current_ctype" name="current_ctype" value="{$cinfo.cate_type}" /><!--当前餐饮商品的类别-->
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	菜品分类<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row"> 
+                <select id="nav_select" class="uniform myselected">
+                    <option value="-1">请选择菜品分类</option>
+                    <foreach name="nninfo" item="ni">
+                    	<option value="{$ni.nav_id}">{$ni.nav_name}</option>
+                    </foreach>
+                </select>&nbsp;&nbsp;注：选择前请在自定义导航设置中添加菜品分类导航。
+			</div>
+			<input type="hidden" id="current_nav" name="current_nav" value="{$cinfo.nav_id}" /><!--当前餐饮菜品分类-->
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	名称<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="c_name" name="c_name" placeholder="请填写餐饮商品名称" required value="{$cinfo.cate_name}" />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注：如麻婆豆腐、拿铁咖啡、鲜榨橙汁、凯撒大帝等。
+            </div>
+        </div>
+  		
+        <div class="control-group">
+			<label class="control-label">
+            	单位<span class="text-error">(*)</span>： 
+            </label>
+            <div class="controls controls-row" style="margin-top:3px;">
+            	<select id="unit_select" class="uniform myselected">
+                    <option value="0">份</option>
+                    <option value="1">杯</option>
+                    <option value="2">个</option>
+                    <option value="3">碗</option>
+                    <option value="4">支</option>
+                    <option value="5">斤</option>
+                    <option value="6">升</option>
+                    <option value="7">扎</option>
+                    <option value="8">瓶</option>  
+                    <option value="-1">自定义</option>                  
+                </select>
+			</div>
+            <input type="hidden" id="current_unit" name="current_unit" value="{$cinfo.unit}" /><!--当前商品的单位-->
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	单价<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="c_price" name="c_price" placeholder="请填写商品单价" required value="{$cinfo.price}" />&nbsp;(元)
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	会员价<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="mem_price" name="mem_price" placeholder="请填写商品会员价" required value="{$cinfo.member_price}" />&nbsp;(元)
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	辣等级： 
+            </label>
+            <div class="controls controls-row" style="margin-top:3px;">
+            	<select id="hlevel_select" class="uniform myselected">
+                    <option value="-1">与辣不相关</option>
+                    <option value="0">不辣</option>
+                    <option value="1">微辣</option>
+                    <option value="2">中辣</option>
+                    <option value="3">重辣</option>
+                    <option value="4">麻辣</option>
+                </select>&nbsp;&nbsp;注：可选择商品的辣味等级，与辣不相关的产品可以不选择。
+			</div>
+            <input type="hidden" id="current_hlevel" name="current_hlevel" value="{$cinfo.hot_level}" />
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	推荐等级： 
+            </label>
+            <div class="controls controls-row" style="margin-top:3px;">
+            	<select id="rmd_level_select" class="uniform myselected">
+                    <option value="0">不做推荐</option>
+                    <option value="1">一星推荐</option>
+                    <option value="2">二星推荐</option>
+                    <option value="3">三星推荐</option>
+                    <option value="4">四星推荐</option>
+                    <option value="5">五星推荐</option>
+                </select>
+			</div>
+            <input type="hidden" id="current_rmd_level" name="current_rmd_level" value="{$cinfo.recommend_level}" /><!--当前餐饮商品的推荐等级（人气指数）-->
+        </div>
+        
+  		<div class="control-group">
+			<label class="control-label">
+            	餐饮简介<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <textarea class="uniform mytextarea" id="brief_des" name="brief_des" placeholder="请填写餐饮商品简介" maxlength="50" required />{$cinfo.brief_description}</textarea>
+            </div>
+            <div class="controls controls-row" style="margin-top:5px;">
+            	温馨提示：此处添加餐饮商品简介(限50字以内，不含图片)。
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label"> 
+				封面图片<span class="text-error">(*)</span>：
+			</label>
+			<div class="controls">
+				<input type="text" class="uniform myinput" id="macro_image_path" name="macro_image_path" placeholder="请上传一张图片作为该餐饮商品的封面。" value="{$cinfo.macro_path}" /><!-- 上传真实路径 -->
+				<input type="hidden" class="uniform myinput" id="micro_image_path" name="micro_image_path" value="{$cinfo.micro_path}" /><!-- 隐藏的缩略图路径 -->
+				<input type="hidden" id="originalchange" name="originalchange" value="{$cinfo.macro_path}" /><!-- 隐藏的封面图片是否变更的标志 -->
+				<br />
+				<div class="btn">
+					<span style="font-size:12px;">添加附件:</span>
+					<input type="file" name="macro_image" class="uniform" />
+			    </div>
+			    <div class="info-tip controls-row">温馨提示：推荐最佳封面尺寸（比例）：300*300像素，品质100KB，png格式最佳。</div>
+			    <div class="preview">
+			        <img src="{$cinfo.micro_path}" id="macroimgpreview" style="width:150px;" alt="" />
+			    </div>
+			 </div>
+		</div>
+        
+		<div class="control-group">
+            <label class="control-label">
+				详细描述：
+            </label> 
+            <div class="controls controls-row">
+                <div class="ueditorContainer" id="description">
+                    <script id="container" type="text/plain" style="width:605px;height:300px;margin:0px;"></script>
+                </div>
+            </div>
+        </div>
+        
+         <div class="control-group">
+            <label class="control-label" for="enableMulti">是否新品：</label>
+            <div class="controls controls-row" style="margin-top:5px;">
+                <input type="checkbox" class="uniform" id="is_new" name="is_new" />&nbsp;&nbsp;注：若添加的餐饮商品为新品，则勾选。
+            </div>
+        </div>
+        
+        <div class="form-actions no-margin" style="margin-bottom:0px; background:#fafafa;">
+            <a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">提交</a>
+            &nbsp;&nbsp;
+            <a id="resetbtn" class="large ui-color-button blue" href="javascript:void(0)">重置</a>
+            <a href="javascript:history.go(-1);">
+                <img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/images/goback.png" />
+            </a>
+        </div> 
+	</form>
+    
+<script type="text/javascript">
+var uploadUrl = "{:U('Admin/CateManageRequest/cateImgUpload', '', '')}"; // 提交封面图片的地址
+var cinct = '{$cinfo.cate_type}';
+var cinni = '{$cinfo.nav_id}';
+var cincn = '{$cinfo.cate_name}';
+var cinun = '{$cinfo.unit}';
+var cinpr = '{$cinfo.price}';
+var cimpr = '{$cinfo.member_price}';
+var cinhl = '{$cinfo.hot_level}';
+var cinrl = '{$cinfo.recommend_level}';
+var cinbd = '{$cinfo.brief_description}';
+var cinde = '{$cinfo.description}';
+var cinmp = '{$cinfo.macro_path}';
+var cinmi = '{$cinfo.micro_path}';
+var checkStatus = '{$cinfo.is_new}';
+
+$(function (){
+	//抓取餐饮商品所有DOM对象
+	var cid = $("#c_id");
+	var cts = $("#ctype_select");
+	var cct = $("#current_ctype");
+	var nsl = $("#nav_select");						
+	var cun = $("#current_nav");
+	var cna = $("#c_name");
+	var usl = $("#unit_select");							
+	var cuu = $("#current_unit");	
+	var cpr = $("#c_price");							
+	var mpr = $("#mem_price");
+	var hls = $("#hlevel_select");		
+	var chl = $("#current_hlevel");
+	var rls = $("#rmd_level_select");
+	var crl = $("#current_rmd_level");
+	var brd = $("#brief_des");
+	var orc = $("#originalchange");
+	var mip = $("#macro_image_path");
+	var mii = $("#micro_image_path");
+	var ine = $("#is_new");
+	
+	$(".uniform").uniform();				                  //初始化uniform，文本框的uniform格式化
+	
+	var ue = UE.getEditor('container',{
+		imageUrl : "{:U('Admin/CateManageRequest/ueImageUpload')}?cate_id={$cinfo.cate_id}",
+		initialContent : cinde,
+		imagePath : "__ROOT__"
+	});
+	
+	//监听ueditor图片插入，插入前设置图片宽度（不让图片太大）。
+	ue.addListener('beforeInsertImage', function (t, arg) {
+		 for(i=0; i<arg.length; i++){
+			 arg[i].width = 580;							  //防止手机上显示超出屏幕
+		 }
+	});
+	
+	checkBoxInit();											//单选框初始化
+	
+	// 初始化餐饮相关下拉选择框
+	cts.val(cct.val());
+	cts.change();
+	
+	nsl.val(cun.val());
+	nsl.change();
+	
+	usl.val(cuu.val());
+	usl.change();
+	
+	hls.val(chl.val());
+	hls.change();
+	
+	rls.val(crl.val());
+	rls.change();
+	
+	//餐饮类别更改事件
+	cts.change(function(){
+		cct.val($(this).val());				                  //获取option选中的大类的value，并写入input里
+	});
+	
+	//菜品分类更改事件
+	nsl.change(function(){
+		cun.val($(this).val());				                  //获取option选中的大类的value，并写入input里
+	});	
+	
+	//餐饮商品单位更改事件
+	usl.change(function(){
+		cuu.val($(this).val());				                  //获取option选中的单位的value，并写入input里
+	});
+	
+	//餐饮商品辣等级更改		
+	hls.change(function(){
+		chl.val($(this).val());				                  //获取option选中的辣等级的value，并写入input里
+	});
+	
+	//餐饮商品推荐等级更改事件
+	rls.change(function(){
+		crl.val($(this).val());				                  //获取option选中的推荐等级的value，并写入input里
+	});
+	
+	$("#submitbtn").click(function(){
+		var des = UE.getEditor('container').getContent();	  		//抓取餐饮商品描述的UEditor框内容
+		
+		//Step1: 判断餐饮类别是否选择
+		if(cct.val() == '-1'){
+			$.messager.alert('温馨提示', '请选择餐饮商品类别!', 'warning', function(){
+	  			cct.focus();
+	  		});
+	  		return
+		}
+		
+		//Step2: 判断餐饮菜品分类是否选择
+		if(cun.val() == '-1'){
+			$.messager.alert('温馨提示', '请选择餐饮菜品分类，若暂无分类请先前往自定义导航设置菜品分类导航!', 'warning', function(){
+	  			cun.focus();
+	  		});
+	  		return
+		}
+		
+		//Step3: 判断餐饮名称是否填写
+		if(cna.val() == ''){
+			$.messager.alert('温馨提示', '请填写餐饮商品名称!', 'warning', function(){
+				cna.focus();
+	  		});
+	  		return
+		}
+		
+		//Step4: 判断餐饮商品单价是否合法输入
+		if(cpr.val() == ''){
+			$.messager.alert('温馨提示', '请填写餐饮商品单价!', 'warning', function(){
+				cpr.focus();
+	  		});
+	  		return
+		}else{
+			if(isNaN(cpr.val())|| cpr.val() < 0){
+				$.messager.alert('温馨提示', '请正确输入价格!<br />单价金额为数字且不小于0!', 'warning', function(){
+					cpr.focus();											
+				});
+				return;
+			}
+		}
+	  		
+		//Step5: 判断会员价是否合法输入
+		if ( mpr.val() == ''){
+			$.messager.alert('温馨提示', '请填写商品会员价!', 'warning', function(){
+	  			mpr.focus();
+	  		});
+	  		return
+		}else{
+			if(isNaN(mpr.val())|| mpr.val() < 0){
+				$.messager.alert('温馨提示', '请正确输入价格!<br />会员价金额为数字且不小于0!', 'warning', function(){
+					mpr.focus();											
+				});
+				return;
+			}
+		}
+		
+		//Step6: 判断餐饮简介是否填写，若填写是否小于50字
+		if(brd.val() == '' || brd.val() == null){
+			$.messager.alert('温馨提示', '请填写餐饮商品简介!', 'warning', function(){
+				brd.focus();
+	  		});
+	  		return
+		}
+		
+		//Step7：判断封面图片是否上传
+		if(mip.val() == "" || mip.val() == null){
+			$.messager.alert('温馨提示', '请上传餐饮商品封面图片!', 'warning');
+	  		return
+		}
+		
+		//验证通过，post提交
+		$.messager.confirm('温馨提示', '确定提交所编辑的餐饮商品信息吗?', function(result){
+			if(result) {
+				var checked = 0;
+				var temp = $('.checker span').attr("class");
+				if(temp=="checked"){
+					checked = 1;
+				}
+				
+				var flag = 1;     //封面图片变更标记，默认1表示变更了
+				if(orc.val() == mip.val()){
+					flag = 0;
+				}
+				var usoptions=$("#unit_select option:selected");
+			$.post("{:U('Admin/CateManageRequest/editCateConfirm')}", 
+				{ 
+					cid : cid.val(),
+					cct : cct.val(),
+					cun : cun.val(),
+					cna : cna.val(),
+					cuu : cuu.val(),
+					una : usoptions.text(),
+					cpr : cpr.val(),
+					mpr : mpr.val(),
+					chl : chl.val(),
+					crl : crl.val(),
+					brd : brd.val(),
+					mip : mip.val(),
+					mii : mii.val(),
+					des : des,
+					checked: checked,
+					flag : flag
+					}, function(result){
+						if (result.errCode == 0) {
+							$.messager.alert('温馨提示', '餐饮商品信息更新成功！', 'info', function() {
+								window.location.href = "{:U('Admin/CateManage/cateView')}";
+							})
+						} else {
+							$.messager.alert('温馨提示', '餐饮商品信息更新失败！' + result.errMsg, 'error');
+						}
+					},'json');
+				}
+			});
+			return
+		});
+	// 表单重置按钮
+	$("#resetbtn").click(function(){
+			$.messager.confirm('温馨提示', '确定重置吗?', function(result){
+				if(result) {
+					//重置所有
+					cct.val(cinct);
+					cts.val(cinct);
+					cts.change();
+					
+					cun.val(cinni);
+					nsl.val(cinni);
+					nsl.change();
+					
+					cna.val(cincn);
+					
+					cuu.val(cinun);
+					usl.val(cinun);
+					usl.change();
+					
+					cpr.val(cinpr);
+					mpr.val(cimpr);
+					
+					chl.val(cinhl);                       //清空辣等级选项
+					hls.val(cinhl);
+					hls.change();
+					
+					crl.val(cinrl);                       //清空推荐等级选项
+					rls.val(cinrl);
+					rls.change();
+					
+					brd.val(cinbd);
+					mip.val(cinmp);                       //清空封面图片
+					mii.val(cinmi);
+					$(".uploader span[class='filename']").html('未选择文件');
+					$('#macroimgpreview').attr('src', cinmi);
+					UE.getEditor('container').setContent(cinde);
+					checkBoxInit();
+				}
+			});
+	});
+	// js创建XHR上传图片并获得图片预览路径
+	$("#myCate").find("input[name=macro_image]").on("change", function(e){
+		var loadfun = $(this).attr("name")+"complete";
+		e = e || window.event;
+        var fileList = e.target.files;
+        if (!fileList.length) return false; // 没有文件返回 
+        
+		//创建表单数据
+		var formData = new FormData();
+		formData.append('picture', fileList[0]); //图片文件数据附加到name为pic中
+		// 创建 ajax 请求
+        var xhr = new XMLHttpRequest();
+		xhr.addEventListener("load", window[loadfun], false);		//监听XMLHttpRequest的load事件，使用模块内complete函数响应（注意使用window[某js函数名]）
+		xhr.addEventListener("abort", abort, false);				//监听XMLHttpRequest的abort事件，使用模块内abort函数响应
+		xhr.addEventListener("error", failed, false);				//监听XMLHttpRequest的error事件，使用模块内failed函数响应
+		xhr.open("POST", uploadUrl + '?time=' + Date.now());		//打开静态POST提交，并加上时间作为参数，打开一个GET请求
+		xhr.send(formData);											//使用ajax请求 发送表单
+	});
+});
+
+//封面图片上传完成时的函数
+var macro_imagecomplete = function (e) {
+    var result = $.parseJSON(e.target.response);			//解析服务器返回的json数据为result
+    if (result.errCode == 0) {
+    	$("input[name=macro_image_path]").val(result.data.uploadpath); // 没有经过组装的原始路径
+    	$("input[name=micro_image_path]").val(result.data.nowifipath); // 缩略图路径
+        $("#macroimgpreview").attr("src", result.data.nowifipath); // 预览写入图片路径
+    } else {
+        $.messager.alert("温馨提示", result.errMsg, "error");
+    }
+}
+
+// 上传失败函数
+var failed = function() {
+	// to do sth.
+	$.messager.alert("温馨提示", "上传文件失败！", "error");
+}
+
+// 上传终止函数
+var abort = function() {
+	// to do sth.
+	$.messager.alert("温馨提示", "上传已取消！", "error");
+}
+
+//单选框初始化函数
+function checkBoxInit(){
+	if(checkStatus==1){
+		document.getElementById("is_new").checked=true;
+		$('.checker span').attr("class","checked");
+	}else{
+		document.getElementById("is_new").checked=false;
+		$('.checker span').attr("class","");
+	}
+}
+</script>
+</body>
+</html>

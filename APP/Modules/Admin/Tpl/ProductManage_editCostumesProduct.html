@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/ueditor/themes/default/css/ueditor.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uploadstyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/webuploader.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/diywebuploader.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ueditor/lang/zh-cn/zh-cn.js"></script>
+<title>编辑商品</title>
+</head>
+
+<body>
+    <form name="myform" class="form-horizontal uniform" method="post" action="">
+        <div class="control-group">
+            <div class="controls controls-row"><h2>编辑商品信息</h2></div>
+            <div class="controls controls-row">
+                <font style="font-size:1.17em; font-weight:bold; color:highlight;">注意：带<span class="text-error">(*)</span>的为必填项</font>
+            </div>
+        </div>
+        
+        <hr />
+        
+        <input type="hidden" id="product_id" name="product_id" value="{$productinfo.product_id}" /><!-- 隐藏框：服装商品的id编号 -->
+        <input type="hidden" id="product_type" name="product_type" value="{$productinfo.product_type}" /><!-- 隐藏框：商品类别，2是服装，5是公共商品 -->
+        <!-- <input type="hidden" id="original_price" name="original_price" value="{$productinfo.current_price}" />隐藏框：商品原来的价格，当前的价格给到原价、现价可能被更改 -->
+        
+        <div class="control-group">
+			<label class="control-label">
+            	商品分类<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input id="ct" class="easyui-combotree" />
+                <input id="nav_id" type="hidden" name="nav_id" />
+            </div>
+            <div class="controls controls-row">
+            	<p class="rose-warning">只能在最后一级分类下添加商品，价格的单位是元（人民币）。</p>
+            </div>
+        </div>
+  		
+        <div class="control-group">
+			<label class="control-label">
+            	商品编号<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myselectedinput" id="product_number" name="product_number" value="{$productinfo.product_number}" placeholder="请输入商品编号" required />
+            </div>
+            <div class="controls controls-row">
+            	填写条形牌上编号，英文、数字或两者组合（32位以内）。
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	商品名称<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myselectedinput" id="product_name" name="product_name" value="{$productinfo.product_name}" placeholder="请输入商品名称" required />
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	适用性别<span class="text-error">(*)</span>： 
+            </label>
+            <div class="controls controls-row" style="margin-top:3px;">
+            	<select id="sex_selected" class="uniform myselected">
+                    <option value="-1">请选择</option>
+                    <option value="0">通用</option>
+                    <option value="1">男</option>
+                    <option value="2">女</option>
+                </select>
+			</div>
+            <input type="hidden" id="sex" name="sex" value="{$productinfo.sex}" />
+        </div>
+        
+        <div class="control-group">
+        	<input value="FsG2ANgqJtUs5cGlVOlsk8R7kCee" type="hidden" id="productPicUrl" name="productPicUrl" />
+        	<label class="control-label">
+            	封面图片<span class="text-error">(*)</span>： 
+            </label>
+            <div class="controls controls-row">
+            	<input type="hidden" id="CSRFtoken" name="CSRFtoken" value="123456" /><!-- 图片防注入提交 -->
+				<input type="hidden" id="latest-upload" name="latest-upload" value="" /><!-- 最后一次上传的图片id -->
+				<div class="webUploaderWrap ui-sortable" id="previewUploadWrap">
+        			<div id="previewUpload" class="webuploader-container">点击上传</div>
+    			</div>
+            </div>
+            <div class="controls controls-row">
+            	<p></p>
+            	<p class="infotip">温馨提示：推荐最佳封面尺寸（比例）：300px × 300px，jpeg、png格式，大小100KB以内。</p>
+                <p class="rose-warning">特别注意：已上传图片若要变更请直接删除；最多可以上传5张封面图片备用，但是默认随机显示一张。</p>
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="control-group">
+			<label class="control-label">
+            	SKU属性表：
+            </label>
+            <div class="controls controls-row">
+            	<img src="__PUBLIC__/images/platformimage/skutitle.png" alt="" />
+                <table id="proColorSizeTable" class="pro-color-size" border="1" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <th>颜色</th>
+                        <th>尺寸</th>
+                        <th>尺码排序</th>
+                        <th>库存量</th>
+                        <th>条形码</th>
+                        <th>操作</th>
+                    </tr>
+                    <tr>
+                        <td class="sku-head"><input id="proColor" value="" /></td>
+                        <td class="sku-head"><input id="proSize" value="" /></td>
+                        <td class="sku-head"><input id="order" value="" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" /></td>
+                        <td class="sku-head"><input id="proAmount" value="" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')" /></td>
+                        <td class="sku-head"><input id="proCode" value="" /></td>
+                        <td><a class="addBtn" href="javascript:addSizeColor();">添加</a></td>
+                    </tr>
+                    <!-- 编辑页面打印已有sku信息 -->
+                    <!-- 特别注意，TP页面变量相减一定要用综括号，.号不能识别 -->
+                    <foreach name="skuinfo" item="sku">
+					<tr>
+						<td><input type="text" name="colorList[]" class="colorList" value="{$sku.product_color}" readonly /></td>
+						<td><input type="text" name="sizeList[]" class="sizeList" value="{$sku.product_size}" readonly /></td>
+						<td><input type="text" name="orderList[]" class="orderList" value="{$sku.size_order}" oninput="numbervalidate(this);" /></td>
+						<td><input type="text" name="amountList[]" class="amountList" value="{$sku[storage_amount]-$sku[sell_amount]}" oninput="numbervalidate(this);" /></td>
+						<td><input type="text" name="codeList[]" class="codeList" value="{$sku.bar_code}" /></td>
+						<td><a class="delBtn" href="javascript:;" onclick="delSizeColor(this);">删除</a></td>
+					</tr>
+					</foreach>
+                </table>
+            </div>
+            <div class="controls controls-row" style="margin-top:10px;">
+            	<p class="infotip">温馨提示：已添加SKU颜色、尺寸不能修改；尺码排序、库存可以编辑，提交之后可以看到总库存相应变化，请务必检查库存量无误；</p>
+                <p class="rose-warning">特别注意：颜色请不要使用“+”连接（如黄色+黑色）；尺码排序和库存量只能输入数字；</p>
+                <p class="rose-warning">失误处理：如不小心误删或误操作SKU信息，请不要提交，直接取消或返回。</p>
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	卖出量：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myselectedinput" id="sell_amount" name="sell_amount" placeholder="0" value="{$productinfo.sell_amount}" required readonly />
+            </div>
+            <div class="controls controls-row">
+            	卖出量不能编辑，真实反映线上销售量。
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	总库存：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myselectedinput" id="current_storage" name="current_storage" placeholder="0" value="" required readonly />
+            </div>
+            <div class="controls controls-row">
+            	总库存量不能编辑，为所有在售规格数量总和。
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="control-group">
+			<label class="control-label">
+            	质地：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myselectedinput" id="material" name="material" value="{$productinfo.material}" placeholder="可填写商品质地" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	吊牌价<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myselectedinput" id="original_price" name="original_price" value="{$productinfo.original_price}" placeholder="请填写商品吊牌价" required /> &nbsp;元
+            </div>
+            <div class="controls controls-row">
+            	精确到两位小数（如：1000.00）
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	现售价<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myselectedinput" id="current_price" name="current_price" value="{$productinfo.current_price}" placeholder="请填写当前商品出售价格" required /> &nbsp;元
+            </div>
+            <div class="controls controls-row">
+            	精确到两位小数（如：1000.00）
+            </div>
+            <div class="controls controls-row">
+            	<p class="infotip">温馨提示：若现售价低于吊牌价，会显示成 原价：<del>500</del>；现价：300；若现售价和吊牌价相同，只显示一个价格。</p>
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="control-group">
+			<label class="control-label">
+            	计量单位<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myselectedinput" id="units" name="units" value="{$productinfo.units}" placeholder="请填写商品计量单位" required />
+            </div>
+            <div class="controls controls-row">
+            	商品的计量单位（如：个、件、只、条等）
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	商品重量<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myselectedinput" id="weight" name="weight" value="{$productinfo.weight}" placeholder="请填写商品重量" required /> &nbsp;千克（kg）
+            </div>
+            <div class="controls controls-row">
+            	<p class="rose-warning">特别注意：重量单位是千克，如果不免邮，将自动根据邮费模板计算邮费</p>
+            </div>
+        </div>
+        
+         <!-- 邮费规则 begin -->
+        <div class="control-group">
+			<label class="control-label">
+            	邮费规则<span class="text-error">(*)</span>： 
+            </label>
+            <div class="controls controls-row" style="margin-top:3px;">
+            	<select id="express-selected" class="uniform myselected">
+                    <option value="0" selected="selected">免邮</option>
+                    <option value="1">使用邮费模板</option>
+                </select>
+			</div>
+            <div class="controls controls-row">
+            	<p class="infotip">温馨提示：如果使用邮费模板，将会对本商品按邮费模板结算邮费，请确认已添加邮费规则。</p>
+            </div>
+            <input type="hidden" id="express-input" name="express-input" value="{$productinfo.postage}" /><!-- 初始化的时候请选择 -->
+        </div>
+        <!-- 邮费规则 end -->
+        
+        <!-- 物流方式选择 begin -->
+        <div class="control-group">
+			<label class="control-label">
+            	物流方式<span class="text-error">(*)</span>： 
+            </label>
+            <div class="controls controls-row" style="margin-top:3px;">
+            	<select id="logistics-selected" class="uniform myselected">
+                    <option value="0" selected="selected">不限制（可快递、可到店自提）</option>
+                    <option value="1">仅限到店自提</option>
+                </select>
+			</div>
+            <div class="controls controls-row">
+            	<p class="infotip">温馨提示：到店自提商品将不会开启邮费结算，不能和邮费商品一起结算。</p>
+            </div>
+            <input type="hidden" id="logistics-input" name="logistics-input" value="{$productinfo.logistics}" /><!-- 初始化的时候请选择 -->
+        </div>
+        <!-- 物流方式选择 end -->
+        
+        <hr />
+        
+        <!-- 导购提成部分 begin -->
+        <div class="control-group">
+			<label class="control-label">
+            	导购提成<span class="text-error">(*)</span>： 
+            </label>
+            <div class="controls controls-row" style="margin-top:3px;">
+            	<select id="cut-profit-select" class="uniform myselected">
+                    <option value="0" selected="selected">默认不提成（0%）</option>
+                    <option value="1">按百分比</option>
+                    <option value="2">按固定金额</option>
+                </select>
+                <span class="cut-percent hide">
+                	<input type="text" class="uniform myamountinput" id="profit-percent" name="profit-percent" value="" placeholder="百分比" required /> &nbsp;%
+                </span>
+                <span class="cut-amount hide">
+                	<input type="text" class="uniform myamountinput" id="profit-amount" name="profit-amount" value="" placeholder="金额" required /> &nbsp;元 &nbsp;( 不能超过商品价格 )
+                </span>
+			</div>
+            <input type="hidden" id="cut-profit-input" name="cut-profit-input" value="{$productinfo.cutprofit_type}" /><!-- 初始化的时候请选择 -->
+        </div>
+        <!-- 导购提成部分 end -->
+        
+        <!-- 购买返分部分 begin -->
+        <div class="control-group">
+			<label class="control-label">
+            	购买返分<span class="text-error">(*)</span>： 
+            </label>
+            <div class="controls controls-row" style="margin-top:3px;">
+            	<select id="buy-return-selected" class="uniform myselected">
+                    <option value="0" selected="selected">购买不获得积分</option>
+                    <option value="1">购买可获得积分</option>
+                </select>
+                <span class="buy-return hide">
+                	<input type="text" class="uniform myamountinput" id="return-amount" name="return-amount" value="" placeholder="返还积分" required /> &nbsp;分 &nbsp;( 百分比请乘以价格折合成数量 )
+                </span>
+			</div>
+            <input type="hidden" id="buy-return-input" name="buy-return-input" value="{$presenttype}" /><!-- 初始化的时候请选择 -->
+        </div>
+        <!-- 购买返分部分 end -->
+        
+        <!-- 积分换购 begin -->
+        <div class="control-group">
+			<label class="control-label">
+            	积分换购<span class="text-error">(*)</span>： 
+            </label>
+            <div class="controls controls-row" style="margin-top:3px;">
+            	<select id="score-buy-selected" class="uniform myselected">
+                    <option value="0" selected="selected">不允许积分换购</option>
+                    <option value="1">允许积分换购</option>
+                </select>
+                <div class="score-buy hide">
+                	<hr />
+                	<div>
+                		<input type="checkbox" class="uniform" id="level1_switch" name="level1_switch" onchange="openLevelSwitch(1)" />一级会员专区换购所需积分<input type="text" class="uniform myamountinput" id="level1_score" name="level1_score" value="{$levelinfo[0].score_amount}" placeholder="多少积分"  disabled/>分
+                	</div>
+                	<div>
+                		<input type="checkbox" class="uniform" id="level2_switch" name="level2_switch" onchange="openLevelSwitch(2)"  />二级会员专区换购所需积分<input type="text" class="uniform myamountinput" id="level2_score" name="level2_score" value="{$levelinfo[1].score_amount}" placeholder="多少积分" disabled/>分
+                	</div>
+                	<div>
+                		<input type="checkbox" class="uniform" id="level3_switch" name="level3_switch" onchange="openLevelSwitch(3)"  />三级会员专区换购所需积分<input type="text" class="uniform myamountinput" id="level3_score" name="level3_score" value="{$levelinfo[2].score_amount}" placeholder="多少积分" disabled />分
+                	</div>
+                </div>
+			</div>
+            <div class="controls controls-row">
+            	该商品是否允许在积分商城进行换购。<span class="rose-warning">特别注意：只有勾选了才表示该商品在积分商城相应会员专区出售，会员级数越大表示级别越高。</span>
+            </div>
+            <hr />
+            <input type="hidden" id="score-buy-input" name="score-buy-input" value="{$productinfo.score_type}" /><!-- 初始化的时候请选择 -->
+        </div>
+        <!-- 积分换购 end -->
+        
+		<div class="control-group">
+            <label class="control-label">
+                图文详情描述：
+            </label> 
+            <div class="controls controls-row">
+                <div class="ueditorContainer" id="instruction">
+                    <script id="container" type="text/plain" name="html_description"></script>
+                </div>
+            </div>
+        </div>
+        
+        <hr />
+                    
+		<div class="handle-action">
+            <a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">提交</a>
+            &nbsp;&nbsp;
+            <a id="cancelbtn" class="large ui-color-button blue" href="javascript:history.go(-1);">取消</a>
+            <a href="javascript:history.go(-1);">
+                <img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/images/goback.png" />
+            </a>
+        </div> 
+	</form>
+    
+<script type="text/javascript">
+//定义webuploader的js位置、flash位置和上传处理图片的服务器地址（必须）
+var webuploaderjspath = "__PUBLIC__/js/webuploader.min.js", webuploaderswf = "__PUBLIC__/js/Uploader.swf", serverhandleimg = '{:U("Admin/ProductManageRequest/productImageUpload", "", "")}';
+
+// 如果是编辑页面，这里$imagelist会有值
+var _previewIdJson = "{$editimgidlist}".split(","); // 切割imgidlist
+var _previewJson = "{$editimglist}".split(","); // 切割imagelist
+var imgcount = _previewIdJson.length;
+
+if(_previewJson[0] == "") {
+	_previewIdJson = []; // id 也为空
+	_previewJson = []; // 如果没有图片，置空数组
+}
+
+//回显已上传商品图片（编辑页面），页面ready马上立即执行一次这个函数
+
+;(function(){
+	var _previewImageDOM = ""; // 定义预览图片的DOM
+	$.each(_previewJson,function(i,e){
+		_previewImageDOM += '<div class="webuploader-container loaded" data-oriimgid="'+_previewIdJson[i]+'" data-url="'+e+'" style="background-image: url('+e+'?imageView2/2/w/80/h/80);"><span class="cancel">×</span></div>';
+		if (i == 4) {
+			$("#previewUpload").css("display", "none");
+		}
+	});
+	// 删除旧商品图片的处理
+	$("#previewUploadWrap").prepend(_previewImageDOM);
+})();
+
+var product_id = '{$productinfo.product_id}'; // 商品编号
+var p_type = '{$productinfo.product_type}';
+var p_sex = '{$productinfo.sex}'; // 性别
+var p_sellamount = {$productinfo.sell_amount};
+var p_totalstorage = {$productinfo.storage_amount};
+var	p_currentstorage = p_totalstorage - p_sellamount; // 实际库存
+var p_logistics = '{$productinfo.logistics}';
+var p_postage = '{$productinfo.postage}';
+var p_cuttype = '{$productinfo.cutprofit_type}';
+var p_cutamount = '{$productinfo.cutprofit_amount}';
+var p_prescore = '{$productinfo.present_score}';
+var p_stype = '{$productinfo.score_type}';
+var p_samount = '{$productinfo.score_amount}';
+var p_sprice = '{$productinfo.score_price}';
+var	p_htmldescription = {$productinfo.html_description}; // 图文描述（html代码要在后台经过json_encode转义，才能保证不出错）
+
+var level1_open = '{$levelinfo[0].is_use}';
+var level2_open = '{$levelinfo[1].is_use}';
+var level3_open = '{$levelinfo[2].is_use}';
+if(level1_open){
+	$('#level1_switch').attr('checked',true);
+	$('#level1_switch').val('open');
+	$('#level1_score').removeAttr('disabled');
+}
+if(level2_open){
+	$('#level2_switch').attr('checked',true);
+	$('#level2_switch').val('open');
+	$('#level2_score').removeAttr('disabled');
+}
+if(level3_open){
+	$('#level3_switch').attr('checked',true);
+	$('#level3_switch').val('open');
+	$('#level3_score').removeAttr('disabled');
+}
+
+$(function(){
+	$("#current_storage").val(p_currentstorage); // 写入实际库存
+	$(".uniform").uniform(); // 魔幻表单初始化
+	
+	// 初始化ueditor及内部内容
+	var ue = UE.getEditor('container',{
+		imageUrl : "{:U('Admin/ProductManageRequest/ueditorImageUpload')}?product_id="+product_id,
+		imagePath : "__ROOT__",
+		initialContent : p_htmldescription,
+		//autoFloatEnabled: false // 浮动锁定编辑工具栏
+	});
+	
+	// 监听ueditor图片插入，插入前设置图片宽度（不让图片太大）。
+	ue.addListener('beforeInsertImage', function (t, arg) {
+		 for(i=0; i<arg.length; i++){
+			 arg[i].width = 300; // 模拟手机上显示大小（手机端有js控制图片大小）
+		 }
+	});
+	
+	// 初始化上级树节点
+	$('#ct').combotree({
+		url: "{:U('Admin/ProductManageRequest/getAllCategory')}?type="+p_type,
+		valueField: 'id',
+		textField: 'text',
+		onLoadSuccess: function() {
+			var nav_id = '{$productinfo.nav_id}';
+			var nav_name = '{$productinfo.nav_name}';
+			$('#ct').combotree('setText', nav_name);
+			$('#nav_id').val(nav_id);
+		},
+		onSelect: function(rec) {
+			$('#nav_id').val(rec.id);
+		}
+	});
+	
+	// 对previewUpload使用拓展方法multiImgUploader
+	$("#previewUpload").multiImgUploader({
+	    length : 5, // 最多5张图
+	    resultInput : $("#latest-upload") // 上传完写入最后一次上传图片input框中
+	});
+	
+	//初始化所有下拉选择框
+	$("#sex_selected").val(p_sex); // 处理性别选择框
+	$("#sex_selected").change(); // 更换一下值
+	
+	$("#express-selected").val(p_postage);
+	$("#express-selected").change();
+	
+	$("#logistics-selected").val(p_logistics);
+	$("#logistics-selected").change();
+	
+	//初始化导购是否从商品中获得提成
+	if(p_cuttype == 1){
+		$(".cut-percent").removeClass("hide");
+		$("input[name=profit-percent]").val(p_cutamount); // 初始化读取原百分比内容
+		
+	}else if(p_cuttype == 2){
+		// 按照固定金额提成，固定金额框出现
+		$(".cut-amount").removeClass("hide");
+		$("input[name=profit-amount]").val(p_cutamount); // 初始化读取原固定金额内容
+	}
+	$("#cut-profit-select").val(p_cuttype);
+	$("#cut-profit-select").change();
+	
+	//初始化购买是否返还积分
+	if(p_prescore ==0 || p_prescore == null){
+		$("#buy-return-selected").val(0);
+		$("#buy-return-selected").change();
+	}else {
+		$("#buy-return-selected").val(1);
+		$("#buy-return-selected").change();
+		$(".buy-return").removeClass("hide");
+		$("input[name=return-amount]").val(p_prescore);//初始化读取原来设置的返还积分
+	}
+	//初始化是否允许积分兑换
+	if(p_stype == 1){
+		$(".score-buy").removeClass("hide");
+		$("input[name=score-need]").val(p_samount);
+		$("input[name=money-need]").val(p_sprice);
+	}
+	$("#score-buy-selected").val(p_stype);
+	$("#score-buy-selected").change();
+	
+	// 性别选择框更改事件绑定
+	$("#sex_selected").change(function(){
+		$("#sex").val($(this).val()); // 把变更的值写入提交框中
+	});
+	
+	// 邮费规则选择框更改事件
+	$("#express-selected").change(function(){
+		$("#express-input").val($(this).val()); // 把变更的值写入提交框中
+	});
+	
+	// 物流方式选择框更改事件
+	$("#logistics-selected").change(function(){
+		$("#logistics-input").val($(this).val()); // 把变更的值写入提交框中
+	});
+	
+	// 导购提成选择变更
+	$("#cut-profit-select").change(function(){
+		var type = $(this).val(); // 获取所选择的提成方式：0为不提成，1为提成百分比，2为提成固定金额
+		if (type == 1 && p_cuttype == 1) {
+			// 按照百分比提成，百分比框出现
+			$(".cut-percent").removeClass("hide");
+			$(".cut-amount").addClass("hide");
+			$("input[name=profit-percent]").val(p_cutamount);
+		} else if(type == 1 && p_cuttype != 1){
+			$(".cut-percent").removeClass("hide");
+			$(".cut-amount").addClass("hide");
+			$("input[name=profit-percent]").val("");
+		} else if (type == 2  && p_cuttype != 2) {
+			// 按照固定金额提成，固定金额框出现
+			$(".cut-percent").addClass("hide");
+			$(".cut-amount").removeClass("hide");
+			$("input[name=profit-amount]").val("");
+		} else if(type == 2  && p_cuttype == 2){
+			$(".cut-percent").addClass("hide");
+			$(".cut-amount").removeClass("hide");
+			$("input[name=profit-amount]").val(p_cutamount);
+		} else{
+			// 不提成，两种框都消失
+			$(".cut-percent").addClass("hide");
+			$(".cut-amount").addClass("hide");
+		}
+		$("#cut-profit-input").val(type); // 写入input框中
+	});
+	
+	// 购买允许积分返还方式选择变更
+	$("#buy-return-selected").change(function(){
+		var type = $(this).val(); // 获取所选择的提成方式：0为不返还积分，1为返还积分
+		if (type == 1 && p_prescore !=0 && p_prescore != null) {
+			// 如果购买可获得积分
+			$(".buy-return").removeClass("hide"); // 移除样式
+			$("input[name=return-amount]").val(p_prescore); // 置原返还积分内容
+		} else if(type == 1 && (p_prescore ==0 || p_prescore == null)){
+			$(".buy-return").removeClass("hide"); // 移除样式
+			$("input[name=return-amount]").val(""); // 清空原返还积分内容
+		} else{
+			// 购买不获得积分
+			$(".buy-return").addClass("hide"); // 增加样式
+		}
+		$("#buy-return-input").val(type); // 写入input框中
+	});
+	
+	// 本商品允许积分换购选择变更
+	$("#score-buy-selected").change(function(){
+		var type = $(this).val(); // 获取所选择的提成方式：0为不返还积分，1为返还积分
+		if (type == 1 && p_stype == 1) {
+			// 如果购买可获得积分
+			$(".score-buy").removeClass("hide"); // 移除样式
+			$("input[name=score-need]").val(p_samount);
+			$("input[name=money-need]").val(p_sprice);
+		} else if(type == 1 && p_stype == 0){
+			$(".score-buy").removeClass("hide"); // 移除样式
+			$("input[name=score-need]").val("");
+			$("input[name=money-need]").val("");
+		} else {
+			// 购买不获得积分
+			$(".score-buy").addClass("hide"); // 增加样式
+		}
+		$("#score-buy-input").val(type); // 写入input框中
+	});
+	
+	var delimglist = [];
+	$(".webuploader-container").on("click",".cancel",function(e){
+		var deltempid = $(this).parent().attr("data-oriimgid");
+		delimglist.push(deltempid);
+    });
+	
+	// 提交按钮
+	$("#submitbtn").click(function(){
+		var nav_id = $("#nav_id"); 					// 获取当前商品添加在哪个导航的编号nav_id
+		var navname=$("#ct").combotree("getText");
+		var product_number = $("#product_number"); 	// 获取商品编号
+		var product_name = $("#product_name"); 		// 获取商品名称
+		var sex = $("#sex"); 						// 获取性别
+		var material = $("#material");				// 质地
+		var original_price = $("#original_price");	// 吊牌价
+		var current_price = $("#current_price"); 	// 获取商品价格
+		var unit = $("#units"); 					// 商品计量单位
+		var weight = $("#weight"); 					// 商品重量
+		var expinp = $("#express-input"); 			// 商品邮费规则
+		var loginp = $("#logistics-input"); 		// 物流配送方式
+		var cutinp = $("#cut-profit-input"); 		// 导购提成方式
+		var proper = $("#profit-percent"); 			// 导购提成百分比
+		var proamo = $("#profit-amount"); 			// 导购提成金额
+		var buyinp = $("#buy-return-input"); 		// 购买商品是否回赠积分
+		var retamo = $("#return-amount"); 			// 回赠积分数
+		var scoinp = $("#score-buy-input"); 		// 是否允许积分兑换
+		//var sconee = $("#score-need"); 				// 允许积分兑换需积分数，微动1.6临时改动
+		//var monnee = $("#money-need"); 				// 允许积分兑换所需金钱数，微动1.6临时改动
+		var level1_switch = $("#level1_switch");
+		var level1_score = $("#level1_score");
+		var level2_switch = $("#level2_switch");
+		var level2_score = $("#level2_score");
+		var level3_switch = $("#level3_switch");
+		var level3_score = $("#level3_score"); 
+		var description = UE.getEditor('container').getContent();	  		//抓取描述的UEditor框内容
+		
+		// 输入规则性检测
+		// 检查导航分类选择
+		if (nav_id.val() == '-1') {
+			$.messager.alert('温馨提示', '请选择商品所属分类！', 'warning', function(){
+				$(".combo input[class='combo-text']").focus(); // 聚焦导航类别combobox，但是好像没啥效果
+			});
+			return;
+		} 
+		// 检查商品编号
+		if (product_number.val() == "" || product_number.val() == "undefined" || product_number.val() == null) {
+			$.messager.alert('温馨提示', '请填写商品编号！', 'warning', function(){
+				product_number.focus(); // 聚焦商品编号框
+			});
+			return;
+		} 
+		// 检查商品名称
+		if (product_name.val() == "" || product_name.val() == "undefined" || product_name.val() == null) {
+			$.messager.alert('温馨提示', '请填写商品名称！', 'warning', function(){
+				product_name.focus(); // 聚焦商品名称框
+			});
+			return;
+		} 
+		// 检查性别选择框
+		if (sex.val() == '-1') {
+			$.messager.alert('温馨提示', '请选择商品适用性别，男装OR女装、通用！', 'warning', function(){
+				sex.focus(); // 聚焦性别选择
+			});
+			return;
+		}
+		
+		// 检查SKU是否被添加到列表中
+		var waitcolor = $("#proColor").val().trim(); // 获取当前待加入SKU列表中的颜色
+		var waitsize = $("#proSize").val().trim(); // 获取当前待加入SKU列表中的尺码
+		var waitorder = $("#order").val().trim(); // 获取当前待加入SKU列表中的顺序
+		var waitamount = $("#proAmount").val().trim(); // 获取当前待加入SKU列表中的数量
+		var waitcode = $("#proCode").val().trim(); // 获取当前待加入SKU列表中的条形码，不是必填项
+		if (waitcolor != "" || waitsize != "" || waitorder != "" || waitamount != "" || waitcode!= "") {
+			$.messager.alert('温馨提示', '请点击添加按钮将商品SKU信息加入列表中再提交！', 'warning', function(){
+				$(".addBtn").focus(); // 聚焦添加框
+			});
+			return false;
+		}
+		// 检测商品的SKU数量
+		if (getSKULength() == 0) {
+			$.messager.alert('温馨提示', '你还没有添加商品的颜色尺码和数量！', 'warning', function(){
+				$("#proColor").focus(); // 聚焦添加框
+			});
+			return false;
+		}
+		// 检查商品吊牌价是否填写
+		if (original_price.val() == "" || original_price.val() == null || isNaN(original_price.val())) {
+			$.messager.alert('温馨提示', '请正确输入商品吊牌价：数字格式！', 'warning', function(){
+				original_price.focus(); // 乱输入价格，则聚焦商品价格框
+			});
+			return;
+		}
+		// 检查商品价格
+		if (current_price.val() == "" || current_price.val() == null) {
+			$.messager.alert('温馨提示', '请输入商品价格！', 'warning', function(){
+				current_price.focus(); // 乱输入价格，则聚焦商品价格框
+			});
+			return;
+		}
+		// 检查商品价格输入正确性
+		if (isNaN(current_price.val())) {
+			$.messager.alert('温馨提示', '请正确填写商品价格！', 'warning', function(){
+				current_price.focus(); // 乱输入价格，则聚焦商品价格框
+			});
+			return;
+		} else {
+			current_price.val(parseFloat(current_price.val())); // 转变商品价格为浮点数
+		}
+		// 检测商品的计量单位
+		if (unit.val() == "" || unit.val() == "undefined" || unit.val() == null) {
+			$.messager.alert('温馨提示', '请输入商品计量单位！', 'warning', function(){
+				unit.focus();
+			});
+			return;
+		}
+		
+		// 检测商品的重量
+		if (weight.val() == "" || weight.val() == "undefined" || weight.val() == null) {
+			$.messager.alert('温馨提示', '请输入商品重量！', 'warning', function(){
+				weight.focus();
+			});
+			return;
+		}else if(isNaN(weight.val())){
+			$.messager.alert('温馨提示', '请正确填写商品重量为数字格式！', 'warning', function(){
+				weight.focus();
+			});
+			return;
+		}
+		// 检测导购从商品中获得提成
+		if (cutinp.val() == "1") {
+			if (proper.val() == "" || proper.val() == "undefined" || proper.val() == null || isNaN(proper.val())) {
+				$.messager.alert('温馨提示', '请输入导购提成百分比：0~100的数字！', 'warning', function(){
+					proper.focus();
+				});
+				return;
+			}
+		}else if(cutinp.val() == "2"){
+			if (proamo.val() == "" || proamo.val() == "undefined" || proamo.val() == null || isNaN(proper.val())) {
+				$.messager.alert('温馨提示', '请输入导购提成固定金额：0~商品当前价格的数字！', 'warning', function(){
+					proamo.focus();
+				});
+				return;
+			}
+		}
+		// 检测商品的回赠积分
+		if(buyinp.val() == "1"){
+			if (retamo.val() == "" || retamo.val() == "undefined" || retamo.val() == null) {
+				$.messager.alert('温馨提示', '请输入用户购买本商品获得的积分数！', 'warning', function(){
+					retamo.focus();
+				});
+				return;
+			}
+		}
+		// 检测商品的积分兑换
+		if(scoinp.val() == "1"){
+			/* if (sconee.val() == "" || sconee.val() == "undefined" || sconee.val() == null || isNaN(sconee.val())) {
+				$.messager.alert('温馨提示', '请输入商品参与积分兑换所需积分数：大于0的数字！', 'warning', function(){
+					sconee.focus();
+				});
+				return;
+			}
+			if (monnee.val() == "" || monnee.val() == "undefined" || monnee.val() == null || isNaN(monnee.val())) {
+				$.messager.alert('温馨提示', '请输入商品参与积分兑换所需金钱数：大于0的数字！', 'warning', function(){
+					monnee.focus();
+				});
+				return;
+			} */
+			//这里的level_switch.val()=='off'表示已勾选
+			if (level1_switch.val()=='off'&&(level1_score.val() == "" || level1_score.val() == "undefined" || level1_score.val() == null || isNaN(level1_score.val()))){
+				$.messager.alert('温馨提示', '请输入一级会员专区换购所需积分数：大于0的数字！', 'warning', function(){
+					level1_score.focus();
+				});
+				return;
+			}
+			if (level2_switch.val()=='off'&&(level2_score.val() == "" || level2_score.val() == "undefined" || level2_score.val() == null || isNaN(level2_score.val()))){
+				$.messager.alert('温馨提示', '请输入一级会员专区换购所需积分数：大于0的数字！', 'warning', function(){
+					level2_score.focus();
+				});
+				return;
+			}
+			if (level3_switch.val()=='off'&&(level3_score.val() == "" || level3_score.val() == "undefined" || level3_score.val() == null || isNaN(level3_score.val()))){
+				$.messager.alert('温馨提示', '请输入一级会员专区换购所需积分数：大于0的数字！', 'warning', function(){
+					level3_score.focus();
+				});
+				return;
+			}
+		}
+		
+		var imglength = $("#previewUploadWrap .loaded").length;
+		if (imglength == 0) {
+			$.messager.alert('温馨提示', '你还没有添加商品封面图片，至少上传一张！', 'warning');
+			return false;
+		}
+		
+		// 确认是否所编辑的商品信息
+		$.messager.confirm('温馨提示', '确认商品信息无误并发布这款商品？', function(cf) {
+			if (cf) { 
+				$.post('{:U("Admin/ProductManageRequest/checkModifyProduct", "", "")}', {
+					nav_id: nav_id.val(),
+					nav_type : p_type,
+					type: 'edit'
+				}, function(result) {
+					if (result.errCode == 0) {
+						var imgidlist = [];
+						var imgpathlist = [];
+						var colorList = [];
+						var sizeList = [];
+						var orderList = [];
+						var amountList = [];
+						var codeList = [];
+						$("#previewUploadWrap .loaded").each(function(){
+							var imagePath = $(this).attr("data-imgpath");
+							var imageId = $(this).attr("data-imgid");
+							imgidlist.push(imageId);
+							imgpathlist.push(imagePath);
+						});
+						$(".colorList").each(function(){
+							colorList.push($(this).val());
+						});
+						$(".sizeList").each(function(){
+							sizeList.push($(this).val());
+						});
+						$(".orderList").each(function(){
+							orderList.push($(this).val());
+						});
+						$(".amountList").each(function(){
+							amountList.push($(this).val());
+						});
+						$(".codeList").each(function(){
+							codeList.push($(this).val());
+						});
+						var params = {
+								product_id : product_id,
+								nav_id : nav_id.val(),
+								navname : navname,
+								product_type : p_type,
+								product_number : product_number.val(),
+								product_name : product_name.val(),
+								sex : sex.val(),
+								material : material.val(),
+								original_price : original_price.val(),
+								current_price : current_price.val(),
+								units : unit.val(),
+								weight : weight.val(),
+								expinp : expinp.val(),
+								loginp :loginp.val(),
+								cutinp : cutinp.val(),
+								proper : proper.val(),
+								proamo : proamo.val(),
+								scoinp : scoinp.val(),
+								
+								//sconee : sconee.val(),	//之前的换购所需积分
+								//monnee : monnee.val(),	//之前的换购所需金钱
+								//微动1.6新增6个字段
+								level1_switch : $('#level1_switch').is(':checked')?1:0,
+								level1_score : level1_score.val(),
+								level2_switch : $('#level2_switch').is(':checked')?1:0,
+								level2_score : level2_score.val(),
+								level3_switch : $('#level3_switch').is(':checked')?1:0,
+								level3_score : level3_score.val(),
+								
+								buyinp : buyinp.val(),
+								retamo : retamo.val(),
+								html_description : description,
+								imgidlist : imgidlist,
+								imgpathlist : imgpathlist,
+								colorList : colorList,
+								sizeList : sizeList,
+								orderList : orderList,
+								amountList : amountList,
+								codeList : codeList,
+								delimglist : delimglist
+						};
+		
+						$.post('{:U("Admin/ProductManageRequest/editCostumesConfirm"),"",""}',params,function(data){
+							if(data.errCode == 0){
+								window.location.href="{:U('Admin/ProductManage/ERPProductView')}";
+							}else{
+								$.messager.alert('温馨提示', '更新失败！'+data.errMsg, 'warning');
+							}
+						});
+						
+					} else {
+						$.messager.alert('温馨提示', '更新商品信息不满足条件！'+result.errMsg, 'warning');
+					}
+				},'json');
+			}
+		});
+	});
+});
+
+// 防止在输入非数字
+function numbervalidate(obj) {
+	var num = $(obj).val(); // 当前input排序框
+	num = num.replace(/\D/g,''); // 替换特殊字符
+	$(obj).val(num); // 重新把数字写进去
+}
+
+//检测某种颜色尺码是否已经存在
+function checkSizeColor(product_color, product_size) {
+	var flag = 0; // 默认不存在
+	$('.colorList').each(function() {
+		if ($(this).val().trim() == product_color) {
+			var pro_size = $(this).parent().next().children('input').val().trim();
+			if (product_size == pro_size) {
+				flag = 1;
+			}
+		}
+	});
+	return flag;
+}
+
+//增加颜色尺码
+function addSizeColor() {
+	var product_color = $('#proColor').val().trim(); // 获得要添加的商品颜色
+	var product_size = $('#proSize').val().trim(); // 获得要添加的商品尺寸
+	var product_amount = $('#proAmount').val().trim(); // 获得要添加的商品sku数量
+	var order = $('#order').val().trim(); // 获得该sku尺寸的排序（可能为空，若为空，直接默认为0）
+	var product_code = $('#proCode').val().trim(); // 获得要添加的商品条形码
+	
+	if (product_color == "" || product_color == "undefined" || product_color == null) {
+		$.messager.alert('温馨提示', '请输入SKU颜色！', 'warning', function(){
+			$('#proColor').focus(); // 聚焦商品颜色输入框
+		});
+		return false;
+	} else if (product_size == "" || product_size == "undefined" || product_size == null) {
+		$.messager.alert('温馨提示', '请输入SKU尺码！', 'warning', function(){
+			$('#proSize').focus(); // 聚焦商品尺码输入框
+		});
+		return false;
+	} else if (product_amount == "" || product_amount == "undefined" || product_amount == null) {
+		$.messager.alert('温馨提示', '请输入SKU库存量！', 'warning', function(){
+			$('#proAmount').focus(); // 聚焦商品库存输入框
+		});
+		return false;
+	} else {
+		if (checkSizeColor(product_color, product_size) == 1) {
+			$.messager.alert('温馨提示', '该种颜色尺码已经存在！', 'warning', function(){
+				$('#proColor').focus(); // 尺码颜色存在提示后聚焦颜色输入框
+			});
+			return false;
+		} else {
+			if (order == "" || order == "undefined" || order == null) {
+				order = 0; // 如果不输入顺序，默认order就是0
+			}
+			var html = '<tr>' 
+					+ '<td><input type="text" class="colorList" name="colorList[]" value="' + product_color + '" readonly /></td>' 
+					+ '<td><input type="text" class="sizeList" name="sizeList[]" value="' + product_size + '" readonly /></td>' 
+					+ '<td><input type="text" class="orderList" name="orderList[]" value="' + order + '" oninput="numbervalidate(this);" /></td>' 
+					+ '<td><input type="text" class="amountList" name="amountList[]" value="' + product_amount + '" oninput="numbervalidate(this);" /></td>' 
+					+ '<td><input type="text" class="codeList" name="codeList[]" value="' + product_code + '"/></td>'
+					+ '<td><a class="delBtn" href="javascript:" onclick="delSizeColor(this)">删除</a></td>' 
+					+ '</tr>';
+			$('#proColorSizeTable').append(html); // 将新增加的颜色尺码顺序追加到已有SKU表的最后
+			//修改当前库存总数量
+			var total_storage_amount = $('#current_storage').val();
+			total_storage_amount = parseInt(total_storage_amount) + parseInt(product_amount);
+			$('#current_storage').val(total_storage_amount);
+			$('#proColor').val(''); // 添加完后清空商品颜色输入框
+			$('#proSize').val(''); // 添加完后清空商品尺码输入框
+			$('#proAmount').val(''); // 添加完后清空商品SKU数量输入框
+			$('#order').val(''); // 添加完后清空商品SKU尺码排序输入框
+			$('#proCode').val('');
+		}
+	}
+}
+
+//删除颜色尺码
+function delSizeColor(obj) {
+	var product_amount = $(obj).parent().parent().find('.amountList').val(); // 找到a标签的父节点td的表头tr，然后找到里边的class="amountList"的input框，获取值
+	var total_storage_amount = $('#current_storage').val(); // 当前总库存数
+	total_storage_amount = parseInt(total_storage_amount) - parseInt(product_amount);
+	$('#current_storage').val(total_storage_amount); // 将减去的数量更改到总库存数里
+	$(obj).parent('td').parent('tr').remove(); // 移除DOMSKU节点
+}
+
+//获取商品颜色尺寸SKU数量
+function getSKULength() {
+	var length = 0;
+	$('.colorList').each(function() {
+		length++;
+	});
+	return length;
+}
+
+//是否开启会员专区开关,如果开启了对应的开关，就要输入对应的积分值
+function openLevelSwitch(level){
+	switch(level){
+	case 1:
+		//alert($('#level1_switch').val());
+		if($('#level1_switch').is(':checked')==true){
+			//$('#level1_switch').attr('checked',false);
+			$("#level1_score").attr('disabled',false);
+			$("#level1_score").attr('required','required');
+		}else{
+			
+			$("#level1_score").removeAttr('required');
+			$("#level1_score").attr('disabled',true);
+		}
+		
+		break;
+	case 2:
+		if($('#level2_switch').is(':checked')==true){
+			$("#level2_score").attr('disabled',false);
+			$("#level2_score").attr('required','required');
+		}else{
+			
+			
+			$("#level2_score").removeAttr('required');
+			$("#level2_score").attr('disabled',true);
+		}
+		break;
+	case 3:
+		if($('#level3_switch').is(':checked')==true){
+			$("#level3_score").attr('disabled',false);
+			$("#level3_score").attr('required','required');
+		}else{
+			$("#level3_score").removeAttr('required');
+			$("#level3_score").attr('disabled',true);
+		}
+		break;
+	}
+}
+</script>
+</body>
+</html>

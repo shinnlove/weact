@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<title>设置微信支付Version3</title>
+</head>
+
+<body>
+	<div class="widget">
+		<div class="widget-head">
+			<div class="pull-left">
+            	<span class="text-success">微信支付Version3</span> <span class="v3-open-status text-warning">已启用</span>
+			</div>
+            <div class="clearfix"></div>
+		</div>
+        
+		<div class="widget-content">
+			<div class="padd">
+				
+				<form id="myform" class="form-horizontal uniform" method="post" action="">
+			        <div class="control-group">
+			            <div class="controls controls-row"><h2>配置微信支付Version3</h2></div>
+			            <div class="controls controls-row">
+				        	<font style="font-weight:bold; color:#666;">说明：</font><font style="color:highlight; line-height:22px;">若不配置支付信息，商城将只能浏览商品，不能完成支付，带<span class="text-error">(*)</span>为必填信息！</font><br />
+							<font style="font-weight:bold; color:#666;">申请方式：</font><font style="color:highlight; line-height:22px;">微信支付必须认证的服务号方可申请，详询微信客服人员。</font><br />
+						</div>
+			        </div>
+			        
+			        <hr />
+								
+			        <div class="control-group success" style="margin-top:20px;">
+			            <label class="control-label"> JS API支付授权目录 </label>
+			            <div class="controls controls-row">
+			                <input type="text" class="uniform myinput" id="paymentauthorization" name="paymentauthorization" placeholder="请刷新页面，并将此链接复制到公众平台。"  value="http://www.we-act.cn/weact/Home/WeChatPay/" />
+			            </div>
+			        </div>
+			        
+			        <div class="control-group success">
+			            <label class="control-label"> JS API支付请求实例 </label>
+			            <div class="controls controls-row">
+			                <input type="text" class="uniform myinput" id="paymentrequests" name="paymentrequests" placeholder="请刷新页面，并将此链接复制到公众平台。"  value="http://www.we-act.cn/weact/Home/WeChatPay/webPayCall/e_id/{$appinfo.e_id}/" />
+			            </div>
+			        </div>
+			        
+			        <div class="control-group success">
+			            <label class="control-label"> Native原生支付回调URL </label>
+			            <div class="controls controls-row">
+			                <input type="text" class="uniform myinput" id="paymentcallback" name="paymentcallback" placeholder="请刷新页面，并将此链接复制到公众平台。"  value="http://www.we-act.cn/weact/Home/WeChatPay/nativeCallback/e_id/{$appinfo.e_id}/" />
+			            </div>
+			        </div>
+			        
+			        <div class="control-group success">
+			            <label class="control-label"> 维权通知URL </label>
+			            <div class="controls controls-row">
+			                <input type="text" class="uniform myinput" id="rightsnotice" name="rightsnotice" placeholder="请刷新页面，并将此链接复制到公众平台。"  value="http://www.we-act.cn/weact/Home/WeChatPay/guardLegalRight/e_id/{$appinfo.e_id}/" />
+			            </div>
+			        </div>
+			        
+			        <div class="control-group success">
+			            <label class="control-label"> 告警通知URL </label>
+			            <div class="controls controls-row">
+			                <input type="text" class="uniform myinput" id="warningnotice" name="warningnotice" placeholder="请刷新页面，并将此链接复制到公众平台。"  value="http://www.we-act.cn/weact/Home/WeChatPay/payInfoOrWarn/e_id/{$appinfo.e_id}/" />
+			            </div>
+			        </div>
+			        
+			        <div class="control-group hide" id="copyhintDiv">
+			            <div class="alert alert-info" style="margin-top: 5px;" id="copyhint"> </div>
+			        </div>
+			        
+			        <hr />
+			        
+			        <div class="control-group">
+						<label class="control-label"> 财付通商户号 <span class="text-error">(*)</span>
+						</label>
+						<div class="controls controls-row">
+							<input type="text" class="uniform myinput" id="mchid" name="mchid" placeholder="请输入商户财付通号MCHID" required value="{$secretinfo.mch_id}" />
+						</div>
+					</div>
+			        
+			        <div class="control-group">
+			            <label class="control-label">
+			                API支付密钥<span class="text-error">(*)</span>
+			            </label>
+			            <div class="controls controls-row">
+			                <input type="text" class="uniform myinput" id="paysignkey" name="paysignkey" placeholder="请输入财付通邮件中提供的paysignkey" required value="{$secretinfo.apikey}" />
+			            </div>
+			        </div>
+			        
+			        <div class="control-group">
+			        	<label class="control-label"> 
+							证书api_cert.p12：<span class="text-error">(*)</span>
+						</label>
+			            <div class="controls controls-row" data-id="1">
+			               	<input type="text" class="uniform myinput" id="apicertp12" name="apicertp12" placeholder="请选择要上传的证书apiclient_cert.p12" readonly required="required" value="{$secretinfo.cert_p12}" />
+			               	<br />
+			                <div class="btn">
+			                    <span style="font-size:12px;">选择文件:</span>
+			                    <input type="file" name="api_cert_p12" class="uniform" />
+			                </div>
+			            </div>
+			        </div>
+			        
+			        <div class="control-group">
+						<label class="control-label"> 
+							证书api_cert.pem：<span class="text-error">(*)</span>
+						</label>
+			            <div class="controls controls-row" data-id="2">
+			            	<input type="text" class="uniform myinput" id="apicertpem" name="apicertpem" placeholder="请选择要上传的证书apiclient_cert.pem" readonly required="required" value="{$secretinfo.sslcert_path}" />
+			            	<br />
+			                <div class="btn">
+			                    <span style="font-size:12px;">选择文件:</span>
+			                    <input type="file" name="api_cert_pem" class="uniform" />
+			                </div>
+			            </div>
+			        </div>
+			        
+			        <div class="control-group">
+			        	<label class="control-label"> 
+							证书api_key.pem：<span class="text-error">(*)</span>
+						</label>
+			            <div class="controls controls-row" data-id="3">
+			            	<input type="text" class="uniform myinput" id="apikeypem" name="apikeypem" placeholder="请选择要上传的证书apiclient_key.pem" readonly required="required" value="{$secretinfo.sslkey_path}" />
+			                <br />
+			                <div class="btn">
+			                    <span style="font-size:12px;">选择文件:</span>
+			                    <input type="file" name="api_key_pem" class="uniform" />
+			                </div>
+			            </div>
+			        </div>
+			        
+			        <div class="control-group">
+						<label class="control-label"> 
+							证书rootca.pem：<span class="text-error">(*)</span>
+						</label>
+			            <div class="controls controls-row" data-id="4">
+			            	<input type="text" class="uniform myinput" id="rootcapem" name="rootcapem" placeholder="请选择要上传的证书rootca.pem" readonly required="required" value="{$secretinfo.rootca_pem}" />
+			                <br />
+			                <div class="btn">
+			                	<span style="font-size:12px;">选择文件:</span>
+			                	<input type="file" name="rootca_pem" class="uniform" />
+			            	</div>
+			            </div>
+						<div class="controls controls-row" style="margin-top:10px;">
+			            	<p class="warning" style="color: #C06;">温馨提示：以上证书都在腾讯发送的财付通邮件里下载，或登录微支付财务平台下载。</p>
+			            </div>
+			        </div>
+			     
+			        <div class="control-group">
+			            <label class="control-label">开启微信V3支付</label>
+			            <div class="controls controls-row">
+			                <input type="checkbox" class="uniform" id="open_payv3" name="open_tenpay" />只有开启后，才能进行微支付
+			            </div>
+			        </div>
+			        
+			        <hr />
+			        
+			        <div class="handle-action">
+			            <a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">提交</a>
+			            &nbsp;&nbsp;
+			            <a id="resetbtn" class="large ui-color-button blue" href="javascript:void(0)">重置</a>
+			            <a href="javascript:history.go(-1);">
+			                <img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/images/goback.png" />
+			            </a>
+			        </div>
+				</form>
+				
+			</div><!--包裹form的div class="padd"的结束div-->
+
+		</div><!--widget-head结束div-->
+	</div><!--widget结束div-->
+
+<script type="text/javascript">
+var payv3open = {$appinfo.tenpay_open}; // 当前第三版支付开启状态
+
+var uploadUrl = "{:U('Admin/EnterpriseSetRequest/uploadCertHandle', '', '')}"; // 证书上传异步处理地址
+// 页面初始化函数
+$(function() {
+	$(".uniform").uniform(); // 初始化uniform表单
+	
+	if (payv3open == 3) {
+		$("#open_payv3").attr("checked", "checked"); // 自身选中
+		$("#open_payv3").parent().addClass("checked"); // uniform选中
+		
+		// 上面的字显示
+		$(".v3-open-status").removeClass("text-warning").addClass("text-success").html("已启用");
+	} else {
+		$(".v3-open-status").removeClass("text-success").addClass("text-warning").html("未启用");
+	}
+	
+	// 证书上传事件
+	$("#myform").on("change", "input[name=api_cert_p12], input[name=api_cert_pem], input[name=api_key_pem], input[name=rootca_pem]", function(e){
+		var loadfun = $(this).attr("name")+"complete";
+		e = e || window.event;
+        var fileList = e.target.files;
+        if (!fileList.length) return false; // 没有文件返回 
+        
+		//创建表单数据
+		var formData = new FormData();
+		formData.append('cert', fileList[0]); //图片文件数据附加到name为pic中
+		// 创建 ajax 请求
+        var xhr = new XMLHttpRequest();
+		xhr.addEventListener("load", window[loadfun], false);		//监听XMLHttpRequest的load事件，使用模块内complete函数响应（注意使用window[某js函数名]）
+		xhr.addEventListener("abort", abort, false);				//监听XMLHttpRequest的abort事件，使用模块内abort函数响应
+		xhr.addEventListener("error", failed, false);				//监听XMLHttpRequest的error事件，使用模块内failed函数响应
+		xhr.open("POST", uploadUrl + '?time=' + Date.now());		//打开静态POST提交，并加上时间作为参数，打开一个GET请求
+		xhr.send(formData);											//使用ajax请求 发送表单
+	}).on("click", "#submitbtn", function(){
+		// 抓取数据
+		var mid = $("#mchid");
+		var psk = $("#paysignkey");
+		var acp12 = $("#apicertp12");
+		var acpem = $("#apicertpem");
+		var akpem = $("#apikeypem");
+		var rcpem = $("#rootcapem");
+		if (mid.val() == "") {
+			$.messager.alert('温馨提示', '请输入微支付财付通商户号!', 'warning', function() {
+				mid.focus();
+			});
+			return;
+		} else if (psk.val() == "") {
+			$.messager.alert('温馨提示', '请输入财付通平台上的paysignkey!', 'warning', function() {
+				psk.focus();
+			});
+			return;
+		} else if(acp12.val() == "") {
+			$.messager.alert('温馨提示', '请选择apiclient_cert.p12证书!', 'warning', function() {
+				acp12.focus();
+			});
+			return;
+		} else if(acpem.val() == ""){
+			$.messager.alert('温馨提示', '请选择apiclient_cert.pem证书!', 'warning', function() {
+				acpem.focus();
+			});
+			return;
+		} else if(akpem.val() == ""){
+			$.messager.alert('温馨提示', '请选择apiclient_key.pem证书!', 'warning', function() {
+				akpem.focus();
+			});
+			return;
+		} else if(rcpem.val() == ""){
+			$.messager.alert('温馨提示', '请选择rootca.pem证书!', 'warning', function() {
+				rcpem.focus();
+			});
+			return;
+		}
+		// 是否开启点击
+		var checked = 0;
+		var temp = $('.checker span').attr("class");
+		if(temp=="checked"){
+			checked = 1;
+		}
+		
+		//验证通过，post提交
+		$.messager.confirm('温馨提示', '确定提交所配置的微支付信息吗?', function(cf){
+			if(cf) {
+				$.post("{:U('Admin/EnterpriseSetRequest/wechatPayV3Confirm', '', '')}", { 
+					mid : mid.val(),
+					psk : psk.val(),
+					acp12 : acp12.val(),
+					acpem : acpem.val(),
+					akpem : akpem.val(),
+					rcpem : rcpem.val(),
+					opennow : checked
+				}, function(result){
+						if(result.errCode == 0) {
+							$.messager.alert('温馨提示', '保存成功!', 'info');
+							setTimeout(function(){
+								window.location.reload(); // 页面刷新下
+							},1000);
+						} else {
+							$.messager.alert('温馨提示', '保存配置信息失败，'+result.errMsg, 'error');
+							return false;
+						}
+				}, 'json');
+			}
+		});
+		
+	});
+}); // end $(function){};
+
+//cert api_cert_p12 上传完成时的函数
+var api_cert_p12complete = function (e) {
+    var result = $.parseJSON(e.target.response);			//解析服务器返回的json数据为result
+    if (result.errCode == 0) {
+    	$("input[name=apicertp12]").val(result.data.cert_path); // 返回服务器端路径
+    } else {
+        $.messager.alert("温馨提示", result.errMsg, "error");
+    }
+}
+
+//cert api_cert_pem 上传完成时的函数
+var api_cert_pemcomplete = function (e) {
+    var result = $.parseJSON(e.target.response);			//解析服务器返回的json数据为result
+    if (result.errCode == 0) {
+    	$("input[name=apicertpem]").val(result.data.cert_path); // 返回服务器端路径
+    } else {
+        $.messager.alert("温馨提示", result.errMsg, "error");
+    }
+}
+
+//cert api_key_pem 上传完成时的函数
+var api_key_pemcomplete = function (e) {
+    var result = $.parseJSON(e.target.response);			//解析服务器返回的json数据为result
+    if (result.errCode == 0) {
+    	$("input[name=apikeypem]").val(result.data.cert_path); // 返回服务器端路径
+    } else {
+        $.messager.alert("温馨提示", result.errMsg, "error");
+    }
+}
+
+//cert rootca_pem 上传完成时的函数
+var rootca_pemcomplete = function (e) {
+    var result = $.parseJSON(e.target.response);			//解析服务器返回的json数据为result
+    if (result.errCode == 0) {
+    	$("input[name=rootcapem]").val(result.data.cert_path); // 返回服务器端路径
+    } else {
+        $.messager.alert("温馨提示", result.errMsg, "error");
+    }
+}
+
+// 上传失败函数
+var failed = function() {
+	// to do sth.
+	$.messager.alert("温馨提示", "上传文件失败！", "error");
+}
+
+// 上传终止函数
+var abort = function() {
+	// to do sth.
+	$.messager.alert("温馨提示", "上传已取消！", "error");
+}
+</script>
+</body>
+</html>

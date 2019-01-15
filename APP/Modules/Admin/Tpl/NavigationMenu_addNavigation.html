@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<title>添加导航</title>
+</head>
+
+<body>
+	<form id="navForm" name="navForm" class="form-horizontal uniform" method="post" action="{:U('Admin/NavigationMenu/addNavConfirm', '', '')}">
+        <div class="control-group">
+            <div class="controls controls-row"><h2>自定义导航配置</h2></div>
+            <div class="controls controls-row">
+                <font style="font-size:1.17em; font-weight:bold; color:highlight;">注意：带<span class="text-error">(*)</span>的为必填项</font>
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="control-group">
+            <label class="control-label">
+            	导航类别<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <select id="nav_type" class="uniform myselected" onchange="navTypeSelected(this)">
+                	<option value="0">请选择导航类别</option>
+                    <option value="1">信息类导航</option>
+                    <option value="2">服装类导航</option>
+                    <option value="3">超链接导航</option>
+                    <option value="4">餐饮类导航</option>
+                    <option value="5">商品类导航</option>
+                </select>
+            </div>
+            <input type="hidden" id="nav_type_selected" name="nav_type_selected" value="" /><!--用来放置所选择的导航类型type-->
+            <div class="controls controls-row">
+            	<p>信息类：发布信息；商品类：发布商品；超链接：跳转指定网址。</p>
+            </div>
+        </div>
+        
+        <div class="control-group" id="link_panel" style="display:none;">
+			<label class="control-label">
+				超链接地址<span class="text-error">(*)</span>：
+			</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myinput" id="link_url" name="link_url" placeholder="请输入该导航跳转的超链接" required value="" />
+            </div>
+            <div class="controls controls-row">
+				请填写超链接URL地址，必须以&nbsp;<font style="color:#F20;">http://&nbsp;或&nbsp;https://</font>&nbsp;开头。
+			</div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">
+            	上级导航<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <select id="superior_nav" class="uniform myselected" onchange="superior_nav_change(this)">
+                	<option value="-1">无上级导航</option>
+                </select>
+            </div>
+            <input type="hidden" id="father_nav_selected" name="father_nav_selected" value="" /><!--用来放置所选择的上级导航nav_id-->
+            <div class="controls controls-row">
+            	<p>若配置顶级导航，请选择无上级导航；若配置二级导航，请选择一个已存在的顶级导航。</p>
+                <p class="warning">顶级导航下没有二级导航但存在信息或商品，想再添加二级导航，必须先清空该导航下所有信息或商品。</p>
+			</div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+				导航名称<span class="text-error">(*)</span>：
+			</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myselectedinput" id="nav_name" name="nav_name" placeholder="请输入导航名称，4~5个字最佳" required value="" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">导航英文名：</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myselectedinput" id="nav_english" name="nav_english" placeholder="2个英文单词组合最佳，空格分隔" value="" />
+            </div>
+            <div class="controls controls-row">
+				主页模板选择《九宫格国际版》，请填写顶级导航的英文名。
+			</div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">导航图标：</label>
+            <div class="controls">
+				<div class="btn">
+                    <span style="font-size:12px; line-height:26px;">上传图标:</span>
+                    <input type="file" name="nav_image" class="uniform" />
+                </div>
+				<p class="infotip navimgrec">温馨提示：您选择的是<span id="tplName">横版瀑布流微商城</span>模板，建议上传<span id="tplSize">150*300</span>的图片作为当前导航的图标最佳。（png透明背景格式最佳）</p>
+				<img id="nav_image_preview" src="" alt="" style="border-radius:6px; margin-top:10px; width:150px;" />
+            </div>
+            <input type="hidden" name="nav_image_path" value="" /><!-- 导航图片路径 -->
+		</div>
+        
+        <div class="control-group">
+			<label class="control-label">
+				导航顺序<span class="text-error">(*)</span>：
+			</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myamountinput" id="nav_order" name="nav_order" placeholder="" required value="" />
+                &nbsp;&nbsp;&nbsp;&nbsp;请输入数字代表同级导航排序，数字越小越靠前。
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">导航描述：</label>
+            <div class="controls controls-row">
+                <textarea id="nav_description" name="nav_description" class="uniform mytextarea" placeholder="用户若分享导航页面，则描述会出现在分享信息中"></textarea>
+            </div>
+        </div>
+    	
+        <hr style="width:90%;margin:10px auto;"/>
+        
+        <div class="control-group">
+            <div class="controls controls-row">
+                <input type="checkbox" class="uniform" id="set_middle" name="set_middle" />设置该导航在中部显示（仅对4格主页的顶级导航有效，二级导航不生效。）
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <div class="controls controls-row">
+                <input type="checkbox" class="uniform" id="temporary_stop" name="temporary_stop" />临时停用该导航
+            </div>
+        </div>
+        
+        <hr />
+        
+		<div class="handle-action">
+			<a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">提交</a>
+			&nbsp;&nbsp;
+			<a id="resetbtn" class="large ui-color-button blue" href="javascript:void(0)">重置</a>
+			<a href="javascript:history.go(-1);">
+				<img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/images/goback.png" />
+			</a>
+		</div>
+	</form>
+    
+<script type="text/javascript">
+var uploadUrl = "{:U('Admin/NavigationMenu/navImgUpload', '', '')}"; // 提交导航图标的地址
+// 页面初始化函数
+$(function (){
+	$(".uniform").uniform(); // 初始化uniform，文本框的uniform格式化
+	
+	$("#nav_type").change(); // 让导航类别默认选中，引起上级导航初始化
+	
+	// 为DOM元素生成事件
+	$("#navForm").on("change", "input[name='nav_image']", function(e){
+		// js创建XHR上传图片并获得图片预览路径
+		var loadfun = $(this).attr("name")+"complete";
+		e = e || window.event;
+        var fileList = e.target.files;
+        if (!fileList.length) return false; 						//没有文件返回 
+        
+		// 创建表单数据
+		var formData = new FormData();
+		formData.append('picture', fileList[0]); 					//图片文件数据附加到name为pic中
+		// 创建 ajax 请求
+        var xhr = new XMLHttpRequest();
+		xhr.addEventListener("load", window[loadfun], false);		//监听XMLHttpRequest的load事件，使用模块内complete函数响应（注意使用window[某js函数名]）
+		xhr.addEventListener("abort", abort, false);				//监听XMLHttpRequest的abort事件，使用模块内abort函数响应
+		xhr.addEventListener("error", failed, false);				//监听XMLHttpRequest的error事件，使用模块内failed函数响应
+		xhr.open("POST", uploadUrl + '?time=' + Date.now());		//打开静态POST提交，并加上时间作为参数，打开一个GET请求
+		xhr.send(formData);											//使用ajax请求 发送表单
+	}).on("click", "#submitbtn", function(e){
+		// 表单形式提交，此处只做条件验证
+		var nav_type = $("#nav_type_selected").val();				//获取本次添加导航的类型
+		var nav_link = $("#link_url").val().trim();					//获取本次添加导航的链接
+		var navna = $("#nav_name");									//抓取对象，获取本次添加导航的名字（不可空）
+		var navor = $("#nav_order");								//抓取对象，获取本次添加导航的同级排序（不可空）
+		var imgpath = $("input[name='nav_image_path']");			//抓取图片
+		
+		// 检测导航类型是否选择
+		if (nav_type == 0) {
+			$.messager.alert('温馨提示', '请选择一种导航类别！', 'warning', function(){
+				$("#nav_type_selected").focus();
+	  		});
+	  		return
+		}
+		// 检测超链接导航时，有没有填写超链接
+		if ( (nav_type == 3 && nav_link == "") || (nav_type == 3 && nav_link == null) ) {
+			$.messager.alert('温馨提示', '超链接导航必须添加超链接，URL地址请以http://或https://开头！', 'warning', function(){
+				$("#link_url").focus();
+	  		});
+	  		return
+		}
+		// 检测导航名称是否填写
+		if(navna.val() == null || navna.val() == ""){
+			$.messager.alert('温馨提示', '请填写导航名称！','warning', function(){
+				navna.focus(); // 注意聚焦和return的顺序！
+	  		});
+	  		return // 注意聚焦和return的顺序！
+		} 
+		if (navor.val()=="" || isNaN(navor.val()) || navor.val()<0){
+	  		$.messager.alert('温馨提示', '必须填写本次添加导航的同级排序，数字越小同级排序越靠前，且序号不得小于0！', 'warning', function(){
+	  			navor.focus();
+	  		});
+	  		return
+	  	}
+		// 验证通过，询问是否提交
+		$.messager.confirm('温馨提示', '确定添加所编辑导航吗？', function(cf){
+			if (cf){ 
+				$('#navForm').submit(); // 用户确认，提交form表单给控制器，注意设置Action的URL
+			}
+		});
+	});
+});
+
+// 上传完成时的函数
+var nav_imagecomplete = function (e) {
+    var result = $.parseJSON(e.target.response);						//解析服务器返回的json数据为result
+    if (result.errCode == 0) {
+    	$("input[name=nav_image_path]").val(result.data.uploadpath); 	//没有经过组装的原始路径
+        $("#nav_image_preview").attr("src", result.data.nowifipath); 	//预览写入图片路径
+    } else {
+        $.messager.alert("温馨提示", result.errMsg, "error");
+    }
+}
+
+// 上传失败函数
+var failed = function() {
+	$.messager.alert("温馨提示", "上传文件失败！", "error");
+}
+
+// 上传终止函数
+var abort = function() {
+	$.messager.alert("温馨提示", "上传已取消！", "error");
+}
+
+// 导航类型改变函数
+function navTypeSelected(obj) {
+	var nav_type = obj.options[obj.selectedIndex].value; //获得选中的选项的value
+	if (nav_type == 1) {
+		$('#link_panel').css('display', 'none'); // 如果导航类型是信息（类型1），则超链接面板不展现
+	} else if (nav_type == 2) {
+		$('#link_panel').css('display', 'none'); // 如果导航类型是服装（类型2），则超链接面板不展现
+	} else if (nav_type == 3) {
+		$('#link_panel').css('display', 'block'); // 如果导航类型是超链接（类型3），则超链接面板展现
+	} else if (nav_type == 4) {
+		$('#link_panel').css('display', 'none'); // 如果导航类型是餐饮（类型4），则超链接面板不展现
+	} else if (nav_type == 5) {
+		$('#link_panel').css('display', 'none'); // 如果导航类型是商品（类型5），则超链接面板不展现
+	} else {
+		$('#link_panel').css('display', 'none'); // 以后添加更多类型导航接口。
+	}
+	$('#nav_type_selected').val(nav_type); // 获取option的value，并写入input里，用作提交的时候判断
+	
+	if(nav_type!=0) {
+		// 如果选择了一个类别的导航（不是请选择导航分类），就发送AJAX请求查询商品顶级导航
+		$.post("{:U('Admin/NavigationMenu/typeReadTopNav','','')}", {
+			nt: nav_type
+		}, function(result) {
+			if (result.errCode == 0) {
+				$("#superior_nav").empty();
+				var option = '<option value="-1">无上级导航</option>'; // 初始化option选择的html代码
+				for (var i = 0; i < result.data.length; i++) {
+					option += '<option value="' + result.data[i].nav_id + '">' + result.data[i].nav_name + '</option>'
+				}
+				$("#superior_nav").html(option); // 写入选择框
+				$("#superior_nav").change(); // 让superior顶级导航选择框初始化选择一次
+			} 
+		}, 'json');
+	}
+}
+
+// 上级导航改变函数（ajax请求看推荐LOGO尺寸）
+function superior_nav_change(obj) {
+	var father_nav_selected = obj.options[obj.selectedIndex].value;
+	$('#father_nav_selected').val(father_nav_selected); //获得选中的父级导航的编号，并写入选中导航input框，用作提交
+	var current_type = $("#nav_type_selected").val(); //获取当前的导航类型
+	//发送请求查找对应的温馨提示
+	$.post("{:U('Admin/NavigationMenu/navRecommend','','')}", {
+		fn: father_nav_selected,
+		ct: current_type
+	}, function(result) {
+		$(".navimgrec").css("display", "none");
+		$("#tplName").empty(); // 清空模板名字
+		$("#tplSize").empty(); // 清空模板推荐尺寸
+		if (result.errCode == 0 && result.data.template_name) {
+			$(".navimgrec").css("display", "block");
+			// 有推荐模板数据过来，才显示，否则不显示推荐
+			$("#tplName").html(result.data.template_name);
+			$("#tplSize").html(result.data.nav_image_size); // 写入模板导航图片的推荐尺寸
+			//alert(result.data.template_name+","+result.data.nav_image_size+","+result.data.remark);
+		}
+	}, 'json');
+}
+</script>
+</body>
+</html>

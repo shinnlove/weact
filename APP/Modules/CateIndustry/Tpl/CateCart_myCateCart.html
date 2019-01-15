@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/template1/css/wei_canyin_v1.8.4.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/template1/css/wei_dialog_v1.2.1.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/template1/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/template1/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/template1/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/template1/js/wei_webapp_v2_common_v1.9.4.js"></script>
+<script type="text/javascript" src="__PUBLIC__/template1/js/wei_dialog_v2.2.3.js"></script>
+<title>{$einfo.e_name} 我的餐车</title>
+</head>
+
+<body id="page_intelOrder" class="myOrderCon">
+	<div class="center">
+		<header>
+			<span class="pCount">我的餐车</span> 
+            <label><i>共计：</i><b class="duiqi" id="total"></b><b class="duiqi">元</b></label>
+		</header>
+		<section>
+			<article>
+				<h2>
+					<span class="cartstatus">餐车中已点餐饮</span>
+					<button class="btn_add emptyIt" id="clearBtn">清空</button>
+					<button class="btn_add pluscate">+加餐</button>
+				</h2>
+				<ul class="myorder">
+                    <foreach name="cartlist" item="cl">
+                    	<li>
+                    		<!-- 页面上价格还是统一使用price，如果是会员，提前把member_price给到price -->
+	                    	<span class="dishName">{$cl.cate_name}</span> <i>{$cl.price}元/{$cl.unit_name}</i>
+							<section class="bbox" dishid="{$cl.cate_id}" dishName="{$cl.cate_name}">
+								<!-- 特别注意这3个input还不能换行!!! -->
+								<input class="btn-reduce" type="button" value="-" /><input class="numBox" name="numBox" type="text" value="{$cl.amount}" price="{$cl.price}" disabled="disabled" /><input type="button" class="btn-plus" value="+" />
+							</section>
+	                    </li>
+                    </foreach>
+				</ul>
+			</article>
+		</section>
+		<footer class="footFix">
+			<a href="javascript:;" id="mycateorder" style="float:left;margin-left:20px;background-color:#e4af25;">我的订单</a>
+			<a href="javascript:;" class="order">提交订单</a>
+			<a href="javascript:;" class="member" id="becomeVIP" style="background-color:#e4af25;">成为会员</a>
+		</footer>
+	</div>
+
+<script type="text/javascript">
+//判断餐车数量
+var catelist = _qAll("article ul li");
+if(catelist.length == 0) {
+	$('.cartstatus').html('餐车中空空如也');
+} else {
+	$('.cartstatus').html('餐车中已点餐饮');
+}
+var reduce = _qAll('.btn-reduce');		//获取所有减菜数组
+var plus = _qAll('.btn-plus');			//获取所有加菜数组
+var share = _qAll('.shareBtn');			//获取分享按钮
+//金额累加操作
+function tototal(){
+    var total = 0;						//总价
+    var nums = _qAll('.numBox');		//获取数量input
+    for( var j = 0; j < nums.length; j++){
+        total = total + nums[j].value * nums[j].getAttribute('price');	//nums[j].value是数量，nums[j].getAttribute('price')是单价
+    }
+	
+    endTotal = parseFloat(total).toFixed(2) * 100/100;
+    // endTotal = endTotal == parseInt(endTotal) ? parseInt(endTotal) : endTotal;
+    _q('#total').innerHTML = endTotal;	//写入总价中
+    return endTotal;
+}
+
+tototal();//初始化金额
+
+function doSelectBtn(){
+    var btn = _qAll("article ul li .bbox");
+    var btnIndex = 0,btnLength = btn.length;
+    for(btnIndex; btnIndex<btnLength; btnIndex++){
+        var countNumText=parseInt(btn[btnIndex].children[1].value),
+            btnAdd=btn[btnIndex].children[2],
+            btnMin=btn[btnIndex].children[0];
+
+        var iTimeout,iInterval,originalNum, beforeRemoveDish = false;
+        btnAdd.addEventListener(_movestartEvt,function(){
+            var _self = this;
+            originalNum = parseInt(_self.parentNode.children[1].value, 10);
+            countNumText =  originalNum +1;
+            _self.parentNode.children[1].value = countNumText;
+            iTimeout = setTimeout(function(){
+                iInterval = setInterval(function(){
+                    countNumText++;
+                    _self.parentNode.children[1].value = countNumText;
+                },100)
+            },1000)
+        })
+
+        btnAdd.addEventListener(_moveendEvt,function(){
+            //alert(countNumText)
+            //_doAjax()...
+            clearTimeout(iTimeout);
+            clearInterval(iInterval);
+            tototal();
+
+            var _self = this;
+            var countNumText =  parseInt(_self.parentNode.children[1].value, 10);
+            var dishid = _self.parentNode.getAttribute('dishid');
+            ajaxDishReset(dishid, countNumText, function(){}, function() {
+				_self.parentNode.children[1].value = originalNum;
+				tototal();
+			});
+            // countNumText = 0;
+        })
+
+        btnMin.addEventListener(_movestartEvt,function(){
+            var _self = this;
+            originalNum = parseInt(_self.parentNode.children[1].value, 10);
+            countNumText =  originalNum -1;
+
+            if(countNumText <=0){
+                beforeRemoveDish = true;
+				//countNumText = 0;
+				//_self.parentNode.children[1].value = countNumText;
+            }else{
+                _self.parentNode.children[1].value = countNumText;
+                iTimeout = setTimeout(function(){
+                    iInterval = setInterval(function(){
+                        if(countNumText<=0){
+                            beforeRemoveDish = true;
+                            _self.parentNode.children[1].value = originalNum;
+                            clearInterval(iInterval);
+                            return; 
+                        }
+                        countNumText--;
+                        _self.parentNode.children[1].value = countNumText;
+                    },100)
+                },1000)
+            }
+        })
+
+        btnMin.addEventListener(_moveendEvt,function(){
+            clearTimeout(iTimeout);
+            clearInterval(iInterval);
+            _self = this;
+
+            var dishid = _self.parentNode.getAttribute('dishid');
+            var dishName = _self.parentNode.getAttribute('dishName');
+            var countNumText =  parseInt(_self.parentNode.children[1].value, 10);
+
+            if(beforeRemoveDish){
+                setTimeout(function(){
+                    MDialog.confirm('', '是否删除' + dishName +'？', null, '确定', function(){
+						ajaxDishRemove(dishid, function(){
+							var li = _self.parentNode.parentNode;
+                            li.parentNode.removeChild(li);
+                            var total = tototal();
+
+                            // 没有数据后刷新页面
+                            if (total == 0) {
+                            	location.reload();
+                            }
+                        }, function() {
+							_self.parentNode.children[1].value = originalNum;
+                            tototal();
+						});
+					}, null, '取消', null, null, null, true, true);
+                },500)
+                beforeRemoveDish = false;
+            } else {
+                tototal();
+                ajaxDishReset(dishid, countNumText, function(){}, function() {
+					_self.parentNode.children[1].value = originalNum;
+					tototal();
+				});
+            }
+        })
+    } // for
+	
+    function ajaxDishReset(dishid, o2uNum, successCallback, errorCallback) {
+    	//重设菜品的数量，发送4个参数：菜品、目前的菜品数量、哪个用户和哪个企业
+		var params = {
+			'dishid' : dishid,
+			'o2uNum' : o2uNum,
+			'openid' : '{$openid}',
+			'e_id' : '{$e_id}'
+		};
+		//重设菜品数量地址
+		$.post("{:U('CateIndustry/MenuView/updateCateNumber')}", params, function(result){
+                if (result['code'] != 0) {
+                    errorCallback();
+                    alert(result['message']);
+                    return;
+                } else {
+                    successCallback();
+                }
+        });
+    } // ajaxDishReset
+
+    function ajaxDishRemove(dishid, successCallback, errorCallback) {
+    	//移除一盘菜，发送3个参数：菜品名字、哪个人，哪个企业
+		var params = {
+			'dishid' : dishid,
+			'openid' : '{$openid}',
+			'e_id' : '{$e_id}'
+		};
+		//移除菜品post地址
+		$.post("{:U('CateIndustry/MenuView/removeCateOrder')}", params, function(result){
+            if (result['code'] != 0) {
+                errorCallback();
+                alert(result['message']);
+                return;
+            } else {
+                successCallback();
+            }
+        });
+    } // ajaxDishRemove
+} // doSelectBtn
+
+function Order() {
+	alert('订单已提交!');
+}
+
+//页面的$(function(){});
+_onPageLoaded(function(){
+	var ismember = '{$ismember}';			//是否会员
+    var reduce = _qAll('.btn-reduce');
+    var plus = _qAll('.btn-plus');
+    tototal();								//初始化金额
+    doSelectBtn();
+    if(ismember == '1'){
+		$("#becomeVIP").hide();				//如果是会员，隐藏成为会员的按钮
+	}
+	//定义clearBtn的点击函数
+    $("#clearBtn").click(function(){
+    	MDialog.confirm('', '是否清空菜单？', null, '确定', function(){
+			//先发送post清空餐车，并且回调函数成功跳转到刚才的菜单列表
+			var params = {
+				'clearall' : 1,
+				'openid' : '{$openid}',
+				'e_id' : '{$e_id}'
+			};
+			$.post("{:U('CateIndustry/CateCart/clearCateCart', '', '')}", params, function(result){
+				if(result.status == 1) {
+					$('.cartstatus').html('餐车中空空如也'); // 餐车被清空提示
+					$('.myorder').html(''); // 清空餐车里的餐品
+					setTimeout(function() {
+						window.location.href = '{$cateshopurl}';
+					}, 1000);
+				}else {
+					alert('清空失败，请检查网络状况!');
+				}
+			}, 'json');
+		}, null, '取消', null, null, null, true, true);
+    });
+	//点击加菜跳转菜单
+    $(".pluscate").click(function() {
+    	window.location.href = '{$cateshopurl}'; // 跳转微餐饮商城或者平台主页
+    });
+	//点击提交订单
+	$(".order").click(function(){
+		// 判断餐车数量
+		var catelistnow = _qAll("article ul li");
+	    if(catelistnow.length == 0) {
+	    	scscms_alert("亲，餐车是空的，请先点餐后再提交订单！", "warn", "", 3);//定时关闭窗口
+	    	return;
+	    }
+		// 判断餐车不空后准备params提交
+		var params = {
+			'openid' : '{$openid}',
+			'e_id' : '{$e_id}'
+		};
+		scscms_alert("您确定要提交订单吗？", "confirm", function(){
+			$.post("{:U('CateIndustry/CateOrder/orderConfirm','','')}", params, function(result){
+				if (result.errCode == 0) {
+					var orderId = result.data.newOrderId;
+					window.location.href = "{:U('CateIndustry/CateOrder/orderInfo', '', '')}/e_id/{$e_id}/oid/"+orderId; // 跳转订单详情页面
+				} else if(result.errCode == 20002) {
+					scscms_alert(result.errMsg, "warn", "", 3);		// 定时关闭窗口
+					window.location.reload();						// 刷新过期页面
+				}else{
+					scscms_alert(result.errMsg, "error", "", 3);
+				}
+			}); 
+		});
+	});
+	// 我的订单
+	$('#mycateorder').click(function(){
+		window.location.href="{:U('CateIndustry/CateOrder/historyOrder', array(e_id => $e_id), '')}";
+	});
+	// 点击成为会员
+	$("#becomeVIP").click(function(){
+		var obj = $(this);
+		if(obj.html() == '成为会员'){
+			$(this).html('使用会员价')
+			window.location.href = '{$subscribepage}';	//跳到该公众账号的页面去
+		}else{
+			window.location.reload();					//刷新页面
+		}
+	});
+});
+</script>
+</body>
+</html>

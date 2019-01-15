@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/MobileCommonStyle.min.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>{$activity[0]['activity_name']}</title>
+</head>
+
+<body>
+	<div class="wrap">
+		<div style="text-align:center; color: #0066CC; font-family: Arial;">
+			<h2 style="font-size: 20px;">{$activity[0]['activity_name']}</h2>
+		</div>
+		<div style="color: grey;font-size: 15px; ">编辑时间：{$activity[0]['add_time']}</div>
+		<div style="color: grey;font-size: 15px; ">开始时间：<font color="red">{$activity[0]['start_time']}</font></div>
+		<div style="color: grey;font-size: 15px; ">结束时间：<font color="red">{$activity[0]['end_time']}</font></div>
+		<div style="color: grey;font-size: 15px;">活动内容：<font color="red">{$activity[0]['activity']}</font></div>
+		<hr>
+		<div>{$activity[0]['activity_description']}</div>
+		<div class="o_btn clearfix">
+			<input type="button" class="o_btn_back ts1" onclick="_system._guide(true)" value="分享活动" />
+		</div>
+        {:W('Footer', array('e_id' => $e_id))}<!--footer-->
+	</div><!--wrap-->
+
+	<div id="cover"></div>
+	<div id="loading">
+		<img src="__PUBLIC__/images/loading.gif" alt="" />
+		<div id="loading_text"></div>
+	</div>
+	<div id="guide">
+		<img src="__PUBLIC__/images/guide.png" alt="" />
+	</div>
+	<div id="toast"></div>
+
+<script type="text/javascript">
+	var enterprise_name = "{$enterprise[0]['account']}";
+	var activity_name = "{$activity[0]['activity_name']}";
+	var e_id = "{$activity[0]['e_id']}";
+	var activity_id = "{$activity[0]['activity_id']}";
+	var pathFinal = "{$Think.server.SERVER_ADDR}{:U('Home/Activity/getMyActivity','','')}?e_id="+e_id+"&activity_id="+activity_id;
+	var dataForWeixin = {
+			appId : "",
+			MsgImg : "images/share_msg.png",
+			TLImg : "images/share.png",
+			path : pathFinal,
+			title : activity_name,
+			desc : activity_name,
+			fakeid : "",
+			callback : function() {
+				_$("http://mp.weixin.qq.com/mp/appmsg/", "", "");
+			}
+		};
+</script>
+</body>
+</html>

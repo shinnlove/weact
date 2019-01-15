@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/template-native.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>代理导航商品信息管理</title>
+</head>
+
+<body class="easyui-layout" fit="true">
+	<div data-options="region:'center',border:false">
+		<table id="dg" title="代理导航商品信息     —— 温馨提示：点击每条商品左侧加号可看到实时库存" toolbar="#toolbar"></table>
+	</div>
+	
+	<!-- easyUI的工具条 -->
+	<div id="toolbar">
+		<div class="uptool">
+			<a href="javascript:history.go(-1);" class="easyui-linkbutton" iconCls="icon-back" plain="true">后退</a> 
+			<span class="searchbox">
+				<select id="search_condition" name="search_condition">
+					<option value="product_number" selected="selected">商品编号</option>
+					<option value="product_name">商品名称</option>
+					<option value="storage_amount">库存量低于</option>
+					<option value="sell_amount">卖出量大于</option>
+				</select>
+				<input id="search_content" name="search_content" type="text" class="searchbox-text mysearchbox" placeholder="可选择一个条件查询" />
+				<span class="searchbox-button searchbox-button-hover"></span>
+			</span>
+			<span class="searchbox">
+				<select id="category_search" name="category_search">
+					<option value="-1" selected="selected">全部</option>
+					<foreach name="navlist" item="nl">
+					<option value="{$nl['nav_name']}">{$nl['nav_name']}</option>
+					</foreach>
+				</select>
+			</span>
+			<span class="remind-condition">商品分类：</span>
+		</div>
+	</div>
+	
+<!-- 商品库存js arttemplate begin -->
+<script type="text/html" id="storageinfotpl">
+<table>
+    <tbody>
+        <tr>
+            <td style="border:0; width:150px;">
+                <p style="font-weight:bold;">商品实时库存信息：</p>
+            </td>
+        </tr>
+        <tr style="border:0;height:30px;">
+            <td class="sku-title">sku序号</td>
+			<td class="sku-title">规格</td>
+			<td class="sku-title">属性</td>
+            <td class="sku-title">当前库存量</td>
+			<td class="sku-title">卖出量</td>
+        </tr>
+		<% for (var i in detaillist) {%>
+			<tr>
+            	<td class="sku-info"><%=i*1+1%></td>
+            	<td class="sku-info"><%=detaillist[i].product_size%></td>
+				<td class="sku-info"><%=detaillist[i].product_color%></td>
+            	<td class="sku-info"><%=detaillist[i].storage_amount-detaillist[i].sell_amount%></td>
+				<td class="sku-info"><%=detaillist[i].sell_amount%></td>
+        	</tr>
+		<% } %>
+    </tbody>
+</table>
+</script>
+<!-- 商品库存js arttemplate end -->
+
+<!-- easyUI上对单个商品操作的按钮区，js模板 begin -->
+<script type="text/html" id="handlebtntpl">
+<table class="handlebtntable">
+    <tr>
+		<td>
+			<a href="javascript:void(0)" class="btn btn-mini" title="移除商品" onclick="removePro('<%=product_id%>')">移除</a>
+		</td>
+	</tr>
+</table>
+</script>
+<!-- easyUI上对单个商品操作的按钮区，js模板 end -->
+
+<script type="text/javascript">
+var e_id = '{$e_id}'; // 商家编号
+var dg = $("#dg"); // 全局变量table easyUI
+$(function() {
+	// easyui初始化
+	$('#dg').datagrid({
+		url: "{:U('Admin/DistributorManageRequest/getDistributorProduct', '', '')}?p2pnavid={$p2pnavid}",
+		singleSelect: true,
+		collapsible: true,
+		method: 'post',
+		fitColumns: true,
+		fit: true,
+		pagination: true,
+		pageSize: 10,
+		pageList: [5, 10, 15],
+		rownumbers: true,
+		idField: 'product_id',
+		columns: [[
+				{ field: 'nav_id', title: '分类编号', width: 200, hidden: true }, 
+				{ field: 'nav_name', title: '导航分类', width: 70, align:'left', sortable: true }, 
+				{ field: 'micro_path', title : '缩略图', width : 60, align : 'center', sortable: false, formatter : picInit }, 
+				{ field: 'product_number', title: '商品名称编号', width: 120, align:'left', sortable: true, formatter : productNameNo }, 
+				{ field: 'original_price', title: '吊牌价', width: 60, align:'right', sortable: true }, 
+				{ field: 'current_price', title: '现售价', width: 60, align:'right', sortable: true }, 
+				{ field: 'onshelf_time', title: '上架时间', width: 80, align:'center', sortable: true, formatter: onshelfInit }, 
+				{ field: 'total_storage_left', title: '库存', width: 60, align:'right', sortable: true, formatter: storageInit }, 
+				{ field: 'sell_amount', title: '卖出', width: 60, align:'right', sortable: true }, 
+				{ field: 'storage_warn', title: '预警', width: 60, align:'right', sortable: true, formatter: warningInit }, 
+				{ field: 'product_id', title: '操作', width: 100, align:'center', sortable: false, formatter: handleBtnInit }
+			 ]],
+		view: detailview,
+		detailFormatter: function(index, row) {
+			return '<div class="ddv" id="' + row.product_id + '">' + '</div>';
+		},
+		onExpandRow: function(index, row){
+			$.post('{:U("Admin/DistributorManageRequest/getProductStorage", "", "")}',
+					{ pid : row.product_id },
+					function(result){
+						if(result.errCode == 0){
+							var storageinfo = template( 'storageinfotpl', result.data ); // artTemplate渲染模板引擎
+							if (storageinfo == '{Template Error}') {
+								storageinfo = ''; // 如果渲染失败，则detailinfo置空
+								$.messager.alert('温馨提示', '网络繁忙，接收商品库存详情数据错误！', 'error'); // 提示用户出错了
+	                        }
+							$('#'+row.product_id).html(storageinfo); // 写入展开详情中
+							$('#dg').datagrid("fixDetailRowHeight", index); // 该行的详情框高度自适应（非常重要，以前没处理好）
+						} else {
+							$.messager.alert('温馨提示', '网络繁忙，没有查询到该商品的详细库存信息！', 'error');
+						}
+					},'json');	//post
+            $('#dg').datagrid('fixDetailRowHeight', index);
+	    }	// onExpandRow
+	}); //end easyui
+
+	// 按商品分类搜索 
+	$('#category_search').change(function() {
+		var searchcondition = 'nav_name';
+		var searchcontent = $('#category_search').val(); // 要搜索的导航名称
+		$("#dg").datagrid({
+			url: "{:U('Admin/DistributorManageRequest/searchProduct', '', '')}?p2pnavid={$p2pnavid}",
+			queryParams: {
+				searchcondition: searchcondition,
+				searchcontent: searchcontent
+			}
+		}, 'load');
+		clearSelect(); // 清空潜在选择项
+	});
+
+	// 指定条件查询，进行商品搜索
+	$('.searchbox-button').click(function() {
+		var searchcondition = $('#search_condition').val().trim(); // 获取搜索条件
+		var searchcontent = $('#search_content').val(); // 获取搜索内容
+		if (searchcontent.trim() == "" || searchcontent == "undefined") {
+			$.messager.alert('温馨提示', '请输入搜索内容！', 'warning');
+			return
+		}
+		$("#dg").datagrid({
+			url: "{:U('Admin/DistributorManageRequest/searchProduct', '', '')}?p2pnavid={$p2pnavid}",
+			queryParams: {
+				searchcondition: searchcondition,
+				searchcontent: searchcontent
+			}
+		}, 'load');
+		clearSelect(); // 清空潜在选择项
+	});
+});
+
+/*-------------easyUI初始化部分函数--------------*/
+
+// 初始化商品
+function picInit(val, row){
+	if(row){
+		return '<img src="' + row.micro_path + '" style="width:50px; height:50px; margin-top:5px; border:0; border-radius:5px;" />';
+	} else {
+		return '<img src="" style="width:50px; height:50px; margin-top:5px;" alt="请上传商品缩略图" />'; // 返回一张默认图片
+	}
+}
+
+// 初始化商品名称和编号
+function productNameNo(val, row){
+	var prohtml = '<span class="pro-label">'+row.product_name+'</span>' + '<span class="pro-label">款号:'+row.product_number+'</span>';
+	// 如果是精选，追加精选标签
+	if (row.is_feature == 1) {
+		prohtml += '<span class="special-mark">精选</span>';
+	}
+	// 如果是新品，追加新品标签
+	if (row.is_new == 1) {
+		prohtml += '<span class="special-mark">新品</span>';
+	}
+	// 如果是折扣，追加折扣标签
+	if (row.is_preferential == 1) {
+		prohtml += '<span class="special-mark">折扣</span>';
+	}
+	return prohtml;
+}
+
+// 初始化商品性别
+function sexInit(val, row) {
+	if(row.sex == "0") {
+		return "通用";
+	} else if (row.sex == "1") {
+		return "男";
+	} else if (row.sex == "2") {
+		return "女";
+	} else if (row.sex == "-1") {
+		return "<span style='text-align:center; color:#666;'>/</span>";
+	}
+}
+
+// 初始化商品上下架显示
+function onshelfInit(val, row) {
+	if(row.on_shelf == 0) {
+		return "<span class='grey' style='color:#666;'>商品未上架</span>"; // 未上架返回商品未上架提示
+	} else {
+		return "<span class='green' style='color:#39b868;'>" + row.onshelf_time + "</span>"; // 上架返回商品商家时间
+	}
+}
+
+// 初始化商品预警（使用特别重要的warning字段来区分库存是否报警）
+function storageInit(val, row){
+	if(row.warning == 1){
+		return "<span class='red' style='color:#d00224;'>"+row.total_storage_left+"（sku库存预警）</span>";
+	} else {
+		return "<span class='green' style='color:#39b868;'>"+row.total_storage_left+"</span>";
+	}
+}
+
+// 初始化库存预警数量
+function warningInit(val, row) {
+	if (row.storage_warn > 0) {
+		return "<span class='green' style='color:#39b868;'>"+row.storage_warn+"</span>";
+	} else {
+		return "<span class='grey' style='color:#666;'>未设置</span>"; // 报警数量为0代表未设置
+	}
+}
+
+// 操作区域的按钮初始化
+function handleBtnInit(val, row) {
+	var handlebtntmpl = template("handlebtntpl", row); // 渲染模板
+	return handlebtntmpl;
+}
+
+/*-----------easyUI功能按钮区------------*/
+
+// 共用警示函数：有些调用后不使用此函数可能会存在隐藏错误
+function clearSelect() {
+	dg.datagrid("clearSelections"); // 清除所有选中的行
+}
+
+//移除商品 
+function removePro(proid) {
+	clearSelect(); // 清空可能潜在选择的商品
+	$.messager.confirm('温馨提示', '确定移除选中商品？', function(cf) {
+		if (cf) {
+			MLoading.show('提交中...'); // 显示友好度提示
+			$.post("{:U('Admin/DistributorManageRequest/removeProduct', '', '')}", {
+				proid : proid
+			}, function(result) {
+				MLoading.hide(); // 取消友好度提示
+				if (result.errCode == 0) {
+					dg.datagrid('reload'); // 无刷新重载页面数据
+					clearSelect(); // 清空可能潜在选择的商品
+				} else {
+					$.messager.alert('温馨提示', '移除商品失败！'+result.errMsg, 'error');
+				}
+			});
+		}
+	});
+}
+</script>
+</body>
+</html>

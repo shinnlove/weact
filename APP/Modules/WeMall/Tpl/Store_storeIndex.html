@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css?v=1.0.0" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/prosearchfav.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>{$sinfo.subbranch_name} - 店铺精选</title>
+<style>
+.loadingBox{margin-top: 0;}
+.getCouponBox{padding:0 10px 10px;}
+.getCouponBox a{display: block;border:solid 2px #ea2d1e;background: #f34537;line-height: 30px;padding: 10px;color: #fff;text-align: center;}
+</style>
+</head>
+
+<body>
+	<div class="posterBox" style="background-image:url({$sinfo.signs_path})">
+	    <!-- <img class="poster" src="{$sinfo.image_path}"> -->
+	    <div class="wbox">
+	        <img class="logo" src="{$sinfo.image_path}">
+	        <div class="wbox-1 fc-white lh20">
+	            <div class="name">{$sinfo.subbranch_name}</div>
+	            <div class="guide fn-hide">导购 <b class="guide-name">柏芸</b> 正在为您服务</div>
+			</div>
+	        <div class="attention">
+	          <!-- <a href="#" class="btn">+关注</a> -->
+	        </div>
+	    </div>
+	</div>
+	
+	<section class="s-options">
+	    <ul class="s-items static">
+	        <li><a class="curr" href="javascript:;"><span>店铺精选</span></a><hr></li>
+	        <li><a href="{:U('WeMall/Product/allCategory', array('sid' => $sid), '')}"><span>商品分类</span></a><hr></li>
+	        <li><a href="{:U('WeMall/CustomerCenter/myCenter', array('sid' => $sid), '')}"><span>我的账户</span></a><hr></li>
+	    </ul>
+	</section>
+	
+	<div class="searchBox stock mb10">
+		<form action="{:U('WeMall/Product/productList', array('sid' => $sid), '')}" class="wbox">
+			<div class="wbox-1 cont">
+				<input type="search" class="search" name="keyword" placeholder="搜索店内的商品">
+				<button type="submit" class="s-btn"></button>
+			</div>
+			<button type="reset" class="s-cancel fn-hide">取消</button>
+		</form>
+	</div>
+	
+	<div class="searchCover fn-hide">
+		<ul class="history"></ul><!-- 历史记录搜索 -->
+	</div>
+	
+	<!-- <div class="getCouponBox">
+	  <a href="#" class="with-go-right">店铺优惠券限时发放中，点击领取</a>
+	</div> -->
+	
+	<div class="tagsLinkBox wbox">
+		<a href="{:U('WeMall/Product/productList', array('sid' => $sid, 'querytype' => 2), '')}" class="item wbox-1">新品上架</a>
+		<a href="{:U('WeMall/Product/productList', array('sid' => $sid, querytype => 3), '')}" class="item wbox-1">特价促销</a>
+		<a href="{:U('WeMall/Product/productList', array('sid' => $sid), '')}" class="item wbox-1">全部商品</a>
+	</div>
+	
+	<div class="stockList" id="stockList">
+		<ul></ul>
+	</div>
+	<div class="loadingBox wbox fn-hide"><a href="javascript:;">正在加载中···</a></div>
+	<div class="no-more fn-hide">已显示全部</div>
+	
+	<div class="blackFooter">
+	    <div class="wbox pb10">
+	        <img class="size43" src="{$sinfo.image_path}" />
+	        <div class="wbox-1 fc-white lh22 pl10">
+	            <div class="name">{$sinfo.subbranch_name}</div>
+	            <div class="guide fn-hide">导购 <b class="guide-name">柏芸</b> 正在为您服务</div>
+			</div>
+	        <div>
+				<a href="{:U('WeMall/Store/storeDetail', array('sid' => $sid), '')}" class="btn storeDetail">店铺详情</a>
+	        </div>
+	    </div>
+	    <div class="footer tx-c">
+			<p class="pb10">
+				<a href="{:U('WeMall/Product/productList', array('sid' => $sid, 'querytype' => 1), '')}">店铺精选</a>
+				<a href="{:U('WeMall/Product/allCategory', array('sid' => $sid), '')}" class="pl10 pr10">商品分类</a>
+				<a href="{:U('WeMall/CustomerCenter/myCenter', array('sid' => $sid), '')}">我的账户</a></p>
+			<p class="fc-grey">Power by WeAct</p>
+	    </div>
+	</div>
+	
+	<div class="chooseSalesBox fn-hide">
+		<div class="title">
+			<div>店内导购在此恭候多时了</div>
+			<div class="tit">请选择一位，他将随时为您提供服务</div>
+		</div>
+		<div class="storeSales"></div><!-- 导购列表 -->
+		<a href="javascript:;" class="jumpStep">暂时跳过</a>
+	</div>
+	
+	<a href="{:U('WeMall/Cart/shoppingCart', array('sid' => $sid), '')}" class="linkNeedLogin toShoppingCart"></a>
+	<a href="javascript:;" id="gotoTalk" class="toAskSales"></a>
+	
+<!-- guide js template begin -->
+<script type="text/html" id="guidelisttpl">
+{{each guidelist as e i}}
+	<div class="item wbox" data-id="{{e.guide_id}}">
+		{{if e.headimg}}<img src="{{e.headimg}}" class="size43 round" />{{else}}<img src="__PUBLIC__/images/default-photo.png" class="size43 round" />{{/if}}
+		<div class="name wbox-1 with-go-right">
+			<div class="namer">{{e.guide_name}}</div>
+        	<div>
+				<div class="appProgress"><span class="val" data-stars="{{e.star_level}}" style="width: 0%;"></span></div>
+				<div class="grade">{{e.star_level}}</div>
+			</div>
+		</div>
+	</div>
+{{/each}}
+</script>
+<!-- guide js template end -->
+
+<!-- product js template begin -->
+<script type="text/html" id="productlisttpl">
+{{each productlist as e i}}
+	<li class="stockBox">
+		<a href="{{e | productDetailURL}}" class="stockLink" data-id="{{e.product_id}}">
+			<div class="stockImg wbox">
+				<img src="{{e.micro_path}}" alt="" />
+			</div>
+			<div class="stockName">{{if e.is_feature == 1}}<b>精选</b>{{else if e.is_new == 1}}<b>新品</b>{{else if e.is_preferential == 1}}<b>特价</b>{{/if}}{{e.product_name}}</div>
+			<div class="stockPrice">
+				{{if e.original_price && e.current_price < e.original_price}}
+				<span class="fc-red fw-bold">¥{{e.current_price}}</span>
+				<del class="block">¥{{e.original_price}}</del>
+				{{else}}
+				<!-- <span class="fc-red fw-bold">¥{{e.current_price}}</span> -->
+				<span class="fc-red fw-bold">¥{{e.current_price}}</span>
+				<del class="block white">→</del>
+				{{/if}}
+			</div>
+			<b class="more openFav">···</b>
+			<div class="cover"><div class="fav">收藏</div></div>
+		</a>
+	</li>
+{{/each}}
+</script>
+<!-- product js template end -->
+
+<script type="text/javascript">
+var eid = "{$eid}", 			// 商家编号
+	sid = "{$sid}", 			// 分店编号
+	selectskip = '{$selectd}', 	// 是否刚选择导购后来到页面
+	hasguide = "{$hasguide}", 	// 当前顾客是否有导购
+	guidename = '{$gname}', 	// 当前店铺该顾客所选导购信息
+	hasMoreData = true, 		// 本js模块全局变量：后续是否还有数据
+	isLoadingData = false, 		// 本js模块全局变量：本模块正在请求数据标记
+	querytype = {$querytype}, 	// 店铺首页查询的是精选商品
+	nextstart = 0, 				// 页面默认下一次请求开始的数据位置
+	guideMoreData = true, 		// 导购列表还有数据
+	guideLoadingData = false, 	// 导购列表正在请求数据
+	guidenextstart = 0, 		// 导购列表下一页开始的数据位置
+	curpage = "{:U('WeMall/Store/storeIndex', array('sid' => $sid), '')}", 		// 当前位置
+	loginurl = "{:U('WeMall/GuestMall/login', array('sid' => $sid), '')}", 		// 登录地址
+	selectGuideURL = "{:U('WeMall/CustomerRequest/selectGuide', '', '')}", 		// 绑定导购信息
+	guidelistURL = "{:U('WeMall/Guide/queryGuideList', '', '')}", 				// 导购列表请求URL
+	productlistURL = "{:U('WeMall/Product/queryProduct', '', '')}", 			// 商品列表请求URL
+	webchatRequestURL = "{:U('WeMall/GuideChatRequest/initWebChat', '', '')}", 	// 请求网页聊天窗
+	guidejsondata = '{$guidelistjson}', 	// 导购列表数据
+	productjsondata = '{$productlistjson}'; // 第一屏的商品数据
+	
+// 页面ready
+$(function(){
+	// 当前顾客没有导购，并且也没有选择跳过导购，则弹出导购列表
+	//if (hasguide == "0" && ! sessionStorage.skipguide) {
+	if (hasguide == "0" && selectskip == "0") {
+		// 如果第一次进店铺|不跳过导购列表，则读取导购列表
+		var guidelist = $.parseJSON(window.guidejsondata); // 解析页面的json数据（不管是带了反斜杠，还是没有反斜杠，都可以解析json数据） 
+		var tmpl = template('guidelisttpl', guidelist.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+		if (tmpl == '{Template Error}') {
+			tmpl = ""; // 置空tmpl
+		}
+		
+		$('html,body').css({
+			"height": $(window).height(),
+			"overflow": "hidden"
+		});
+		
+		// 弹出导购层并写入导购信息
+		$(".chooseSalesBox").show().find(".storeSales").height($(window).height() - 160).append(tmpl); // 追加导购信息
+		
+		// 为每个导购追加评分
+		$(".chooseSalesBox .storeSales .appProgress").each(function(i, e) {
+			var stars = parseFloat($(e).find(".val").data("stars")); // 计算获得的星星
+			$(e).find(".val").width((stars * 20).toFixed(1) + "%"); // 加宽span[class='val']的style宽度，默认0%一颗星都没有
+			$(e).siblings(".grade").html(stars.toFixed(1)); // 导购评分，精确到小数点后1位，与淘宝一样，最高5分
+		});
+		
+		window.guidenextstart = guidelist.nextstart;		// 下一页开始 
+	}
+	
+	// 如果有导购，显示导购正在为您服务
+	if (hasguide == 1) {
+		if (guidename == "" || guidename == "undefined") {
+			guidename = sessionStorage.salesName; // 缓存中的导购名字给它
+		}
+		$(".guide-name").html(guidename).parent().removeClass("fn-hide"); // 出现导购正在服务，写入导购名字
+	}
+	
+	// 初始化店铺精选商品：第一次直出渲染商品模板（默认是上架时间）
+	var productlist = $.parseJSON(window.productjsondata); // 解析页面的json数据（不管是带了反斜杠，还是没有反斜杠，都可以解析json数据） 
+	var tmpl = template('productlisttpl', productlist.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+	var productListObj = $('.stockList ul'); 		// 抓取class为stockList的ul，定义为productListObj对象
+	if (tmpl == '{Template Error}') {
+		tmpl = ""; // 置空tmpl
+	}
+	productListObj.html(tmpl);					// 渲染成功就把模板渲染的信息写入
+	window.nextstart = productlist.nextstart;		// 下一页开始 
+	
+	// 生成DOM结构事件
+	$(".chooseSalesBox").on("click", ".jumpStep", function(e){
+		// 跳过按钮点击事件
+		e.stopPropagation(); // 阻止事件传播
+		$(".chooseSalesBox").hide(); // 选择导购弹层隐藏
+		$('html,body').css({
+			"height": "auto",
+			"overflow": "auto"
+		});
+	}).on("click", ".storeSales .wbox", function(e){
+		// 选导购弹层上任何一个导购点击
+		e.stopPropagation(); // 阻止事件传播
+		var _t = $(this), salesId = _t.data("id"); // 获取点击导购编号
+		// 准备参数
+		var params = {
+				sid : sid, // 分店信息
+				gid : salesId, // 导购编号
+		}
+		$.post(selectGuideURL, params, function(result){
+			if (result.errCode == 0) {
+				$(".chooseSalesBox").hide();
+				mobileAlert(_t.find(".namer").text() + "很高兴为您服务");
+				// 页面不重定位，会导致高度不一致
+				setTimeout(function() {
+					location.reload();
+				}, 1200);
+				sessionStorage.salesId = salesId; // 记录导购编号
+				sessionStorage.salesName = _t.find(".namer").text(); // 记录导购名字
+				sessionStorage.skipguide = true; // 不用再选导购了
+			} else if (result.errCode == 20001) {
+				window.location.href = loginurl+"?from="+curpage;
+				return false;
+			} else {
+				mobileAlert(result.errMsg); // 弹出错误信息
+				return false;
+			}
+		},"json");
+	});
+	
+	// 悬浮按钮聊天窗
+	$("#gotoTalk").click(function(){
+		var param = { 
+				sid : sid, // 分店信息
+		}
+		$.post(webchatRequestURL, param, function(result){
+			if (result.errCode == 0) {
+				location.href = result.data.chaturl; // 跳转顾客与导购聊天窗页面
+			} else if (result.errCode == 20001) {
+				window.location.href = loginurl+"?from="+curpage;
+				return false;
+			} else {
+				mobileAlert(result.errMsg); // 弹出错误信息
+				return false;
+			}
+		}, "json");
+	});
+	
+	// 向上推（到底部才加载）与向下拉（zepto不是很敏感）
+	$(window).scroll(function() {
+		if ($(".chooseSalesBox").css("display") == "block") {
+			//alert('导购列表滑动');
+			if (!guideLoadingData && guideMoreData) {
+				// 如果不在请求数据并且还有数据
+				guideLoadingData = true;
+				getGuideList('drag'); // 继续请求导购列表
+			}
+		} else {
+			//alert('商品列表滑动');
+			var scrollh = document.body.scrollHeight; // 网页正文全文高
+			var clienth = document.documentElement.clientHeight; // 网页可见区域高度
+			var scrollt = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop; // 网页被卷去的高
+			var limitheight = 100; // 触碰屏幕的距离底部（主页底部有页脚，间距增大到100px）
+			if (scrollt + clienth + limitheight >= scrollh && !isLoadingData && hasMoreData) {
+				isLoadingData = true;
+				getProductList('drag'); // 由本模块内的init方法来调用getProductList方法上推加载下一页
+			}
+			scrollPosition = $(window).scrollTop();
+		}
+	}).swipeDown(function(){
+		if (! isLoadingData && document.body.scrollTop <= 1) {
+            isLoadingData = true;
+            getProductList('pull', 0);			// 由本模块内的init方法来调用getProductList方法下拉刷新
+        }
+	});
+	
+});
+
+// 控制悬浮
+var menuTop = $(".s-options").offset().top;
+$(document).on("scroll", function() {
+	if ($("body").scrollTop() >= menuTop) {
+		$(".s-options").css({
+			"position": "fixed",
+			"top": "0",
+			"z-index": "5"
+		});
+		$(".searchBox.stock").css("padding-top", "48px");
+	} else {
+		$(".s-options").css({
+			"position": "static"
+		});
+		$(".searchBox.stock").css("padding-top", "8px");
+	}
+});
+
+// 分页获取导购列表
+function getGuideList(action, nextstart) {
+	// Step1：定义请求参数
+	var start = 0; // 定义起始页为0
+	if (typeof nextstart == 'undefined') {
+		start = window.guidenextstart; // 如果没有定义guidenextstart下一页数据，就用window.guidenextstart这个值
+	} 
+	var url = guidelistURL + "?eid=" + eid + "&sid=" + sid + "&nextstart=" + start; // 分页请求数据的地址
+	
+	// Step2：根据不同的请求方式
+	switch (action) {
+		case 'pull':
+			//$('.no-more').addClass("fn-hide"); // 默认已显示全部的div隐藏
+			break;
+		case 'drag':
+			// 如果是上推操作
+			MLoading.show('加载中');
+			break;
+		default:
+			MLoading.show('加载中');
+			break;
+	}
+	guideMoreData = true; // 模块开始请求新数据的标记置为true
+	guideLoadingData = true; // 模块设置为正在请求数据
+	
+	// 准备请求参数
+	var params = {
+			eid : eid, 					// 商家编号
+			sid : sid, 					// 分店编号
+			nextstart : start 			// 下一页导购开始的位置
+	}
+	// Step3：请求并且完成界面不同显示
+	$.post(url, params, function(result){
+		
+		MLoading.hide(); // 隐藏等待刷新框
+		guideLoadingData = false; // 本模块正在loading数据的状态变为false
+		
+		if (result.errCode == 0) {
+			// 如果正确请求到了导购数据
+			if (action == 'pull') {
+				// 如果加载数据的动作是下拉，则有新收藏可能已经更新，需要清空原来的
+				$('.storeSales').html('');					// 下拉先清空模板
+				var tmpl = template('guidelisttpl', result.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+				if (tmpl == '{Template Error}') {
+					tmpl = ""; // 如果渲染模板出错，置空tmpl
+				} 
+				// 弹出导购层并写入导购信息
+				$(".chooseSalesBox").show().find(".storeSales").height($(window).height() - 160).html(tmpl); // 直接写入导购信息
+			} else {
+				// 上推加载下一页的处理
+				var tmpl = template('guidelisttpl', result.data); // 渲染模板
+				if (tmpl == "{Template Error}") {
+					tmpl = ""; // 渲染出错为空
+				}
+				// 弹出导购层并写入导购信息
+				$(".chooseSalesBox").show().find(".storeSales").height($(window).height() - 160).append(tmpl); // 继续追加导购信息
+				
+				// 如果返回的json数据的data字段的threadList字段里无数据，就不再加载任何数据
+				if (result.data.guidelist.length == 0) {
+					guideMoreData = false; // 还有下一页数据变成false
+				}
+			}
+			// 为每个导购追加评分
+			$(".chooseSalesBox .storeSales .appProgress").each(function(i, e) {
+				var stars = parseFloat($(e).find(".val").data("stars")); // 计算获得的星星
+				$(e).find(".val").width((stars * 20).toFixed(1) + "%"); // 加宽span[class='val']的style宽度，默认0%一颗星都没有
+				$(e).siblings(".grade").html(stars.toFixed(1)); // 导购评分，精确到小数点后1位，与淘宝一样，最高5分
+			});
+			window.guidenextstart = nextstart = result.nextstart; // 将下一页数据给到nextStart，同时给到window.nextStart
+			// 至此，一次pull或者drag操作所有DOM元素与结构、特效变更结束
+		} else {
+			mobileAlert("加载导购列表失败，网络繁忙，请稍后再试！");
+			return false; // errCode不为0，有错误码，表示请求数据失败
+		}
+	}, 'json');
+}
+
+// 分页获取商品列表
+function getProductList(action, nextstart) {
+	// Step1：定义请求参数
+	var start = 0; // 定义起始页为0
+	if (typeof nextstart == 'undefined') {
+		start = window.nextstart; // 如果没有定义nextstart下一页数据，就用window.nextstart这个值
+	} 
+	var url = productlistURL + "?eid=" + eid + "&sid=" + sid + "&nextstart=" + start; // 分页请求数据的地址
+	
+	// Step2：根据不同的请求方式
+	switch (action) {
+		case 'pull':
+			$('.no-more').addClass("fn-hide"); // 默认已显示全部的div隐藏
+			break;
+		case 'drag':
+			// 如果是上推操作
+			MLoading.show('加载中');
+			$(".loadingBox").removeClass("fn-hide");
+			break;
+		default:
+			MLoading.show('加载中');
+			$(".loadingBox").removeClass("fn-hide");
+			break;
+	}
+	hasMoreData = true; // 模块开始请求新数据的标记置为true
+	isLoadingData = true; // 模块设置为正在请求数据
+	
+	// 准备请求参数
+	var params = {
+			eid : eid, 					// 商家编号
+			sid : sid, 					// 分店编号
+			querytype : querytype, 		// 查询精选商品
+			nextstart : start 			// 下一页商品开始的位置
+	}
+	// Step3：请求并且完成界面不同显示
+	$.post(url, params, function(result){
+		
+		$(".loadingBox").addClass("fn-hide"); // 正在加载中隐藏
+		MLoading.hide(); // 隐藏等待刷新框
+		isLoadingData = false; // 本模块正在loading数据的状态变为false
+		
+		if (result.errCode == 0) {
+			// 如果正确请求到了订单数据
+			var productListObj = $('.stockList ul'); 		// 抓取class为stockList的ul，定义为productListObj对象
+			
+			if (action == 'pull') {
+				// 如果加载数据的动作是下拉，则有新收藏可能已经更新，需要清空原来的
+				productListObj.html('');					// 下拉先清空模板
+				var tmpl = template('productlisttpl', result.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+				if (tmpl == '{Template Error}') {
+					tmpl = ""; // 如果渲染模板出错，置空tmpl
+				} 
+				productListObj.html(tmpl); // 写入新html数据
+			} else {
+				// 上推加载下一页的处理
+				var tmpl = template('productlisttpl', result.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+				if (tmpl == '{Template Error}') {
+					tmpl = ''; // 如果渲染失败，则html置空
+				}
+				productListObj.append(tmpl); // 在文档尾追加新html数据
+				
+				// 如果返回的json数据的data字段的threadList字段里无数据，就不再加载任何数据
+				if (result.data.productlist.length == 0) {
+					hasMoreData = false; // 模块不在加载数据中
+					$('.no-more').removeClass("fn-hide"); // 显示所有数据
+				}
+			}
+			window.nextstart = nextstart = result.nextstart; // 将下一页数据给到nextStart，同时给到window.nextStart
+			// 至此，一次pull或者drag操作所有DOM元素与结构、特效变更结束
+		} else {
+			mobileAlert("加载商品列表失败，网络繁忙，请稍后再试！");
+			return false; // errCode不为0，有错误码，表示请求数据失败
+		}
+	}, 'json');
+}
+</script>
+</body>
+</html>

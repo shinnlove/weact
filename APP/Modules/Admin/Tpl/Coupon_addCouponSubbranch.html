@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<title>优惠券关联店铺</title>
+</head>
+
+<body>
+	<form name="myCoupon" class="form-horizontal uniform" method="post" action="#">
+		<input type="hidden" id="coupon_id" name="coupon_id" value="" />
+		<div class="control-group">
+	        <div class="controls controls-row"><h2>添加优惠券关联店铺</h2></div>
+	        <div class="controls controls-row">
+	        	<font style="font-size:1.17em; font-weight:bold; color:highlight;">步骤：第3步，共3步</font><br />
+	        	<font style="font-size:1.17em; font-weight:bold; color:highlight;">请选择线下优惠券适用的店铺</font>
+	        </div>
+	    </div>
+		
+		<hr />
+		
+		<iframe id="subbranch" name="subbranch" src="{:U('Admin/Coupon/frameSubbranch')}" frameborder="false" style="overflow-x:hidden;border:none;" width="100%" allowtransparency="true"></iframe>
+		
+		<hr />
+		
+		<div class="handle-action">
+            <a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">下一步</a>
+            &nbsp;&nbsp;
+            <a id="resetbtn" class="large ui-color-button blue" href="javascript:void(0)">重置</a>
+            <a href="javascript:history.go(-1);">
+                <img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/images/goback.png" />
+            </a>
+        </div>
+	</form>
+	
+<script type="text/javascript">
+$(function() {
+	$(".uniform").uniform();				//初始化uniform，文本框的uniform格式化
+	
+	$('#subbranch').css('height', $(window).height() - 262);		//262px（头加脚）正好全屏无滚动条
+	
+	//提交信息
+	$("#submitbtn").click(function(){
+		//进行“下一步”的方法
+		var rows = $("#subbranch")[0].contentWindow.getAllSelected();
+		var coupon_id = $("#coupon_id").val();
+		var ids = [];
+		if (rows.length > 0) {
+			$.messager.confirm('确认', '确定您所选择的店铺使用该优惠券吗？', function(cf) {
+				if (cf) {
+					for (var i = 0; i < rows.length; i++) {
+						ids.push(rows[i].subbranch_id);
+					}
+					var params = { 
+							//coupon_id : coupon_id,
+							stepfirst : sessionStorage.stepfirstinfo,
+							stepsecond : sessionStorage.stepsecondinfo,
+							sids : ids.join(',') 
+					}
+					$.post("{:U('Admin/CouponRequest/addCouponConfirm','','')}", params, function(result) {
+						if (result.errCode == 0) {
+							window.location = "{:U('Admin/Coupon/CouponView','','')}";
+						} else {
+							$.messager.alert('提示', '添加优惠券失败，'+result.errMsg, 'error');
+						}
+					});
+				}
+			});
+		} else {
+			$.messager.alert('提示', '请选择店铺', 'error');
+		}
+	});
+	
+	$("#resetbtn").click(function(){
+		/* var subbranch = new Array();
+		subbranch[0] = '7c1c501c73e7f5bd2131bf1aa99ac158';
+		subbranch[1] = '52fbc26ecee6e4f3cdf856f0edab951b';
+		subbranch[2] = '72faeb666b02e85c00f303b800fdd15b';
+		subbranch[3] = '954b5cda9dbb60426fc8f9cc4c56da85';
+		subbranch[4] = '40bfd8e38692eada30d6762c68607727';
+		$("#subbranch")[0].contentWindow.selectMultipleRow(subbranch); */
+	});
+});
+window.onresize = function() {
+	$('#subbranch').css('height', $(window).height() - 262);
+}
+</script>
+</body>
+</html>

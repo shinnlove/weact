@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/MobileCommonStyle.min.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>添加许愿</title>
+</head>
+
+<body style="background:#efefef;">
+	<div class="wrap">
+		<div class="head">{$einfo.brand}</div>
+		<div class="content">
+			<div class="main">
+				<form id="loginform" name="loginform" action="{:U('Home/Plugin/add')}" method="post">
+					<input type="hidden" id="e_id" value="{$e_id}" name="e_id" />
+					<div class="p_mod o_address">
+						<h2 class="p_mod_title">许愿</h2>
+						<div id="city">
+							<ul>
+								<li><strong>昵称：</strong><input type="text" placeholder="请输入昵称（可填）,默认佚名" id="wisher" name="wisher" value="" style="width: 100%;" /></li>
+								<li><strong>我的愿望：</strong>
+								<textarea rows="3" cols="10" placeholder="请输入愿望（必填）" style="width: 100%; height: 100px;" id="wish_content" name="wish_content"></textarea></li>
+							</ul>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="o_btn clearfix">
+				<input id="wishbtn" type="button" class="o_btn_submit ts1" value="许愿" style="margin-bottom: 10px;" />
+				<input type="button" class="o_btn_back ts1" onclick="javascript:history.go(-1)" value="返回" />
+			</div>
+			<div class="bottom">
+				<div class="weActName">微信公众名称：{$einfo.e_name}</div>
+				<div class="weActNumber">微信号：{$einfo.wechat_account}</div>
+				<div class="weActProducer">Powered by <a href="#">WeAct</a></div>
+				<div class="weact-deco"></div>
+	        </div>
+		</div><!-- content结束div -->
+		
+        {:W('Footer', array('e_id' => $e_id))}<!--footer-->
+	</div>
+	
+<script type="text/javascript">
+$("#wishbtn").click(function(){
+	var wish_content = $("#wish_content").val();
+	if(wish_content.trim()==''){
+		scscms_alert("请填写你的愿望","error","",1);
+		$("#wish_content").focus();
+		return;
+	}
+	document.loginform.submit();
+});
+</script>
+</body>
+</html>

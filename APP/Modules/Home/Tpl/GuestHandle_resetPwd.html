@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/MobileCommonStyle.min.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>重置密码</title>
+</head>
+
+<body style="background:#efefef">
+	<div id="wrap" class="wrap">
+    	<div class="head">{$einfo.brand}</div>
+        <div class="content">
+        
+        	<div class="main">
+        	    <form id="resetPwdform" name="resetPwdform" action='{:U("Home/GuestHandle/customerResetPwd","","")}' method="post">
+                	<input id="customer_id" name="customer_id" value="{$customer_id}" type="hidden" />
+					<input id="e_id" name="e_id" value="{$e_id}" type="hidden" />
+                    <div class="p_mod o_address">
+                        <h2 class="p_mod_title">重置密码</h2>
+                        <div id="city">
+                            <ul>
+                                <li>
+                                	<font color="red">温馨提示：请输入新密码，并牢记此密码：</font>
+                                </li>
+                                <li>
+                                	<strong>账号：</strong>
+                                    <input type="text" placeholder="请输入您的账号" id="account" name="account" readonly="readonly" value="{$account}" style="width:130px;" />
+                                </li>
+                                <li>
+                                	<strong>新密码：</strong>
+                                    <input type="password" placeholder="请输入新密码" id="password" name="password" value="" style="width:130px;" />
+                                </li>
+                                <li>
+                                	<strong>确认密码：</strong>
+                                    <input type="password" placeholder="请确认新密码" id="repassword" name="repassword" value="" style="width:130px;" />
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="o_btn clearfix">
+                        <input type="button" id="resetPwdBtn" name="resetPwdBtn" class="o_btn_submit ts1" value="重置密码" style="margin-bottom:10px;" />
+                    </div>
+                </form>
+			</div>
+            <div class="bottom">
+            	<div class="weActName">微信公众名称：{$einfo.e_name}</div>
+                <div class="weActNumber">微信号：{$einfo.wechat_account}</div>
+                <div class="weActProducer">Powered by <a href="#">WeAct</a></div>
+                <div class="weact-deco"></div>
+            </div>
+        </div><!--content-->
+        {:W('Footer', array('e_id' => $e_id))}<!--footer-->
+    </div><!--wrap-->
+
+<script type="text/javascript">
+$(function(){
+	$('#resetPwdBtn').click(function(){
+		var password = $('#password').val().trim();
+		var repassword = $('#repassword').val().trim();
+		if(password == ''){
+			scscms_alert("请填写新密码！", "warn", function(){
+				$('#password').focus();
+			});
+			return false;
+		}else{
+			if(repassword == ''){
+				scscms_alert("请确认新密码！", "warn", function(){
+					$('#repassword').focus();
+				});
+				return false;
+			}else{
+				if(password!=repassword){
+					scscms_alert("两次密码不一致！", "warn", function(){
+						$('#repassword').focus();
+					});
+					return false;
+				}else{
+					$('#resetPwdform').submit();
+				}
+			}
+		}
+	});
+});
+</script>
+</body>
+</html>

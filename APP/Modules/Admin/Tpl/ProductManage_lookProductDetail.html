@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=7" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/enterpriseMainStyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/dialog.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ueditor/lang/zh-cn/zh-cn.js"></script>
+<title>商品详细信息</title>
+<style type="text/css">
+.pro-color-size { padding:0;border:1px solid #b1cde3;border-collapse:collapse;}
+.pro-color-size th { padding:3px 3px 3px 8px;width:84px;height:20px;border:1px solid #b1cde3;background:#fff;color:#4f6b72;text-align:center;font-size:12px;}
+.pro-color-size input { width:83px;height:20px;border:0;text-align:center;}
+.pro-color-size td { padding:3px 3px 3px 8px;height:20px;border:1px solid #b1cde3;background:#fff;color:#4f6b72;text-align:center;font-size:12px;}
+</style>
+</head>
+
+<body>
+	<div class="pad-10">
+		<div class="col-tab">
+			<ul class="tabBut cu-li">
+				<li id="tab_setting_1" class="on">基本信息</li>
+			</ul>
+			<div id="div_setting_1" class="contentList pad-10">
+				<table width="100%" cellpadding="2" cellspacing="1" class="table_form">
+					<tr>
+						<th></th>
+						<td><input type="hidden" name="product_id" id="product_id" class="input-text" value="{$productDetail.product_id}" /></td>
+					</tr>
+					<tr>
+						<th width="100">商品分类：</th>
+						<td><input id="nav_id" type="hidden" name="nav_id" />
+							{$productDetail.nav_name}</td>
+					</tr>
+					<tr>
+						<th width="100">商品名称：</th>
+						<td>{$productDetail.product_name}</td>
+					</tr>
+					<tr>
+						<th width="100">商品编号：</th>
+						<td>{$productDetail.product_number}</td>
+					</tr>
+					<tr>
+						<th width="100">适用性别：</th>
+						<td id="pro-sex"></td>
+					</tr>
+					<tr>
+						<th width="100">已上传的商品图片：</th>
+						<td></td>
+					</tr>
+					<tr>
+						<th width="100"></th>
+						<td style="width: 500px;">
+							<volist name="imageList" id="imgL" mod="5">
+							<div style="border: solid 1px #CCC; width: 100px; display: block; float: left; margin-right: 10px; margin-bottom: 5px;">
+								<div>
+									<img id="cImg" width="100px;" height="100px;" src="{$imgL.micro_path}" />
+								</div>
+							</div>
+							</volist>
+						</td>
+					</tr>
+					<tr>
+						<th width="100">SKU属性：</th>
+						<td></td>
+					</tr>
+					<tr>
+						<th width="100"></th>
+						<td>
+							<table id="proColorSizeTable" class="pro-color-size" border="1"
+								cellpadding="0" cellspacing="0">
+								<tr>
+									<th>颜色</th>
+									<th>尺寸</th>
+									<th>库存量</th>
+									<th>卖出量</th>
+									<th>尺码排序</th>
+									<th>条形码</th>
+								</tr>
+								<foreach name="scaList" item="sca">
+								<tr>
+									<td><input type="text" readonly="readonly" class="colorList" name="colorList[]" value="{$sca.product_color}" /></td>
+									<td><input type="text" readonly="readonly" class="sizeList" name="sizeList[]" value="{$sca.product_size}" /></td>
+									<td><input type="text" readonly="readonly" name="amountList[]" value="{$sca['storage_amount']-$sca['sell_amount']}" /></td>
+									<td><input type="text" readonly="readonly" name="amountList[]" value="{$sca.sell_amount}" /></td>
+									<td><input type="text" readonly="readonly" name="orderList[]" value="{$sca.size_order}" /></td>
+									<td><input type="text" readonly="readonly" name="codeList[]" value="{$sca.bar_code}" /></td>
+								</tr>
+								</foreach>
+							</table>
+						</td>
+					</tr>
+					<tr>
+						<th width="100">卖出量：</th>
+						<td>{$productDetail.sell_amount}&nbsp;&nbsp;({$productDetail.units})</td>
+					</tr>
+					<tr>
+						<th width="100">总库存量：</th>
+						<td>{$productDetail.storage_amount}&nbsp;&nbsp;({$productDetail.units})</td>
+					</tr>
+					<tr>
+						<th width="100">质地：</th>
+						<td>{$productDetail.material}</td>
+					</tr>
+					<tr>
+						<th width="100">吊牌价：</th>
+						<td>{$productDetail.original_price}&nbsp;&nbsp;(元)</td>
+					</tr>
+					<tr>
+						<th width="100">现售价：</th>
+						<td>{$productDetail.current_price}&nbsp;&nbsp;(元)</td>
+					</tr>
+					<tr>
+						<th width="100">商品重量：</th>
+						<td>{$productDetail.weight}&nbsp;&nbsp;(kg)</td>
+					</tr>
+					<tr>
+						<th width="100">邮费规则：</th>
+						<td id="pro-postage"></td>
+					</tr>
+					<tr>
+						<th width="100">物流方式：</th>
+						<td id="pro-logistics"></td>
+					</tr>
+					<tr>
+						<th width="100">导购提成：</th>
+						<td id="pro-cutprofit"></td>
+					</tr>
+					<tr>
+						<th width="100">购买返分：</th>
+						<td id="pro-present"></td>
+					</tr>
+					<tr>
+						<th width="100">积分换购：</th>
+						<td id="pro-scoretype"></td>
+					</tr>
+					<tr>
+						<th width="100">描述信息：</th>
+						<td></td>
+					</tr>
+					<tr>
+						<th width="100"></th>
+						<td><script id="container" type="text/plain" style="width: 800px; height: 300px;"></script></td>
+					</tr>
+				</table>
+			</div>
+			<div class="bk15"></div>
+			<div style="position: fixed; right: 20px; bottom: 20px;">
+				<a href="javascript:history.go(-1);"><img style="width: 80px; height: 80px;" alt="返回" src="__PUBLIC__/images/shop-return.jpg" /></a>
+			</div>
+		</div>
+	</div>
+
+<script type="text/javascript">
+var psex = '{$productDetail.sex}';
+var ppostage = '{$productDetail.postage}';
+var plogistics = '{$productDetail.logistics}';
+var pcutprofit = '{$productDetail.cutprofit_type}';
+var pcutamount = '{$productDetail.cutprofit_amount}';
+var ppresent = '{$productDetail.present_score}';
+var pscoretype = '{$productDetail.score_type}';
+var pscoreamo = '{$productDetail.score_amount}';
+var pscorepri = '{$productDetail.score_price}';
+
+$(function(){
+	$detail_html = '{$productDetail.html_description}';
+	$('#container').html($detail_html);
+
+	var ue = UE.getEditor('container', {
+		toolbars : [ [ 'FullScreen', 'Source' ] ], // ueditor不带任何编辑功能
+		autoFloatEnabled : false,
+	});
+
+	//监听ueditor图片插入，插入前设置图片宽度。
+	ue.addListener('beforeInsertImage', function(t, arg) {
+		for (i = 0; i < arg.length; i++) {
+			arg[i].width = 720;
+		}
+	});
+	
+	//商品适用性别初始化：1代表男,2代表女,0代表通用
+	if (psex == 1){
+		document.getElementById("pro-sex").innerHTML="男";
+	}else if (psex == 2){
+		document.getElementById("pro-sex").innerHTML="女";
+	}else {
+		document.getElementById("pro-sex").innerHTML="通用";
+	}
+	
+	//邮费规则初始化：默认0表示免邮，1表示使用邮费模板
+	if (ppostage == 0){
+		document.getElementById("pro-postage").innerHTML="免邮";
+	}else if(ppostage == 1) {
+		document.getElementById("pro-postage").innerHTML="使用邮费模板";
+	}
+	
+	//配送方式初始化：默认0表示不限制，1表示仅限到店自提
+	if (plogistics == 0){
+		document.getElementById("pro-logistics").innerHTML="不限制";
+	}else if(plogistics == 1) {
+		document.getElementById("pro-logistics").innerHTML="仅限到店自提";
+	}
+	
+	//初始化商品对导购提成方式，默认0表示0.0%没有提成，1表示按百分比提成且数字范围0~100，2表示按固定金额提成且数字范围0~商品当前价格。
+	if (pcutprofit == 0){
+		document.getElementById("pro-cutprofit").innerHTML="不给提成";
+	}else if (pcutprofit == 1){
+		document.getElementById("pro-cutprofit").innerHTML="按百分比提成："+pcutamount+"%";
+	}else if (pcutprofit == 2){
+		document.getElementById("pro-cutprofit").innerHTML="按固定金额提成："+pcutamount+"&nbsp;&nbsp;(元)";
+	}
+	
+	//初始化用户购买商品获得的积分数，默认0表示不获得积分。
+	if (ppresent != 0 && ppresent != null){
+		document.getElementById("pro-present").innerHTML="购买可获得积分："+ppresent+"&nbsp;&nbsp;(分)";
+	}else {
+		document.getElementById("pro-present").innerHTML="购买不获得积分";
+	}
+	
+	//初始化积分兑换方式，默认0表示不能积分兑换，1表示允许部分积分兑换（积分+钱）。
+	if (pscoretype == 0){
+		document.getElementById("pro-scoretype").innerHTML="不允许积分换购";
+	}else if(pscoretype == 1){
+		document.getElementById("pro-scoretype").innerHTML="换购所需积分+金钱："+pscoreamo+"分&nbsp;+&nbsp;"+pscorepri+"元";
+	}
+});
+</script>
+</body>
+</html>

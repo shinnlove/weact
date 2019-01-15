@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/login.css">
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>用户登录</title>
+</head>
+
+<body>
+	<!-- 公共头部 -->
+	<!-- <section class="pub-header clearfix">
+		<div class="header">
+			<a href="javascript:;" class="pub-return pubArr"></a>
+			<div class="pub-header-tit">登录微动</div>
+			<a href="regularMembers.html" class="pub-user"></a>
+		</div>
+	</section> -->
+	
+	<!-- logo IMG模块 -->
+	<section class="logo log3">
+		<a href="#"><img src="__PUBLIC__/images/newloginbkg.jpg" alt="" /></a>
+	</section>
+	
+	<!-- 登录模块 -->
+	<section class="loginMoudle2 loginModule3">
+		<form action="#" method="post">
+			<input type="hidden" name="sid" id="sid" value="{$sid}" />
+			<input type="hidden" name="from" id="from" value="{$from}" /><!-- 本页面来自的位置 -->
+			<div class="login-con2 login3">
+				<label for=""><input class="userinfo" type="text" name="username" id="username" value="" placeholder="请输入您的手机号码"></label>
+				<label for=""><input class="pswinfo" type="password" name="password" id="password" value="" placeholder="输入密码"></label>
+				<i></i>
+			</div>
+			<div class="login-choose2 clearfix">
+				<label for="getpsw" class="remember fl"><input type="checkbox" id="getpsw" name="remberMe" value="rember">记住密码</label>
+				<a href="#" class="forgetpsw fr">忘记密码？</a>
+			</div>
+			<input type="button" value="登录" class="loginBtn loginBtn2" />
+			<input type="button" value="微信授权" class="wechatLoginBtn loginBtn2" />
+			<div class="quicklogin2">
+				<a href="javascript:;" class="fl">微信登录</a>
+				<a href="#" class="fr">QQ登录</a>
+			</div>
+			<!-- <div class="quickReg quickReg2"><a href="#">没有账号?来注册吧</a></div> -->
+		</form>
+	</section>
+	
+<script type="text/javascript">
+$(function() {
+	imgSize();
+	
+	$("body").on("click", "#getpsw", function(e){
+		// 记住密码
+		var $this = $(this);
+		if ($this.is(':checked')) {
+			$this.parent().addClass('checked');
+		} else {
+			$this.parent().removeClass('checked');
+		};
+	}).on("click", ".loginBtn", function(e){
+		// 账号密码登录方式
+		var btnObj = $(this);
+		// 检测表单数据完整性
+		var username = $("#username").val().trim(); // 获取用户名
+		var password = $("#password").val().trim(); // 获取密码
+		if (username == "") {
+			mobileAlert("请输入账号！");
+			$("#username").focus(); // 账号文本框聚焦
+			return false;
+		} 
+		var telreg = /1((3[0123456789])|(4[0123456789])|(5[0123456789])|(7[0123456789])|(8[0123456789]))\d{8}/;
+		if(! telreg.test( username ) ) {	
+			mobileAlert("请填写正确的手机号！");
+			$("#username").focus(); // 账号文本框聚焦
+			return false;
+		} 
+		if (password == "") {
+			mobileAlert("请输入密码！");
+			$("#password").focus(); // 密码文本框聚焦
+			return false;
+		} 
+		
+		// 准备参数
+		var params = {
+				sid : $("#sid").val(), // 分店编号
+				from : $("#from").val(), // 登录页面从哪里
+				username : username,
+				password : password
+		}
+		MLoading.show('提交中...'); // 体验度等待
+		btnObj.attr('disabled',true); // 冻结按钮防止重复点
+		$.post("{:U('WeMall/GuestRequest/loginCheck', '', '')}", params, function(result){
+			MLoading.hide(); // 得到响应关闭等待框
+			btnObj.removeAttr('disabled'); // 恢复按钮
+			if (result.errCode == 0) {
+				mobileAlert("登录成功，欢迎回来！");
+				setTimeout(function(){
+					window.location.href = $("#from").val().trim(); // 1.2秒后跳转页面
+				},1200);
+			} else {
+				mobileAlert(result.errMsg);
+			}
+		}, "json");
+	}).on("click" ,".wechatLoginBtn, .quicklogin2 .fl", function(e){
+		// 微信方式登录
+		var url = "{:U('WeMall/GuestRequest/wechatAuthorizeLogin', array('sid' => $sid), '')}?from="+$("#from").val().trim();
+		window.location.href = url; // 跳转微信登录方式
+	}).on("click" ,".quicklogin2 .fr", function(e){
+		// QQ方式登录
+		mobileAlert("QQ授权登录暂不开放，请尝试使用其他登录方式！");
+		return false;
+	});
+});
+
+$(window).resize(function() {
+	imgSize();
+});
+
+// 变更顶部图片大小
+function imgSize() {
+	// 获取logo IMG的宽度
+	var imgWidth = $('.logo').find('img').width();
+	$('.logo').find('img').height(imgWidth / 2);
+};
+</script>
+</body>
+</html>

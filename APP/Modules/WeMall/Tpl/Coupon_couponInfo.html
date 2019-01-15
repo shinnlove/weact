@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>优惠券详情</title>
+<style>
+footer { position: fixed; bottom: 0; left: 0; width: 100%; height: 43px; }
+.bottom {padding-bottom:50px !important;}
+.c-8 {color:#888;}
+</style>
+</head>
+
+<body>
+	<div class="couponInfo">
+		<div class="top" style="background:#F44336">
+			<div class="type"></div>
+			<div class="couponName">{$couponinfo.coupon_name}</div>
+			<div class="wave"></div>
+			<div class="time">使用期限：<span id="couponstart">{$couponinfo.start_time}</span> - <span id="couponend">{$couponinfo.end_time}</span></div>
+		</div>
+		<div class="bottom">
+			<p class="fw-bold">使用说明：</p>
+			<div class="cont">{$couponinfo.instruction}</div>
+			<div><br /></div>
+		</div>
+	</div>
+	
+	<footer>
+		<a href="javascript:history.go(-1)" class="btn btn-red full no-rdu" style="background:#F44336">返回</a>
+	</footer>
+	
+	<input type="hidden" id="noTalking" />
+	
+<script type="text/javascript">
+var coupontype = "{$couponinfo.coupon_type}", 		// 获取优惠券类型
+	denomination = "{$couponinfo.denomination}", 	// 抵用券抵扣金额
+	discount = "{$couponinfo.discount}", 			// 优惠券所有的折扣
+	special_price = "{$couponinfo.special_price}", 	// 特价券面值
+	lowestconsume = "{$couponinfo.lowest_consume}", // 优惠券最低消费额度
+	basename = ""; // 优惠券基本名称
+
+// 页面初始化函数
+$(function(){
+	
+	// 对优惠券种类和名称进行初始化
+	if (coupontype == "1") {
+		if(~~lowestconsume > 0) {
+			basename = "满" + lowestconsume + "元 立减" + denomination + "元 抵用券"; // 有额度的抵扣
+		} else {
+			basename = "立减" + denomination + "元 抵用券"; // 直接抵扣
+		}
+	} else if (coupontype == "2") {
+		basename = "立享"+discount+"%折扣券";
+	} else if (coupontype == "3") {
+		if (special_price < 0) {
+			special_price = 1; // 防止出错
+		}
+		basename = "直接享受特价"+ special_price +" 特价券";
+	}
+	$(".type").html(basename); // 写入优惠券的名字
+	
+	// 点击使用优惠券
+	$("#useCoupon").click(function(){
+		var data = {
+				"id" : $(this).data("id"), 										// 优惠券编号
+		        "name" : $(this).closest(".item").find(".couponName").text(), 	// 获取优惠券名字
+		        "value" : $(this).data("cv"), 									// 获取优惠券文字描述的面额
+		        "coupontype" : coupontype, 										// 优惠券类型：1为抵扣券，2为折扣券，3为特价券
+		        "lowestconsume" : lowestconsume, 								// 抵用券最低消费
+		        "denomination" : denomination, 									// 抵用券面额
+		        "discount" : discount, 											// 折扣券折扣
+		        "special_price" : special_price, 								// 特价券特价
+	    }
+	    sessionStorage.usedCoupon=JSON.stringify(data);
+		window.location.href = "{:U('WeMall/Order/preOrder', array('sid' => $sid), '')}"; // 跳转预订单页面
+	});
+});
+</script>

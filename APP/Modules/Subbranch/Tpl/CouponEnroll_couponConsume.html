@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiColorButtonStyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/myUniformStyle.css" /><!--uniform表单控件长度大小根据需要修改的css，里边有很多类，引用后调用类名即可-->
+<!--[if gt IE 8]>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<![endif]-->
+<!--[if lt IE 8]>
+    <link href="css/ie7.css" rel="stylesheet" type="text/css" />
+<![endif]-->
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type='text/javascript' src='__PUBLIC__/js/plugins/bootstrap.min.js'></script>
+<title>录入优惠券</title>
+</head>
+
+<body>
+  <form id="couponEntering" name="couponEntering" class="form-horizontal uniform" method="post" action="#" style="padding:10px; border:1px solid #DDD;min-width:800px;">
+        <div class="control-group">
+            <div class="controls controls-row"><h2>录入优惠券信息</h2></div>
+            <div class="controls controls-row">
+                <font style="font-size:1.17em; font-weight:bold; color:highlight;">请填写会员要使用的优惠券信息，带</font>
+                	<span class="text-error">(*)</span>
+				<font style="font-size:1.17em; font-weight:bold; color:highlight;"> 为必填。</font>
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="control-group">
+			<label class="control-label">
+            	优惠券sn编号<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="coupon_sncode" name="coupon_sncode" placeholder="请填写优惠券编号" required value="" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	优惠券sn密码<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="password" class="uniform mybriefinput" id="coupon_password" name="coupon_password" placeholder="请填写优惠券的验证密码" required value="" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	商品价格<span class="text-error">(*)</span>： 
+            </label>
+            <div class="controls controls-row">
+            	<select id="price_select" class="uniform myselected">
+                    <option value="-1">请选择用户购买商品的价格</option>
+                    <option value="0">折扣价</option>
+                    <option value="1">正价</option>
+                </select>
+			</div>
+            <input type="hidden" id="price_limited" name="price_limited" value="-1" /><!--当前所选择商品的价格属性-->
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	经办人<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="enroll_person" name="enroll_person" placeholder="录入经办人" required value="" />
+            </div>
+            <div class="controls controls-row">
+              	  请填写录入本优惠券信息的工作人员
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	购买简述<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <textarea id="used_for" name="used_for" class="uniform mytextarea" placeholder="请简要填写使用该优惠券购买的商品信息" required></textarea>
+            </div>
+        </div>
+
+        <div class="form-actions no-margin" style="margin-bottom:0px; background:#fff;">
+        	<a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">提交</a>
+        	&nbsp;&nbsp;
+            <a id="resetbtn" class="large ui-color-button blue" href="javascript:void(0)">重置</a>
+            <a href="javascript:history.go(-1);">
+                <img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/img/goback.png" />
+            </a>
+        </div>
+	</form>
+	
+<script type="text/javascript">
+$(function(){
+	$(".uniform").uniform();				            //初始化uniform，文本框的uniform格式化
+	
+	//抓取录入的优惠券信息
+	var csn = $("#coupon_sncode");
+	var cps = $("#coupon_password");
+	var ps = $("#price_select");
+	var pri = $("#price_limited");
+	var enp = $("#enroll_person");			
+	var usf = $("#used_for");	
+	
+	//购买的商品的价格属性选择框更改事件
+	ps.change(function(){
+		pri.val($(this).val());			               //获取option选中的商品的price的value，并写入input里
+	});
+	
+	//信息提交
+	$("#submitbtn").click(function(){			
+		//判断优惠券sncode是否填写
+		if (csn.val() == ''){
+			$.messager.alert('温馨提示', '请填写优惠券的编号!', 'warning', function(){
+				csn.focus();						       //注意聚焦和return的顺序！
+			});
+			return								
+		}
+		//判断优惠券验证密码是否填写
+		if (cps.val() == ''){
+			$.messager.alert('温馨提示', '请填写优惠券的验证密码!', 'warning', function(){
+				cps.focus();						
+			});
+			return								
+		}
+		//判断用户购买的商品的价格属性是否选择
+		if (pri.val() == '-1'){
+			$.messager.alert('温馨提示', '请填写优惠券使用商品的价格!', 'warning', function(){
+				ps.focus();						
+			});
+			return								
+		}
+		//判断录入该优惠券信息的录入员的姓名是否填写
+		if (enp.val() == ''){
+			$.messager.alert('温馨提示', '请填写录入的工作人员姓名!', 'warning', function(){
+				enp.focus();						      //注意聚焦和return的顺序！
+			});
+			return								
+		}
+		//判断录入该优惠券信息的购物信息是否填写
+		if (usf.val() == ''){
+			$.messager.alert('温馨提示', '请简要填写该优惠券购买的商品信息!', 'warning', function(){
+				usf.focus();						      //注意聚焦和return的顺序！
+			});
+			return								
+		}
+		//验证通过，post提交
+		$.messager.confirm('温馨提示', '确定提交所录入的优惠券信息吗?', function(result){
+			if(result) {
+				$.post("{:U('useCoupon')}", 
+				{ 
+					csn : csn.val(),
+					cps : cps.val(),
+					pri : pri.val(),
+					enp : enp.val(),
+					usf : usf.val()
+				}, function(data){
+						if(data.status == 1) {
+							$.messager.alert('温馨提示', '优惠券使用成功!', 'info');
+							window.location.href = "{:U('Subbranch/CouponEnroll/couponRecord')}";
+						} else if(data.status == 2) {
+							$.messager.alert('温馨提示', '没有查到记录，优惠券不存在!', 'error');
+						} else if(data.status == 3) {
+							$.messager.alert('温馨提示', '优惠券已使用!', 'warning');
+						} else if(data.status == 4) {
+							$.messager.alert('温馨提示', '此优惠券仅限在线上微平台使用!', 'error');
+						} else if(data.status == 5) {
+							$.messager.alert('温馨提示', '输入优惠券编号或密码错误!', 'error');
+						} else if(data.status == 6) {
+							$.messager.alert('温馨提示', '此优惠券只能使用在正价商品上!', 'error');
+						} else if(data.status == 7) {
+							$.messager.alert('温馨提示', '网络繁忙，请稍后重试!', 'error');
+						} else if(data.status == 8) {
+							$.messager.alert('温馨提示', '本店不在此券使用范围内!', 'error');
+						} else if(data.status == 9) {
+							$.messager.alert('温馨提示', '此优惠券仅限各门店独立使用，本券并非在本门店所领，无法在本门店使用!', 'error');
+						}
+				},'json');
+			}
+		});
+	});
+	
+	//信息重置
+	$("#resetbtn").click(function(){
+		$.messager.confirm('温馨提示', '确定重置吗?', function(result){
+			if(result){
+				//重置所有
+				csn.val('');		//重置优惠券编号	
+				cps.val('');		//重置优惠券验证密码
+				pri.val('-1');		//重置价格属性
+				ps.val('-1');
+				ps.change();                         
+				enp.val('');		//重置录入员姓名
+				usf.val('');
+			}
+		});
+	});
+});
+</script>
+</body>
+</html>

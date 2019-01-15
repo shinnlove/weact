@@ -1,0 +1,211 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weact.css" /><!--新版式的css样式-->
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.sea.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>{$pageinfo [currentnav] [nav_name]}</title>			
+</head>
+
+<body>
+    <div class="lay_page page_cat_2" id="page_cat_2">
+        <div class="lay_page_wrap">
+
+            <div class="lay_header" style="height: 45px">
+	            <div class="lay_toptab mod_tab" id="lay_head">
+	                <div class="tab_item go_back" onclick="window.history.go(-1);">
+	                    <i class="qb_icon icon_goback"></i>
+	                </div>
+	                <a class="tab_item" href='{:U("Home/Index/index", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_home"></i></a>
+	                <a class="tab_item" href='{:U("Home/MemberHandle/customerCenter", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_icenter"></i></a>
+	                <a class="tab_item" href='{:U("Home/Cart/shoppingCart", array("e_id"=>$e_id), "")}'>
+	                	<i class="qb_icon icon_cart"></i>
+	                    <i class="qb_icon icon_number_bubble qb_none" id="cartNum">0</i>
+	                </a>
+	            </div>
+	        </div><!-- lay_header结束div -->
+
+            <div style="padding-left: 5px;padding-right: 5px;margin-bottom: 5px;">
+                <div style="padding-top:10px;">
+                    <input id="keywords" type="text" class="txt_medium" style="height:33px;line-height:30px;font-size:12px;float:left;margin-left:10px;margin-right:5px;" placeholder="输入商品关键字" />
+                    <a id="btn_search" href="javascript:;" class="large ui-color-button meadow" style="float:left;">搜索</a>
+                    <div class="clearlevel" style="height:0;clear:both;"></div>    
+                	<hr class="hr_microshop2"/>
+            	</div>
+                
+                <div class="module">
+                <foreach name="pageinfo.secondnavigation" item="pisec" key='key'>
+                 	<if condition="$key % 2 eq 0">
+                    <table style="background:#1f497d;width:100%;">
+                        <tr>
+                            <td style="width:50%;">
+                                <a href="{$pisec.url}">
+                                    <img width="100%" init_src="{$pisec.nav_image_path}" style="display:block;height:auto;min-height:50px;"/>
+                                </a>
+                            </td>
+                            <td align="center" valign="center" style="position:relative;">                                                                                                                                                                                           
+                               <a href="{$pisec.url}">
+                                    <p style="text-align:center;color:#ffffff;font-family:Microsoft Yahei;font-size:20px;font-weight:normal;">{$pisec.nav_name}</p>                             
+                                    <p style="text-align:center;color:#ffffff;font-family:Microsoft Yahei;font-size:12px;">{$pisec.nav_english}</p>
+                                    <div style=" text-align:center;">
+                                        <div style="display:inline-block;width:8px;height:8px; border-right : 2px solid #ffffff; border-bottom : 2px solid #ffffff; -webkit-transform:rotate(-45deg);-ms-transform:rotate(-45deg);-moz-transform:rotate(-45deg);-o-transform:rotate(-45deg);transform:rotate(-45deg);"></div>
+                                    </div>
+                                    <div style="position:absolute;top:50%;margin-left:-8px;margin-top:-8px;border-right-color:#1f497d;" class="triangle_left_8"></div>                        
+                                </a>		
+                            </td>
+                        </tr>
+                    </table>
+                    </if>
+                    <if condition="$key % 2 eq 1">
+                    <table style="background:#1f497d;width:100%;">
+                        <tr>
+                            <td align="center" valign="center" style="position:relative;">                                                                                                                                                                                           
+                            	<a href="{$pisec.url}">
+                                    <p style="text-align:center;color:#ffffff;font-family:Microsoft Yahei;font-size:20px;font-weight:normal;">{$pisec.nav_name}</p>                             
+                                    <p style="text-align:center;color:#ffffff;font-family:Microsoft Yahei;font-size:12px;">{$pisec.nav_english}</p>
+                                    <div style=" text-align:center;">
+                                        <div style="display:inline-block;width:8px;height:8px; border-right : 2px solid #ffffff; border-bottom : 2px solid #ffffff; -webkit-transform:rotate(-45deg);-ms-transform:rotate(-45deg);-moz-transform:rotate(-45deg);-o-transform:rotate(-45deg);transform:rotate(-45deg);"></div>
+                                    </div>
+                                    <div style="position:absolute;top:50%;margin-left:-8px;margin-top:-8px;border-right-color:#1f497d;" class="triangle_left_8"></div>                        
+                                </a>		
+                            </td>
+                            <td style="width:50%;">
+                            	<a href="{$pisec.url}">
+                                    <img width="100%" init_src="{$pisec.nav_image_path}" style="display:block;height:auto;min-height:50px;"/>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                    </if>
+                    <div test="6" style="height:0px;background:#000000"></div>
+                    </foreach>
+                </div><!--module结束div-->
+            </div><!--中间部分包裹div结束-->
+		</div><!--lay_page_wrap结束-->
+		
+		<div class="lay_footer qb_tac qb_fs_s mod_mb15">
+	        <div class="fn_quicklinks">
+				<a class="mod_color_weak" href='{:U("Home/Index/index",array("e_id"=>$e_id),"")}'>商户首页</a>
+				<for start="0" end="3" step="1">
+					<span class="mod_color_comment">|</span>
+					<a class="mod_color_weak" href="{$pageinfo [navigation] [foot] [$i] [url]}">{$pageinfo [navigation] [foot] [$i] [nav_name]}</a>
+				</for>
+			</div>
+	        <div class="fn_copyright">
+	            <div class="mod_color_comment fn_copyright_agreement ui-fz-x-small ui-ta-c"><a href="#">Powered By WeAct</a></div>
+	            <div class="mod_color_comment fn_copyright_text">Copyright &copy; 2014 WeAct.<br/>All Rights Reserved. </div>
+	            <div class="mod_color_comment fn_copyright_text">微动公司 版权所有</div>
+	        </div>
+	    </div><!-- lay_footer结束div -->
+        
+    </div><!--最外层div结束-->
+	
+<script type="text/javascript">
+var e_id = '{$einfo.e_id}';				//要分享的商家编号
+//分享的信息
+var shareData = {
+	appid: "{$pageinfo [shareinfo] [appid]}", // 分享的商家编号
+    img_url: "{$pageinfo [shareinfo] [img_url]}", // 分享的图片
+    img_width: "160", // 宽度
+    img_height: "160", // 高度
+    title: "{$pageinfo [shareinfo] [title]}", // 分享的标题
+    desc: "{$pageinfo [shareinfo] [desc]}", // 分享的描述
+    link: "{$pageinfo [shareinfo] [link]}", // 分享的超链接
+    fakeid : "{$openid}",																		//分享用户的id
+    callback:function(result){
+    	if(result != 'send_app_msg:cancel' && result != 'share_timeline:cancel' && result != 'share_weibo:cancel' && result != 'share_fb:cancel'){
+    		$.post("{:U('Home/MobileCommon/shareRecord','','')}",
+    				{ e_id : e_id, link : shareData.link, openid : shareData.fakeid },			//分享的时候传3个参数：1、商家编号；2、链接地址（区分授权和不授权两种）；3、分享的微信号（只有开启授权登录才有）
+    				function(data){
+    					if(data.status == 1){
+    						scscms_alert("谢谢您的分享!", "ok", "", 2);//定时关闭窗口
+    					}else{
+    						scscms_alert("服务器繁忙，请稍后再试!"+data.msg, "warning", "", 2);//定时关闭窗口
+    					}
+    				},
+    				'json');
+    	}else{
+    		scscms_alert("下次记得分享噢!", "ok", "", 2);//定时关闭窗口
+    	}
+    }	/*分享后的回调函数，发送给朋友的类型分为send_app_msg:confirm或send_app_msg:cancel；对应发送给朋友、分享到朋友圈、分享到腾讯微博、分享到facebook都有4种类型*/
+};
+
+var oKeywords = $('#keywords');
+(function() {
+	var a = {
+		imgMark: "init_src",
+		imageList: [],
+		loadCount: 0
+	};
+	$.extend(a, {
+		init: function() {
+			this.imageList = document.images;
+			var b = this;
+			setTimeout(function() {
+				b.fetchImg()
+			}, 500);
+			$(window).scroll(function() {
+				b.fetchImg()
+			})
+		},
+		fetchImg: function() {
+			clearTimeout(this.timeout);
+			for (var b = this, a = this.imageList, f = document.body.scrollTop, k = $(window).height(), d = 0, e = 0, g = a.length; e < g; e++) {
+				var c = a[e];
+				if ($(c).attr(this.imgMark)) {
+					var h = $(c).offset().top;
+					h >= f && h <= f + k && 10 > d && (d++, $(c).prop("src", $(c).attr(this.imgMark)).removeAttr(this.imgMark), this.loadCount++, 9 == d && (this.timeout = setTimeout(function() {
+						b.fetchImg()
+					}, 1E3)));
+					this.loadCount == g && $(window).unbind("scroll")
+				}
+			}
+		}
+	});
+	$(document).ready(function() {
+		a.init()
+	})
+})();
+
+$(function(){
+	// 初始化自适应宽度
+	var current_width = document.documentElement.clientWidth;
+	var current_length = current_width - 94;
+	oKeywords.css("width",current_length);
+	
+	// 进行购物车的查询
+	var param = {
+			e_id : e_id
+	};
+	$.post("{:U('Home/ProductView/queryCartNumber', '', '')}", param, function(result) {
+		if (result.errCode == 0) {
+			var carnum = result.data.cart_count;
+			if (carnum > 0) {
+				$("#cartNum").text(carnum).removeClass("qb_none"); // 如果购物车有商品，移除qb_none并显示数量
+			}
+		} else {
+			return false;
+		}
+	}, "json");
+	
+	// 搜索按钮
+	$("#btn_search").click(function(){
+		alert('搜索成功!');
+	});
+});
+// 页面改变大小（横版竖版）
+window.onresize= function(){
+	var current_width = document.documentElement.clientWidth;
+	var current_length = current_width - 94;
+	oKeywords.css("width",current_length);
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,341 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/ueditor/themes/default/css/ueditor.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/My97DatePicker/skin/WdatePicker.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ueditor/lang/zh-cn/zh-cn.js"></script>
+<title>添加活动信息</title>
+<style type="text/css">
+a {
+	text-decoration: none;
+}
+input,textarea,select{  
+	width:200px;  
+	border:1px solid #ccc;  
+	padding:2px;  
+}  
+</style>
+</head>
+
+<body>
+	<div style="margin-left: 10px;">
+		<div>
+			<h3 style="color: highlight;">步骤：第1步,共3步(<font color="red" style="font-size: 15px;" >添加活动信息</font>)</h3>
+		</div>
+		<div>
+			<hr style="width: 200px; float: left; border-color: lightgreen;" />
+		</div>
+		<br />
+		<div>
+			活动名称：&nbsp;<input type="text" id="activity_name" name="activity_name" style="width: 500px; height: 25px;" class="easyui-validatebox" data-options="required:true" /> <br />
+		</div>
+		<br />
+		<div>
+			活动类型： <select id="activity_type" name="activity_type"
+				class="easyui-combobox" name="dept"
+				style="width: 200px; height: 30px;"
+				data-options="required:true,panelHeight:'auto',onSelect: function(rec){
+				     getOptionChange();
+                }">
+				<option value="-1">请选择...</option>
+				<option value="0">直接打折</option>
+				<option value="1">直接减价</option>
+				<option value="2">微电商活动</option>
+			</select>
+		</div>
+		<br />
+		<div>
+			开始时间：&nbsp;<input type="text" class="Wdate easyui-validatebox" name="start_time" data-options="required:true"
+				id="start_time" readonly style="width: 200px; height: 25px;"
+				onFocus="var end_time=$dp.$('end_time'); WdatePicker({onpicked:function(){end_time.focus();},firstDayOfWeek:1,dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'currentTime()'})">
+			&nbsp;结束时间：&nbsp;<input type="text" name="end_time" id="end_time" data-options="required:true"
+				readonly class="Wdate easyui-validatebox" style="width: 200px; height: 25px;"
+				onFocus="WdatePicker({firstDayOfWeek:1,dateFmt:'yyyy-MM-dd HH:mm:ss',minDate:'getStartTime()'})">
+		</div>
+		<!-- 记录行数 -->
+		<input type="hidden" id="numrow" value="0" />
+		<!-- 根据用户选择的活动添加对应的框 -->
+		<div id="append"></div>
+		<br>
+		<div>
+			活动描述：
+			<script id="container" name="activity_description" type="text/plain"
+				style="width: 600px; height: 200px;">
+             </script>
+		</div>
+		<br>
+		<div style="margin-left: 450px;">
+			<a id="btnclear" href="javascript:void(0)" onclick="clearContainer()"
+				class="easyui-linkbutton" style="float: none; font-size: 15px;">清空</a>
+			<a id="btnnext" href="javascript:void(0)" class="easyui-linkbutton"
+				style="float: none; font-size: 15px;"  onclick="next()">下一步</a>
+		</div>
+	</div>
+	<input type="hidden" id="enterprise_id" value="{$Think.session.curEnterprise.e_id}" />
+
+<script type="text/javascript">
+	var ue = UE.getEditor('container',{
+			imageUrl : "{:U('Admin/Activity/imageUpload')}",
+			imagePath : "__ROOT__"
+		});
+	
+	//监听ueditor图片插入，插入前设置图片宽度。
+	ue.addListener('beforeInsertImage', function (t, arg) {
+		 for(i=0; i<arg.length; i++){
+			 arg[i].width = 520;
+		 }
+	});
+	//um.setContent('');
+	//清空
+	function clearContainer() {
+		var numrow = $("#numrow").val();
+		numrow = parseInt(numrow);
+		//console.info(numrow);
+		$("#activity_type").combobox('setValue', '-1');
+		$("#activity_name").val('');
+		for (var i = 0; i <= numrow; i++) {
+			$("#reach_capacity" + i).val('');
+			$("#alleviate_amount" + i).val('');
+		}
+		UE.getEditor('container').setContent('');
+		$('#start_time').val('');
+		$('#end_time').val('');
+		$("#append").html('');
+	}
+	//下一页
+	function next() {
+		var s= "{$Think.server.SERVER_ADDR}";
+		var url = "{:U('Admin/Activity/addActivity','','')}";
+		var activity_type = $("#activity_type").combobox('getValue');
+		var activity_name = $("#activity_name").val();
+		var start_time = $("#start_time").val();
+		var end_time = $("#end_time").val();
+		var activity_description = UE.getEditor('container').getContent();
+		//activity_description = activity_description.replace('http:\/\/','').replace('https:\/\/','').replace();
+		var txt = UE.getEditor('container').getContent();
+		if(activity_name.trim()==''){
+			$("#activity_name").val('');
+			$("#activity_name").focus();
+			return;
+		}
+		if(activity_type == '-1'){
+			$.messager.show({
+   				title:'警告',
+   				msg:'请选择活动类型',
+   				timeout:3000,
+   				showType:'slide'
+   			});
+			return;
+		}
+		if($.isEmptyObject(start_time)){
+			$.messager.show({
+   				title:'警告',
+   				msg:'请选择活动开始时间',
+   				timeout:3000,
+   				showType:'slide'
+   			});
+			return;
+		}
+		if($.isEmptyObject(end_time)){
+			$.messager.show({
+   				title:'警告',
+   				msg:'请选择活动结束时间',
+   				timeout:3000,
+   				showType:'slide'
+   			});
+			return;
+		}
+		if(checkEndTime(start_time,end_time) == false){
+     		  $.messager.show({
+     				title:'警告',
+     				msg:'开始时间不能大于或等于结束时间',
+     				timeout:3000,
+     				showType:'slide'
+     			});
+     		  return false;
+     	  }
+		if (activity_type == '0' || activity_type == '1') {
+			var discount = $("#discount").val();
+			if(discount.trim()==''){
+				$("#discount").focus();
+				return;
+			}
+			if(UE.getEditor('container').hasContents() == false){
+				UE.getEditor('container').setContent('');
+				UE.getEditor('container').focus();
+				$.messager.show({
+      				title:'警告',
+      				msg:'请填写活动描述',
+      				timeout:3000,
+      				showType:'slide'
+      			});
+				return;
+			}
+			$('#btnnext').linkbutton('disable');
+			$.post(url, {
+				activity_name : activity_name,
+				activity_type : activity_type,
+				activity_description : activity_description,
+				start_time : start_time,
+				end_time : end_time,
+				discount : discount
+			}, function(data) {
+				//console.info(data.activity_id);
+				if(data.status == 1){
+					var url = "{:U('Admin/Activity/preaddProduct')}"
+					window.location.href = url+"?activity_id="+data.activity_id;
+				}else{
+					$('#btnnext').linkbutton('enable');
+					alert("error,添加失败");
+				}
+			});
+		} else if (activity_type == '2') {
+			var numrow = $("#numrow").val();
+			var reach_capacitys = [];
+			var alleviate_amounts = [];
+			for(var i = 0; i<=numrow; i++){
+				reach_capacitys.push($("#reach_capacity"+i).val());
+				alleviate_amounts.push($("#alleviate_amount"+i).val());
+				if($("#reach_capacity"+i).val().trim() == ''){
+					$("#reach_capacity"+i).focus();
+					return;
+				}
+				if($("#alleviate_amount"+i).val().trim() == ''){
+					$("#alleviate_amount"+i).focus();
+					return;
+				}
+			}
+			if(UE.getEditor('container').hasContents() == false){
+				UE.getEditor('container').setContent('');
+				UE.getEditor('container').focus();
+				$.messager.show({
+      				title:'警告',
+      				msg:'请填写活动描述',
+      				timeout:3000,
+      				showType:'slide'
+      			});
+				return;
+			}
+			$('#btnnext').linkbutton('disable');
+			$.post(url, {
+				activity_name : activity_name,
+				activity_type : activity_type,
+				activity_description : activity_description,
+				start_time : start_time,
+				end_time : end_time,
+				reach_capacitys : reach_capacitys.join(','),
+				alleviate_amounts : alleviate_amounts.join(',')
+			}, function(data) {
+				if(data.status == 1){
+					var url = "{:U('Admin/Activity/preaddProduct')}"
+					window.location.href = url+"?activity_id="+data.activity_id;
+				}else{
+					$('#btnnext').linkbutton('enable');
+					alert("error,添加失败");
+				}
+			});
+		}
+	}
+	//验证输入数据是否有误
+	function check(){
+		var activity_type = $("#activity_type").combobox('getValue');
+		var activity_name = $("#activity_name").val();
+		var start_time = $("#start_time").val();
+		var end_time = $("#end_time").val();
+		var activity_description = ue.getContent();
+		return false;
+	}
+	//获得下拉框的值
+	function getOptionChange(rec) {
+		//var targetObj = $("<input name='mydate' class='easyui-datebox'>").appendTo("#id");
+	    //$.parser.parse(targetObj);
+		var activity_type = $("#activity_type").combobox('getValue');
+		var target;
+		var target2;
+		if (activity_type != '-1') {
+			if (activity_type == '0') {
+				target = $("#append").html('<br>活动折扣：&nbsp;<input data-options=\'required: true,min:0,precision:2\' class=\'easyui-numberbox\' style=\'height:25px; width: 200px; \' type=\'text\' name=\'discount\' id=\'discount\'/><font color=\'red\' size=\'5px\'>%</font>');
+			} else if (activity_type == '1') {
+				target = $("#append").html('<br>抵现金额：&nbsp;<input data-options=\'required: true,min:0,precision:2\' class=\'easyui-numberbox\' style=\'height:25px; width: 200px; \' type=\'text\' name=\'discount\' id=\'discount\'/>(元)');
+			} else if (activity_type == '2') {
+				target = $("#append").html('<br>最低金额：&nbsp;<input data-options=\'required: true,min:0,precision:2\' class=\'easyui-numberbox\' style=\'height:25px; width: 200px; \' type=\'text\' name=\'reach_capacity0\' id=\'reach_capacity0\'/>');
+				target2 = $("#append").append('&nbsp;&nbsp;抵现金额：&nbsp;<input data-options=\'required: true,min:0,precision:2\' class=\'easyui-numberbox\' style=\'height:25px; width: 200px; \' type=\'text\' name=\'alleviate_amount0\' id=\'alleviate_amount0\'/>&nbsp;<a href=\'javascript:void(0)\' onclick=\'addOption()\'>添加</a>(单位:元)');
+			}
+			$.parser.parse(target);
+			if(target2 != undefined)
+			   $.parser.parse(target2);
+		} else {
+			$("#append").html('');
+		}
+	}
+	//添加满额就减
+	function addOption() {
+		var numrow = $("#numrow").val();
+		numrow = parseInt(numrow) + 1;
+		$("#numrow").val(numrow);
+		var str = '<div id=\'appendrow'+numrow+'\'><br>最低金额：&nbsp;<input data-options=\'required: true,min:0,precision:2\' class=\'easyui-numberbox\' style=\'height:25px; width: 200px; \' type=\'text\' name=\'reach_capacity'+numrow+'\' id=\'reach_capacity'+numrow+'\'/>';
+		str = str
+				+ '&nbsp;&nbsp;抵现金额：&nbsp;<input data-options=\'required: true,min:0,precision:2\' class=\'easyui-numberbox\' style=\'height:25px; width: 200px; \' type=\'text\' name=\'alleviate_amount'+numrow+'\' id=\'alleviate_amount'+numrow+'\'/>&nbsp;<a href=\'javascript:void(0)\' onclick=\'delOption('
+				+ numrow + ')\'>删除</a>';
+		var target = $("#append").append(str);
+		$.parser.parse(target);
+	}
+	//删除满额就减
+	function delOption(numrow) {
+		var numrow = $("#numrow").val();
+		$("#appendrow" + numrow).remove();
+		numrow = parseInt(numrow) - 1;
+		$("#numrow").val(numrow);
+	}
+	 //判断时间大小
+       function checkEndTime(start_time,end_time){
+     	    var start=new Date(start_time.replace("-", "/").replace("-", "/"));   
+     	    var end=new Date(end_time.replace("-", "/").replace("-", "/"));
+     	    console.info(start);
+     	    console.info(end);
+     	    if(start >= end){  
+     	        return false;  
+     	    }  
+     	    return true;  
+     	}  
+	//获得当前时间
+	function currentTime() {
+		var now = new Date();
+		var year = now.getFullYear(); //年
+		var month = now.getMonth() + 1; //月
+		var day = now.getDate(); //日
+		var hh = now.getHours(); //时
+		var mm = now.getMinutes(); //分
+		var clock = year + "-";
+		if (month < 10)
+			clock += "0";
+		clock += month + "-";
+		if (day < 10)
+			clock += "0";
+		clock += day + " ";
+		if (hh < 10)
+			clock += "0";
+		clock += hh + ":";
+		if (mm < 10)
+			clock += "0";
+		clock += mm;
+		//console.info(clock);
+		return clock;
+	}
+
+	function getStartTime() {
+		var starttime = $("#start_time").val();
+		starttime = starttime.substr(0,16);
+		return starttime;
+	}
+</script>
+</body>
+</html>

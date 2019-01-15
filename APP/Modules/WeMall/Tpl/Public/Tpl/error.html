@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>出错提示</title>
+<style>
+html{font-family: sans-serif;-ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%;height: 100%;}
+body{margin: 0;min-height: 100%;font: normal 12px/1.5 "Helvetica Neue", Helvetica, Arial, STHeiTi, "Microsoft Yahei", sans-serif;color: #fff8db;background-color: #b92e2b;background-image: -webkit-radial-gradient(circle, rgba(249, 140, 76, 0.9), rgba(249, 140, 76, 0));text-align: center;}
+.d-n{display: block;}
+img{vertical-align: middle;width: 145px;}
+section{padding-top: 30px;padding-bottom: 30px;}
+.error-msg { width:70%; margin:0px auto; }
+.error-msg span { font-size:16px; line-height:32px; text-align:center; }
+</style>
+<script type="text/javascript">
+window.onload = function() {
+	var wait = document.getElementById('wait'),
+		href = document.getElementById('href').href;
+	var interval = setInterval(function() {
+		var time = --wait.innerHTML;
+		if (time <= 0) {
+			location.href = href;
+			clearInterval(interval);
+		};
+	}, 1000);
+}
+</script>
+</head>
+
+<body>
+    <header class="d-n">
+        <h1>唔 {$msgTitle} 蛋定...</h1>
+        <div class="error-msg"><span>出错原因：{$error}</span></div>
+        <!-- <h3>系统将在&nbsp; <span style="color:blue;font-weight:bold">{$waitSecond}</span>&nbsp;秒后自动关闭，如果不想等待,直接点击 <a href="{$jumpUrl}">这里</a> 关闭</h3> -->
+        <h3>系统将在 &nbsp;<span id="wait" style="color:blue;font-weight:bold">{$waitSecond}</span>&nbsp;秒后自动跳转，</h3>
+        <h3>如果不想等待,直接点击 <a id="href" href="{$jumpUrl}">这里</a> 关闭</h3>
+	</header>
+    <section> 
+    	<img src="__PUBLIC__/images/errorinfo.png" alt="请用微信打开"> 
+    </section>
+</body>
+</html>

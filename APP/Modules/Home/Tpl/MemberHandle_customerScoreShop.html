@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css?v=1.0.0" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weact.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<script type="text/javascript">
+function goExchange(){
+	location.href = "{:U('Home/Exchange/myExchange',array('e_id' => $e_id),'')}";
+}
+</script>
+<title>积分商城</title>
+</head>
+
+<body>
+	<!-- 显示导购悬浮聊天窗 -->
+	<!--  
+	<div id="FloatDiv" style="position:fixed; width:100px; height:100px; visibility:visible; right: 10px; bottom: 5px; border: 0px;z-index:100">
+		<a href="http://192.168.0.42/wechat/chatindex.html"><img  src="__PUBLIC__/images/2.jpg"  scrolling="yes" /></a>
+	</div>
+	-->
+	<div class="lay_page page_cat_2" id="page_cat_2">
+        <div class="lay_page_wrap">
+            <div class="lay_header" style="height: 45px">
+	            <div class="lay_toptab mod_tab" id="lay_head">
+	                <div class="tab_item go_back" onclick="window.history.go(-1);">
+	                    <i class="qb_icon icon_goback"></i> 
+	                </div>
+	                <a class="tab_item" href='{:U("Home/Index/index", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_home"></i></a>
+	                <a class="tab_item" href='{:U("Home/MemberHandle/customerCenter", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_icenter"></i></a>
+	                <a class="tab_item" href='{:U("Home/Cart/shoppingCart", array("e_id"=>$e_id), "")}'>
+	                	<i class="qb_icon icon_cart"></i>
+	                    <i class="qb_icon icon_number_bubble qb_none" id="cartNum">0</i>
+	                </a>
+	            </div>
+	        </div><!-- lay_header结束div -->
+			
+            
+			<div class="lay_page page_icenter" id="page_icenter">
+            	<div class="lay_page_wrap">
+					<div class="fn_profile qb_clearfix">
+						<div class="qb_fl">
+							<h2> <span class="profile_name" style="font-size:12px;">欢迎来到积分商城</span> </h2>
+							<div class="profile_detail">
+								<a class="profile_location" href="{:U('Home/MemberHandle/deliveryManage', array('e_id' => $e_id), '')}">
+									<i class="qb_icon icon_profile_location"></i>收货地址管理
+								</a>
+							</div>
+						</div>
+			    	</div>
+				    
+				    <!-- 显示会员专区列表 -->
+					<div class="fn_tab qb_flex mod_mb15" id="tab-list">
+	                    <foreach name="memberlevelname" item="vo" key="k">
+							<if condition = "$k eq 0">
+								<a href="javascript:;" class="flex_box current" data-type="{$vo['level']}" data-order="current_price"><span>{$vo['level_name']}专区<i></i></span></a><hr>
+							</if>
+							<if condition ="$k gt 0">
+								<a href="javascript:;" class="flex_box" data-type="{$vo['level']}"><span>{$vo['level_name']}专区<i></i></span></a><hr>
+							</if>
+						</foreach>	
+                	</div>
+					
+					<!-- 显示某个专区下的商品列表 -->	                   
+	                <div id="itemList">
+	                    <div class="stockList">
+							<ul></ul>
+						</div>
+						<div class="noResult fn-hide"></div>
+	                    <div class="show-all" style="display:none;">已显示所有数据</div>
+	                </div>
+				    
+				    <div class="qb_tac qb_none" style="height: 30px;" evttag="loadMore" id="load-more"></div>
+				</div>
+           </div>
+       </div><!--lay_page_wrap结束div-->
+   </div><!--lay_page结束div-->
+							   
+	<div class="lay_footer qb_tac qb_fs_s mod_mb15">
+        <div class="fn_quicklinks">
+			<a class="mod_color_weak" href='{:U("Home/Index/index",array("e_id"=>$e_id),"")}'>商户首页</a>
+			<for start="0" end="3" step="1">
+				<span class="mod_color_comment">|</span>
+				<a class="mod_color_weak" href="{$pageinfo [navigation] [foot] [$i] [url]}">{$pageinfo [navigation] [foot] [$i] [nav_name]}</a>
+			</for>
+		</div>
+        <div class="fn_copyright">
+            <div class="mod_color_comment fn_copyright_agreement ui-fz-x-small ui-ta-c"><a href="#">Powered By WeAct</a></div>
+            <div class="mod_color_comment fn_copyright_text">Copyright &copy; 2014 WeAct.<br/>All Rights Reserved. </div>
+            <div class="mod_color_comment fn_copyright_text">微动公司 版权所有</div>
+        </div>
+    </div><!-- lay_footer结束div -->
+<!-- 会员专区商品列表 js arttemplate begin -->
+<script type="text/html" id="productlisttpl">
+{{each prolist as e i}}
+	<li class="stockBox">
+		<a href="{{e | productScoreDetailURL}}" class="stockLink" data-id="{{e.rule_id}}">
+			<div class="stockImg wbox">
+				<img src="{{e.micro_path}}" alt="" />
+			</div>
+			<div class="stockPrice">
+				所需积分:<span class="fc-red fw-bold">{{e.score_amount}}分</span>
+				<del class="block">¥{{e.original_price}}</del>
+			</div>
+		</a>
+	</li>
+{{/each}}
+</script>
+<!-- 会员专区商品列表 js arttemplate end -->
+<script type ="text/javascript">
+var eid = "{$e_id}", 					// 商家编号
+	openid = "{$openid}", 				// 订单用户微信号
+	querytype = 0, 						// 默认订单的请求类型为全部（0为全部订单，1为待付款，2为待发货，3为待收货，4为待评价，5为已评价，6为已关闭）
+	hasMoreData = true, 				// 本js模块全局变量：后续是否还有数据
+	isLoadingData = false, 				// 本js模块全局变量：本模块正在请求数据标记
+	nextstart = 0, 	
+	productlistjson = '{$proExchangeListjson}';
+	requestProductListURL = "{:U('Home/MemberHandle/requestProExchangeList', '', '')}"; // 分页请求商品
+	
+$(function(){
+	//第一次直出渲染模板（默认是上架时间）
+	var productlist = $.parseJSON(window.productlistjson); // 解析页面的json数据（不管是带了反斜杠，还是没有反斜杠，都可以解析json数据） 
+	var tmpl = template('productlisttpl', productlist.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+	var productListObj = $('.stockList ul'); 		// 抓取class为stockList的ul，定义为productListObj对象
+	if (tmpl == '{Template Error}') {
+		tmpl = ""; // 置空tmpl
+	}	else if (tmpl == "") {
+		tmpl = ""; 
+		$(".noResult").removeClass("fn-hide").html("没有微商城商品，等待商家添加。"); 
+	}
+	productListObj.html(tmpl);					// 渲染成功就把模板渲染的信息写入
+	window.nextstart = productlist.nextstart;		// 下一页开始 
+	
+	//生成DOM结构事件
+	$(window).on("tap", "#tab-list .flex_box", function(e){
+		// 按序查询商品
+		e.preventDefault();
+		var _t = $(this); // 抓取自身
+		if (_t.hasClass("current")) {
+			return false;
+		} else {
+			// 如果是切换标签卡
+			$(".flex_box").removeClass("current");
+			$(this).addClass("current"); 				// 点击的tab菜单要添加选中状态
+			window.querytype = $(this).data("type"); 	// 获取点击的是哪个页卡（非常关键）
+			//MLoading.show('加载中');
+			getProductList("pull", 0); 	
+			//MLoading.hide();
+		}
+	});
+	
+	//向上推（到底部才加载）与向下拉（不是很敏感）
+	$(window).scroll(function() {
+		var scrollh = document.body.scrollHeight; // 网页正文全文高
+		var clienth = document.documentElement.clientHeight; // 网页可见区域高度
+		var scrollt = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop; // 网页被卷去的高
+		var limitheight = 50; // 触碰屏幕的距离底部（增加到50px，预留一下）
+		if (scrollt + clienth + limitheight >= scrollh && !isLoadingData && hasMoreData) {
+			isLoadingData = true;
+			getProductList('drag'); // 由本模块内的init方法来调用getProductList方法上推加载下一页
+		}
+		scrollPosition = $(window).scrollTop();
+	}).swipeDown(function(){
+		if (! isLoadingData && document.body.scrollTop <= 1) {
+	        isLoadingData = true;
+	        getProductList('pull', 0);			// 由本模块内的init方法来调用getProductList方法下拉刷新
+	    }
+	});
+});
+//分页获取商品列表
+function getProductList(action, nextstart) {
+	// Step1：定义请求参数
+	var start = 0; // 定义起始页为0
+	if (typeof nextstart == 'undefined') {
+		start = window.nextstart; // 如果没有定义nextstart下一页数据，就用window.nextstart这个值
+	} 
+	var url = requestProductListURL + "?e_id=" + eid +  "&nextstart=" + start; // 分页请求数据的地址
+	if (window.querytype) {
+		url += "&querytype=" + window.querytype; // 加上查询条件
+	}
+	// Step2：根据不同的请求方式
+	switch (action) {
+		case 'pull':
+			//$('.show-all').hide(); // 默认已显示全部的div隐藏
+			MLoading.show('加载中');
+			break;
+		case 'drag':
+			// 如果是上推操作
+			MLoading.show('加载中');
+			break;
+		default:
+			MLoading.show('加载中');
+			break;
+	}
+	hasMoreData = true; // 模块开始请求新数据的标记置为true
+	isLoadingData = true; // 模块设置为正在请求数据
+	if($(".loading-bottom").length == 0){
+	    $("#itemList").append('<div class="loading-bottom">加载中...</div>'); // 添加正在加载中
+	}
+	// 准备请求参数
+	var params = {
+			e_id : eid, 					// 商家编号
+			nextstart : start,
+			querytype : window.querytype			
+	}
+	// Step3：请求并且完成界面不同显示
+	$.post(url, params, function(result){
+		MLoading.hide(); // 隐藏等待刷新框
+		isLoadingData = false; // 本模块正在loading数据的状态变为false
+		$(".loading-bottom").remove();
+		if (result.errCode == 0) {
+			//alert(JSON.stringify(result));
+			// 如果正确请求到了订单数据
+			var productListObj = $('.stockList ul');
+			if (action == 'pull') {
+				// 如果加载数据的动作是下拉，则有新收藏可能已经更新，需要清空原来的
+				productListObj.html('');					// 渲染成功就把模板渲染的信息写入
+				$(".noResult").addClass("fn-hide"); 	// 先隐藏没有数据
+				var tmpl = template('productlisttpl', result.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+				if (tmpl == '{Template Error}') {
+					tmpl = ""; // 如果渲染模板出错，置空tmpl
+					$(".noResult").removeClass("fn-hide").html("好像出了点问题，请联系管理员。"); // 如果渲染模板出错，更换样式
+				} else if (tmpl == "") {
+					tmpl = ""; // 置空tmpl
+					$(".noResult").removeClass("fn-hide").html("没有订单数据，逛逛商城吧。"); // 如果渲染模板为空，更换样式
+				}
+				productListObj.html(tmpl); // 写入新html数据
+			} else {
+				// 上推加载下一页的处理
+				var tmpl = template('productlisttpl', result.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+				if (tmpl == '{Template Error}') {
+					tmpl = ''; 
+				}
+				productListObj.append(tmpl); // 在文档尾追加新html数据
+				// 如果返回的json数据的data字段的threadList字段里无数据，就不再加载任何数据
+				if (result.data.prolist.length == 0) {
+					hasMoreData = false; 
+					$(".show-all").show(); // 显示所有数据
+				}
+			}
+			window.nextstart = nextstart = result.nextstart; // 将下一页数据给到nextStart，同时给到window.nextStart
+		} else {
+			scscms_alert("请求订单数据失败！", "error", "", 2);
+			return false; 
+		}
+	}, 'json');
+}
+</script>
+</body>
+</html>

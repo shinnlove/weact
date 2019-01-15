@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/MobileCommonStyle.min.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>我的邀请码</title>
+</head>
+
+<body style="background:#efefef;">
+	<div class="wrap" id="wrap">
+    	<div class="head">{$einfo.brand}</div>
+        <div class="content">
+        	
+            <div class="main">
+                <form method="post" action="#">
+                <input type="hidden" name="refer" value="#" />
+                    <div class="p_mod o_address">
+                        <h2 class="p_mod_title">邀请码</h2>
+                        <div id="city">
+                        <ul>
+                            <li><strong>邀请码：</strong><input type="text" id="truename" name="truename" value="{$customer.customer_id}" style="font-size:16px; color:#0066CC; font-family:Arial;" /></li>
+                            <li><strong>邀请网址：</strong><input type="text" id="yqurl" name="yqurl" value="{:U('Home/GuestHandle/customerRegister',array('e_id' => $e_id, cid => $customer [customer_id]),'shtml', 0, true)}" style="font-size:16px; color:#0066CC; font-family:Arial;" /></li>
+                        </ul>
+                        </div>
+                    </div>
+                    <div class="o_btn clearfix">
+                        <input type="button" class="o_btn_submit ts1" value="分享邀请" onClick="_system._guide(true)" id="forward1" style="margin-bottom:10px;" />
+                        <input type="button" class="o_btn_back ts1" onclick="history.go(-1);" value="返回" />
+                    </div>
+                </form>
+				<div class="p_mod o_address">
+                    <h2 class="p_mod_title">邀请记录</h2>
+                    <div id="city">
+                        <ul>
+                        	<if condition="($followlist eq null)">
+                        		<p style="font-size:12px;">没有任何邀请记录，快去邀请朋友赚积分吧!</p>
+                        		<p style="font-size:12px;">成功邀请一次可以赚取5积分!</p>
+                        	<else />
+                        		<for start="0" end="$followcount" step="1">
+	                            	<li><strong>{$followlist[$i].register_time} 旗下会员：<span style="font-size:16px; color:#CC0000; font-family:Arial;">{$followlist[$i].nick_name}</span></strong></br><strong>集粉会员编号：<span style="font-size:16px; color:#CC0000; font-family:Arial;">{$followlist[$i].customer_id}</span></strong></li>
+	                            </for>
+                        	</if>
+                        	
+                        </ul>
+                    </div>
+    			</div>
+    			<div class="pagerBar" style="text-align: center">{$page}</div>
+			</div>
+            <div class="bottom">
+            	<div class="weActName">微信公众名称：{$einfo.e_name}</div>
+                <div class="weActNumber">微信号：{$einfo.wechat_account}</div>
+                <div class="weActProducer">Powered by <a href="#">WeAct</a></div>
+                <div class="weact-deco"></div>
+            </div>
+        </div><!--content-->
+        {:W('Footer', array('e_id' => $e_id))}<!--footer-->
+    </div><!--wrap-->
+    <div id="cover"></div>
+	<div id="loading">
+		<img src="__PUBLIC__/images/loading.gif" alt="" />
+		<div id="loading_text"></div>
+	</div>
+	<div id="guide"><img src="__PUBLIC__/images/guide.png" alt="" /></div>
+	<div id="toast"></div> 
+
+<script type="text/javascript">
+var e_id = '{$einfo.e_id}';				//要分享的商家编号
+//分享的信息
+var shareData = {
+	appid: "{$einfo.appid}",			//分享的商家编号
+	img_url: "{$shareimg}",				//分享的图片
+	img_width: "160",					//宽度
+	img_height: "160",					//高度
+	title: "{$sharetitle}",				//分享的标题
+	desc: "{$sharedesc}",				//分享的描述
+	link: "{:U('Home/GuestHandle/customerRegister', array('e_id' => $e_id, 'cid' => $customer [customer_id]), 'shtml', 0, true)}",					//分享的超链接（特别注意：分享出去的链接也是经过授权的！）
+	fakeid : "{$openid}",																		//分享用户的id
+	callback:function(result){
+		if(result != 'send_app_msg:cancel' && result != 'share_timeline:cancel' && result != 'share_weibo:cancel' && result != 'share_fb:cancel'){
+			$.post("{:U('Home/MobileCommon/shareRecord','','')}",
+				{ e_id : e_id, link : shareData.link, openid : shareData.fakeid },			//分享的时候传3个参数：1、商家编号；2、链接地址（区分授权和不授权两种）；3、分享的微信号（只有开启授权登录才有）
+				function(data){
+					if(data.status == 1){
+						scscms_alert("谢谢您的分享!", "ok", "", 2);//定时关闭窗口
+					}else{
+						scscms_alert("服务器繁忙，请稍后再试!"+data.msg, "warning", "", 2);//定时关闭窗口
+					}
+				},
+				'json');
+		}else{
+			scscms_alert("下次记得分享噢!", "ok", "", 2);//定时关闭窗口
+		}
+	}	/*分享后的回调函数，发送给朋友的类型分为send_app_msg:confirm或send_app_msg:cancel；对应发送给朋友、分享到朋友圈、分享到腾讯微博、分享到facebook都有4种类型*/
+};
+</script>
+</body>
+</html>

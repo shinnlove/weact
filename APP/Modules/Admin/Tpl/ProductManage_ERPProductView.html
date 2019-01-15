@@ -1,0 +1,1349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/ui-dialog.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/select2.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artdialog/dialog-min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonutil.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type='text/javascript' src="__PUBLIC__/js/plugins/select2/select2.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/PCASClass.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>ERP商品总库</title>
+</head>
+
+<body>
+	<div class="wrap">
+    	<div class="search-bar">
+        	<span class="search-sec label-select">
+            	<select class="search-select" id="label-select">
+                    <option value="-1">不限标签</option>
+                    <option value="1">精选</option>
+                    <option value="2">新品</option>
+                    <option value="3">折扣</option>
+                </select>
+            </span>
+            <span class="search-sec pro-num">
+            	<input type="text" class="uniform" id="product_number" name="product_number" placeholder="商品编号" value="" />
+            </span>
+            <span class="search-sec pro-name">
+            	<input type="text" class="uniform" id="product_name" name="product_name" placeholder="商品名称" value="" />
+            </span>
+            <span class="search-sec storage-num">
+            	<select class="search-select" id="storage-num">
+                    <option value="-1">不限库存</option>
+                    <option value="1">库存预警</option> 
+                </select>
+            </span>
+            <span class="search-sec sell-amount">
+            	<input type="text" class="uniform" id="sell_amount" name="sell_amount" placeholder="卖出量大于" value="" />
+            </span>
+            <button class="btn btn-default btn-sm search-btn" id="title-search">查询</button>
+            <div class="clear"></div>
+        </div>
+        
+        <div class="handle-bar">
+        	<div class="upper-handle btn-group-xs">
+            	<span class="bar-label">操作</span>
+                <span class="handle-btn add-product"><button class="btn btn-default btn-xs">添加商品</button></span>
+                <span class="handle-btn batch-add"><button class="btn btn-default btn-xs">批量导入</button></span>
+                <span class="handle-btn cloud-onshelf"><button class="btn btn-default btn-xs">上架云店</button></span>
+                <span class="handle-btn subbranch-onshelf"><button class="btn btn-default btn-xs">批量分拨</button></span>
+                <span class="handle-btn p2p-onshelf"><button class="btn btn-default btn-xs">上架分销</button></span>
+                <span class="handle-btn pc-onshelf"><button class="btn btn-default btn-xs">上架官网</button></span>
+                <span class="handle-btn del-product"><button class="btn btn-default btn-xs">删除</button></span>
+                <span class="handle-btn export-record"><button class="btn btn-default btn-xs">导出</button></span>
+                <div class="clear"></div>
+            </div>
+            <div class="lower-handle btn-group-xs">
+            	<span class="bar-label">标签</span>
+                <span class="label-btn set-feature"><button class="btn btn-default btn-xs">设为精选</button></span>
+                <span class="label-btn set-new"><button class="btn btn-default btn-xs">设为新品</button></span>
+                <span class="label-btn set-preferential"><button class="btn btn-default btn-xs">设为折扣</button></span>
+                <div class="clear"></div>
+            </div>
+        </div>
+        
+        <div class="easyui-section easyui-layout">
+        	<table id="dg" title="商品信息     —— 温馨提示：点击每条商品左侧加号可看到实时库存，批量上下架时可以多选"></table>
+        </div>
+    </div>
+    
+    <!-- 商品库存预警设置对话框 -->
+	<div id="pro_store_warn" class="easyui-window" title="商品库存预警设置" data-options="modal:true,closed:true" style="width:450px; padding:10px;">
+		<input type="hidden" name="pid" id="pid" val="" />
+		<table>
+			<tr>
+				<th class="dialog-head">商品编号:&nbsp;&nbsp;</th>
+				<td><input id="pro_num" class="easyui-datebo input-readonly" type="text" value="" required readonly /></td>
+			</tr>
+			<tr>
+				<th class="dialog-head">商品名称:&nbsp;&nbsp;</th>
+				<td><input id="pro_name" class="easyui-datebo input-readonly" type="text" required readonly /></td>
+			</tr>
+			<tr>
+				<th class="dialog-head">当前总库存:&nbsp;&nbsp;</th>
+				<td><input id="pro_store" class="easyui-datebo input-readonly" type="text" required readonly /></td>
+			</tr>
+			<tr>
+				<th class="dialog-head">卖出数量:&nbsp;&nbsp;</th>
+				<td><input id="pro_sold" class="easyui-datebo input-readonly" type="text" required readonly /></td>
+			</tr>
+			<tr>
+				<th class="dialog-head">sku预警数量<span class="text-error">(*)</span>:&nbsp;&nbsp;</th>
+				<td><input id="store_warn" class="easyui-datebo input-editable" type="text" required /></td>
+			</tr>
+		</table>
+		<a href="javascript:void(0)" class="easyui-linkbutton dialog-cancel" iconCls="icon-cancel" onclick="javascript:$('#pro_store_warn').dialog('close')">取消</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton dialog-confirm" iconCls="icon-ok" onclick="productConfirm()">确定</a>
+	</div> 
+	
+	<!-- 修改线上商城商品库存对话框 -->
+	<div id="change_sku_store" class="easyui-window" title="修改商品库存" data-options="modal:true,closed:true" style="width:450px; padding:10px;">
+		<input type="hidden" name="sc_id" id="sc_id" val="" />
+		<input type="hidden" name="p_id" id="p_id" val="" />
+		<table>
+			<tr>
+				<!--因为文字过多所以这里修改单元格的宽度  -->
+				<th class="dialog-head" style="width:160px">商品编号:&nbsp;&nbsp;</th>
+				<td><input id="p_num" class="easyui-datebo input-readonly" type="text" value="" required readonly /></td>
+			</tr>
+			<tr>
+				<th class="dialog-head">商品名称:&nbsp;&nbsp;</th>
+				<td><input id="p_name" class="easyui-datebo input-readonly" type="text" required readonly /></td>
+			</tr>
+			<tr>
+				<th class="dialog-head">属性 规格:&nbsp;&nbsp;</th>
+				<td><input id="p_material" class="easyui-datebo input-readonly" type="text" required readonly /></td>
+			</tr>
+			<tr>
+				<th class="dialog-head">线上商城当前sku库存:&nbsp;&nbsp;</th>
+				<td><input id="store_now" class="easyui-datebo input-readonly" type="text" required readonly /></td>
+			</tr>
+			<tr>
+				<th class="dialog-head">云总库当前sku库存:&nbsp;&nbsp;</th>
+				<td><input id="cloud_store_now" class="easyui-datebo input-readonly" type="text" required readonly /></td>
+			</tr>
+			<tr>
+				<th class="dialog-head">线上商城sku新库存量<span class="text-error">(*)</span>:&nbsp;&nbsp;</th>
+				<td><input id="new_online_store" class="easyui-datebo input-editable" type="text" required /></td>
+			</tr>
+			<tr>
+				<th class="dialog-head">云总库sku新库存量<span class="text-error">(*)</span>:&nbsp;&nbsp;</th>
+				<td><input id="new_cloud_store" class="easyui-datebo input-editable" type="text" required /></td>
+			</tr>
+		</table>
+		<a href="javascript:void(0)" class="easyui-linkbutton dialog-cancel" iconCls="icon-cancel" onclick="javascript:$('#change_sku_store').dialog('close')">取消</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton dialog-confirm" iconCls="icon-ok" onclick="editStorageConfirm()">确定</a>
+	</div>
+	
+	
+	<!-- 复制商品链接对话框 begin -->
+	<div id="copy-dialog" class="easyui-window clipwindow" title="商品分享链接" iconCls="icon-edit" data-options="modal:true,closed:true">
+		<div class="easyui-layout" fit="true">
+			<div region="center" border="false" class="link-region">
+				<div class="handle-panel">
+					<div class="link-panel">
+						总店商品链接： <input name="outaddress" id="main-shareurl" size="50" value="" />
+						<a href="javascript:;" id="main_clip_button" class="easyui-linkbutton" iconCls="icon-redo" data-clipboard-target="main-shareurl">复制链接</a>
+					</div>
+					<div class="link-panel">
+						分店商品快照： <input name="outaddress" id="fast-shareurl" size="50" value="" />
+						<a href="javascript:;" id="fast_clip_button" class="easyui-linkbutton" iconCls="icon-redo" data-clipboard-target="fast-shareurl">复制链接</a>
+					</div>
+				</div>
+				
+				<h6 class="tit-sm">商品链接答疑</h6>
+				<div class="question-list">
+					<div class="question">
+						<span class="badge red-answer">Q</span>
+						<span class="badge-list">总店链接和商品快照是什么？</span>
+					</div>
+					<div class="answer">
+						<span class="badge blue">A</span>
+						<span class="badge-list">总店链接就是微信用户在线上集成平台购物的商品数字陈列URL地址（需在微信中打开）；商品快照就是线下集成实体店互联网化微猫商城的商品快照URL地址。</span>
+					</div>
+					<div class="question">
+						<span class="badge red-answer">Q</span>
+						<span class="badge-list">若多个门店上架该商品，会员进入链接后看到的是哪个店的商品，我该设置哪个链接？</span>
+					</div>
+					<div class="answer">
+						<span class="badge blue">A</span>
+						<span class="badge-list">根据你的意愿活学活用，想把顾客引导到线上品牌集成平台就用第一个；想要把会员引导到门店连锁体系并发挥导购价值，就用第二个。</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- 复制商品链接对话框 end -->
+    
+    
+<!-- easyUI上对单个商品操作的按钮区 begin -->
+<script type="text/html" id="handlebtntpl">
+<table class="handlebtntable">
+    <tr>
+		<td>
+			<a href="javascript:void(0)" class="btn btn-mini" title="编辑" onclick="editPro('{{product_id}}', '{{product_type}}')">编辑</a>
+			<a href="javascript:void(0)" class="btn btn-mini" title="设置预警" onclick="setTipAmount('{{product_id}}', '{{product_number}}', '{{product_name}}', '{{total_storage_left}}', '{{sell_amount}}', '{{storage_warn}}')">预警</a>			
+			<a href="javascript:void(0)" class="btn btn-mini" title="链接" onclick="getProLink('{{nav_id}}', '{{product_id}}')">链接</a>
+			<a href="javascript:void(0)" class="btn btn-mini" title="扫码" onclick="proDimension('{{product_id}}')">扫码</a>
+			<a href="javascript:void(0)" class="btn btn-mini" title="门店管控" onclick="allocateProduct('{{product_id}}')">管控</a>
+		</td>
+	</tr>
+</table>
+</script>
+<!-- easyUI上对单个商品操作的按钮区 end -->
+
+<!-- 展开商品实时库存 begin -->
+<script type="text/html" id="storageinfotpl">
+<table>
+    <tbody>
+        <tr>
+            <td style="border:0; width:150px;">
+                <p style="font-weight:bold;">商品实时库存信息：</p>
+            </td>
+        </tr>
+        <tr style="border:0;height:30px;">
+            <td class="sku-title">sku序号</td>
+			<td class="sku-title">规格</td>
+			<td class="sku-title">属性</td>
+            <td class="sku-title">线上商城库存量</td>
+			<td class="sku-title">线上商城卖出量</td>
+			<td class="sku-title">云总库库存量</td>
+			<td class="sku-title">云总库卖出量</td>
+			<td class="sku-title">操作</td>
+        </tr>
+		{{each detaillist as e i}}
+			<tr>
+            	<td class="sku-info">{{i+1}}</td>
+            	<td class="sku-info">{{e.product_size}}</td>
+				<td class="sku-info">{{e.product_color}}</td>
+            	<td class="sku-info">{{e.storage_amount-e.sell_amount}}</td>
+				<td class="sku-info">{{e.sell_amount}}</td>
+				<td class="sku-info">{{e.central_total_left}}</td>
+				<td class="sku-info">{{e.central_total_sell}}</td>
+				<td class="sku-info" data-scid="{{e.sizecolor_id}}" data-pid="{{e.product_id}}" data-pname="{{e.product_name}}" data-pnum="{{e.product_number}}" data-size="{{e.product_size}}" data-color="{{e.product_color}}" data-storage-left="{{e.storage_amount-e.sell_amount}}" data-total-storage-left="{{e.central_total_left}}"><a href="javascript:;" class="small ui-color-button dark-blue" onclick="editStorage(this)">修改库存</a></td>
+			</tr>
+		{{/each}}
+    </tbody>
+</table>
+</script>
+<!-- 展开商品实时库存 end -->
+
+<!-- 云总店商品上架 begin -->
+<script type="text/html" id="onshelfprotpl">
+	<div class="product-onshelf">
+        <span class="onshelf-title">即将把这些商品上架到<font class="mall-type">云总店</font>商城</span>
+            
+        <hr class="hr-dialog" />
+            
+        <div class="onshelf-list">
+			<ul>
+				{{each onshelflist as e i}}
+				<li>
+					<div class="single-pro">
+						<div class="pro-img"><img src="{{e.img}}" alt="" /></div>
+						<span class="onshelf-span pro-name">{{e.name}}</span>
+						<span class="onshelf-span pro-number">{{e.num}}</span>
+						<span class="onshelf-span current-price">￥{{e.price}}</span>
+						<span class="onshelf-span storage-amount">{{e.storage}}（件）</span>
+					</div>
+				</li>
+				{{/each}}
+			</ul>
+			<div class="clear"></div>
+		</div>
+		
+		<span class="onshelf-title">请选择上架到哪类导航</span>
+		
+		<hr class="hr-dialog" />
+		
+		<div class="nav-handle">
+			<span class="nav-label">所属导航</span>
+			<div class="nav-section">
+				<select class="nav-select" id="nav-select">
+					<option value="-1">请选择所属导航...</option>
+					<!-- {{include('optiontpl')}} -->
+					{{each optionlist as t j}}
+						<option value="{{t.nav_id}}">{{t.nav_name}}</option>
+					{{/each}}
+				</select>
+			</div>
+			<div class="clear"></div>
+		</div>
+		
+	</div>
+</script>
+<!-- 云总店商品上架 end -->
+
+<!-- 店铺商品导出 begin -->
+<script type="text/html" id="exportData">
+	<div class="product-onshelf">
+		<span class="onshelf-title">请选择要导出的店铺数据</span>
+		<hr class="hr-dialog" />
+		<div class="nav-handle">
+			<span class="nav-label">店铺名称</span>
+			<div class="nav-section">
+				<select class="nav-select" id="nav-select">
+					<option value="-1">请选择店铺名称...</option>
+					<!-- {{include('optiontpl')}} -->
+					{{each optionlist as t j}}
+						<option value="{{t.subbranch_id}}">{{t.subbranch_name}}</option>
+					{{/each}}
+				</select>
+			</div>
+			<div class="clear"></div>
+		</div>
+		
+	</div>
+</script>
+<!-- 店铺商品导出 end -->
+
+<!-- 云总店自定义导航选择 begin -->
+<script type="text/html" id="optiontpl">
+{{each optionlist as t j}}
+	<option value="{{t.nav_id}}">{{t.nav_name}}</option>
+{{/each}}
+</script>
+<!-- 云总店自定义导航选择 end -->
+
+<!-- 商品批量分拨 begin -->
+<script type="text/html" id="allocatetpl">
+	<div class="product-allocate">
+		<span class="onshelf-title">即将把这些商品上架到<font class="mall-type">微猫</font>商城</span>
+		
+		<hr class="hr-dialog" />
+			
+		<div class="onshelf-list">
+			<ul>
+				{{each allocatelist as e i}}
+				<li>
+					<div class="single-pro" data-pid="{{e.pid}}">
+						<div class="pro-img"><img src="{{e.img}}" alt="" /></div>
+						<span class="onshelf-span pro-name">{{e.name}}</span>
+						<span class="onshelf-span pro-number">{{e.num}}</span>
+						<span class="onshelf-span current-price">￥{{e.price}}</span>
+						<span class="onshelf-span storage-amount">{{e.storage}}（件）</span>
+					</div>
+				</li>
+				{{/each}}
+			</ul>
+			<div class="clear"></div>
+		</div>
+		
+		<span class="onshelf-title">请选择要分拨到的门店</span>
+		
+		<hr class="hr-dialog" />
+		
+		<div class="nav-handle shop-search-section">
+			<span class="area-label">门店区域</span>
+			<div class="area-section">
+				<select class="area-select" id="province-select" name="province-select"></select>
+			</div>
+			<div class="area-section">
+				<select class="area-select" id="city-select" name="city-select"></select>
+			</div>
+			<div class="area-section">
+				<select class="area-select" id="region-select" name="region-select"></select>
+			</div>
+			<div class="clear"></div>
+			
+			<div class="name-section">
+				<span class="area-label">门店名称</span>
+				<div class="shop-name fl mr10"><input type="text" class="uniform" id="shop-name" name="shop-name" placeholder="可输入店铺名称" value="" /></div>
+				<div class="fl"><button class="btn btn-default btn-sm search-btn" id="area-search">筛选</button></div>
+				<div class="clear"></div>
+			</div>
+		</div>
+		
+		<div class="subbranch-list">
+			<ul>
+				{{each subbranchlist as t j}}
+				<li>
+					<div class="single-shop" data-sid="{{t.subbranch_id}}">
+						<div class="fl"><input name="subbranch-check" class="subbranch-check uniform" type="checkbox" /></div>
+						<div class="fl mr10">{{t.subbranch_name}}</div>
+						<!-- <div class="fl mr10"><span class="storage-left">10</span>件</div> -->
+						<div class="clear"></div>
+					</div>
+				</li>
+				{{/each}}
+			</ul>
+		</div>
+		
+		<div class="clear"></div>
+		
+	</div>
+</script>
+<!-- 商品批量分拨 end -->
+
+<!-- 查询商品分拨分店列表 begin -->
+<script type="text/html" id="subbranchtpl">
+{{each subbranchlist as e i}}
+	<li>
+		<div class="single-shop">
+			<div class="fl"><input name="subbranch-check" class="subbranch-check uniform" type="checkbox" /></div>
+			<div class="fl mr10">{{e.subbranch_name}}</div>
+			<!-- <div class="fl mr10"><span class="storage-left">10</span>件</div> -->
+			<div class="clear"></div>
+		</div>
+	</li>
+{{/each}}
+</script>
+<!-- 查询商品分拨分店列表 end -->
+
+<script type="text/javascript">
+var e_id = '{$e_id}'; // 商家编号
+var dg = $("#dg"); // 全局变量table easyUI
+var psw = $("#pro_store_warn");
+var cloudpronav = []; // 云总店导航列表
+var subbranchlist = []; // 店铺列表
+
+$(function(){
+	
+	$(".uniform").uniform(); // uniform表单初始化
+	
+	// 带搜索的select2选择框初始化
+	$("#label-select").select2(); 
+	$("#storage-num").select2(); 
+	
+	getNavList(1); // 查询云总店导航，查询后台获得商品类无下级的导航
+	getSubbranchList(); // 查询所有分店信息
+	
+	// easyui初始化
+	$('#dg').datagrid({
+		url: "{:U('Admin/ProductManageRequest/getAllProduct', '', '')}",
+		singleSelect: false,
+		collapsible: true,
+		method: 'post',
+		fitColumns: true,
+		fit: true,
+		pagination: true,
+		pageSize: 10,
+		pageList: [5, 10, 15],
+		rownumbers: true,
+		idField: 'product_id',
+		columns: [[
+				{ field: 'ck', checkbox: 'true', width: 60 }, 
+				{ field: 'micro_path', title : '缩略图', width : 60, align : 'center', sortable: false, formatter : picInit }, 
+				{ field: 'product_number', title: '商品名称编号', width: 120, align:'left', sortable: true, formatter : productNameNo }, 
+				{ field: 'original_price', title: '吊牌价', width: 60, align:'right', sortable: true }, 
+				{ field: 'current_price', title: '现售价', width: 60, align:'right', sortable: true }, 
+				{ field: 'onshelf_time', title: '上架时间', width: 80, align:'center', sortable: true, formatter: onshelfInit }, 
+				{ field: 'total_storage_left', title: '库存', width: 60, align:'right', sortable: true, formatter: storageInit }, 
+				{ field: 'sell_amount', title: '卖出', width: 60, align:'right', sortable: true }, 
+				{ field: 'storage_warn', title: '预警', width: 60, align:'right', sortable: true, formatter: warningInit }, 
+				{ field: 'product_id', title: '操作', width: 200, align:'center', sortable: false, formatter: handleBtnInit }
+			 ]],
+		view: detailview,
+		detailFormatter: function(index, row) {
+			return '<div class="ddv" id="' + row.product_id + '">' + '</div>';
+		},
+		onExpandRow: function(index, row){
+			$.post('{:U("Admin/ProductManageRequest/getProductStorage", "", "")}',
+					{ pid : row.product_id },
+					function(result){
+						if(result.errCode == 0){
+							var storageinfo = template( 'storageinfotpl', result.data ); // artTemplate渲染模板引擎
+							if (storageinfo == '{Template Error}') {
+								storageinfo = ''; // 如果渲染失败，则detailinfo置空
+								$.messager.alert('温馨提示', '网络繁忙，接收商品库存详情数据错误！', 'error'); // 提示用户出错了
+	                        }
+							$('#'+row.product_id).html(storageinfo); // 写入展开详情中
+							$('#dg').datagrid("fixDetailRowHeight", index); // 该行的详情框高度自适应（非常重要，以前没处理好）
+						} else {
+							$.messager.alert('温馨提示', '网络繁忙，没有查询到该商品的详细库存信息！', 'error');
+						}
+					},'json');	//post
+            $('#dg').datagrid('fixDetailRowHeight', index);
+	    }	// onExpandRow
+	}); //end easyui
+	
+	// 复制到剪贴板：鼠标点击时，全选文本框内容
+	$('#main-shareurl, #fast-shareurl').on('click', function(){
+		this.setSelectionRange(0, $(this).val().length);
+	});
+	
+	// 上架云店 按钮事件
+	$(".cloud-onshelf").click(function(){
+		var rows = $("#dg").datagrid('getSelections'); 
+		if(rows.length <= 0) {
+			util.alert("请选择要上架的商品，最多选择10件。");
+			return false;
+		}
+		if(rows.length > 10) {
+			util.alert("一次最多选择10件商品上架。");
+			return false;
+		}
+		
+		var prolist = []; 
+		// 压栈商品
+		rows.forEach(function(e){
+			var temp = {
+					pid : e.product_id,
+					img : e.micro_path,
+					num : e.product_number,
+					name : e.product_name,
+					price : e.current_price, 
+					storage : e.total_storage_left 
+			}
+			prolist.push(temp);
+		});
+		// 定义渲染参数
+		var tplparams = {
+				onshelflist:prolist, 
+				optionlist:cloudpronav 
+		}
+		//alert(JSON.stringify(tplparams));
+		var tmpl = template("onshelfprotpl", tplparams); // 利用模板数据渲染
+		if (tmpl == "{Template Error}") {
+			tmpl = ""; 
+		}
+		var onshelf = dialog({
+			title: '上架商品',
+			okValue: '确定',
+			ok: function () {
+				// 点击上架确定按钮
+				var optval = $("#nav-select").val();
+				var optname = $("#nav-select").select2("data").text; // ❤特别注意，这里是select2的取选中文字的方法，跟普通select不一样
+				
+				if (optval == "-1") {
+					util.alert("请选择这些商品要上架的导航");
+					return false;
+				}
+				
+				// 有选择导航打包参数
+				var pidlist = [];
+				prolist.forEach(function(e){
+					pidlist.push(e.pid);
+				});
+				var params = {
+						onshelflist : pidlist.join(),
+						navid : optval,
+						navname : optname 
+				}
+				// 将商品上架操作提交到后台
+				MLoading.show("上架中，请稍后...");
+				$.post("{:U('Admin/ProductManageRequest/cloudOnshelf', '', '')}", params, function(result){
+					MLoading.hide();
+					if (result.errCode == 0) {
+						util.alert("上架成功，请在商品管理--云总店商品中查看已上架的商品。");
+						dg.datagrid('reload'); // 重加载数据
+						clearSelect(); // 清除选中行
+					} else {
+						util.alert(result.errMsg);
+					}
+				}, "json");
+			},
+			cancelValue: '取消',
+			cancel: function () {},
+			content: tmpl
+		});
+		$("#nav-select").select2(); // 先生成事件（加载select2或者uniform）
+		onshelf.showModal(); // 再以模态框的方式弹出
+	});
+	
+	// 分拨到门店弹窗事件
+	$(".subbranch-onshelf").click(function(){
+		var rows = $("#dg").datagrid('getSelections'); 
+		if(rows.length <= 0) {
+			util.alert("请选择要分拨到门店的商品。");
+			return false;
+		}
+		if(rows.length > 5) {
+			util.alert("一次最多分拨5件商品。");
+			return false;
+		}
+		
+		var allocatelist = []; 
+		// 压栈商品
+		rows.forEach(function(e){
+			var temp = {
+					pid : e.product_id,
+					img : e.micro_path,
+					num : e.product_number,
+					name : e.product_name,
+					price : e.current_price, 
+					storage : e.total_storage_left 
+			}
+			allocatelist.push(temp);
+		});
+		// 定义渲染参数
+		var tplparams = {
+				allocatelist:allocatelist, 
+				subbranchlist : window.subbranchlist 
+		}
+		//alert(JSON.stringify(tplparams));
+		var tmpl = template("allocatetpl", tplparams); // 利用模板数据渲染
+		if (tmpl == "{Template Error}") {
+			tmpl = ""; 
+		}
+		var allocate = dialog({
+			title: '批量分拨商品到门店',
+			okValue: '确定',
+			ok: function () {
+				// 未选中不许关闭
+				if ($(".subbranch-list ul").find('input[name="subbranch-check"]:checked').length == 0) {
+					util.alert("请选择要分拨的分店。");
+					return false; 
+				}
+				
+				// 选中获取分店id
+				var checklist = []; // 存放勾选分店编号
+				$(".subbranch-list ul li").find('input[name="subbranch-check"]:checked').each(function(){
+					var _t = $(this), sid = _t.closest(".single-shop").data("sid");
+					checklist.push(sid);
+				});
+				
+				// 获取分拨商品编号
+				var productlist = []; // 存放分拨商品编号
+				$(".onshelf-list ul li").each(function(){
+					var pid = $(this).find(".single-pro").data("pid");
+					productlist.push(pid);
+				});
+				
+				var params = {
+						pidlist : productlist.join(), // 商品数组
+						sidlist : checklist.join() // 选中分店数组
+				}
+				//alert(JSON.stringify(params));
+				// 将分拨请求提交回数据库，可能需要等待一段时间，需要出现提示框
+				MLoading.show('分拨中，请耐心等待...'); // 显示友好度提示
+				$.post("{:U('Admin/SubbranchProductRequest/batchAllocateProduct', '', '')}", params, function(result){
+					MLoading.hide(); 
+					if (result.errCode == 0) {
+						util.alert("已成功分拨商品到选中门店，可在商品管控中查看详情。");
+					} else {
+						util.alert(result.errMsg);
+						return false;
+					}
+				}, "json");
+			},
+			cancelValue: '取消',
+			cancel: function () {
+				//util.alert("取消分拨");
+			},
+			statusbar: '<label class="inline"><div class="fl"><input type="checkbox" class="uniform" id="select-all" /></div><div class="fl lh26">全选</div></label>',
+			content: tmpl, 
+			onshow: function(){
+				//clearAreaSelect(); // 绑定省市区联动清除事件
+				// 绑定门店搜索事件
+				$("#area-search").on("click", function(e){
+					// 获取select2的选择，查询当地的门店
+					var province = $("#province-select").val();
+					var provincename = $("#province-select").select2("data").text;
+					if (province == "-1" || provincename == "--选择省份--") {
+						provincename = ""; // 没有选择则置空
+					}
+					
+					var city = $("#city-select").val();
+					var cityname = $("#city-select").select2("data").text;
+					if (city == "-1" || cityname == "--选择城市--") {
+						cityname = ""; // 没有选择则置空
+					}
+					
+					var region = $("#region-select").val();
+					var regionname = $("#region-select").select2("data").text;
+					if (region == "-1" || regionname == "--选择地区--") {
+						regionname = ""; // 没有选择则置空
+					}
+						
+					var sname = $("#shop-name").val().trim();
+					
+					var params = {
+							province : provincename, 
+							city : cityname, 
+							region : regionname, 
+							sname : sname 
+					}
+					// 查询门店
+					$.post("{:U('Admin/ProductManageRequest/querySubbranch', '', '')}", params, function(result){
+						if (result.errCode == 0) {
+							var shopObj = $(".subbranch-list ul");
+							shopObj.html(""); // 先清空所有分店
+							var tmpl = "";
+							if (result.data.subbranchlist.length == 0) {
+								// 如果没有查询表到相关门店
+								tmpl = "<li>暂时没有查询到任何门店信息</li>";
+							} else {
+								// 如果查询到相关门店
+								var datalist = result.data.subbranchlist;
+								datalist.forEach(function(e){
+									tmpl += '<li>'
+										+ '<div class="single-shop" data-sid="'+e.subbranch_id+'">'
+										+ '<div class="fl"><input name="subbranch-check" class="subbranch-check uniform" type="checkbox" /></div>'
+										+ '<div class="fl mr10">' + e.subbranch_name +'</div>'
+										+ '<!-- <div class="fl mr10"><span class="storage-left">10</span>件</div> -->'
+										+ '<div class="clear"></div>'
+										+ '</div>'
+										+ '</li>';
+								});
+							}
+							shopObj.html(tmpl).find(".uniform").uniform(); // 追加店铺列表并且初始化店铺勾选框为uniform
+							// 重新绑定单个checkbox变化（重要！2015/07/27 16:04:36）
+							$(".subbranch-list ul li").find("input[name=subbranch-check]").on("click", function(){
+								// 具体某个店铺勾选框触发事件（单个分店勾选是否引起全选）
+								if ($(this).closest(".subbranch-list ul").find('input[name="subbranch-check"]').not("input:checked").length == 0) {
+									$("#select-all").prop("checked", true); 	// 如果所有店铺都勾中了，全选
+									$("#select-all").parent().addClass("checked");
+								} else {
+									$("#select-all").prop("checked", false); 	// 还有店铺没勾中，就不全选
+									$("#select-all").parent().removeClass("checked");
+								}
+							});
+							// 取消全选框
+							$("#select-all").prop("checked", false); 	// 还有商品没勾中，就不全选
+							$("#select-all").parent().removeClass("checked");
+						} else {
+							util.alert("网络繁忙，没有查询到相关门店数据。");
+						}
+					}, "json")
+				});
+			},
+		});
+		$(".uniform").uniform(); 
+		$("#province-select").select2(); // 先初始化select2样式
+		$("#city-select").select2(); 
+		$("#region-select").select2(); 
+		new PCAS("province-select", "city-select", "region-select", "", "", ""); // 再初始化店铺确定三级联动
+		//$("#province-select").select2("val", "--选择省份--"); // 最后再设定默认选中的值
+		//$("#city-select").select2("val", "--选择城市--"); 
+		//$("#region-select").select2("val", "--选择地区--"); 
+		//clearAreaSelect(); // 绑定省市区联动清除事件
+		checkSubbranchInit(); // 初始化分店列表
+		allocate.showModal(); // 再以模态框的方式弹出
+	});
+	
+	// 标题栏查询
+	$("#title-search").click(function(){
+		var labeltag = $("#label-select").val(); // 标签
+		var pnum = $("#product_number").val(); // 编号
+		var pname = $("#product_name").val(); // 名字
+		var storage = $("#storage-num").val(); // 库存
+		var sellamount = $("#sell_amount").val(); // 卖出量
+		
+		if (sellamount != "" && ! isPositiveNum(sellamount)) {
+			util.alert("输入的卖出量有误，请输入正确的正整数。");
+			return false;
+		}
+		
+		// 重新查询数据
+		$("#dg").datagrid({
+			url: "{:U('Admin/ProductManageRequest/conditionSearch', '', '')}",
+			queryParams: {
+				labeltag : labeltag, 
+				pnum : pnum, 
+				pname : pname, 
+				storage : storage, 
+				sellamount : sellamount 
+			}
+		}, 'load');
+		clearSelect(); // 清空潜在选择项
+	});
+	
+	// 操作与标签事件绑定
+	$(".handle-bar").on("click", ".add-product", function(){
+		// 添加商品跳转选择商品类别
+		location.href = "{:U('Admin/ProductManage/addProduct', '', '')}";
+	}).on("click", ".batch-add", function(){
+		// 批量导入
+		location.href = "{:U('Admin/ProductManage/batchImportProduct', '', '')}";
+	}).on("click", ".p2p-onshelf", function(){
+		// 上架分销
+		alert("上架分销");
+	}).on("click", ".pc-onshelf", function(){
+		// 上架官网
+		alert("上架官网");
+	}).on("click", ".del-product", function(){
+		// 删除回收
+		var rows = $("#dg").datagrid('getSelections'); 
+		if(rows.length <= 0) {
+			util.alert("请选中要删除的商品。");
+			return false;
+		}
+		if(rows.length > 10) {
+			util.alert("一次最多批量删除10件商品。");
+			return false;
+		}
+		
+		var pidlist = []; // 商品列表
+		rows.forEach(function(e){
+			pidlist.push(e.product_id); // 压栈商品
+		});
+		MLoading.show("提交中，请稍后...");
+		$.post("{:U('Admin/ProductManageRequest/recycleProduct', '', '')}", {pidlist:pidlist.join()}, function(result){
+			MLoading.hide();
+			if (result.errCode == 0) {
+				util.alert("删除成功，商品已移入回收站。");
+				$("#dg").datagrid("reload");
+				clearSelect();
+			} else {
+				util.alert(result.errMsg);
+			}
+		}, "json");
+	}).on("click", ".export-record", function(){
+		// 导出商品记录
+		
+		// 请求获取总店和分店列表
+		$.post("{:U('Admin/ProductManageRequest/getAllShop', '', '')}", {}, function(result){
+			if (result.errCode == 0) {
+				// 只取成功部分改变导航，没有查询成功就是用空导航
+				shoplist = result.data.shoplist;
+				var tplparams = {
+						optionlist:shoplist 
+				}
+				var tmpl = template("exportData", tplparams); // 利用模板数据渲染
+				if (tmpl == "{Template Error}") {
+					tmpl = ""; 
+				}
+				var onshelf = dialog({
+					title: '导出数据',
+					okValue: '确定',
+					ok: function () {
+						// 点击上架确定按钮
+						var optval = $("#nav-select").val();
+						var optname = $("#nav-select").select2("data").text; // ❤特别注意，这里是select2的取选中文字的方法，跟普通select不一样
+						
+						if (optval == "-1") {
+							util.alert("请选择要导出数据的店铺名称");
+							return false;
+						}
+						window.location.href = "{:U('Admin/ProductManage/exportProduct', '', '')}?optval="+optval+"&optname="+optname;
+					},
+					cancelValue: '取消',
+					cancel: function () {},
+					content: tmpl
+				});
+				$("#nav-select").select2(); // 先生成事件（加载select2或者uniform）
+				onshelf.showModal(); // 再以模态框的方式弹出
+			} 
+		}, "json");
+		// 原来的全部商品都导出
+		/* $.messager.confirm('温馨提示', '确定要导出所有商品数据?', function(result){
+			if(result) {
+				window.location.href = "{:U('Admin/ProductManage/exportProduct', '', '')}";
+			}
+		}); */
+	}).on("click", ".set-feature", function(){
+		// 设为精选
+		var rows = $("#dg").datagrid('getSelections'); 
+		if(rows.length <= 0) {
+			util.alert("请选择要设为精选的商品，最多选择10件。");
+			return false;
+		}
+		if(rows.length > 10) {
+			util.alert("一次最多批量设置10件商品为精选。");
+			return false;
+		}
+		
+		var pidlist = []; // 商品列表
+		rows.forEach(function(e){
+			pidlist.push(e.product_id); // 压栈商品
+		});
+		setProductTag(pidlist.join(), "feature"); // 设置精选
+	}).on("click", ".set-preferential", function(){
+		// 设为折扣
+		var rows = $("#dg").datagrid('getSelections'); 
+		if(rows.length <= 0) {
+			util.alert("请选择要设为折扣的商品，最多选择10件。");
+			return false;
+		}
+		if(rows.length > 10) {
+			util.alert("一次最多批量设置10件商品为折扣。");
+			return false;
+		}
+		
+		var pidlist = []; // 商品列表
+		rows.forEach(function(e){
+			pidlist.push(e.product_id); // 压栈商品
+		});
+		setProductTag(pidlist.join(), "preferential"); // 设置折扣
+	}).on("click", ".set-new", function(){
+		// 设为新品
+		var rows = $("#dg").datagrid('getSelections'); 
+		if(rows.length <= 0) {
+			util.alert("请选择要设为新品的商品，最多选择10件。");
+			return false;
+		}
+		if(rows.length > 10) {
+			util.alert("一次最多批量设置10件商品为新品。");
+			return false;
+		}
+		
+		var pidlist = []; // 商品列表
+		rows.forEach(function(e){
+			pidlist.push(e.product_id); // 压栈商品
+		});
+		setProductTag(pidlist.join(), "new"); // 设置新品
+	});
+	
+});
+
+// 批量设置
+function setProductTag(pidlist, tagname) {
+	var params = {
+			pidlist : pidlist, 
+			tag : tagname 
+	}
+	MLoading.show("设置中，请稍后...");
+	$.post("{:U('Admin/ProductManageRequest/setProductTag', '', '')}", params, function(result){
+		MLoading.hide(); // 隐藏提示框
+		if(result.errCode == 0) {
+			util.alert("设置成功，点击商品上的标签可以取消设置。"); 
+			$("#dg").datagrid("reload");
+			clearSelect();
+		} else {
+			util.alert(result.errMsg); // 弹窗显示错误
+		}
+	}, "json");
+}
+
+// 取消设置商品标签
+function cancelProductTag(pid, tagname) {
+	var params = {
+			pid : pid, 
+			tag : tagname 
+	}
+	MLoading.show("取消中，请稍后...");
+	$.post("{:U('Admin/ProductManageRequest/cancelProductTag', '', '')}", params, function(result){
+		MLoading.hide(); // 隐藏提示框
+		if(result.errCode == 0) {
+			$("#dg").datagrid("reload");
+			clearSelect();
+		} else {
+			util.alert(result.errMsg); // 弹窗显示错误
+		}
+	}, "json");
+}
+</script>
+
+<!-- easyui rowsinit begin -->
+<script type="text/javascript">
+// 初始化商品图片
+function picInit(val, row){
+	if(row){
+		return '<img class="easyui-img img-round" src="' + row.micro_path + '" />';
+	} else {
+		return '<img class="easyui-img img-round" src="" alt="请上传商品缩略图" />'; // 返回一张默认图片，请尽快设定
+	}
+}
+
+// 初始化商品名称和编号
+function productNameNo(val, row){
+	var prohtml = '<span class="pro-label">'+row.product_name+'</span>' + '<span class="pro-label">款号:'+row.product_number+'</span>';
+	// 如果是精选，追加精选标签
+	if (row.is_feature == 1) {
+		prohtml += '<span class="special-mark feature" onclick="cancelProductTag(\'' + row.product_id + '\', \'feature\')">精选</span>';
+	}
+	// 如果是新品，追加新品标签
+	if (row.is_new == 1) {
+		prohtml += '<span class="special-mark new" onclick="cancelProductTag(\'' + row.product_id + '\', \'new\')">新品</span>';
+	}
+	// 如果是折扣，追加折扣标签
+	if (row.is_preferential == 1) {
+		prohtml += '<span class="special-mark preferential" onclick="cancelProductTag(\'' + row.product_id + '\', \'preferential\')">折扣</span>';
+	}
+	return prohtml;
+}
+
+// 初始化商品性别
+function sexInit(val, row) {
+	if(row.sex == "0") {
+		return "通用";
+	} else if (row.sex == "1") {
+		return "男";
+	} else if (row.sex == "2") {
+		return "女";
+	} else if (row.sex == "-1") {
+		return "<span style='text-align:center; color:#666;'>/</span>";
+	}
+}
+
+// 初始化商品上下架显示
+function onshelfInit(val, row) {
+	if(row.on_shelf == 0) {
+		return "<span class='grey'>商品未上架</span>"; // 未上架返回商品未上架提示
+	} else {
+		return "<span class='green'>" + row.onshelf_time + "</span>"; // 上架返回商品商家时间
+	}
+}
+
+// 初始化商品预警（使用特别重要的warning字段来区分库存是否报警）
+function storageInit(val, row){
+	if(row.warning == 1){
+		return "<span class='red'>"+row.total_storage_left+"（sku库存预警）</span>";
+	} else {
+		return "<span class='green'>"+row.total_storage_left+"</span>";
+	}
+}
+
+// 初始化库存预警数量
+function warningInit(val, row) {
+	if (row.storage_warn > 0) {
+		return "<span class='green'>"+row.storage_warn+"</span>";
+	} else {
+		return "<span class='grey'>未设置</span>"; // 报警数量为0代表未设置
+	}
+}
+
+// 操作区域的按钮初始化
+function handleBtnInit(val, row) {
+	var handlebtntmpl = template("handlebtntpl", row); // 渲染模板
+	return handlebtntmpl;
+}
+
+// 共用警示函数：有些调用后不使用此函数可能会存在隐藏错误
+function clearSelect() {
+	dg.datagrid("clearSelections"); // 清除所有选中的行
+}
+</script>
+<!-- easyui rowsinit end -->
+
+<!-- easyui rowsbtn begin -->
+<script type="text/javascript">
+// 商品管控（分拨单件商品到分店）
+function allocateProduct(proid) {
+	clearSelect();
+	window.location.href = "{:U('Admin/SubbranchProduct/distributeProduct', '', '')}?pid="+proid; // 跳过去分拨商品
+}
+
+// 编辑商品按钮
+function editPro(proid, protype) {
+	if (typeof protype == "undefined") {
+		protype = 2; // 默认是服装
+	}
+	location.href = "{:U('Admin/ProductManage/editProductDetail', '', '')}?product_id="+proid+"&product_type="+protype; // 编辑商品
+}
+
+//设置预警库存数量对话框
+function setTipAmount(proid,pronum,proname,prostore,prosell,prowarn){
+	clearSelect();
+	psw.dialog('open').dialog('setTitle', '设置库存预警（针对各sku库存数量）');
+	$("#pid").val(proid); // 取商品主键
+	$("#pro_num").val(pronum); // 取商品编号
+	$("#pro_name").val(proname); // 取商品名称
+	$("#pro_store").val(prostore); // 取商品库存（剩余数量）
+	$("#pro_sold").val(prosell); // 取商品卖出量
+	$("#store_warn").val(prowarn); // 取商品报警库存
+	$("#store_warn").focus(); // 聚焦库存报警的框
+}
+
+// 库存预警设置提交
+function productConfirm(){
+	var pid = $("#pid").val(); // 取商品编号
+	var ps = $("#pro_store"); // 取商品库存（剩余数量）
+	var sn = $("#store_warn"); // 取设置的商品报警库存（数量）
+	if (sn.val() == '') {
+		$.messager.alert('温馨提示', '请输入库存预警数量!', 'warning', function() {
+			sn.focus(); //注意聚焦和return的顺序！
+		});
+		return;
+	} else if (!isPositiveNum(sn.val())) {
+		$.messager.alert('温馨提示', '请输入大于等于0、数字格式的库存预警数量!', 'warning', function() {
+			sn.focus(); //注意聚焦和return的顺序！
+		});
+		return;
+	}
+
+	MLoading.show("提交中..."); // 增加等待友好度体验
+	$.post('{:U("Admin/ProductManageRequest/setStorageWarning", "", "")}', {
+		pid: pid,
+		sn: sn.val()
+	}, function(result) {
+		MLoading.hide(); // 取消等待框
+		if (result.errCode == 0) {
+			$.messager.alert('温馨提示', '保存成功!', 'info', function() {
+				psw.dialog('close'); // 关闭对话框
+				dg.datagrid('reload'); // 重加载数据
+				clearSelect(); // reload后一定要清空所选的行
+			});
+		} else {
+			$.messager.alert('温馨提示', '保存失败!' + result.errMsg, 'warning', function() {
+				return;
+			});
+		}
+	}, 'json');
+}
+
+// 获取商品链接
+function getProLink(navid, proid){
+	clearSelect();
+	
+	$('#copy-dialog').window('open'); // 打开对话框
+	var onlineurl = "{:U('Home/ProductView/productShow', '', '', '', true)}?e_id=" + window.e_id + "&nav_id=" + navid + "&product_id=" + proid;
+	var offlineurl = "{:U('WeMall/QRCode/product', '', '', '', true)}?pid=" + proid;
+	$("#main-shareurl").val(onlineurl); // 线上商品地址
+	$("#fast-shareurl").val(offlineurl); // 线下快照地址
+	
+	// 点击复制按钮
+	$("#main_clip_button").zclip({
+	    path: "__PUBLIC__/js/ZeroClipboard.swf",
+	    copy: function(){
+	    	return $('#main-shareurl').val();
+	    },
+	    setCSSEffects:false,
+	    beforeCopy:function(){
+	    	/* 复制成功前干嘛 */
+			//$(this).css('background','#449d44');
+		},
+	    afterCopy:function(){
+	    	/* 复制成功后的操作 */
+	    	//$(this).html('复制成功');
+	    	var $copysuc = $("<div class='copy-tips'><div class='copy-tips-wrap'>复制成功</div></div>");
+			$("body").find(".copy-tips").remove().end().append($copysuc);
+			$(".copy-tips").fadeOut(3000);
+	    }
+	});
+	
+	// 点击复制按钮
+	$("#fast_clip_button").zclip({
+	    path: "__PUBLIC__/js/ZeroClipboard.swf",
+	    copy: function(){
+	    	return $('#fast-shareurl').val();
+	    },
+	    setCSSEffects:false,
+	    beforeCopy:function(){
+	    	/* 复制成功前干嘛 */
+			//$(this).css('background','#449d44');
+		},
+	    afterCopy:function(){
+	    	/* 复制成功后的操作 */
+	    	//$(this).html('复制成功');
+	    	var $copysuc = $("<div class='copy-tips'><div class='copy-tips-wrap'>复制成功</div></div>");
+			$("body").find(".copy-tips").remove().end().append($copysuc);
+			$(".copy-tips").fadeOut(3000);
+	    }
+	});
+}
+
+// 商品二维码
+function proDimension(proid){
+	clearSelect();
+	// 准备请求参数
+	var params = {
+			pid : proid, // 要生成下载的商品二维码
+			direct2browser : 0 // 直接输出到浏览器
+	}
+	MLoading.show("请稍候，生成中..."); // 压缩文件时的等待框
+	$.post("{:U('Admin/ProductManageRequest/downloadQRCode', '', '')}", params , function(result){
+		MLoading.hide(); // 得到响应取消等待框
+		if (result.errCode == 0) {
+			var filepath = result.data.zipfilepath; // 获得文件地址（如果有路径值，才去下载）
+			if (typeof filepath != "undefined" && filepath != "") {
+				$.messager.confirm('温馨提示', '生成二维码压缩包成功，是否现在下载?', function(cf){
+					if(cf) {
+						setTimeout(function(){
+							window.location.href = filepath;
+						},1000);
+					}
+				});
+			}
+		} else {
+			$.messager.alert( '温馨提示', '下载二维码出错，'+result.errMsg, 'error' );
+		}
+	},'json');
+}
+</script>
+<!-- easyui rowsbtn end -->
+
+<!-- handle btn begin -->
+<script type="text/javascript">
+
+</script>
+<!-- handle btn end -->
+
+<!-- 功能性函数 begin -->
+<script type="text/javascript">
+/*-----------读取云总店商品导航------------*/
+
+// 根据商城类型来读取商品类导航
+function getNavList(malltype) {
+	var requesturl = "", optionlist = [];
+	// 区分导航类型
+	
+	if (malltype == 1) {
+		// 云总店商品类导航
+		requesturl = "{:U('Admin/ProductManageRequest/cloudNav', '', '')}";
+	} else if (malltype == 3) {
+		// 分销店代理商品类导航
+		requesturl = "{:U('Admin/ProductManageRequest/agentNav', '', '')}";
+	}
+	$.post(requesturl, {malltype:malltype}, function(result){
+		if (result.errCode == 0) {
+			// 只取成功部分改变导航，没有查询成功就是用空导航
+			optionlist = result.data.navlist;
+			window.cloudpronav = optionlist;
+		} 
+	}, "json");
+}
+
+// 获取分店列表
+function getSubbranchList(province, city, region, name) {
+	var shoplist = [];
+	var params = { querysubbranch:1 };
+	if (province != "" && typeof(province) != "undefined") {
+		params.province = province;
+	}
+	if (city != "" && typeof(city) != "undefined") {
+		params.city = city;
+	}
+	if (region != "" && typeof(region) != "undefined") {
+		params.region = region;
+	}
+	if (name != "" && typeof(name) != "undefined") {
+		params.name = name;
+	}
+	$.post("{:U('Admin/ProductManageRequest/getSubbranch', '', '')}", params, function(result){
+		if (result.errCode == 0) {
+			shoplist = result.data.subbranchlist;
+			window.subbranchlist = shoplist;
+		} 
+	}, "json");
+}
+
+// 初始化商品门店分拨勾选框
+function checkSubbranchInit() {
+	// 单个店铺checkbox变化
+	$(".subbranch-list ul li").find("input[name=subbranch-check]").on("click", function(){
+		// 具体某个店铺勾选框触发事件（单个分店勾选是否引起全选）
+		if ($(this).closest(".subbranch-list ul").find('input[name="subbranch-check"]').not("input:checked").length == 0) {
+			$("#select-all").prop("checked", true); 	// 如果所有店铺都勾中了，全选
+			$("#select-all").parent().addClass("checked");
+		} else {
+			$("#select-all").prop("checked", false); 	// 还有店铺没勾中，就不全选
+			$("#select-all").parent().removeClass("checked");
+		}
+	});
+	
+	// 店铺全选勾选框点击触发事件
+	$("#select-all").on("click", function(){
+		var thisStoreAllSelect = $(".subbranch-list ul").find('input[name="subbranch-check"]'); // 找到最近一个店铺section区域里边所有的勾选框
+		if ($(this).prop("checked")) {
+			thisStoreAllSelect.prop("checked", true); // 如果全选是勾中的，则所有店铺全部勾中
+			thisStoreAllSelect.parent().addClass("checked");
+		} else {
+			thisStoreAllSelect.prop("checked", false); // 如果全选是取消的，则所有店铺取消勾中
+			thisStoreAllSelect.parent().removeClass("checked");
+		}
+	});
+}
+
+// 店铺地区联动清除函数
+function clearAreaSelect() {
+	// 省份联动清空城市和地区
+	$("#province-select").on("change", function(){
+		$("#city-select").select2("val", "--选择城市--");
+	});
+	
+	// 城市变换清空地区
+	$("#city-select").on("change", function(){
+		$("#region-select").select2("val", "--选择地区--");
+	});
+}
+
+// 正则判断大于或等于0的整数  
+function isPositiveNum(s){
+    var re = /^[0-9]*[0-9][0-9]*$/ ;  
+    return re.test(s)  
+}
+
+//修改商品信息
+function editPro(proid,protype) {
+	clearSelect();
+	window.location.href = "/weact/Admin/ProductManage/editProductDetail?product_id=" + proid + "&product_type=" + protype; // 跳转编辑商品页面
+}
+
+//修改商品库存信息
+function editStorage(obj) {
+	//alert('22');
+	var tdobj = $(obj).parent(); // 抓取td表格对象
+	var skuid = tdobj.attr("data-scid"); // 获取当前skuid
+	var skupid = tdobj.attr("data-pid");
+	var skupnum = tdobj.attr("data-pnum");
+	var skupname = tdobj.attr("data-pname");
+	var skusize = tdobj.attr("data-size"); // 获取当前sku尺码
+	var skucolor = tdobj.attr("data-color"); // 获取当前sku颜色
+	var skustorage = tdobj.attr("data-storage-left"); // 获取当前sku库存
+	var skutotalstorage = tdobj.attr("data-total-storage-left");
+	//alert(skuid+", ["+skusize+", "+skucolor+"], "+skustorage);
+	
+	if (skuid) {
+		$('#change_sku_store').dialog('open').dialog('setTitle', '修改线上商城库存数量（针对当前sku）');
+		$("#sc_id").val(skuid); // 取商品sku主键
+		$("#p_id").val(skupid); 
+		$("#p_num").val(skupnum); // 取商品编号
+		$("#p_name").val(skupname); // 取商品名称
+		$("#p_material").val(skusize+" "+skucolor); //取商品规格属性 
+		$("#store_now").val(skustorage); // 取商品库存（剩余数量）
+		$("#cloud_store_now").val(skutotalstorage);
+		$("#new_online_store").focus(); // 聚焦设置新库存的框
+	}
+}
+
+// 确认修改sku新库存
+function editStorageConfirm() {
+	var scid = $("#sc_id").val(); 				// 取商品sku编号
+	var nosa = $("#new_online_store"); 			// 取商品sku新库存
+	var ncsa = $("#new_cloud_store");
+	var store_now = $("#store_now");
+	var cloud_store_now = $("#cloud_store_now");
+	if (nosa.val() == ''&&ncsa.val()=='') {
+		$.messager.alert('温馨提示', '请输入线上sku新库存数量或云总店sku新库存量!', 'warning', function() {
+			nosa.focus(); 						//注意聚焦和return的顺序！
+		});
+		return;
+	} else if (!isPositiveNum(nosa.val())) {
+		$.messager.alert('温馨提示', '请输入大于等于0、数字格式的库存数量!', 'warning', function() {
+			nosa.focus(); 						//注意聚焦和return的顺序！
+		});
+		return;
+	} else if (!isPositiveNum(ncsa.val())) {
+		$.messager.alert('温馨提示', '请输入大于等于0、数字格式的库存数量!', 'warning', function() {
+			ncsa.focus(); 						//注意聚焦和return的顺序！
+		});
+		return;
+	} else if (nosa.val()==store_now.val()&&ncsa.val()==cloud_store_now.val()){
+		$.messager.alert('温馨提示', '您输入的新的库存数和原来的库存数不能完全一样!', 'warning', function() {
+			ncsa.focus(); 						//注意聚焦和return的顺序！
+		});
+		return;
+	}
+	
+	MLoading.show("提交中..."); // 增加等待友好度体验
+	$.post('/weact/Admin/ProductManageRequest/setNewStorage', {
+		scid: scid,
+		nosa : nosa.val(),
+		ncsa : ncsa.val()
+	}, function(result) {
+		MLoading.hide(); // 取消等待框
+		if (result.errCode == 0) {
+			$.messager.alert('温馨提示', '保存成功!', 'info', function() {
+				$('#change_sku_store').dialog('close'); // 关闭对话框
+				dg.datagrid('reload'); // 重加载数据
+				clearSelect(); // reload后一定要清空所选的行
+			});
+		} else {
+			$.messager.alert('温馨提示', '保存失败!' + result.errMsg, 'warning', function() {
+				return;
+			});
+		}
+	}, 'json');
+}
+</script>
+<!-- 功能性函数 end -->
+</body>
+</html>

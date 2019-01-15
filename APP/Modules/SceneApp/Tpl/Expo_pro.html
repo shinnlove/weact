@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="keywords" content="{$sainfo.shareinfo.title}">
+<meta name="description" content="{$sainfo.shareinfo.description}">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/pro/reset.css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/pro/mod.css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/pro/arrowpro.css">
+<script type="text/javascript" src="__PUBLIC__/js/pro/sea.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/expo/weactsharefinal.js"></script>
+<script type="text/javascript">
+var shareData={appid:"{$sainfo.shareinfo.appid}",img_url:"{$sainfo.shareinfo.img_url}",img_width:"160",img_height:"160",title:"{$sainfo.shareinfo.title}",desc:"{$sainfo.shareinfo.description}",link:"http://www.we-act.cn/weact/SceneApp/Expo/magazine/issue/{$sainfo.sceneapp_id}.shtml",fakeid:"",callback:function(a){}};
+</script>
+<title>{$sainfo.shareinfo.title}</title>
+</head>
+
+<body>
+	<div id="loading" class="loading">
+		<div class="loadbox">
+			<div class="loadlogo" style="background: url({$sainfo.shareinfo.img_url}) no-repeat; background-size: 100%"></div><!-- logo loading -->
+			<div class="loadbg"></div>
+		</div>
+	</div>
+	<div class="p-index main" id="con">
+		<!--左右滚动 start-->
+		<div id="slider" class="sl-slider-wrapper">
+			<div class="sl-slider">
+				<for start="0" end="$sainfo[image][commoncount]-1" step="1">
+					<div class="sl-slide" data-orientation="horizontal" data-slice1-rotation="0" data-slice2-rotation="0" data-slice1-scale="2" data-slice2-scale="2">
+						<div class="sl-slide-inner">
+							<div class="bg-img" href="javascript:;" style="background-image: url({$sainfo.image.common.$i.resource_url});"></div>
+						</div>
+					</div>
+					
+				</for>
+				
+				<div class="sl-slide" data-orientation="horizontal" data-slice1-rotation="0" data-slice2-rotation="0" data-slice1-scale="2" data-slice2-scale="2">
+					<div class="sl-slide-inner">
+						<div class="bg-img" href="javascript:;" style="background-image: url({$sainfo [image] [common] [$sainfo[image][commoncount] - 1] [resource_url]});"></div>
+						<a href="#"> <footer>微动资源技术支持</footer> </a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="animateYl animateYl01">
+			<span class="shou"><img src="__PUBLIC__/images/pro/shou.png" alt=""></span>
+			<span class="cyyle"><img src="__PUBLIC__/images/pro/cycle02.png" alt=""></span>
+			<span class="bg"></span>
+		</div>
+		<!--<span class="jt_left"><img src="images/pro/jt.png"></span>-->
+		<!--左右滚动代码 end-->
+	</div>
+
+	<!--音乐-->
+	<div id="audio_btn" url="{$sainfo.music.0.resource_url}" class="off"></div>
+	<!--资源推广 begin-->
+    <input id="r-wx-appid" type="hidden" value="{$sainfo.shareinfo.appid}" /><!-- 微信分享信息 -->
+	<input id="r-wx-title" type="hidden" value="{$sainfo.shareinfo.title}" /><!-- 微信分享信息 -->
+	<input id="r-wx-img" type="hidden" value="{$sainfo.shareinfo.img_url}" /><!-- 微信分享信息 -->
+	<input id="r-wx-des" type="hidden" value="{$sainfo.shareinfo.description}" /><!-- 微信分享信息 -->
+    <input id="r-wx-link" type="hidden" value="http://www.we-act.cn/weact/SceneApp/Expo/magazine/issue/{$sainfo.sceneapp_id}.shtml" /><!-- 微信分享信息 -->    
+    <!--资源推广 end-->
+</body>
+</html>

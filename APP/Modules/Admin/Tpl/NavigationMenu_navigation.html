@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>自定义导航配置</title>
+</head>
+
+<body class="easyui-layout">
+	<div data-options="region:'center'">
+		<table id='tg' title="自定义导航配置" class="easyui-treegrid" toolbar="#toolbar"></table>
+		<!-- easyUI的工具条 -->
+		<div id="toolbar">
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="newNavigation()">添加导航</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editNavigation()">编辑导航</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="deleteNavigation()">删除导航</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="clearNavigation()">移除该导航下内容或商品</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="resetNavigation()">删除所有导航</a>
+		</div>
+	</div>
+
+<script type="text/javascript">
+$(function(){
+	$('#tg').treegrid({
+		url: "{:U('Admin/NavigationMenu/allNavInit')}",	//treegrid的数据源
+        region:'center',
+        border:false,
+        fit:true,
+        rownumbers: true,
+        pagination: true,							//开启分页
+        pageSize: 10,								//每页大小
+        pageList: [10,15,20],						//可供选择的页码范围
+        idField: 'nav_id',							//treegrid的主键
+        treeField: 'nav_name',						//treegrid应用的行
+        collapsible:true,							//整块easyUI可收起
+        animate:true,								//展开显示动画效果
+        onBeforeLoad: function(row, param){
+            if (!row) {    			// load top level rows
+                param.id = '-1';    // set id=0, indicate to load new page rows
+            }
+        },	
+	    columns:[[
+			{ field:'nav_name', title:'名称' },
+			{ field:'nav_image_path', title:'图标', width:100, formatter:navImageInit, align:'center' },
+	        { field:'father_nav_id', title:'导航属性', width:100, formatter:navTypeInit, align:'center' },
+	        { field:'nav_type', title:'导航类别', width:100, formatter:navClassInit, align:'center' },
+	        { field:'nav_order', title:'同级导航顺序', width:100, align:'right'},
+	        { field:'description', title:'微信分享描述', width:150, formatter:navDesInit, align:'center' },
+	        { field:'has_info', title:'当前情况', width:100, formatter:navHasInfo, align:'center' },
+	        { field:'temporary_stop', title:'当前状态', width:100, formatter:navValid, align:'center' }
+	    ]]
+	});
+});
+
+/*--------------------------下边为easyUI初始化的函数-----------------------------*/
+//easyUI的treegrid初始化图片函数
+function navImageInit(value){
+    if (value){
+        return '<img src="'+ value +'" width="90" alt="" style="border:0; border-radius:5px; margin-top:5px;" />';
+    } else {
+        return '';
+    }
+}
+
+//easyUI的treegird初始化导航类型属性（标记不同颜色）
+function navTypeInit(val, row){
+	if(row.father_nav_id=='-1'){
+		return '<font style="color:#482cf1;">顶级导航</font>';
+	}else{
+		return '<font style="color:#dd56ff;">二级导航</font>';
+	}
+}
+
+//easyUI的treegird初始化导航类别（标记不同颜色）
+function navClassInit(val, row) {
+	if (row.nav_type == 1) {
+		return '<font style="color:#ccaf27;">信息类</font>';
+	} else if (row.nav_type == 2) {
+		return '<font style="color:#f16f2c;">服装类</font>';
+	} else if (row.nav_type == 3) {
+		return '<font style="color:#e21a1a;">超链接</font>';
+	} else if (row.nav_type == 4) {
+		return '<font style="color:#0dce83;">餐饮类</font>';
+	} else if (row.nav_type == 5) {
+		return '<font style="color:#00c0ff;">商品类</font>';
+	}
+}
+
+//easyUI的treegird导航描述初始化
+function navDesInit(val, row){
+	if(row.description==''||row.description==null){
+		return '<font style="color:#a7a7a7;">未编辑</font>';
+	}else{
+		var n = val.length;
+		var tail = '';
+		if(n>10) { 
+			n = 10;
+			tail = '...'
+		}
+		return '<font style="color:#468847;">'+val.substr(0,n)+tail+'</font>';
+	}
+}
+
+//easyUI的treegird导航是否已经编辑
+function navHasInfo(val, row){
+	var type = '';
+	if(row.nav_type==1) type='信息';
+	else if(row.nav_type==2) type='服装';
+	else if(row.nav_type==3) type='链接';
+	else if(row.nav_type==4) type='餐品';
+	else if(row.nav_type==5) type='商品';
+	
+	if(row.father_nav_id == '-1'){
+		//父级导航情况初始化
+		if(val == 2) return '<font style="color:#468847;">已添加子级</font>';
+		else if(val == 1) return '<font style="color:#468847;">已添加'+type+'</font>';
+		else if(val == 0) return '<font style="color:#a7a7a7;">未编辑</font>'
+	}else{
+		//子级导航情况初始化
+		if(val == 1){
+			return '<font style="color:#468847;">已添加'+type+'</font>'
+		}else{
+			return '<font style="color:#a7a7a7;">未添加'+type+'</font>'
+		}
+	}
+}
+
+//easyUI的treegird导航是否关闭初始化
+function navValid(val, row){
+	if(val == 1){
+		return '<font style="color:#a7a7a7;">已停用</font>'
+	}else{
+		return '<font style="color:#468847;">使用中</font>'
+	}
+}
+/*--------------------------下边为easyUI初始化的函数-----------------------------*/
+
+//新增导航
+function newNavigation() {
+	window.location.href="{:U('Admin/NavigationMenu/addNavigation','','')}";
+}
+
+//编辑导航
+function editNavigation() {
+	var row = $('#tg').treegrid('getSelected');
+	if (row) {
+		window.location.href="{:U('Admin/NavigationMenu/editNavigation','','')}?nav_id="+row.nav_id;
+	}else{
+		$.messager.alert('温馨提示', '请选择要编辑的导航!', 'warning');
+	}
+}
+
+//删除导航函数
+function deleteNavigation() {
+	var row = $('#tg').treegrid('getSelected');
+	if (row) {
+		$.messager.confirm('温馨提示', '确定要删除该导航吗？导航下的信息将被清空，商品将会移入未分类，请谨慎操作！', function(cf) {
+			if (cf) {
+				$.post("{:U('Admin/NavigationMenu/deleteNav', '', '')}", {
+					nid: row.nav_id,
+					ntype : row.nav_type
+				}, function(result) {
+					if (result.errCode == 0) {
+						$.messager.alert('温馨提示', '删除选中导航成功！', 'info', function(){
+							$('#tg').treegrid('reload'); // reload the user data
+						});
+					} else {
+						$.messager.alert('温馨提示', '删除导航失败！'+result.errMsg, 'error');
+					}
+				}, 'json');
+			}
+		});
+	} else {
+		$.messager.alert('温馨提示', '请选择要删除的导航!', 'warning');
+	}
+}
+
+// 移除导航下信息或产品（包括子导航）
+function clearNavigation() {
+	var row = $('#tg').treegrid('getSelected');
+	if (row) {
+		$.messager.confirm('温馨提示', '确定要移除该导航下所有内容？温馨提示：信息类将被删除；服装、餐品或商品都会列入未分类中。', function(cf) {
+			if (cf) {
+				$.post("{:U('Admin/NavigationMenu/clearNavConfirm', '', '')}", {
+					nid: row.nav_id,
+					ntype: row.nav_type,
+					clear: true
+				}, function(result) {
+					if (result.errCode == 0) {
+						$.messager.alert('温馨提示', '清空成功，该导航已经没有任何关联内容！', 'info', function() {
+							$('#tg').treegrid('reload');
+						});
+					} else {
+						$.messager.alert('温馨提示', '移除内容失败，' + result.errMsg, 'error');
+					}
+				}, 'json');
+			}
+		});
+	} else {
+		$.messager.alert('温馨提示', '请选择要清空的导航!<br />所要清空的导航必须<font style="color:#F20;">无下级导航</font>。','warning');
+	}
+}
+
+// 重置导航信息
+function resetNavigation(){
+	$.messager.confirm('温馨提示', '确定要重置所有导航吗?<br />该操作将<font style="color:#F20">清除所有已存在导航及其所属内容，且该操作不可恢复</font>!请谨慎考虑!', function(cf) {
+		if (cf) {
+			$.messager.confirm('温馨提示', '<font style="color:#F20">请再次确认重置所有导航，若改变主意请取消。</font><br />建议采用单个删除导航的方式解决问题。', function(result) {
+				if (result) {
+					$.post("{:U('Admin/NavigationMenu/resetAllNav', '', '')}", {
+						resetConfirm: true
+					}, function(result) {
+						if (result.errCode == 0) {
+							$.messager.alert('温馨提示', '重置所有导航成功!', 'info', function() {
+								$('#tg').treegrid('reload'); // reload the user data
+							});
+						} else {
+							$.messager.alert('温馨提示', '重置所有导航失败!' + result.errMsg, 'error');
+						}
+					}, 'json');
+				}
+			});
+		}
+	});
+}
+</script>
+</body>
+</html>

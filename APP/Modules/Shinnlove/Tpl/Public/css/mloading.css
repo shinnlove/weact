@@ -1,0 +1,7 @@
+/*-----------------以下是等待对话框的样式-----------------*/
+#mLoading{position:absolute;left:0;top:60px;z-index:9999}
+#mLoading,#mLoading .lbk,#mLoading .lcont{width:146px}
+#mLoading .lbk,#mLoading .lcont{position:relative}
+#mLoading .lbk{height:146px;background-color:rgba(0,0,0,.5);border-radius:10px;z-index:0}
+#mLoading .lcont{text-align:center;color:#f5f5f5;font-size:14px;line-height:35px;z-index:1;margin-top:-146px;padding-top:90px;height:56px;background:url(/weact/APP/Modules/Shinnlove/Tpl/Public/images/loading.gif) no-repeat 50% 50%;-webkit-background-size:35px 35px;background-size:35px 35px}
+/*-----------------以上是等待对话框的样式-----------------*/

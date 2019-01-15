@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css?v=1.0.1" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>微猫商城--街市 血拼{$pinfo.product_name}</title>
+<style type="text/css">
+.fixed-btn { margin-top:10px; }
+</style>
+</head>
+
+<body>
+    <div class="street-wrap">
+    	<div class="street-header">
+            <h3>欢迎来到微猫商城街市</h3>
+        </div>
+        <hr class="street-hr" />
+        <div class="father-box b-round">
+            <div class="left-box"><img src="{$pinfo.macro_path}" class="b-round" alt=""/></div>
+            <div class="right-box"><img src="__PUBLIC__/images/wanted.png" class="b-round" alt=""/></div>
+            <div class="center-box">
+            	<span class="pro-info">商品编号：{$pinfo.product_number}</span>
+                <span class="pro-info">商品名称：{$pinfo.product_name}</span>
+            </div>
+        </div>
+        
+        <hr class="street-hr" />
+        <div class="street-header">
+            <h4>线上云总店</h4>
+        </div>
+        <hr class="street-hr" />
+        
+        <div class="father-box b-round">
+            <div class="left-box"><img src="__PUBLIC__/images/default.png" class="b-round" alt=""/></div>
+            <div class="right-box"><a href="javascript:;" class="btn btn-rose fav fs16 fixed-btn cloud-buy">云端购买</a></div>
+            <div class="center-box">
+            	<span class="pro-info">品牌名称：<font class="brand">{$einfo.e_name}</font></span>
+                <span class="pro-info">总部地址：<font class="address">{$einfo.e_province} {$einfo.e_city} {$einfo.e_county} {$einfo.e_address}</font></span>
+            </div>
+        </div>
+        
+        <hr class="street-hr" />
+        <div class="street-header">
+            <h4>线下实体店</h4>
+        </div>
+        <hr class="street-hr" />
+        
+        <div class="list-shop o2o">
+        	<ul>
+            	<li class="no-shop">暂无实体店铺正出售该商品</li>
+            </ul>
+        </div>
+        
+        <hr class="street-hr" />
+        <div class="street-header">
+            <h4>P2P分销店</h4>
+        </div>
+        <hr class="street-hr" />
+        
+        <div class="list-shop p2p">
+        	<ul>
+            	<li class="no-shop">暂无分销店铺正出售该商品</li>
+            </ul>
+        </div>
+        <hr class="street-hr" />
+    </div>
+    
+<!-- 微猫商城 店铺列表 js arttemplate begin -->
+<script type="text/html" id="wemallshoptpl">
+{{each saleshoplist as e i}}
+	<li class="single-subbranch" data-eid="{{e.e_id}}" data-pid="{{e.product_id}}" data-sid="{{e.subbranch_id}}">
+		<div class="father-box b-round">
+			<div class="left-box"><img src="{{e.image_path}}" class="b-round" alt=""/></div>
+			<div class="right-box"><a href="javascript:;" class="btn btn-orange fav fs16 fixed-btn o2o-buy">去该店买</a></div>
+			<div class="center-box">
+				<span class="pro-info">店铺名称：{{e.subbranch_name}}</span>
+				<span class="pro-info">店铺地址：{{e.subbranch_address}}</span>
+			</div>
+		</div>
+	</li>
+{{/each}}
+</script>
+<!-- 微猫商城 店铺列表 js arttemplate end -->
+
+<!-- P2P分销店 店铺列表 js arttemplate begin -->
+<script type="text/html" id="p2pshoptpl">
+{{each shoplist as e i}}
+	<li class="single-distributor">
+		<div class="father-box b-round">
+			<div class="left-box"><img src="__PUBLIC__/images/default.png" class="b-round" alt=""/></div>
+			<div class="right-box"><a href="javascript:;" class="btn btn-red fav fs16 fixed-btn p2p-buy">向TA买</a></div>
+			<div class="center-box">
+				<span class="pro-info">店铺名称：COCO的服装梦工厂</span>
+				<span class="pro-info">店长：彭荻斐</span>
+				<span class="pro-info">联系电话：150284659565</span>
+			</div>
+		</div>
+	</li>
+{{/each}}
+</script>
+<!-- P2P分销店 店铺列表 js arttemplate end -->
+
+<script type="text/javascript">
+var eid = '{$eid}', // 商家编号
+	nid = '{$pinfo.nav_id}', // 商品所属云总店导航编号
+	pid = '{$pid}', // 商品编号
+	nextstart = 0, 
+	isLoadingData = false,
+	hasMoreData = true,
+	o2oshopjson = '{$o2oshop}', // O2O实体店
+	p2pshopjson = ''; // P2P分销店
+	
+$(function(){
+	// 处理品牌和地址未填写的提醒
+	var brand = $(".brand").text();
+	var address = $(".address").text();
+	if (brand == "") {
+		$(".brand").html("这商家很懒，品牌都没有填写");
+	}
+	if (address == "") {
+		$(".address").html("这商家很懒，地址都没有留下");
+	}
+	
+	// 初始化店铺精选商品：第一次直出渲染商品模板（默认是上架时间）
+	var o2oshoplist = $.parseJSON(window.o2oshopjson); // 解析页面的json数据
+	var tmpl = template('wemallshoptpl', o2oshoplist.data); // 利用json数据渲染art模板引擎
+	var o2oshopObj = $('.o2o ul'); 		
+	if (tmpl == '{Template Error}') {
+		tmpl = ""; // 置空tmpl
+	}
+	o2oshopObj.html(tmpl);	
+	window.nextstart = o2oshoplist.nextstart; 
+	
+	// 去云端购买
+	$(".cloud-buy").click(function(){
+		location.href = "{:U('Home/ProductView/productShow', '', '')}/e_id/" + eid + "/nav_id/" + nid + "/product_id/" + pid;
+	});
+	
+	// 去O2O实体店铺
+	$(".o2o-buy").click(function(){
+		var _t = $(this), liobj = _t.closest(".single-subbranch"), eid = liobj.data("eid"), sid = liobj.data("sid");
+		location.href = "{:U('WeMall/Product/productDetail', '', '')}/sid/" + sid + "/pid/" + pid;
+	});
+	
+});
+</script>
+</body>
+</html>

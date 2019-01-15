@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="keywords" content="{$sainfo.shareinfo.title}" />
+<meta name="description" content="{$sainfo.shareinfo.description}" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta http-equiv="Expires" content="-1" />
+<meta http-equiv="pragram" content="no-cache" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/basic/main.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/basic/add2home.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/basic/store.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/basic/endpic.css" />
+<script type="text/javascript" src="__PUBLIC__/js/basic/sea.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/basic/offline.js"></script>
+<!--移动端 extend begin-->
+<script type="text/javascript">
+var mengvalue = -1;
+	//if(mengvalue<0){mengvalue=0;}
+	var phoneWidth = parseInt(window.screen.width);
+	var phoneScale = phoneWidth / 640;
+
+	var ua = navigator.userAgent;
+	if (/Android (\d+\.\d+)/.test(ua)) {
+		var version = parseFloat(RegExp.$1);
+		// andriod 2.3
+		if (version > 2.3) {
+			document.write('<meta name="viewport" content="width=640, minimum-scale = ' + phoneScale + ', maximum-scale = ' + phoneScale + ', target-densitydpi=device-dpi">');
+			// andriod 2.3以上
+		} else {
+			document.write('<meta name="viewport" content="width=640, target-densitydpi=device-dpi">');
+		}
+		// 其他系统
+	} else {
+		document.write('<meta name="viewport" content="width=640, user-scalable=no, target-densitydpi=device-dpi">');
+	}
+</script>
+<!--移动端 extend end -->
+<title>{$sainfo.shareinfo.title}</title>
+</head>
+
+<body class='s-bg-ddd'>
+	<!--模版加载提示-->
+	<section class="u-alert">
+	  <img src="__PUBLIC__/images/basic/loading_large.gif" alt="" style="display: none;" />
+		<div class='alert-loading z-move'>
+			<div class='cycleWrap'>
+				<span class='cycle cycle-1'></span>
+                <span class='cycle cycle-2'></span>
+                <span class='cycle cycle-3'></span>
+                <span class='cycle cycle-4'></span>
+			</div>
+			<div class="lineWrap">
+				<span class='line line-1'></span>
+                <span class='line line-2'></span>
+              <span class='line line-3'></span>
+			</div>
+		</div>
+	</section>
+	<!--模版加载提示 end-->
+    
+	<!-- 声音控件 -->
+	<section class='u-audio f-hide' data-src='{$sainfo.music.0.resource_url}'>
+		<p id='coffee_flow' class="btn_audio">
+			<strong class='txt_audio z-hide'>关闭</strong>
+			<span class='css_sprite01 audio_open'></span>
+		</p>
+	</section>
+	<!-- 声音控件 end-->
+    
+	<section class='u-arrow f-hide'>
+		<p class="css_sprite01"></p>
+	</section>
+	<!-- 箭头指示引导 end-->
+    
+	<!-- page页面内容 -->
+	<section class='p-ct'>
+		<!-- 旋转反面 -->
+		<div class='translate-back f-hide'>
+			<!-- 擦一擦-->
+			<input id="ca-tips" type="hidden" value="" />
+			<!-- 蒙板背景图-->
+			<input id="r-cover" type="hidden" value="" />
+			
+			<!-- 大图文 begin -->
+            <!-- 封页 1-->
+			<div class='m-page m-fengye f-hide' data-page-type='info_pic3' data-statics='info_pic3'>
+				<div class="page-con lazy-img" data-src='{$sainfo.image.common.0.resource_url}'></div>
+			</div>
+			<!-- 封页 end-->
+			
+			<for start="1" end="$sainfo.image.commoncount" step="1">
+				<div class='m-page m-bigTxt f-hide' data-page-type='bigTxt' data-statics='info_list'>
+					<div class="page-con j-txtWrap lazy-img" data-src='{$sainfo.image.common.$i.resource_url}'></div>
+				</div>
+			</for>
+			<!-- 大图文 end-->
+		</div>
+		<!-- 旋转反面 end-->
+	</section>
+	<!-- 正文介绍 page页面内容 end-->
+    
+	<!-- lightapp入口 -->
+	<div class='market-notice f-hide' data-action='Action://lightapp_open'> 点击了解 </div>
+    <div class='market-page f-hide' data-action='Action://lightapp_close'>
+        <div class='market-img'>
+            <a href="tel:{$sainfo.contact_number}"><img src="__PUBLIC__/images/basic/market-tel.png" alt="" /></a>
+        </div>
+	</div>
+    <!-- lightapp入口 end-->
+    
+	<!--pageLoading begin -->
+	<section class="u-pageLoading">
+		<img src="__PUBLIC__/images/basic/load.gif" alt="loading" />
+	</section>
+    <!--pageLoading end-->
+    
+	<!-- 资源传递 begin-->
+	<input id="activity_id" type="hidden" value="" /><!-- 模版ID -->
+	<input id="r-wx-title" type="hidden" value="{$sainfo.shareinfo.title}" /><!-- 微信分享信息 -->
+	<input id="r-wx-img" type="hidden" value="{$sainfo.shareinfo.img_url}" /><!-- 微信分享信息 -->
+	<input id="r-wx-con" type="hidden" value="{$sainfo.shareinfo.description}" /><!-- 微信分享信息 -->
+	<!-- 资源传递 end-->
+</body>
+</html>

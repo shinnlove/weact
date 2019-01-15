@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>优惠券放送</title>
+<style>
+footer { position: fixed; bottom: 0; left: 0; width: 100%; height: 43px; }
+.bottom {padding-bottom:50px !important;}
+.c-8 {color:#888;}
+
+.ui-table {width: 100%; max-width: 100%; background: #fff;}
+.ui-table th {background: #F0F0F0}
+.ui-table th,.ui-table td {padding: 5px 8px;}
+.ui-table.tbl-bdr th,.ui-table.tbl-bdr td{border:1px solid #ddd; overflow: ellipsis;}
+.ui-table.tbl-bdr.tbl-rdu {border-radius: 4px;}
+</style>
+</head>
+
+<body>
+	<div class="couponInfo">
+		<div class="top" style="background:#F44336">
+			<!-- <input type="hidden" name="s_id" id="s_id" value="{$couponinfo.subbranch_id}" /> -->
+			<input type="hidden" name="coupon_id" id="coupon_id" value="{$couponinfo.coupon_id}" />
+			<div class="type"></div>
+			<div class="couponName">{$couponinfo.coupon_name}</div>
+			<div class="wave"></div>
+			<div class="time">使用期限：<span id="couponstart">{$couponinfo.start_time}</span> - <span id="couponend">{$couponinfo.end_time}</span></div>
+		</div>
+		<div class="bottom">
+			<p class="fw-bold">使用说明：</p>
+			<div class="cont">{$couponinfo.instruction}</div>
+			<div><br /></div>
+		</div>
+	</div>
+	
+	<footer>
+		<a href="javascript:void(0)" class="btn btn-red full no-rdu" style="background:#F44336" id="iwant">领取优惠券</a>
+	</footer>
+	
+	<input type="hidden" id="noTalking" />
+	
+<script type="text/javascript">
+var eid = '{$eid}', // 商家编号
+	sid = '{$sid}', // 分店编号
+	cid = '{$cid}', // 优惠券编号
+	curpage = "{:U('WeMall/Coupon/sendCoupon', array('sid' => $sid, 'coupon_id' => $cid), '')}", // 当前位置
+	loginurl = "{:U('WeMall/GuestMall/login', array('sid' => $sid), '')}", // 登录地址
+	coupontype = "{$couponinfo.coupon_type}", 		// 获取优惠券类型
+	denomination = "{$couponinfo.denomination}", 	// 抵用券抵扣金额
+	discount = "{$couponinfo.discount}", 			// 优惠券所有的折扣
+	special_price = "{$couponinfo.special_price}", 	// 特价券面值
+	lowestconsume = "{$couponinfo.lowest_consume}", // 优惠券最低消费额度
+	basename = ""; // 优惠券基本名称
+
+// 页面初始化函数
+$(function(){
+	
+	// 对优惠券种类和名称进行初始化
+	if (coupontype == "1") {
+		if(~~lowestconsume > 0) {
+			basename = "满" + lowestconsume + "元 立减" + denomination + "元 抵用券"; // 有额度的抵扣
+		} else {
+			basename = "立减" + denomination + "元 抵用券"; // 直接抵扣
+		}
+	} else if (coupontype == "2") {
+		basename = "立享"+discount+"%折扣券";
+	} else if (coupontype == "3") {
+		if (special_price < 0) {
+			special_price = 1; // 防止出错
+		}
+		basename = "直接享受特价"+ special_price +" 特价券";
+	}
+	$(".type").html(basename); // 写入优惠券的名字
+	
+	// 领取优惠券
+	$("#iwant").click(function(){
+		var btnObj = $(this); // 点击的按钮对象
+		var coupon_id = $("#coupon_id").val();
+		var coupon_name = $(".couponName").val();
+		var params = { 
+				sid: sid, 
+				coupon_id:coupon_id,
+				coupon_name:coupon_name
+		}
+		MLoading.show('提交中...'); // 体验度等待
+		btnObj.attr('disabled',true); // 冻结按钮防止重复点
+		$.post("{:U('WeMall/CouponRequest/getCouponConfirm', '', '')}", params, function(result){
+			MLoading.hide(); // 体验度等待
+			btnObj.removeAttr('disabled'); // 恢复按钮
+			if(result.errCode == 0){
+				mobileAlert("领取优惠券成功，快去逛逛店铺吧！");
+				setTimeout(function(){
+					window.location.href = "{:U('WeMall/CustomerCenter/myCoupon', array('sid' => $sid), '')}";
+				},500);
+			} else if (result.errCode == 10005 || result.errCode == 20001) {
+				mobileAlert(result.errMsg);
+				setTimeout(function(){
+					window.location.href = loginurl+"?from="+curpage;
+					return false;
+				}, 1200);
+			} else {
+				mobileAlert(result.errMsg);
+				setTimeout(function(){
+					window.location.href = "{:U('WeMall/CustomerCenter/myCoupon', array('sid' => $sid), '')}";
+				},1500);
+				return false;
+			}
+		});
+	});
+	
+});
+</script>

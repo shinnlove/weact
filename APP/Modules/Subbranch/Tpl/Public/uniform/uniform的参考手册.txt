@@ -1,0 +1,50 @@
+						<div>
+							<label>Search:</label>
+							<input type="search" size="40"/>
+						</div>
+						<div>
+							<label>Phone:</label>
+							<input type="tel" size="40"/>
+						</div>
+						<div>
+							<label>URL:</label>
+							<input type="url" size="40"/>
+						</div>
+						<div>
+							<label>Datetime:</label>
+							<input type="datetime" size="40"/>
+						</div>
+						<div>
+							<label>Date:</label>
+							<input type="date" size="40"/>
+						</div>
+						<div>
+							<label>Month:</label>
+							<input type="month" size="40"/>
+						</div>
+						<div>
+							<label>Week:</label>
+							<input type="week" size="40"/>
+						</div>
+						<div>
+							<label>Time:</label>
+							<input type="time" size="40"/>
+						</div>
+						<div>
+							<label>Range:</label>
+							<input type="range" size="40"/>
+						</div>
+						<div>
+							<label>How do you feel?</label>
+							<select id="demoFeeling" multiple="multiple" size=4>
+								<option value="elated">Elated</option>
+								<option value="happy">Happy</option>
+								<option value="content">Content</option>
+								<option value="ok">Ok</option>
+								<option value="unhappy">Unhappy</option>
+								<option value="frustrated">Frustrated</option>
+								<option value="cranky">Cranky</option>
+								<option value="mad">Mad</option>
+								<option value="unlisted">Anything else</option>
+							</select>
+						</div>

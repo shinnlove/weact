@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/ui-dialog.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/select2.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artdialog/dialog-min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonutil.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.zclip.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type='text/javascript' src="__PUBLIC__/js/plugins/select2/select2.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/PCASClass.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>积分商城管理</title>
+</head>
+
+<body>
+	<div class="wrap">
+    	<div class="search-bar">
+        	<span class="search-sec label-select">
+            	<select class="search-select" id="label-select">
+                    <option value="-1">不限会员专区</option>
+                    <option value="1">一级会员专区</option>
+                    <option value="2">二级会员专区</option>
+                    <option value="3">三级会员专区</option>
+                </select>
+            </span>
+            <span class="search-sec pro-num">
+            	<input type="text" class="uniform" id="product_number" name="product_number" placeholder="商品编号" value="" />
+            </span>
+            <span class="search-sec pro-name">
+            	<input type="text" class="uniform" id="product_name" name="product_name" placeholder="商品名称" value="" />
+            </span>
+            <span class="search-sec sell-amount">
+            	<input type="text" class="uniform" id="sell_amount" name="sell_amount" placeholder="卖出量大于" value="" />
+            </span>
+            <button class="btn btn-default btn-sm search-btn" id="title-search">查询</button>
+            <div class="clear"></div>
+        </div>
+        
+        <div class="handle-bar">
+        	<div class="upper-handle btn-group-xs">
+            	<span class="bar-label">操作</span>
+                <span class="handle-btn add-product"><button class="btn btn-default btn-xs">上架商品</button></span>
+                <span class="handle-btn del-product"><button class="btn btn-default btn-xs">下架商品</button></span>
+                <span class="handle-btn export-record"><button class="btn btn-default btn-xs">导出商品数据</button></span>
+                <div class="clear"></div>
+            </div>
+        </div>
+        
+        <div class="easyui-section easyui-layout">
+        	<table id="dg" title="商品信息     —— 温馨提示：点击每条商品左侧加号可看到实时库存，批量上下架时可以多选"></table>
+        </div>
+    </div>
+    
+    <!-- 修改一级会员等级  -->
+	<div id="member_level1" class="easyui-window" title="修改商品库存" data-options="modal:true,closed:true" style="width:450px; padding:10px;">
+		<input type="hidden" name="rule_id1" id="rule_id1" val="" />
+		<table>
+			<tr>
+				<!--因为文字过多所以这里修改单元格的宽度  -->
+				
+				<th class="dialog-head" style="width:160px"><input type= "checkbox" style="margin-bottom:5px" id="is_open1" />是否开启&nbsp;&nbsp;</th>
+			</tr>
+			<tr>
+				<!--因为文字过多所以这里修改单元格的宽度  -->
+				
+				<th class="dialog-head" style="width:160px">购买商品所需积分:&nbsp;&nbsp;</th>
+				<td><input id="p_num1" class="easyui-datebo input-readonly" type="text"  placeholder="请填写积分数，可以不填"/></td>
+			</tr>
+		</table>
+		<a href="javascript:void(0)" class="easyui-linkbutton dialog-cancel" iconCls="icon-cancel" onclick="javascript:$('#member_level1').dialog('close')">取消</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton dialog-confirm" iconCls="icon-ok" onclick="editStorageConfirm(1)">确定</a>
+	</div>
+	
+	 <!-- 修改二级会员等级 -->
+	<div id="member_level2" class="easyui-window" title="修改商品库存" data-options="modal:true,closed:true" style="width:450px; padding:10px;">
+		<input type="hidden" name="rule_id2" id="rule_id2" val="" />
+		<table>
+			<tr>
+				<!--因为文字过多所以这里修改单元格的宽度  -->
+				
+				<th class="dialog-head" style="width:160px"><input type= "checkbox" id="is_open2" style="margin-bottom:5px"  />是否开启&nbsp;&nbsp;</th>
+			</tr>
+			<tr>
+				<th class="dialog-head">购买商品所需积分:&nbsp;&nbsp;</th>
+				<td><input id="p_num2" class="easyui-datebo input-readonly" type="text"   placeholder="请填写积分数，可以不填"/></td>
+			</tr>
+		</table>
+		<a href="javascript:void(0)" class="easyui-linkbutton dialog-cancel" iconCls="icon-cancel" onclick="javascript:$('#member_level2').dialog('close')">取消</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton dialog-confirm" iconCls="icon-ok" onclick="editStorageConfirm(2)">确定</a>
+	</div>
+	
+	 <!-- 修改三级会员等级 -->
+	<div id="member_level3" class="easyui-window" title="修改商品库存" data-options="modal:true,closed:true" style="width:450px; padding:10px;">
+		<input type="hidden" name="rule_id3" id="rule_id3" val="" />
+		<table>
+			<tr>
+				<!--因为文字过多所以这里修改单元格的宽度  -->
+				
+				<th class="dialog-head" style="width:160px"><input type= "checkbox" id="is_open3"  style="margin-bottom:5px" />是否开启&nbsp;&nbsp;</th>
+			</tr>
+			<tr>
+				<th class="dialog-head">购买商品所需积分:&nbsp;&nbsp;</th>
+				<td><input id="p_num3" class="easyui-datebo input-readonly" type="text" placeholder="请填写积分数，可以不填"/></td>
+			</tr>
+		</table>
+		<a href="javascript:void(0)" class="easyui-linkbutton dialog-cancel" iconCls="icon-cancel" onclick="javascript:$('#member_level3').dialog('close')">取消</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton dialog-confirm" iconCls="icon-ok" onclick="editStorageConfirm(3)">确定</a>
+	</div>
+	
+    
+<!-- 展开商品实时库存 begin -->
+<script type="text/html" id="storageinfotpl">
+<table>
+    <tbody>
+        <tr>
+            <td style="border:0; width:150px;">
+                <p style="font-weight:bold;">商品实时库存信息：</p>
+            </td>
+        </tr>
+        <tr style="border:0;height:30px;">
+            <td class="sku-title">sku序号</td>
+			<td class="sku-title">规格</td>
+			<td class="sku-title">属性</td>
+            <td class="sku-title">积分商城库存量</td>
+			<td class="sku-title">积分商城卖出量</td>
+        </tr>
+		{{each skulist as e i}}
+			<tr>
+            	<td class="sku-info">{{i+1}}</td>
+            	<td class="sku-info">{{e.product_size}}</td>
+				<td class="sku-info">{{e.product_color}}</td>
+            	<td class="sku-info">{{e.sku_storage_left}}</td>
+				<td class="sku-info">{{e.score_sell_amount}}</td>
+			</tr>
+		{{/each}}
+		
+		<tr>
+            <td style="border:0; width:150px;">
+                <p style="font-weight:bold;">商品所属会员专区信息：</p>
+            </td>
+        </tr>
+        <tr style="border:0;height:30px;">
+            <td class="sku-title">会员专区类别</td>
+			<td class="sku-title">积分数</td>
+			<td class="sku-title">是否开启</td>
+			<td class="sku-title">操作</td>
+        </tr>
+		{{each scorearealist as e i}}
+			<tr>
+            	<td class="sku-info">{{e.member_level}}</td>
+            	<td class="sku-info">{{e.score_amount}}</td>
+				<td class="sku-info">{{e.is_use}}</td>
+				<td class="sku-info"  data-rid="{{e.rule_id}}" data-ml="{{e.member_level}}" data-amount="{{e.score_amount}}" data-use="{{e.is_use}}"><a href="javascript:;" class="small ui-color-button dark-blue" onclick="editStorage(this)">修改设置</a></td>
+			</tr>
+		{{/each}}
+    </tbody>
+</table>
+</script>
+<!-- 展开商品实时库存 end -->
+
+
+<script type="text/javascript">
+var e_id = '{$e_id}'; // 商家编号
+var dg = $("#dg"); // 全局变量table easyUI
+var psw = $("#pro_store_warn");
+var cloudpronav = []; // 云总店导航列表
+var subbranchlist = []; // 店铺列表
+
+$(function(){
+	$(".uniform").uniform(); // uniform表单初始化
+	// 带搜索的select2选择框初始化
+	$("#label-select").select2(); 
+	$("#storage-num").select2(); 
+	// easyui初始化
+	$('#dg').datagrid({
+		url: "{:U('Admin/ScoreProductManageRequest/getAllProduct', '', '')}",
+		singleSelect: false,
+		collapsible: true,
+		method: 'post',
+		fitColumns: true,
+		fit: true,
+		pagination: true,
+		pageSize: 10,
+		pageList: [5, 10, 15],
+		rownumbers: true,
+		idField: 'product_id',
+		columns: [[
+				{ field: 'ck', checkbox: 'true', width: 60 }, 
+				{ field: 'micro_path', title : '缩略图', width : 60, align : 'center', sortable: false, formatter : picInit }, 
+				{ field: 'product_number', title: '商品名称编号', width: 120, align:'left', sortable: true, formatter : productNameNo }, 
+				{ field: 'original_price', title: '吊牌价', width: 60, align:'right', sortable: true }, 
+				{ field: 'current_price', title: '现售价', width: 60, align:'right', sortable: true }, 
+				{ field: 'modify_time', title: '最近修改时间', width: 80, align:'center', sortable: true }, 
+				{ field: 'total_storage_left', title: '库存', width: 60, align:'right', sortable: true, formatter: storageInit }, 
+				{ field: 'sell_amount', title: '卖出', width: 60, align:'right', sortable: true }, 
+			 ]],
+		view: detailview,
+		detailFormatter: function(index, row) {
+			return '<div class="ddv" id="' + row.product_id + '">' + '</div>';
+		},
+		onExpandRow: function(index, row){
+			$.post('{:U("Admin/ScoreProductManageRequest/getScoreProductStorage", "", "")}',
+					{ pid : row.product_id },
+					function(result){
+						if(result.errCode == 0){
+							var storageinfo = template( 'storageinfotpl', result.data ); // artTemplate渲染模板引擎
+							if (storageinfo == '{Template Error}') {
+								storageinfo = ''; // 如果渲染失败，则detailinfo置空
+								$.messager.alert('温馨提示', '网络繁忙，接收商品库存详情数据错误！', 'error'); // 提示用户出错了
+	                        }
+							$('#'+row.product_id).html(storageinfo); // 写入展开详情中
+							$('#dg').datagrid("fixDetailRowHeight", index); // 该行的详情框高度自适应（非常重要，以前没处理好）
+						} else {
+							$.messager.alert('温馨提示', '网络繁忙，没有查询到该商品的详细库存信息！', 'error');
+						}
+					},'json');	//post
+            $('#dg').datagrid('fixDetailRowHeight', index);
+	    }	// onExpandRow
+	}); //end easyui
+	
+	
+	// 标题栏查询
+	$("#title-search").click(function(){
+		var query_type = $("#label-select").val(); // 标签
+		var product_number = $("#product_number").val(); // 编号
+		var product_name = $("#product_name").val(); // 名字
+		var score_sell_amount = $("#sell_amount").val(); // 卖出量
+		if (score_sell_amount != "" && ! isPositiveNum(score_sell_amount)) {
+			util.alert("输入的卖出量有误，请输入正确的正整数。");
+			return false;
+		}
+		
+		// 重新查询数据
+		$("#dg").datagrid({
+			url: "{:U('Admin/ScoreProductManageRequest/getAllProduct', '', '')}",
+			queryParams: {
+				query_type : query_type, 
+				product_number : product_number, 
+				product_name : product_name, 
+				score_sell_amount : score_sell_amount, 
+				score_sell_amount : score_sell_amount 
+			}
+		}, 'load');
+		clearSelect(); // 清空潜在选择项
+	});
+	
+	// 操作与标签事件绑定
+	$(".handle-bar").on("click", ".add-product", function(){
+		// 添加商品跳转选择商品类别
+		location.href = "{:U('Admin/ProductManage/ERPProductView', '', '')}";
+	}).on("click", ".del-product", function(){
+		
+		// 下架回收
+		var rows = $("#dg").datagrid('getSelections'); 
+		if(rows.length <= 0) {
+			util.alert("请选中要删除的商品。");
+			return false;
+		}
+		if(rows.length > 10) {
+			util.alert("一次最多批量删除10件商品。");
+			return false;
+		}
+		
+		var onshelf = dialog({
+			title: '温馨提示',
+			okValue: '确定',
+			ok: function () {
+				var pidlist = []; // 商品列表
+				rows.forEach(function(e){
+					pidlist.push(e.product_id); // 压栈商品
+				});
+				MLoading.show("提交中，请稍后...");
+				$.post("{:U('Admin/ScoreProductManageRequest/delProductExchangeRule', '', '')}", {pidlist:pidlist.join()}, function(result){
+					MLoading.hide();
+					if (result.errCode == 0) {
+						util.alert("下架成功，若要上架请前往ERP总库设置。");
+						$("#dg").datagrid("reload");
+						clearSelect();
+					} else {
+						util.alert(result.errMsg);
+					}
+				});
+			},
+			cancelValue: '取消',
+			cancel: function () {},
+			content: '请问您确定要下架所选商品吗?'
+		});
+		onshelf.showModal(); // 再以模态框的方式弹出
+		
+	}).on("click", ".export-record", function(){
+		// 导出商品记录
+		exportProduct();
+	});
+	
+});
+
+// 批量设置
+function setProductTag(pidlist, tagname) {
+	var params = {
+			pidlist : pidlist, 
+			tag : tagname 
+	}
+	MLoading.show("设置中，请稍后...");
+	$.post("{:U('Admin/ProductManageRequest/setProductTag', '', '')}", params, function(result){
+		MLoading.hide(); // 隐藏提示框
+		if(result.errCode == 0) {
+			util.alert("设置成功，点击商品上的标签可以取消设置。"); 
+			$("#dg").datagrid("reload");
+			clearSelect();
+		} else {
+			util.alert(result.errMsg); // 弹窗显示错误
+		}
+	}, "json");
+}
+
+</script>
+
+<!-- easyui rowsinit begin -->
+<script type="text/javascript">
+// 初始化商品图片
+function picInit(val, row){
+	if(row){
+		return '<img class="easyui-img img-round" src="' + row.micro_path + '" />';
+	} else {
+		return '<img class="easyui-img img-round" src="" alt="请上传商品缩略图" />'; // 返回一张默认图片，请尽快设定
+	}
+}
+
+// 初始化商品名称和编号
+function productNameNo(val, row){
+	var prohtml = '<span class="pro-label">'+row.product_name+'</span>' + '<span class="pro-label">款号:'+row.product_number+'</span>';
+	return prohtml;
+}
+
+// 初始化商品性别
+function sexInit(val, row) {
+	if(row.sex == "0") {
+		return "通用";
+	} else if (row.sex == "1") {
+		return "男";
+	} else if (row.sex == "2") {
+		return "女";
+	} else if (row.sex == "-1") {
+		return "<span style='text-align:center; color:#666;'>/</span>";
+	}
+}
+
+
+// 初始化商品预警（使用特别重要的warning字段来区分库存是否报警）
+function storageInit(val, row){
+	if(row.warning == 1){
+		return "<span class='red'>"+row.total_storage_left+"（sku库存预警）</span>";
+	} else {
+		return "<span class='green'>"+row.total_storage_left+"</span>";
+	}
+}
+
+// 初始化库存预警数量
+function warningInit(val, row) {
+	if (row.storage_warn > 0) {
+		return "<span class='green'>"+row.storage_warn+"</span>";
+	} else {
+		return "<span class='grey'>未设置</span>"; // 报警数量为0代表未设置
+	}
+}
+
+// 共用警示函数：有些调用后不使用此函数可能会存在隐藏错误
+function clearSelect() {
+	dg.datagrid("clearSelections"); // 清除所有选中的行
+}
+</script>
+<!-- easyui rowsinit end -->
+
+<!-- handle btn begin -->
+<script type="text/javascript">
+// 导出excel数据
+function exportProduct() {
+	$.messager.confirm('温馨提示', '确定要导出所有商品数据?', function(result){
+		if(result) {
+			window.location.href = "{:U('Admin/ScoreProductManage/exportScoreProduct', '', '')}";
+		}
+	});
+}
+</script>
+<!-- handle btn end -->
+
+<!-- 功能性函数 begin -->
+<script type="text/javascript">
+/*-----------读取云总店商品导航------------*/
+
+
+// 正则判断大于或等于0的整数  
+function isPositiveNum(s){
+    var re = /^[0-9]*[0-9][0-9]*$/ ;  
+    return re.test(s)  
+}
+
+//修改商品信息
+function editPro(proid,protype) {
+	clearSelect();
+	window.location.href = "/weact/Admin/ProductManage/editProductDetail?product_id=" + proid + "&product_type=" + protype; // 跳转编辑商品页面
+}
+
+var _is_open;	//定义全局变量，判断用户是否原来的值和修改后的值是否相等
+var _score_amount;
+//修改商品库存信息
+function editStorage(obj) {
+	//alert('22');
+	var tdobj = $(obj).parent(); // 抓取td表格对象
+	var rule_id = tdobj.attr("data-rid"); // 获取当前skuid
+	var score_amount = tdobj.attr("data-amount");
+	_score_amount = score_amount;
+	var is_use = tdobj.attr("data-use");
+	_is_open = is_use=='是'?1:0;
+	var member_level = tdobj.attr("data-ml");
+	//alert(skuid+", ["+skusize+", "+skucolor+"], "+skustorage);
+	//alert(is_use);
+	if (member_level=='一级会员专区') {
+		$('#rule_id1').val(rule_id);
+		$('#p_num1').val(score_amount);
+		if(is_use=='是'){
+			$('#is_open1').attr("checked",'checked');
+		}
+		$('#member_level1').dialog('open').dialog('setTitle', '修改一级会员专区');
+	}else if(member_level = '二级会员专区'){
+		$('#rule_id2').val(rule_id);
+		$('#p_num2').val(score_amount);
+		if(is_use=='是'){
+			$('#is_open2').attr("checked",'checked');
+		}
+		$('#member_level2').dialog('open').dialog('setTitle', '修改二级会员专区');
+	}else{
+		$('#rule_id3').val(rule_id);
+		$('#p_num3').val(score_amount);
+		if(is_use=='是'){
+			$('#is_open3').attr("checked",'checked');
+		}
+		$('#member_level3').dialog('open').dialog('setTitle', '修改三级会员专区');
+	}
+}
+
+
+// 确认修改sku新库存
+function editStorageConfirm(member_level) {
+	
+	 var rule_id = $('#rule_id'+member_level).val();
+	 var is_open = $('#is_open'+member_level).is(':checked')==true?1:0;
+	 var score_amount = $('#p_num'+member_level).val();
+	
+
+	//判断用户是否有修改
+	if(_is_open==is_open&&_score_amount==score_amount){
+		$.messager.alert('温馨提示', '你没有做任何修改哦!', 'warning', function() {
+			$('#p_num'+member_level).focus(); 						
+		});
+		return;
+	}
+	if (is_open==1&&!isPositiveNum(score_amount)) {
+		$.messager.alert('温馨提示', '请输入大于等于0、数字格式的库存数量!', 'warning', function() {
+			$('#p_num'+member_level).focus(); 						//注意聚焦和return的顺序！
+		});
+		return;
+	} 
+	if(is_open==1&&(score_amount==null||score_amount=='')){
+		$.messager.alert('温馨提示', '如果您选择开启，那么必须填入所需积分哦!', 'warning', function() {
+			$('#p_num'+member_level).focus(); 						
+		});
+		return;
+	}
+	MLoading.show("提交中..."); // 增加等待友好度体验
+	$.post('/weact/Admin/ScoreProductManageRequest/changeProductExchangeRule', {
+		rule_id: rule_id,
+		is_use : is_open,
+		score_amount : score_amount
+	}, function(result) {
+		MLoading.hide(); // 取消等待框
+		if (result.errCode == 0) {
+			$.messager.alert('温馨提示', '保存成功!', 'info', function() {
+				$('#member_level'+member_level).dialog('close'); // 关闭对话框
+				dg.datagrid('reload'); // 重加载数据
+				clearSelect(); // reload后一定要清空所选的行
+			});
+		} else {
+			$.messager.alert('温馨提示', '保存失败!' + result.errMsg, 'warning', function() {
+				return;
+			});
+		}
+	}, 'json');
+}
+
+
+</script>
+<!-- 功能性函数 end -->
+</body>
+</html>

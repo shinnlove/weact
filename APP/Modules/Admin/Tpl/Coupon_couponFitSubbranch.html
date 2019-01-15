@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>优惠券适用店铺页面</title>
+</head>
+
+<body class="easyui-layout" fit="true">
+	<div data-options="region:'center',border:false">
+		<table id="dg" title="店铺分店一览：请选择优惠券适用的店铺，支持跨页选择。温馨提示：使用搜索框可快速定位分店。" toolbar="#toolbar" style="width: 100%; height: 100%;"></table>
+	</div>
+	<input type = "hidden" id="coupon_id" value="{$coupon_id}">
+	<!-- easyUI的工具条 -->
+	<div id="toolbar" style="height:30px; padding-top:5px;">
+		<span>
+			<a href="javascript:history.go(-1);" class="easyui-linkbutton" iconCls="icon-back" plain="true">后退</a> 
+			<a href="javascript:location.reload();" class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
+		</span>
+		<span class="searchbox" style="float: right; margin-right: 30px; height: 25px; text-align: center;">
+			<select id="subbranch_search_condition" name="subbranch_search_condition" style="border: 0px; width: 80px; height: 25px; text-align: center;">
+				<option value="subbranch_name" selected="selected">店铺名称</option>
+				<option value="province">所在省份</option>
+			</select>
+			<input id="subbranch_search_content" name="subbranch_search_content" type="text" class="searchbox-text mysearchbox" /> 
+			<span>
+				<span id="search_subbranch_btn" class="searchbox-button searchbox-button-hover mysearchspan"></span>
+			</span>
+		</span>
+	</div>
+	
+<script type="text/javascript">
+$(function() {
+	var subbranchdg = $('#dg').datagrid({
+		url : "{:U('Admin/CouponRequest/couponUsedSubbranch', '', '')}",
+		queryParams : {
+			'coupon_id' : $("#coupon_id").val()
+		},
+		singleSelect : false,
+		collapsible : true,
+		method : 'post',
+		fitColumns : true,
+		fit : true,
+		pagination : true,
+		pageSize: 10,
+        pageList: [10, 20, 30],
+		rownumbers : true,
+		idField : 'subbranch_id',
+		columns : [ [ 
+		              { field : 'subbranch_id', title : '分店编号', width : 100, hidden : true }, 
+		              { field : 'ck', checkbox : 'true', width : 100 }, 
+		              { field : 'subbranch_name', title : '分店名称', width : 150, align : 'left', sortable : true }, 
+		              { field : 'subbranch_address', title : '分店地址', width : 150, align : 'left', sortable : true },
+		              { field : 'manager', title : '店铺负责人', width : 100, align : 'left', sortable : true },
+		              { field : 'contact_number', title : '联系方式', width : 100, align : 'left', sortable : true }
+		          ] ],
+		view : detailview,
+		detailFormatter : function(rowIndex, rowData) {
+			var subbranch_description = rowData.subbranch_description == null ? '' : rowData.subbranch_description;
+			return '<table>'
+			+ '<tr><td style="border:0">'
+			+ '<p>分店描述信息:</p><p>'
+			+ subbranch_description + '</p>'
+			+ '</td>' + '</tr></table>';
+		}
+	});
+	
+	$('#search_subbranch_btn').click(function(){
+		var searchcondition = $('#subbranch_search_condition').val().trim();
+		var searchcontent = $('#subbranch_search_content').val();
+		if(searchcontent.trim() == "" || searchcontent == null){
+			$.messager.alert('警告','搜索内容不能为空！');
+			return
+		}
+       	$("#dg").datagrid({
+       		url:"{:U('Admin/CouponRequest/searchSubbranch','','')}",
+       		queryParams:{ 
+       			searchcondition:searchcondition,
+       			searchcontent:searchcontent
+       		}
+       	},'load');
+	});
+});
+
+function cancelSelect() {
+	$('#dg').datagrid('unselectAll');
+}
+
+function getAllSelected() {
+	return $('#dg').datagrid('getSelections');
+}
+
+function selectSingleRow(index){
+	$('#dg').datagrid('checkRow', index);
+}
+
+function selectMultipleRow(subbranches) {
+	for(var i=0; i<subbranches.length; i++){
+		$('#dg').datagrid('selectRecord', subbranches[i]);
+	}
+}
+</script>
+</body>
+</html>

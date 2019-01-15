@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uploadstyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/webuploader.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/diywebuploader.js"></script>
+<title>第三代前端压缩图片上传技术示例</title>
+</head>
+
+<body>
+	
+	<input type="hidden" id="CSRFtoken" name="CSRFtoken" value="123456" /><!-- （可选参数）图片防注入提交 -->
+	<input type="hidden" id="thisId" name="thisId" value="woaiqianqian" /><!-- （可选参数）当前单个图片上传的对象的id（分文件夹） -->
+	<input type="hidden" id="imgId1" name="imgId1" value="" /><!-- （可选参数）单次上传的图片id1 -->
+	<input type="hidden" id="imgPath1" name="imgPath1" value="" /><!-- （必选参数）单次上传的图片path1 -->
+	
+	<!-- 一个webuploader begin -->
+	<div class="webUploaderWrap ui-sortable" id="uploadWrap">
+        <div id="previewUpload" class="webuploader-container">
+            <div class="webuploader-pick">点击上传</div>
+        </div>
+    </div>
+    <!-- 一个webuploader end -->
+    
+<script type="text/javascript">
+// 定义webuploader的js位置、flash位置和上传处理图片的服务器地址（必须的参数，否则无法处理图片）
+var serverhandleimg = '{:U("Admin/TestUpload/singleUploadHandle", "", "")}'; // 上传的服务器处理图片地址
+
+// 如果是编辑页面，这里$singleimgpath会有值（如果一个页面多个单图上传，多个变量，在document.ready里写入不同的src和input框即可）
+var singleimg = '{$singleimgpath}'; // 单图片的路径
+
+// 页面初始化函数
+$(function(){
+	
+	// 对previewUpload使用拓展方法singleImgUploader后就可以上传图片啦
+	$("#previewUpload").singleImgUploader({
+		// 必填图片参数
+		width : 300, // 图片宽度限制300px
+		height : 200, // 图片高度限制200px
+		
+		// 可选性能参数
+		limitSizeLarger : true, // 是否限制图片大小（可以为true|false）
+		
+		// 可选回调参数（可以不写）
+		imgIdInput : $("#imgId1"), // 图片id会写入哪个input输入框，自己定义id|class的名字，此处举例imgId1
+		imgPathInput : $("#imgPath1"), // 图片路径会写入哪个input输入框，自己定义id|class的名字，此处举例imgpath1
+	});
+	// 编辑页面需要回显单张图片和路径（新增页面直接去掉下面两行）
+	$("#previewUpload").css("background-image", "url('"+singleimg+"')"); // 单图片写入背景图片中
+	$("#imgPath1").val(singleimg); // 原始数据库图片路径也写入路径框中方便提交
+	
+});
+</script>
+</body>
+</html>

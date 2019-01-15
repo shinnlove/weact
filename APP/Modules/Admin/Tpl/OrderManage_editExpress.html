@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=7" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/enterpriseMainStyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/dialog.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<script type="text/javascript" src="__PUBLIC__/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>编辑快递信息</title>
+</head>
+
+<body>
+<form action="{:U('Admin/OrderManage/modifyExpress','','')}" method="post" name="myform" id="myform"  style="margin-top:10px;">
+  <div class="pad-10">
+    <div class="col-tab">
+      <ul class="tabBut cu-li">
+        <li id="tab_setting_1" class="on">基本信息</li>
+      </ul>
+      <div id="div_setting_1" class="contentList pad-10">
+        <table width="100%" cellpadding="2" cellspacing="1" class="table_form">
+          <tr>
+            <th width="100">快递编号：</th>
+            <td>
+            <input id="express_id" type="hidden" name="express_id" value="{$expressdetail.express_id}"></input>
+             <input id="express_num"  type="text" name="express_num" class="input-text easyui-validatebox" size="80" value="{$expressdetail.express_num}" data-options="required:true"/>
+            </td>
+          </tr>
+          <tr>
+            <th width="100">快递公司：</th>
+            <td>
+            	<input type="text" name="express_company" id="express_company" class="input-text easyui-validatebox" size="80" value="{$expressdetail.express_company}" data-options="required:true"/>                  
+            </td>
+          </tr>		  
+		  <tr>
+            <th width="100">投递时间：</th>
+            <td>
+            	<input type="text" name="deliver_time" id="deliver_time" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" class="input-text Wdate " size="80" value="{$expressdetail.deliver_time}"/>
+			</td>
+          </tr>
+            <tr>
+            <th width="100">快递费用：</th>
+            <td>
+            	<input type="text" name="express_fee" id="express_fee" class="input-text easyui-numberbox" size="80" value="{$expressdetail.express_fee}" data-options="required:true,min:0,precision:2"/>
+            	<span><font color="#C06">*</font>&nbsp;精确到两位小数（如：1000.00），单位：元（人民币）</span>
+            </td>
+            </tr>
+             <tr>
+            <th width="100">邮寄地址：</th>
+            <td>
+            	<input type="text" name="send_address" id="send_address" class="input-text easyui-validatebox" size="80" value="{$expressdetail.send_address}" data-options="required:true"/>
+            </td>
+            </tr>                
+          <tr>
+            <th width="100">备注：</th>
+            <td><textarea rows="3" cols="79" id="remark" class="input-text easyui-validatebox" name="remark" data-options="validType:'length[0,150]'">{$expressdetail.remark}</textarea>&nbsp;&nbsp;
+           <span><font color="#C06">*</font>&nbsp;字数限制在150字以内（包含空格）</span> </td>
+          </tr>
+        </table>
+      </div>
+      <div class="bk15"></div>
+      <div class="btn"><input type="button" value="保存"  name="dosubmit" class="button" id="dosubmit" /></div>
+    </div>
+  </div>
+  </form>
+
+<script type="text/javascript">
+$(function(){
+	$('#dosubmit').click(function(){
+		var express_id = $('#express_id').val();
+		$('#myform').submit();
+	});	
+});
+</script>
+</body>
+</html>

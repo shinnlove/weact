@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="format-detection" content="telephone=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="description" content="" />
+<meta name="keywords" content="" />
+<link rel="shortcut icon" href="" />
+<title>发表话题</title>
+<script type="text/javascript">
+    window.g_module = [];							//定义g_module数组
+    var STATIC_DOMAIN = '__PUBLIC__',
+        ARS_TIME = '',
+        IMG_LOADING = 'data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==';
+    
+    var g_tsBase = new Date(),g_ts = {};
+    var PathUtil = {
+        getCPath: function() {
+            return STATIC_DOMAIN + '/js/';
+        }
+    };
+    
+    g_ts.css_start=new Date();
+    var pageName = '';
+</script>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/postquan.css" />
+<!--debug-->
+<script type="text/javascript">
+    var sId = {$site_id},
+        tId = 0,
+        uId = '{$openid}',
+        isNullNick = '0' | false,
+        isManager = 0,
+        authUrl = '',
+        siteLogo = '{$sinfo.site_logo}',	// 站点Logo
+        CSRFToken = "{$sinfo.csrf_token}",
+        debug = '' | false,
+        DOMAIN = 'http://localhost/',					//注意这个域名在jq.DIC.reload里有用到
+        IMAGEUPLOADURL = '{:U("Community/UploadResource/uploadNewTopicImage", "", "")}?e_id='+e_id+'&sId='+sId,					// 定义图片上传路径
+        _speedMark = new Date(),
+        isWX = '' | false,
+        isMQ = '' | false,
+        isAppBar = '' | false,
+        isQQBrowser = '' | false,
+        isWeixinLink = '' | false,
+		newMsgCount = '2',
+        isFriendSite = '0',
+        enabledSmiley = '1';
+    
+    window.addEventListener("DOMContentLoaded", function() {g_ts.domready = new Date();});
+    window.addEventListener("load", function() {g_ts.domload = new Date();});
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideToolbar');
+        WeixinJSBridge.call('showOptionMenu');
+    });
+</script>
+</head>
+
+<body class="pt pb">
+<div class="warp">
+    <form method="post" action="{:U('Community/MicroCommunity/submitNewTopic', array(pid => $pid), '')}" id="newthread">
+        <input type="hidden" name="CSRFToken" value="dc60d1b9">
+        <input type="hidden" name="sId" value="187471671">
+        <div class="sendInfo wot pr">
+            <span class="locationCon address f13 c9" closeStatus="2"><i class="iconloc f16 c9 cf"></i>正在定位...</span>
+            <div class="sendOperBtn pa">
+                <a href="javascript:;" class="sendBtn brSmall f13 db c2" id="submitButton">发送</a>
+                <input type="hidden" name="cityCode" value="" id="cityCode">
+                <input type="hidden" name="LBSInfoLatitude" value="" id="LBSInfoLatitude">
+                <input type="hidden" name="LBSInfoLongitude" value="" id="LBSInfoLongitude">
+                <input type="hidden" name="LBSInfoProvince" value="" id="LBSInfoProvince">
+                <input type="hidden" name="LBSInfoCity" value="" id="LBSInfoCity">
+                <input type="hidden" name="LBSInfoStreet" value="" id="LBSInfoStreet">
+            </div>
+        </div>
+        <div class="sendCon pr">
+            <span class="tagTopic db pa" style="width:50px;display:none;"></span>
+            <textarea id="content" name="content" cols="" rows="" class="sInput f13" placeholder="说两句吧.."></textarea>
+        </div>
+        
+        <div class="photoList" style="display:none;">
+            <ul>
+                <li class="on" id="addPic">
+                <input type="file" class="on needsclick" style="z-index:200;opacity:0;filter:alpha(opacity=0);-ms-filter:'alpha(opacity=0)';" id="uploadFile" accept="image/*" single>
+                </li>
+            </ul>
+            <p class="textTip f12">还可上传<span id="onlyUploadNum">8</span>张照片呦~</p>
+        </div>
+
+        <div class="sendNav">
+            <ul>
+                <!-- <li><a href="javascript:;" class="iconExpression f21 db c9 cf expreSelect"></a></li> -->
+                <li><a data-id='0' href="javascript:;" class="operatIcon iconExpression f21 db c9 cf"></a></li>
+                <li class="pr uploadPicBox">
+                	<a data-id='1' href="javascript:;" class="operatIcon iconSendImg db f21 c9 cf pr" style="z-index:1;"></a>
+                	<input type="file" class="pa" style="height:100%;width:100%;left:0;top:0;z-index:200;opacity:0;filter:alpha(opacity=0);-ms-filter:'alpha(opacity=0)';" id="fistUploadFile" accept="image/*" single>
+                </li>
+                <li>&nbsp;</li>
+                <li>&nbsp;</li>
+                <li>&nbsp;</li>
+                <li><a href="javascript:;" class="iconVideo iconVideoOn db"></a></li>
+                <!-- <li><a href="javascript:;" class="iconVideo db"></a></li>
+                <li><a href="javascript:;" class="iconVideo iconVideoOn db"></a></li>
+                <li><a href="javascript:;" class="iconAdd db f21 c9 cf"></a></li> -->
+            </ul>
+        </div>
+
+        <div class="operatingBox">
+            <div class="operatList tipLayer" style="display:none;margin:0;border:0;">
+                
+<script id="tmpl_expreBox" type="text/html">
+<div class="expreBox" style="display:none;" id="expreBox">
+    <div class="expressionTab pr">
+        <div class="expressionMenu">
+            <% var def = null %>
+            <% for (var i in cate) {%>
+            <% if (def === null) { def = i }%>
+            <a href="javascript:;"<% if (def == i) {%> class="on"<%}%> id="emo<%=i%>" title="<%=cate[i]%>"><%=cate[i]%></a>
+            <% }%>
+        </div>
+        <a href="javascript:;" class="eR db iconArrowR cf pa c9" style="display:none;"></a>
+    </div>
+    <% var pageNum = []%>
+    <div class="expreList" id="expreList">
+        <% for (var i in emo) {%>
+        <ul class="expreCon <%=emo[i].ulClass%>" id="exp_emo<%=i%>" style="<%if(i != def) {%>display:none;<%}%>">
+            <% var emoNum = 0%>
+            <% var page = 0%>
+        <% for (var j in emo[i].icon) {%>
+            <% ++emoNum%>
+            <% if (emoNum % emo[i].perPage == 1) { %>
+                <% ++page%>
+                <% pageNum[i] = page%>
+                <li class="<%=emo[i].liClass%><%=page%>">
+            <% } %>
+                <a href="javascript:;" title="<%=j%>"></a>
+            <% if (emoNum % emo[i].perPage == 0) { %>
+                <%if (emo[i].delBtn) {%><a href="javascript:;"></a><%}%>
+                </li>
+            <% } %>
+        <% }%>
+        </ul>
+        <% }%>
+    </div>
+    <% for (var k in pageNum) {%>
+    <p class="pNumCon" id="exp_emo<%=k%>_page"<% if (def != k) {%> style="display:none;"<%}%>>
+        <% for(var i = 1; i <= pageNum[k]; i++) { %>
+        <a href="javascript:;" class="<% if(i == 1) { %> on <% } %> pNum db"></a>
+        <%}%>
+    </p>
+    <% }%>
+</div>
+    </script>
+            </div>
+            <div class="operatList photoTipsBox" style="padding:23px 15px 15px;height:40px;display:none;"></div>
+            <div class="operatList tagBox" style="display:none;"></div>
+        </div>
+
+    </form>
+</div>
+<script id="tmpl_setGender" type="text/html">
+<form id="genderForm" name="genderForm" method="post" action="/my/info/gender">
+    <input type="hidden" id="gender" name="gender" value="-1">
+    <input type="hidden" id="CSRFToken" name="CSRFToken" value="dc60d1b9">
+    <div class="popLayer pSpace">
+        <h3 class="fTit">想交友，想鲍照，先选择吧~~</h3>
+        <ul class="friendsCon">
+            <li id="iconMan"><a href="javascript:;"><i class="iconMan brBig cf"></i>我是帅哥</a></li>
+            <li id="iconWoman"><a href="javascript:;"><i class="iconWoman brBig cf"></i>我是美眉</a></li>
+        </ul>
+        <div class="editArea btWrap">
+            <a id="cBtnGender" class="btnCancel br db" title="" href="javascript:;">取消</a>
+            <a id="comBtnGender" class="btnFocus br db" title="" href="javascript:;">确定</a>
+        </div>
+    </div>
+</form>
+</script>
+
+<script id="tmpl_newthread_weishi" type="text/html">
+<div class="microVideoBox" style="background:#fff;">
+    <div class="microVideoTab pr">
+        <div class="microVideoCon br">
+            <a href="javascript:;" class="microTab c2 db on" title="" data-id="0"><span>我的微视</span></a>
+            <a href="javascript:;" class="microTab c2 db" title="" data-id="1"><span>热门微视</span></a>
+        </div>
+        <a href="javascript:;" title="" class="mvClose brBig pa db"><i class="needsclick iconClose f16 c2 cf close"></i></a>
+    </div>
+    <div id="myMicro" class="microVideoList"></div>
+    <div id="hotMicro" class="microVideoList" style="display:none;"></div>
+    <div class="loading f14" id="loadNext" style="display:none;">
+        <div class="loadicon">
+            <span class="blockG" id="rotateG_01"></span>
+            <span class="blockG" id="rotateG_02"></span>
+            <span class="blockG" id="rotateG_03"></span>
+            <span class="blockG" id="rotateG_04"></span>
+            <span class="blockG" id="rotateG_05"></span>
+            <span class="blockG" id="rotateG_06"></span>
+            <span class="blockG" id="rotateG_07"></span>
+            <span class="blockG" id="rotateG_08"></span>
+        </div>
+        正在加载...
+    </div>
+    <div id='loadNextPos'></div>
+    <div class="loading" id="showAll" style="display:none;">已显示全部</div>
+    
+</div>
+</script>
+<script id="tmpl_newthread_weishi_list" type="text/html">
+    <% if (!data || data.length == 0) {%>
+        <div class="infobox">
+            <i class="iconEmpty cf cFont db"></i>
+            <% if (type == 'hot') {%>
+                <p>热门微视出错了~</p>
+            <% } else { %>
+
+                <p>您还没有发表过微视，如需下载微视请点击<a href="http://weishi.qq.com/download/index.php?pgv_ref=weishi.app.weishequ" title="下载" target="_blank">下载！</a></p>
+            <%}%>
+        </div>
+    <% } else { %>
+        <ul>
+        <% for (i in data) { %>
+            <li class="weishiList" data-id="<%= data[i].id %>" data-vid="<%= data[i].vid %>" data-player="<%= data[i].player %>" data-inserttime="<%= data[i].insertTime %>" data-timestamp="<%= data[i].timeStamp %>">
+                <a href="javascript:;" class="fl db"><img src="<%= data[i].picUrl %>" class="mvImg" width="45" height="45" alt=""></a>
+                <h4 class="mvText wot"><%== data[i].text %></h4>
+                <p class="mvDate c9"><span><%== data[i].hTimeStamp %></span></p>
+                <a class="iconDefault cf f21 c9 db weishiSelect" href="javascript:;"></a>
+            </li>
+        <%}%>
+        </ul>
+    <% } %>
+</script>
+
+<script id="tmpl_sideBar" type="text/html">
+<div class="sideBar" style="display:none;">
+    <div class="searchContent evtSearchWrap">
+        <div class="sInputIn br">
+            <i class="searchInco cf pa db"></i>
+            <div class="f12 sInput2" style="line-height: 20px">搜索</div>
+        </div>
+    </div>
+    <div class="sideBarCon" id="sideBarCon">
+        <h3 class="sideTit f14 fn c2">话题筛选</h3>
+        <ul style="position: relative;">
+            <li class="filter<%if (!filterType) {%> on<%}%>"><a class="<%if (!filterType) {%>iconSucc cf s_succ db<%} else {%>c9<%}%>" href="javascript:;">全部</a></li>
+            <li class="filter<%if (filterType == 'hot') {%> on<%}%>" labelId="hot"><a class="<%if (filterType == 'hot') {%>iconSucc cf s_succ db<%} else {%>c9<%}%>" href="javascript:;">热门</a></li>
+            <li class="filter<%if (filterType == 'showPic') {%> on<%}%>" labelId="showPic"><a class="<%if (filterType == 'showPic') {%>iconSucc cf s_succ db<%} else {%>c9<%}%>" href="javascript:;">晒图</a></li>
+        </ul>
+        <div class="loading pd10" id="customTagWait">
+            <div class="loadicon">
+                <span class="blockG" id="rotateG_01"></span>
+                <span class="blockG" id="rotateG_02"></span>
+                <span class="blockG" id="rotateG_03"></span>
+                <span class="blockG" id="rotateG_04"></span>
+                <span class="blockG" id="rotateG_05"></span>
+                <span class="blockG" id="rotateG_06"></span>
+                <span class="blockG" id="rotateG_07"></span>
+                <span class="blockG" id="rotateG_08"></span>
+            </div>
+            正在加载...
+        </div>
+        <div class="customTag" id="customTag">
+        </div>
+        <ul class="sidePerMan">
+            <li id="sideProfile"><a href="javascript:;" class="iconPrfile  f16 c9 cf"><i class="db numP" id="sideMsgNum"<%if (newMsgCount < 1) {%> style="display:none;"<%}%>><%if (newMsgCount < 100) {%><%=newMsgCount%><%}else{%>99+<%}%></i>个人主页</a></li>
+            <li id="sideUnfollow" sid="<%=sId%>"<%if (isLiked != 1) {%> style="display:none;"<%}%>><a href="javascript:;" class="iconExit f16 c9 cf">退出社区</a></li>
+        </ul>
+    </div>
+</div>
+</script>
+<script id="tmpl_customTag" type="text/html">
+<div>
+<% for (var i in labelList) { %>
+    <a href="javascript:;" class="f12 filter<%if (filterType == labelList[i].labelId) {%> on<%}%>" labelId="<%=labelList[i].labelId%>"><%=labelList[i].labelName%></a>
+<%}%>
+</div>
+</script>            
+<div class="topBar">
+    <div class="topBarCon pr">
+        <a href="javascript:;" class="qBackBtn" id="goback"><i class="upBtn cf db"></i>返回</a>
+        <h2 class="qTitle">发表话题</h2>
+	</div>
+</div>
+<script type="text/javascript">
+var isForceReload = '0',
+    isLiked = '1',
+    inviteUrl = 'http://m.wsq.qq.com/shareDirect?site=TOPMEN%E7%94%B7%E8%A3%85%E7%BD%91&amp;title=%E5%A5%BD%E5%8F%8B%E9%82%80%E8%AF%B7%E5%87%BD&amp;summary=%E9%82%80%E8%AF%B7%E4%BD%A0%E5%8A%A0%E5%85%A5TOPMEN%E7%94%B7%E8%A3%85%E7%BD%91%EF%BC%8C%E4%B8%80%E8%B5%B7%E5%8F%82%E4%B8%8E%E6%9C%89%E8%B6%A3%E7%9A%84%E8%AF%9D%E9%A2%98%E5%92%8C%E6%B4%BB%E5%8A%A8&amp;targetUrl=http%3A%2F%2Fm.wsq.qq.com%2Ffollow%2Fqr%3F_wv%3D1%26source%3Dconnect%26sId%3D187471671&amp;pageUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671&amp;imageUrl=http%3A%2F%2Fshp.qlogo.cn%2Fgqclogo%2F0%2F187471671%2F200%3Fmax-age%3D2592000%26t%3D1394112055&amp;type=qq';
+g_module.push('module/topBar');			//必须
+</script>    
+
+<script type="text/javascript">
+var userGender= '0';
+g_module.push('module/newthread');		//必须
+</script>
+
+        <div onclick="location.href='#'" class="copyRight ht">微社区，精彩在你身边</div>
+<script type="application/javascript">g_ts.body_view = new Date();</script>
+<script id="tmpl_pageTip" type="text/html">
+<div class="tipInfo" id="showShare">
+    <p class="tipBor"><%=msg || '请点击右上角图标分享'%><span class="arrLeft"></span></p>
+</div>
+</script>
+<script src="__PUBLIC__/js/qqapi.js"></script>
+<script type="text/javascript">
+var shareUrl = '#',
+shareTitle = '分享自#微社区#',
+shareDesc = '......||...',
+shareImgUrl = '{$sinfo.site_logo}';
+g_module.push('module/common', 'module/share');
+</script>
+<script type="application/javascript">
+var url = '__PUBLIC__/js/seajs-0.1.5.js';
+var node = document.createElement('script');node.onload = function(){g_ts.seajs = new Date();};node.src = url;document.body.appendChild(node);
+if (window.statConf) {
+    setTimeout(function() {
+        window.seajs && seajs.use('lib/stat', function(_a) {
+            _a.init();
+        });
+    }, 2000);
+}
+</script> 
+</body>
+</html>

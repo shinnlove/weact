@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/template1/css/wei_canyin_v1.8.4.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/template1/css/wei_dialog_v1.2.1.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/template1/css/styleappend.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/template1/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/template1/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/template1/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/template1/js/wei_webapp_v2_common_v1.9.4.js"></script>
+<script type="text/javascript" src="__PUBLIC__/template1/js/wei_dialog_v2.2.3.js"></script>
+<title>我的订单</title>
+</head>
+
+<body id="page_intelOrder" class="myOrderCon">
+	<div class="center">
+		<div class="oneHistory" style="font-family:'Microsoft YaHei','微软雅黑','黑体',helvetica,arial;margin-bottom:60px;">
+            <div class="orderinfo">
+                <div class="content2">
+                    <div class="conTop"></div>
+                    <div class="conCenter">
+                    	<h2>尊敬的{$einfo.e_name}顾客：{$nickname}，您好,</h2>
+                    	<if condition="$ordercatelist neq null">
+                    		<h2><span class="table">欢迎在第七桌坐下，</span>您的订单已经提交，<span class="notable" style="color:#F20;display:none">请扫描桌号绑定订单，</span></h2>
+	                        <h2>本次消费总金额为：<em>￥{$ordercatelist [0] [total_price]}元</em></h2>
+	                        <p class="buyTime">{$ordercatelist [0] [order_time]}</p>
+	                        <table width="100%">
+	                          <tr>
+	                            <td>订单号</td>
+	                            <td>状态</td>
+	                          </tr>
+	                          <tr>
+	                            <td>{$ordercatelist [0] [visual_number]}</td>
+	                            <td><span class="pay_status">未支付</span></td>
+	                          </tr>
+	                        </table>
+	                        <ul>
+	                        	<for start="0" end="$listcount" step="1">
+	                        		<li class="fixed"><p>{$i+1}、{$ordercatelist [$i] [cate_name]} × {$ordercatelist [$i] [amount]}</p><em>￥{$ordercatelist [$i] [price]}/{$ordercatelist [$i] [unit_name]}</em></li>
+	                        	</for>
+	                        </ul>
+                       	<else/>
+                       		<h2>暂时没有任何您的订单信息。</h2>
+                       	</if>
+                    </div>
+                    <div class="conBottom"></div>
+                </div>
+            </div>
+        </div>
+            
+		<footer class="footFix">
+			<a href="javascript:;" class="historyorder" style="float:left;margin-left:8px;margin-right:0px;background-color:#41b6fa;">我的订单</a>
+			<a href="javascript:;" class="cancelorder" style="float:left;margin-left:8px;margin-right:0px;background-color:#cc0000;">取消订单</a>
+			<a href="javascript:;" class="cashcardpay" style="float:right;margin-left:0px;margin-right:8px;background-color:#e4af25;">现金/刷卡</a>
+            <a href="javascript:;" class="wechatpay" style="float:right;margin-left:0px;margin-right:8px;">微信支付</a>
+		</footer>
+	</div>
+
+<script type="text/javascript">
+var e_id = '{$e_id}';					//要分享的商家编号
+//分享的信息
+var shareData = {
+	appid: "{$einfo.appid}",			//分享的商家编号
+	img_url: "{$shareimg}",				//分享的图片
+	img_width: "160",					//宽度
+	img_height: "160",					//高度
+	title: "{$sharetitle}",				//主页分享的标题
+	desc: "{$sharedesc}",				//主页分享的描述
+	link: "{:U('CateIndustry/CateOrder/orderInfo', array('e_id' => $e_id), 'shtml', 0, true)}",		//分享的超链接（特别注意：分享出去的链接也是经过授权的！）
+	fakeid : "{$openid}",																			//分享用户的id
+	callback:function(result){
+		if(result != 'send_app_msg:cancel' && result != 'share_timeline:cancel' && result != 'share_weibo:cancel' && result != 'share_fb:cancel'){
+			$.post("{:U('Home/MobileCommon/shareRecord', '', '')}",
+  				{ e_id : e_id, link : shareData.link, openid : shareData.fakeid },				//分享的时候传3个参数：1、商家编号；2、链接地址（区分授权和不授权两种）；3、分享的微信号（只有开启授权登录才有）
+  				function(data){
+  					if(data.status == 1){
+  						scscms_alert("谢谢您的分享!", "ok", "", 2);	//定时关闭窗口
+  					}else{
+  						scscms_alert("服务器繁忙，请稍后再试!"+data.msg, "warn", "", 2);//定时关闭窗口
+  					}
+  				},
+  				'json');
+		}else{
+			scscms_alert("下次记得分享噢!", "ok", "", 2);	//定时关闭窗口
+		}
+	}	/*分享后的回调函数，发送给朋友的类型分为send_app_msg:confirm或send_app_msg:cancel；对应发送给朋友、分享到朋友圈、分享到腾讯微博、分享到facebook都有4种类型*/
+};
+// 抓取DOM结构
+var historyBtn = $('.historyorder'); // 历史订单按钮
+var cancelBtn = $('.cancelorder'); // 取消订单按钮
+var cashcardBtn = $('.cashcardpay'); // 现金/刷卡支付按钮
+var wechatBtn = $('.wechatpay'); // 微信支付按钮
+$(function(){
+	var is_payed = {$ordercatelist [0] [is_payed]};
+	var is_received = {$ordercatelist [0] [receive_status]};
+	var pay_method = {$ordercatelist [0] [pay_method]};
+	var payinfo = (is_payed == 1) ? '<font style="color:#39b868;">已支付</font>' : '未支付';
+	var receiveinfo = (is_received == 1) ? '<font style="color:#39b868;">已接收</font>' : '等待接收';
+	$('.pay_status').html(payinfo + ' ' + receiveinfo);
+	if(pay_method != 0) {
+		cashcardBtn.hide(); // 隐藏现金/刷卡支付按钮
+		wechatBtn.hide(); // 隐藏微信支付按钮
+	} // 已经支付过隐藏相关按钮
+	if(is_payed == 1 || (is_payed == 0 && is_received == 1)) {
+		cancelBtn.hide();
+	}
+	
+	var tid = '{$tableinfo}';
+	if(tid != null && tid != ''){
+		$('.table').html('欢迎在第'+tid+'桌坐下，');
+		$('.notable').html('').hide();
+	}else{
+		$('.table').html('').hide();
+		$('.notable').html('请扫描桌号绑定订单，').show();
+	}
+	var existorder = '{$listcount}';
+	if(existorder == '0') {
+		$('.cancelorder').hide();			// 如果没有订单信息，隐藏取消订单按钮
+	}
+	
+	// 历史订单
+	$('.historyorder').click(function() {
+		window.location.href= "{:U('CateIndustry/CateOrder/historyOrder', array(e_id => $e_id), '')}";
+	});
+	// 取消订单
+	$('.cancelorder').click(function(){
+		var params = {
+			'order_id' : '{$ordercatelist[0][order_id]}',
+			'e_id' : '{$e_id}'
+		};
+		scscms_alert("您确定要取消该笔订单吗？", "confirm", function(){
+			$.post("{:U('CateIndustry/CateOrder/orderCancel', '', '')}", params, function(result){
+				if (result.errCode == 0) {
+					window.location.href = "{:U('CateIndustry/CateCart/myCateCart', array(e_id => $e_id, nav_id => $nav_id), '')}";
+				} else{
+					scscms_alert(result.errMsg, "error", "", 2);
+					setTimeout(function() {
+						window.location.reload();
+					}, 2000);
+				}
+			}); 
+		});
+	});
+	// 现金/刷卡支付
+	$('.cashcardpay').click(function() {
+		var params = {
+				'order_id' : '{$ordercatelist[0][order_id]}',
+				'method' : 1, // 1是现金/刷卡支付
+				'e_id' : '{$e_id}'
+		};
+		scscms_alert("用现金或刷卡支付该笔订单？", "confirm", function() {
+			$.post("{:U('CateIndustry/CateOrder/payMethodConfirm', '', '')}", params, function(result) {
+				if (result.errCode == 0) {
+					cashcardBtn.hide(); // 隐藏现金/刷卡支付按钮
+					wechatBtn.hide(); // 隐藏微信支付按钮
+					scscms_alert("订单支付方式已确认，请等候服务员前来结账!", "ok", "", 1);	//定时关闭窗口
+					setTimeout(function() {
+						window.location.href = "{:U('CateIndustry/CateOrder/historyOrder', array(e_id => $e_id), '')}";
+					}, 1500);
+				} else{
+					scscms_alert(result.errMsg, "error", "", 3);
+				}
+			});
+		});
+	});
+	// 微信支付
+	$('.wechatpay').click(function() {
+		var params = {
+				'order_id' : '{$ordercatelist[0][order_id]}',
+				'method' : 2, // 1是现金/刷卡支付
+				'e_id' : '{$e_id}'
+		};
+		scscms_alert("用微信支付为该笔订单付款？", "confirm", function() {
+			$.post("{:U('CateIndustry/CateOrder/wechatPay', '', '')}", params, function(result) {
+				if (result.errCode == 0) {
+					var payurl = "{:U('Home/WeChatPay/wechatPayV3', '', '')}?wcpid="+result.data.wcpid+"&redirecturi="+result.data.redirecturi+"&showwxpaytitle=1";
+					cashcardBtn.hide(); // 隐藏现金/刷卡支付按钮
+					wechatBtn.hide(); // 隐藏微信支付按钮
+					scscms_alert("即将开启微信支付，请及时确认支付!", "ok", "", 1);	//定时关闭窗口
+					setTimeout(function() {
+						// to do 2秒后调起微信支付
+						window.location.href = payurl;
+					}, 2000);
+				} else{
+					scscms_alert(result.errMsg, "error", "", 3);
+				}
+			});
+		});
+	});
+});
+</script>
+</body>
+</html>

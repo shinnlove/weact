@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/guideappstyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>导购订单视图</title>
+</head>
+
+<body>
+	<!-- 下拉等待刷新效果层 begin -->
+	<div class="loading f14" id="refreshWait" style="display:none;">
+	    <div class="loadicon">
+	        <span class="blockG" id="rotateG_01"></span>
+	        <span class="blockG" id="rotateG_02"></span>
+	        <span class="blockG" id="rotateG_03"></span>
+	        <span class="blockG" id="rotateG_04"></span>
+	        <span class="blockG" id="rotateG_05"></span>
+	        <span class="blockG" id="rotateG_06"></span>
+	        <span class="blockG" id="rotateG_07"></span>
+	        <span class="blockG" id="rotateG_08"></span>
+	    </div>
+	    正在加载...
+	</div>
+	<!-- 下拉等待刷新效果层 end -->
+	
+	<div class="wrap">
+		
+		<!-- 搜索框 begin -->
+    	<div class="search-bar">
+        	<div class="search-section1">
+            	<img src="__PUBLIC__/images/order-search.jpg" alt="" />
+        		<input type="text" name="search-input" class="search-info" placeholder="全部订单编号" value="" />
+            </div>
+            <div class="search-section2">
+            	<a href="javascript:;" class="order-search-btn">订单搜索</a>
+            </div>
+        </div>
+        <!-- 搜索框 end -->
+        
+        <!-- tab页卡 begin -->
+        <div class="status-tab">
+        	<ul>
+        		<li class="all_order li-on" data-type="0">全部</li>
+            	<li class="has_pay" data-type="1">待付款</li>
+                <li class="no_delivery" data-type="2">待发货</li>
+                <li class="has_delivery" data-type="3">待收货</li>
+                <li class="wait_praise" data-type="4">待评价</li>
+            </ul>
+            <div class="clear"></div>
+        </div>
+        <!-- tab页卡 end -->
+        
+        <!-- 订单列表主体 begin -->
+        <div class="order-content">
+        	<div class="order-list">
+            	<ul>
+                	<li>
+                		<div class="infobox">
+	            			<i class="iconSuccess cf cFont db"></i>
+	            			<p>正在努力加载...</p>
+	        			</div>
+                	</li>
+                </ul>
+            </div>
+        </div>
+        <!-- 订单列表主体 end -->
+        
+    </div>
+    
+    <div class="deco"></div>
+    <!-- 上推瀑布流刷新下一页效果层与现实全部信息层 begin -->
+    <div class="loading f14" id="loadNext" style="display:none;">
+        <div class="loadicon">
+            <span class="blockG" id="rotateG_01"></span>
+            <span class="blockG" id="rotateG_02"></span>
+            <span class="blockG" id="rotateG_03"></span>
+            <span class="blockG" id="rotateG_04"></span>
+            <span class="blockG" id="rotateG_05"></span>
+            <span class="blockG" id="rotateG_06"></span>
+            <span class="blockG" id="rotateG_07"></span>
+            <span class="blockG" id="rotateG_08"></span>
+        </div>
+	正在加载...
+    </div>
+	<div id='loadNextPos'></div>
+   	<div class="loading" id="showAll" style="display:none;">已显示全部<br />下拉顶部刷新</div>
+    
+<script type="text/html" id="orderlisttpl">
+{{each orderlist as e i}}
+	<li data-oid="{{e.order_id}}">
+		<div class="order-main">
+			<div class="order-detail">
+				<div class="order-title stress">
+					订单编号<span>{{e.visual_number}}</span>
+				</div>
+				<div class="order-info">
+					买家：<span class="pay-status">{{if e.receive_person != ""}}{{e.receive_person}}{{else if e.nick_name != ""}}{{e.nick_name}}{{else if e.customer_name != ""}}{{e.customer_name}}{{else}}微信用户{{/if}}</span>
+					下单时间：<span class="send-status">{{e.order_time}}</span>
+				</div>
+				<div class="delivery-info">
+					配送地址：<span class="praise-status">{{e.receive_address}}</span>
+				</div>
+				<div class="order-status">
+					发货方式：<span class="pay-status">
+						{{if e.logistics_method == 0}}快递配送{{else}}到店自提{{/if}}
+					</span>
+					订单状态：<span class="pay-status">
+						{{if e.normal_status == -2}}发货超时，订单已取消
+						{{else if e.normal_status == -1}}支付超时，订单已取消
+						{{else if e.normal_status == 0}}待付款
+						{{else if e.normal_status == 1}}待发货
+						{{else if e.normal_status == 2}}待收货
+						{{else if e.normal_status == 3}}待评价
+						{{else if e.normal_status == 4}}交易成功{{/if}}
+					</span>
+				</div>
+			</div>
+			<div class="detail-btn">
+				<a href="javascript:;" class="detail" id="detail-info-btn"></a>
+			</div>
+		</div>
+		<div class="order-total">
+			<div class="total-price">
+				订单总价：<span class="price-all">{{e.total_price}}</span>元
+			</div>
+			<div class="total-pro-num">
+				商品列表：<span class="pro-number">点击展开</span><br />
+			</div>
+		</div>
+		<div class="order-detail-list hide">
+			<ul class="pro-section">
+				
+			</ul>
+		</div>
+	</li>
+{{/each}}
+</script>
+
+<script type="text/html" id="detailprotpl">
+{{each detailprolist as t j}}
+	<li>
+		<div class="detail-pro">
+			<div class="pro-image"><img src="{{t.micro_path}}" alt="" /></div>
+			<div class="pro-info">
+				编号：<span>{{t.product_number}}</span><br />
+				名称：<span>{{t.product_name}}</span><br />
+			 	颜色尺码：<span class="sku-color">{{if t.pro_color}}{{t.pro_color}}{{else}}默认{{/if}}</span><span class="sku-size">{{t.pro_size}}</span>
+			</div>
+			<div class="pro-num-price">
+				数量 × <span class="num-green">{{t.amount}}</span> 件<br />
+				单价：<span class="price-orange">{{t.unit_price}}</span> 元
+			</div>
+			<div class="clear"></div>
+		</div>
+	</li>
+{{/each}}
+</script>
+
+<script type="text/javascript">
+// 定义页面变量
+var eid = "{$eid}", 					// 商家编号
+	sid = '{$sid}', 					// 分店编号
+	gid = "{$gid}", 					// 导购编号
+	tabType = 0, 						// 默认tabType是0（全部）
+	visual_number = "", 				// 订单编号
+	hasMoreData = true, 				// 本js模块全局变量：后续是否还有数据
+	isLoadingData = false, 				// 本js模块全局变量：本模块正在请求数据标记
+	nextStart = 0, 						// 页面默认下一次请求开始的数据位置
+	requestOrderListURL = "{:U('GuideApp/GuideOrder/requestGuideOrder', '', '')}", // 请求订单分页
+	requestDetailURL = "{:U('GuideApp/GuideOrder/getOrderDetailByID', '', '')}", // 请求订单详情地址
+	jsonData = '{$guideorderjson}'; 	// 打开页面一屏订单json信息
+	
+// 页面初始化函数
+$(function(){
+	
+	// 第一次直出渲染模板
+	var guidelistinfo = $.parseJSON(window.jsonData); 	// 解析页面的json数据
+	var tmpl = template('orderlisttpl', guidelistinfo.data); // 渲染模板
+	var orderListObj = $('.order-list ul'); 			// 抓取class为order-list的ul，定义为orderListObj对象
+	if (tmpl == '{Template Error}') {
+		orderListObj.html('好像出了点问题，请联系管理员');		// 如果渲染模板出错，更换样式
+	} else {
+		orderListObj.html(tmpl);						// 渲染成功就把模板渲染的信息写入
+	}
+	window.nextStart = guidelistinfo.nextStart;
+	
+	// 为DOM元素生成事件
+	$(".wrap").on("click", ".status-tab ul li", function (e) {
+		var obj = $(this);
+		var container = obj.parent();
+		if (!obj.hasClass("li-on")) {
+			// 每次切换不同页卡
+			container.children("li").removeClass("li-on");
+			obj.addClass("li-on");
+			
+			window.tabType = obj.attr("data-type"); // 特别注意：很关键的一句话，怎么都不可以删除！！！
+			//window.nextStart = 0; // 特别注意：相当关键的一句话，切换页卡的时候需要置0！！！
+			// to do tab query here
+			// 每次切换不同页卡，要将原来的DOM元素结构移除
+			
+			getOrderList('pull', 0);			// 由本模块内的init方法来调用getOrderList方法模拟下拉刷新
+		} 
+		// else 是本来就是自己，不用重新查询
+	}).on("click", ".detail-btn", function(e) {
+		var obj = $(this).children("#detail-info-btn");
+		var belongli = obj.parent().closest("li"); // 点击所在li
+		var oid = belongli.attr("data-oid"); // 被点击的订单编号
+		var detailprolist = belongli.find(".order-detail-list"); // 抓取订单商品详情目标div
+		var prosection = detailprolist.children("ul"); // 要ajax完成后写入的目标区域
+		
+		if (obj.hasClass("detail-on")) {
+			obj.removeClass("detail-on").addClass("detail"); // 收起按钮
+			detailprolist.animate({ height:0 }, "normal", "linear", function() {
+				detailprolist.stop(false, true); // 停止效果
+				detailprolist.addClass("hide"); // 隐藏
+			});
+		} else {
+			obj.removeClass("detail").addClass("detail-on"); // 展开按钮
+			var pronum = detailprolist.find("li").length; // 获取有几个li
+			if (pronum == 0) {
+				// to do query order pro：第一次展开li，查询数据库
+				var param = {
+						eid : eid,
+						sid : sid,
+						gid : gid,
+						oid : oid
+				}
+				$.post(requestDetailURL, param, function(result) {
+					if (result.errCode == 0) {
+						// 渲染模板
+						var protmpl = template('detailprotpl', result.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+						if (protmpl == '{Template Error}') {
+							prosection.html('<li>查询订单商品详情失败，请联系管理员！</li>');		// 如果渲染模板出错，更换样式
+						} else {
+							prosection.html(protmpl);						// 渲染成功就把模板渲染的信息写入
+						}
+						pronum = detailprolist.find("li").length; // 获取有几个li
+						var const_li_height = 80; // 固定pro的li高度
+						var totalheight = const_li_height*pronum; // 计算动态下滑的高度
+						detailprolist.removeClass("hide"); // 特别注意：这里必须要先解除隐藏，才能让用户看到动态展开（否则会等待展开时间）
+						detailprolist.animate({ height:totalheight }, "normal", "linear", function() {
+							detailprolist.stop(false, true); // 停止效果
+						});
+					} else {
+						scscms_alert("查询订单详情失败，" + result.errMsg, "error", 2);
+					}
+				}, "json");
+			} else {
+				// 不用重新查库
+				pronum = detailprolist.find("li").length; // 获取有几个li
+				var const_li_height = 80; // 固定pro的li高度
+				var totalheight = const_li_height*pronum; // 计算动态下滑的高度
+				detailprolist.removeClass("hide"); // 特别注意：这里必须要先解除隐藏，才能让用户看到动态展开（否则会等待展开时间）
+				detailprolist.animate({ height:totalheight }, "normal", "linear", function() {
+					detailprolist.stop(false, true); // 停止效果
+				});
+			}
+		}
+	}).on("click", ".order-search-btn", function(){
+		// 搜索订单
+		getOrderList('pull', 0);
+	});
+	
+	// 安卓4.0版本灵敏度兼容
+    var level = /Android 4.0/.test(window.navigator.userAgent) ? -10 : -100;
+    if (/MQQBrowser/.test(window.navigator.userAgent)) {
+        level = -10; // QQ浏览器灵敏度兼容
+    } 
+    
+    var loadingObj = $('#loadNext'); // 底部正在加载
+    var loadingPos = $('#loadNextPos'); // 紧挨着上边div的div对象
+    
+    // 触摸整个$(window)对象！！！ 2015/03/17 21:15:00注，这里不能绑定body或子元素
+    var x, y , endX, endY, offsetY, loadingAction;
+    $(window).on('touchstart', function(e) {
+        x = endX = e.originalEvent.touches[0].pageX;
+        y = endY = e.originalEvent.touches[0].pageY;
+    }).on('touchmove', function(e) {
+        endX = e.originalEvent.touches[0].pageX;
+        endY = e.originalEvent.touches[0].pageY;
+        offsetY = endY - y;
+		
+        // 向下拉手势刷新
+        if (offsetY > 10 && !isLoadingData && document.body.scrollTop <= 1) {
+            isLoadingData = true;
+            $('#refreshWait').stop(true, true).show();
+            getOrderList('pull', 0);			// 由本模块内的init方法来调用getOrderList方法下拉刷新
+        }
+    });
+	
+	// 向上推（到底部才加载）
+	$(window).scroll(function() {
+		var scrollh = document.body.scrollHeight; // 网页正文全文高
+		var clienth = document.documentElement.clientHeight; // 网页可见区域高度
+		var scrollt = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop; // 网页被卷去的高
+		var limitheight = 20; // 触碰屏幕的距离底部
+		if (scrollt + clienth + limitheight >= scrollh && !isLoadingData && hasMoreData) {
+			isLoadingData = true;
+            $('#loadNext').stop(true, true).slideDown('fast');
+            getOrderList('drag');
+		}
+		scrollPosition = $(window).scrollTop();
+	});
+	
+});
+
+// 分页请求订单函数
+function getOrderList(action, nextStart) {
+	// Step1：定义请求参数初始化参数
+	var start = 0; // 定义起始页为0
+	if (typeof nextStart == 'undefined') {
+		start = window.nextStart; // 如果没有定义nextStart下一页数据，就用window.nextStart这个值
+	} 
+	var url = requestOrderListURL + "?eid=" + window.eid + "&sid=" + window.sid + "&gid=" + gid + "&nextstart=" + start; // 分页请求数据的地址
+	
+	// Step2：获取对订单可视化编号的查询限制
+	var searchnumber = $("input[name='search-input']").val().trim(); 
+	if (typeof searchnumber != "undefined" && searchnumber != "") {
+		window.visual_number = searchnumber;
+		url += "&visualnumber=" + searchnumber; // 带上订单编号模糊查询
+	}
+	
+	// Step3：获取标签页卡
+	if (window.tabType != 0) {
+		// 默认就是tabType == 1的情况，现在不等于1，就要带上参数
+		url += "&querytype=" + window.tabType; // 带上页卡标签查询
+	}
+	
+	// Step4：根据不同的请求方式
+	switch (action) {
+		case 'pull':
+			$('#showAll').hide(); // 默认已显示全部的div隐藏
+			break;
+		case 'drag':
+			// 如果是上推操作
+			MLoading.show('加载中');
+			break;
+		default:
+			MLoading.show('加载中');
+			break;
+	}
+	hasMoreData = true; 			// 模块开始请求新数据的标记置为true
+	isLoadingData = true; 			// 模块设置为正在请求数据
+	
+	// 准备请求参数
+	var params = {
+			eid : eid,
+			sid : sid,
+			gid : gid,
+			nextstart : start,
+			querytype : window.tabType, 
+			visualnumber : searchnumber, 
+	}
+	// Step3：请求并且完成界面不同显示
+	$.post(url, params, function(result){
+		MLoading.hide(); 					// 隐藏等待刷新框
+		isLoadingData = false; 				// 本模块正在loading数据的状态变为false
+		
+		$('#waitForLoad').hide(); 			// 等待加载div隐藏
+		$('#refreshWait').slideUp(); 		// 顶部正在加载div下滑
+		$('#loadNext').slideUp(); 			// 底部正在加载div也下滑
+		
+		if (result.errCode == 0) {
+			var orderListObj = $('.order-list ul'); 
+			var tmpl = template('orderlisttpl', result.data); 
+			if (tmpl == '{Template Error}') {
+				tmpl = ''; 					// 如果渲染失败，则html置空
+			}
+			if (action == 'pull') {
+				// 如果加载数据的动作是下拉，则有新微博可能已经更新，先把内容清空，否则主题已经存在就不渲染模板
+				orderListObj.html('');
+				orderListObj.html(tmpl); 	// 写入新html数据
+				$('.deco').show();
+			} else {
+				$('.infobox').hide(); 		// 隐藏正在努力加载div
+				orderListObj.append(tmpl); 	// 在文档尾追加新html数据
+				// 如果返回的json数据的data字段的threadList字段里无数据，就不再加载任何数据
+				if (result.data.orderlist.length == 0) {
+					hasMoreData = false; 	// 模块不在加载数据中
+					$('#loadNext').stop(true, true).hide(); // 正在加载停止，并隐藏（关于stop(true, true)的解释请见项目收藏夹）
+					$('#showAll').show(); 	// 出现已经显示全部数据的div
+					$('.deco').hide();
+				}
+			}
+			window.nextStart = nextStart = result.nextStart; // 将下一页数据给到nextStart，同时给到window.nextStart
+			$('#refreshWait').hide(); // 隐藏刷新等待提示框
+			// 至此，一次pull或者drag操作所有DOM元素与结构、特效变更结束
+		} else {
+			scscms_alert("请求订单数据失败！", "error", "", 2);
+			return false; // errCode不为0，有错误码，表示请求数据失败
+		}
+	}, 'json');
+}
+</script>
+</body>
+</html>

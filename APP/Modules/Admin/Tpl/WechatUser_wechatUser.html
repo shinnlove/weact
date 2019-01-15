@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/operamasks/themes/apusic/om-theme.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/operamasks/themes/apusic/om-base.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/menu-monitor.min.css" />
+<script type="text/javascript" src="__PUBLIC__/operamasks/jquery.js"></script>
+<script type="text/javascript" src="__PUBLIC__/operamasks/ui/om-core.js"></script>
+<script type="text/javascript" src="__PUBLIC__/operamasks/ui/om-mouse.js"></script>
+<script type="text/javascript" src="__PUBLIC__/operamasks/ui/om-draggable.js"></script>
+<script type="text/javascript" src="__PUBLIC__/operamasks/ui/om-droppable.js"></script>
+<script type="text/javascript" src="__PUBLIC__/operamasks/ui/om-tree.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.json-2.4.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<title>微信用户组</title>
+</head>
+
+<body>
+	<div id="top" class="alert alert-info" style="margin:20px;">
+        1.使用本模块，必须在微信公众平台<strong>申请</strong>自定义菜单使用的<strong>AppId和AppSecret</strong>，然后在【授权设置】中设置。<br/>
+        2.<strong>“还原同步”</strong>是撤销所做更改并与微信服务器同步，<strong>“保存同步”</strong>是将更改同步保存到微信服务器。<br/>
+        3.请注意<strong>同步操作</strong>可能需要<strong>等待几分钟</strong>的时间，若选择同步后服务器未响应，请及时<strong>耐心等待</strong>。
+	</div>
+
+    <!-- view_source_begin -->
+    <div id="main">
+        <div class="frame_left">
+        	<table>
+				<tr valign="top">
+					<td width="220"><ul id="menu_tree"></ul></td>
+				</tr>
+			</table>
+        
+			<div class="confirmRegion" style="position:absolute;left:10px;bottom:0px;">
+			<!-- 
+                <button class="btn btn-small btn-success" id="resetsync" title="撤销更改并同步">还原</button>
+                <button class="btn btn-small btn-success" id="savesync" title="保存更改并同步">保存</button>
+                <button class="btn btn-small btn-success" id="rename" title="重命名分组">重命名</button>
+                <button class="btn btn-small btn-success" id="creategroup" title="创建新分组">创建分组</button> 
+             -->    
+               	<button class="btn btn-small btn-success" id="refresh" title="刷新分组">刷新分组</button> 
+                <button class="btn btn-small btn-success" id="creategroup" title="创建新分组">创建分组</button>  
+                <button class="btn btn-small btn-success" id="deletegroup" title="保存更改并同步">删除分组</button>
+            </div>
+        </div>
+        
+        <div class="frame_right">
+            <iframe frameborder="0" id="detail" name="detail" src="{:U('userGroup')}"></iframe>			
+        </div>
+    </div> 
+    <!-- view_source_end -->
+    
+<!-- view_source_begin -->
+<script type="text/javascript">
+$(function(){
+	resize();
+	$(window).resize(function(){
+		resize();
+	});
+	
+	var menutree = [{
+			"text": "微信平台用户",
+			"id":"-1",
+			"expanded": true,
+			"children":{$usergrouplist} // 后台推送的企业用户信息
+		}];
+	
+	$tree = $("#menu_tree").omTree({
+		dataSource : menutree,
+		draggable : false,				//无排序不可拖动
+		onSelect: function(){
+			var selNode = $("#menu_tree").omTree("getSelected"); 
+			if(selNode["id"] != -1){
+				$("#detail").attr("src" , "{:U('Admin/WechatUser/userGroup','','')}?&gid="+selNode.id+"&gname="+selNode.text);		//如果选中的不是根节点，则直接传当前选中节点的id
+			}else{
+				$("#detail").attr("src" , "{:U('Admin/WechatUser/userGroup','','')}?&gid="+selNode.id+"&gname="+selNode.text);
+			}
+			//alert('编辑 id='+selNode.item_id+ ' 的、 key='+selNode.key+' 的、 名称为 '+selNode.text+' 的菜单');
+		},
+		onDrop:function(nodeData, event){
+			refreshActions();
+		},
+	});
+	$("#menu_tree").omTree("expandAll");		//展开结点树
+	refreshActions();
+	initSelect();								//默认选中第一个菜单 
+	
+	//绑定对树节点的编辑事件操作
+	$tree.delegate(".tree-menu .edit","click",function(){
+		var selectedNode = $tree.omTree("findByNId",$(this).closest(".om-tree-node").attr("id"));				//调用findByNID的方法，选取某个树节点，是一个target对象
+		$tree.omTree('select',selectedNode);																	//调用omTree的select方法，将某个树节点选中
+		$("#detail").attr("src" , "{:U('Admin/WechatUser/editGroup','','')}?mid="+selectedNode.id+"&group_name="+selectedNode.text);						//获取参数跳转editGroup，特别注意，添加页面和编辑页面可以是同一个页面
+    });
+	
+	//创建分组
+	$("#creategroup").click(function(){
+		$("#detail").attr("src" , "{:U('Admin/WechatUser/editGroup','','')}");
+	})
+	
+	$("#deletegroup").click(function(){
+		var selectedjson = $tree.omTree('getSelected');
+		//alert(JSON.stringify(selectedjson));return;
+		var id = selectedjson.id;
+		var name = selectedjson.text;
+		if(id==-1){
+			$.messager.alert('温馨提示', '请选择一个分组进行操作', 'info');
+		}else if(id<=100){
+			$.messager.alert('温馨提示', name+'为系统自带分组，不允许删除', 'info');
+		}else{
+			//alert(id);return;
+			$.post("{:U('Admin/WechatUserRequest/delGroup','','')}",{group_id:id},
+			  function(result){
+				 if(result.errCode==0){
+					 $.messager.alert('温馨提示', '删除分组成功，请点击<strong>刷新分组</strong>按钮查看!', 'info');
+				 }else{
+					 $.messager.alert('温馨提示', '网络繁忙，删除分组失败，请稍后重试!', 'error');
+				 }
+			 },"json");
+		}
+		
+	});
+	
+	//还原同步按钮事件
+	$("#resetsync").click(function(){
+		$("#stop").attr("disabled","disabled");
+		$.post("{:U('Admin/MenuManage/invalidateMenu','','')}",{}
+		 , function(result){
+			 $("#stop").removeAttr("disabled");
+			 if(result.success){
+				 alert("公众号菜单停用成功！");
+			 }else{
+				 if(result.errormsg){
+					 alert(result.errormsg);
+				 }
+			 }
+		 },"json");
+	});
+	//刷新按钮事件
+	$("#refresh").click(function(){
+		window.location.reload();
+	});
+	
+	//创建分组按钮点击事件
+	$("#creategroup2").click(function(){
+		var children = $tree.omTree("getData")[0].children;
+		if(children && children.length>0){
+			for(var i=0; i<children.length; i++){
+				var level_one = children[i];
+				if(hasChild(level_one)){
+					var sub_children = level_one.children;
+					for(var j=0; j<sub_children.length; j++){
+						//如果二级菜单下边还有子节点，则说明超过二层，不予保存
+						if(hasChild(sub_children[j])){
+							alert("公众平台规定，最多只支持两级菜单。");
+							return false;
+						}
+					}
+				}
+			}
+		}
+		$("#saveOrder").attr("disabled","disabled");
+		var treedata = $.toJSON(children);
+		alert(treedata);
+		$.post("{:U('Admin/MenuManage/saveMenu','','')}",{treeData:treedata}
+			 , function(result){
+				 if(result.success){
+					 $("#saveOrder").removeAttr("disabled");
+					 alert("保存菜单排序成功！");
+				 }else{
+					 $("#saveOrder").removeAttr("disabled");
+					 alert("错误提示："+result.errormsg);
+				 }
+			 },"json");
+	});
+});
+
+//判断当前结点是否有孩子
+function hasChild(nodeData){
+	return nodeData.children && nodeData.children.length>0;				//如果孩子不为空，且孩子的长度大于0，代表有孩子节点
+}
+
+function initSelect(){
+	var target = $tree.omTree("findNode", "text", "微信平台用户");
+	$tree.omTree('select',target);
+}
+//对整个树节点数据进行初始化
+function initSelect2(){
+	var data = $tree.omTree("getData");
+	var child = data[0].children;
+	if(child && child.length>0){
+		$tree.omTree("select" , child[0]);
+	}else{
+		$("#detail").attr("src" , "menu-info.php?wuid=60202");
+	}
+}
+
+//取消选择树节点函数
+function unselect(){
+	var selected = $tree.omTree("getSelected");		//尝试获取当前树选中的结点
+	if(selected){
+		$tree.omTree("unselect",selected);			//如果有结点被选中，则调用unselect方法将该树节点取消选中
+	}
+}
+
+//得到要传递的Url值
+function getCommonParam(node){
+	return "wuid=60202"+"&nid="+node.nid+"&level="+($("#"+node.nid).parents(".om-tree-node").length);
+}
+
+//定义一个得到结点的函数，该函数返回当前目标最近的一个树节点
+function getNode(target){
+	return $tree.omTree("findByNId",$(target).closest(".om-tree-node").attr("id"));		//该返回类型为object对象
+}
+
+//刷新树节点函数（非常重要，决定整棵数哪些节点有添加、哪些节点有编辑）
+function refreshActions(){
+	$("#menu_tree .om-tree-node span").each(function(index,span){
+		$(span).prev(".tree-menu").remove();//先删除再重新创建
+		var node = getNode(this);
+		var menuHtml = '<div class="tree-menu">';
+		var level = $(this).parents(".om-tree-node").length;
+		if(level == 2){
+			$(span).find("a").css("width", "90");
+			menuHtml += '<span><i class="icon-edit edit" title="修改分组"></i></span>';
+		}
+		menuHtml += '</div>';
+		$(span).before($(menuHtml));
+	});
+}
+
+//添加结点函数，传入结点编号和结点
+function addNode(nid , node){
+	var $pnode = $tree.omTree("findByNId", nid);			//传入nid调用findByNId找到当前树节点
+	$tree.omTree("insert" , node , $pnode);					//调用omTree的插入方法插入节点
+	refreshActions();										//刷新整个树节点
+}
+
+//形参传入新结点信息（与原结点的id编号相同），更新其名称
+function updateNode(node){
+	$("#"+node.nid).find("a:eq(0)").text(node.text);
+}
+
+//对整个页面框架的重定位技术
+function resize(){
+	var w = $(window).width(),
+	h = $(window).height(),
+	th = $("#top").outerHeight(true),
+	mh = $(".main-title h3").outerHeight(true); 
+	$(".frame_right").width(w - $(".frame_left").width() - 40);
+	$(".frame_left").height(h - th - mh- 75);
+	$(".frame_right").height(h - th - mh - 25);
+	$("#detail").width(w - $(".left").width() - 320);
+	$("#detail").height(h - th - mh- 75);
+}
+</script>
+<!-- view_source_end -->
+</body>
+</html>

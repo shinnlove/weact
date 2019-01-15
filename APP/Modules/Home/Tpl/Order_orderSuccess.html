@@ -1,0 +1,80 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weact.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>订单支付成功</title>
+</head>
+
+<body>
+	<div class="lay_header" style="height: 45px">
+        <div class="lay_toptab mod_tab" id="lay_head">
+            <div class="tab_item go_back" onclick="window.history.go(-1);">
+                <i class="qb_icon icon_goback"></i>
+            </div>
+            <a class="tab_item" href='{:U("Home/Index/index", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_home"></i></a>
+            <a class="tab_item" href='{:U("Home/MemberHandle/customerCenter", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_icenter"></i></a>
+            <a class="tab_item" href='{:U("Home/Cart/shoppingCart", array("e_id"=>$e_id), "")}'>
+            	<i class="qb_icon icon_cart"></i>
+                <i class="qb_icon icon_number_bubble qb_none" id="cartNum">0</i>
+            </a>
+        </div>
+    </div><!-- lay_header结束div -->
+	
+    <div class="lay_page page_order_result">
+        <div class="lay_page_wrap">
+            <div class="mod_cell ui_mt15">
+                <div class="ui_pt10"><strong class="ui_color_strong">付款成功</strong></div>
+                <dl class="mod_dl dl_tabel">
+                    <dt class="ui_color_weak ui_align_right">订单编号：</dt>
+                    <dd class="">--</dd>
+                    <dt class="ui_color_weak ui_align_right">支付金额：</dt>
+                    <dd class=""><span class="ui_color_strong">￥0.00元</span></dd>
+                </dl>
+                <div class="mod_cell_hr"></div>
+                <div class="qb_flex qb_mb10">
+                    <a href="#" class="mod_btn btn_block qb_mr10 flex_box">查看订单</a>
+                    <a href="#" class="mod_btn btn_block btn_em flex_box">再逛逛</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="lay_footer qb_tac qb_fs_s mod_mb15">
+        <div class="fn_quicklinks">
+			<a class="mod_color_weak" href='{:U("Home/Index/index",array("e_id"=>$e_id),"")}'>商户首页</a>
+			<for start="0" end="3" step="1">
+				<span class="mod_color_comment">|</span>
+				<a class="mod_color_weak" href="{$pageinfo [navigation] [foot] [$i] [url]}">{$pageinfo [navigation] [foot] [$i] [nav_name]}</a>
+			</for>
+		</div>
+        <div class="fn_copyright">
+            <div class="mod_color_comment fn_copyright_agreement ui-fz-x-small ui-ta-c"><a href="#">Powered By WeAct</a></div>
+            <div class="mod_color_comment fn_copyright_text">Copyright &copy; 2014 WeAct.<br/>All Rights Reserved. </div>
+            <div class="mod_color_comment fn_copyright_text">微动公司 版权所有</div>
+        </div>
+    </div><!-- lay_footer结束div -->
+    
+<script type="text/javascript">
+var e_id = "{$e_id}", // 商家编号
+	oid = "{$oinfo.order_id}", // 支付的订单编号
+	oinfo = "{$oinfo}"; // 支付的订单信息
+	
+$(function(){
+	
+});
+</script>
+</body>
+</html>

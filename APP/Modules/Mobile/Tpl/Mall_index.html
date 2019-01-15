@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/mobilestyle.css?v=1.0.2" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css?v=1.0.1" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js?v=1.0.1"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js?v=1.0.1"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js?v=1.0.1"></script>
+<script type="text/javascript" src="__PUBLIC__/js/swipe.js?v=1.0.1"></script>
+<script type="text/javascript" src="__PUBLIC__/js/lazyload.js?v=1.0.1"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<title>移动云商城 Mobile Integration</title>
+</head>
+
+<body>
+	<input type="hidden" name="e_id" id="e_id" value="{$e_id}" />
+	<input type="hidden" name="sid" id="sid" value="{$sid}" />
+	<input type="hidden" name="did" id="did" value="-1" />
+	<input type="hidden" name="nid" id="nid" value="{$nid}" />
+	
+	<div class="ui-content w-640">
+        <section id="banner_box" class="box_swipe">
+            <ul>
+                <li id="ad_1006"><a rel="nofollow" href="#"><img class="lazy" data-original="__PUBLIC__/images/banner_01.jpg" width="100%"></a></li>
+                <!-- <li id="ad_1007"><a rel="nofollow" href="#"><img class="lazy" data-original="__PUBLIC__/images/banner_02.jpg" width="100%"></a></li> -->
+            </ul>
+        </section>
+        <div style="text-align:center;">
+            <ol id="position"></ol>
+        </div>
+        <div style="width:100%;position:relative; margin-top:-15%;">
+            <div style="width: 30%; margin: 0 auto; background: none repeat scroll 0 0 #fff; border-radius:50%; padding:.02rem;">
+                <img src="__PUBLIC__/images/shop_logo.png" width="100%" />
+            </div>
+        </div>
+        
+        <div class="top_icon">
+            <div class="top_icon_scan" id="scanQRCode"><img src="__PUBLIC__/images/scan.png" width="100%" /></div>
+            <div class="top_icon_location" id="getLocation"><img src="__PUBLIC__/images/location.png" width="100%" /></div>
+        </div>
+
+        <section>
+            <div style="width:100%;">
+                <div class="btn">
+                    <div class="btn_more"><img src="__PUBLIC__/images/btn_more.png" width="100%" /></div>
+                    <div class="btn_click"><img src="__PUBLIC__/images/btn_click.png" width="100%" /></div>
+                </div>
+
+                <div class="sub_nav">
+                    <div><a href="javascript:;" class="cloud">云总店</a></div>
+                    <div><a href="javascript:;" class="o2o">OTO体验店</a></div>
+                    <div><a href="javascript:;" class="p2p">分销中心</a></div>
+                </div>
+                <div class="pic_info">
+                    <p class="nav_page"><img src="__PUBLIC__/images/pic01.jpg" width="100%"></p>
+                    <p class="nav_page"><img src="__PUBLIC__/images/pic02.jpg" width="100%"></p>
+                </div>
+            </div>
+        </section>
+        <a href="javascript:void(0);" class="backtotop" name="backtotop">返回顶部</a>
+        
+        
+        <!--<div style="height: 45px; clear: both;"><img height="45" src="images/logos.jpg" style="display:none;"></div>-->
+        <!--导航开始-->
+        <div id="nav">
+            <ul class="navlist">
+                <li id="n_0" style="width:20%;"><a href="{:U('Home/Index/index', array('e_id' => $e_id), '')}"><span></span></a></li>
+                <li style="width:30%;"><a href="{:U('Home/MemberHandle/feedback', array('e_id' => $e_id), '')}" class="nav_01">客服中心</a></li>
+                <li style="width:25%;"><a href="{:U('Home/Cart/shoppingCart', array('e_id' => $e_id), '')}" class="nav_02">购物车</a></li>
+                <li style="width:25%;"><a href="{:U('Home/MemberHandle/customerCenter', array('e_id' => $e_id), '')}" class="nav_03">会员中心</a></li>
+            </ul>
+        </div>
+        <!--导航结束-->
+    </div>
+    
+<script type="text/javascript">
+var entityshopurl = "{:U('WeMall/Store/storeList', array('sid'=> $sid), '')}",
+	appId = '{$signpackage.appId}', 
+	timestamp = '{$signpackage.timestamp}', 
+	nonceStr = '{$signpackage.nonceStr}', 
+	signature = '{$signpackage.signature}'; 
+
+wx.config({
+     debug: false,
+     appId: appId, 
+     timestamp: timestamp, 
+     nonceStr: nonceStr, 
+     signature: signature, 
+     jsApiList: [ 'getLocation', 'scanQRCode' ] 
+});
+	
+$(function () {
+	// 回顶部
+	$("[name='backtotop']").bind('click', function () {
+		$("html, body").animate({ scrollTop: 0 }, 300);
+	});
+	
+	// 云总店
+	$(".cloud").click(function(e){
+		location.href = "{:U('Home/Index/index', array('e_id' => $e_id), '')}";
+	});
+	
+	// 实体店
+	$(".o2o").click(function(e){
+		var sid = $("#sid").val();
+		if (sid == "-1") {
+			scscms_alert("商家还没有添加实体店。", "warn", "", 2); 
+		} else {
+			location.href = entityshopurl;
+		}
+	});
+	
+	// 分销店
+	$(".p2p").click(function(e){
+		var did = $("#did").val();
+		if (did == "-1") { 
+			scscms_alert("商家还没有授权分销店。", "warn", "", 2); 
+		} else {
+			location.href = "{:U('P2P/Shop/shopList', array('did'=> $did), '')}";
+		}
+	});
+	
+	// 活动导航
+	$(".nav_page").click(function(e){
+		scscms_alert("跳转活动导航。", "warn", "", 2); 
+	});
+	
+	// 了解更多
+	$(".btn_more").click(function(e){
+		var nid = $("#nid").val();
+		if (nid == "-1") { 
+			scscms_alert("商家还没有添加企业软文信息。", "warn", "", 2); 
+		} else {
+			location.href = "{:U('Home/CustomerView/showSimpleInfo', array('e_id'=> $e_id), '')}/nav_id/" + nid; // 跳转信息详情
+		}
+	});
+	
+	// 点击有礼
+	$(".btn_click").click(function(e){
+		location.href = "{:U('Home/Coupon/giftList', array('e_id' => $e_id), '')}"; // 跳转店家优惠券列表
+	});
+	
+});
+ 
+(function ($) {
+	var imgCount = $("#banner_box ul li img").length;
+	for (var i = 0; i < imgCount; i++) {
+		if (i == 0) {
+			$("#position").append("<li class='on'></li>");
+		} else {
+			$("#position").append("<li ></li>");
+		}
+	}
+	new Swipe(document.getElementById('banner_box'), {
+		speed: 300,
+		auto: 5000,
+		continuous: true,
+		callback: function (pos) {
+			var arr = $("#position").children("li");
+			if ($("#position").children("li").length == 2) {
+				if (pos == 2) {
+					pos = 0;
+				}
+				if (pos == 3) {
+					pos = 1;
+				}
+			}
+			arr.removeClass("on").eq(pos).addClass("on");
+		}
+	});
+	
+	$("#banner_box ul li").each(function (i, e) {
+		if (!$(this).find("img").length > 0) {
+			$(this).remove();//删除没有图片的Li
+		}
+	});
+	
+	$("a").each(function (index) {
+		$(this).removeAttr("target");
+	});
+	
+	$("[name='backtotop']").click(function () {
+		$("html, body").scrollTop(0);
+	});
+})(Zepto)
+</script>
+<script type="text/javascript" src="__PUBLIC__/js/scanlocation.js?v=1.0.1"></script>
+</body>
+</html>

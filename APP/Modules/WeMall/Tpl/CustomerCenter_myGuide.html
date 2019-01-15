@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>我的导购</title>
+<style>
+a.gotoStore { display: block; width: 80px; height: 40px; line-height: 40px; color: #fff; background: #e04241; text-align: center; border-radius: 4px; margin: 30px auto 0; }
+.btn { padding: 5px; }
+</style>
+</head>
+
+<body>
+	<div class="noResult fn-hide">
+		<span class="sales">您还没有专属导购<br>快去您喜欢的门店选择一个吧 </span> 
+		<a href="javascript:;" class="gotoStore">去选择</a>
+	</div>
+	
+	<div class="mySalesList"></div>
+	
+	<div class="chooseSalesBox fn-hide">
+		<div class="title">
+			<div class="tit">请选择要更换的导购</div>
+		</div>
+		<div class="storeSales"></div>
+		<a href="javascript:;" class="jumpStep">取消</a>
+	</div>
+	
+	<a href="{:U('WeMall/Cart/shoppingCart', array('sid' => $sid), '')}" class="linkNeedLogin toShoppingCart"></a>
+	<a href="javascript:;" id="gotoTalk" class="toAskSales"></a>
+	
+	<input type="hidden" id="noTalking" />
+	
+<!-- my guide js template begin -->
+<script id="myguidelisttpl" type="text/html">
+{{each myguidelist as e i}}
+	<div class="wbox item">
+		<div class="wbox-1">
+			<a href="{{e.guide_id | guideCommentURL}}">
+				<div class="wbox">
+					<div class="roundWrap mr10"><img src="{{e.headimg}}" class="size40 round"></div>
+					<div class="wbox-1">
+						<div class="sales"><span>{{e.guide_name}}</span><span class="star"></span><span class="val" data-star="{{e.star_level}}">{{e.star_level}}</span></div>
+						<div class="store">{{e.subbranch_name}}</div>
+					</div>
+				</div>
+			</a>
+		</div>
+		<a href="javascript:;" data-store="{{e.subbranch_id}}" data-gid="{{e.guide_id}}" class="change btn">换导购</a>
+		<a href="javascript:;" data-id="{{e.guide_id}}" class="talk btn">咨询</a>
+	</div>
+{{/each}}
+</script>
+<!-- my guide js template end -->
+
+<!-- guide js template begin -->
+<script type="text/html" id="otherguidelisttpl">
+{{each otherguidelist as e i}}
+	<div class="item wbox" data-id="{{e.guide_id}}" data-sid="{{e.subbranch_id}}">
+		{{if e.headimg}}<img src="{{e.headimg}}" class="size43 round" />{{else}}<img src="__PUBLIC__/images/default-photo.png" class="size43 round" />{{/if}}
+		<div class="name wbox-1 with-go-right">
+			<div class="namer">{{e.guide_name}}</div>
+        	<div>
+				<div class="appProgress"><span class="val" data-stars="{{e.star_level}}" style="width: 0%;"></span></div>
+				<div class="grade">{{e.star_level}}</div>
+			</div>
+		</div>
+	</div>
+{{/each}}
+</script>
+<!-- guide js template end -->
+
+<script type="text/javascript">
+var eid = "{$eid}", 					// 商家编号
+	sid = "{$sid}", 					// 分店编号
+	hasMoreData = true, 				// 本js模块全局变量：后续是否还有数据
+	isLoadingData = false, 				// 本js模块全局变量：本模块正在请求数据标记
+	nextstart = 0, 						// 页面默认下一次请求开始的数据位置
+	hasMoreData = true, 				// 导购列表还有数据
+	curpage = "{:U('WeMall/CustomerCenter/myGuide', array('sid' => $sid), '')}", // 当前位置
+	loginurl = "{:U('WeMall/GuestMall/login', array('sid' => $sid), '')}", // 登录地址
+	webchatRequestURL = "{:U('WeMall/GuideChatRequest/initWebChat', '', '')}", // 请求聊天窗URL
+	requestGuideURL = "{:U('WeMall/Guide/shopOtherGuide', '', '')}", // 请求店铺导购地址
+	changeGuideURL = "{:U('WeMall/CustomerRequest/selectGuide', '', '')}", // 换导购地址
+	guidejson = '{$guidejson}'; // 我的导购列表
+
+// 页面初始化函数
+$(function(){
+	
+	// 初始化店铺精选商品：第一次直出渲染商品模板（默认是上架时间）
+	var guidelist = $.parseJSON(window.guidejson); // 解析页面的json数据（不管是带了反斜杠，还是没有反斜杠，都可以解析json数据） 
+	var tmpl = template('myguidelisttpl', guidelist.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+	var guideListObj = $('.mySalesList'); 		// 抓取class为mySalesList定义为guideListObj对象
+	if (tmpl == '{Template Error}') {
+		tmpl = ""; // 置空tmpl
+	} else if (tmpl == "") {
+		hasMoreData = false; // 已经没有更多数据了
+		$(".mySalesList").addClass("fn-hide");
+		$(".noResult").removeClass("fn-hide");
+	}
+	if (tmpl != "") {
+		$(".mySalesList").removeClass("fn-hide");
+		$(".noResult").addClass("fn-hide");
+		guideListObj.html(tmpl);					// 渲染成功就把模板渲染的信息写入
+	}
+	window.nextstart = guidelist.nextstart;		// 下一页开始 
+	
+	// 我的导购评星
+	$(".mySalesList .wbox").each(function(i, e) {
+		var avgStars = $(this).find(".val").data("star");
+		$(this).find(".val").html((parseFloat(avgStars)).toFixed(1)); 
+	});
+	
+	// 换导购
+	$(".change").on("click", function(e) {
+		var _t = $(this), storeId = _t.data("store"), cgid = _t.data("gid"); // 获取点击的导购所在的店铺与其编号
+		// 准备参数
+		var params = {
+				sid : storeId, // 注意不是页面上的sid，而是点中这个导购所在的shopid
+				cgid : cgid, // 当前用户所选择的导购编号
+		}
+		$.post(requestGuideURL, params, function(result){
+			if (result.errCode == 0) {
+				// 如果正确请求
+				var listlen = result.data.otherguidelist.length; // 获取其他导购数量
+				if (listlen > 0) {
+					// 返回还有其他导购
+					var tmpl = template('otherguidelisttpl', result.data); 
+					if (tmpl == '{Template Error}') {
+						mobileAlert("网络繁忙，请稍后再试"); // 渲染出错直接报错返回
+						return false;
+					} 
+					// 弹层出现
+					$(".chooseSalesBox").show().find(".storeSales").height($(window).height() - 130).html(tmpl);
+					// 初始化评星级
+					$(".chooseSalesBox .storeSales .appProgress").each(function(i, e) {
+						var stars = parseFloat($(e).find(".val").data("stars"));
+						$(e).find(".val").width((stars * 20).toFixed(1) + "%");
+						$(e).siblings(".grade").html((stars).toFixed(1));
+					});
+					// 初始化点选导购事件???好像不用
+				} else {
+					mobileAlert("该店铺已经没有更多导购可供选择，将就一下吧^_^"); // 店铺里就这么个导购，或者已经没有导购了
+				}
+			} else {
+				mobileAlert(result.errMsg); // 如果请求错误，弹出错误信息
+			}
+		}, "json");
+	});
+	
+	// 我的导购页面取消导购选择
+	$(".chooseSalesBox .jumpStep").on("click", function(e) {
+		$(".chooseSalesBox").hide();
+	});
+	
+	// 点选导购
+	$(".chooseSalesBox .storeSales").on("click", ".item", function(e) {
+		// 选导购弹层上任何一个导购点击
+		e.stopPropagation(); // 阻止事件传播
+		var _t = $(this), salesId = _t.data("id"), csid = _t.data("sid"); // 获取点击导购编号和其所属分店
+		_t.addClass("ac");
+		// 准备参数
+		var params = {
+				sid : csid, 	// 这次选择的分店编号
+				gid : salesId, 	// 这次选择的导购编号
+		}
+		$.post(changeGuideURL, params, function(result){
+			if (result.errCode == 0) {
+				$(".chooseSalesBox").hide();
+				mobileAlert("更换导购成功，" + _t.find(".namer").text() + "很高兴为您服务");
+				// 页面不重定位，会导致高度不一致
+				setTimeout(function() {
+					location.reload();
+				}, 1200);
+				sessionStorage.salesId = salesId; // 记录导购编号
+				sessionStorage.salesName = _t.find(".namer").text(); // 记录导购名字
+				sessionStorage.skipguide = true; // 不用再选导购了
+			} else if (result.errCode == 20001) {
+				window.location.href = loginurl+"?from="+curpage;
+				return false;
+			} else {
+				mobileAlert(result.errMsg); // 弹出错误信息
+				return false;
+			}
+		},"json");
+	});
+	
+	// 去门店列表
+	$(".gotoStore").on("click", function(e) {
+		e.preventDefault();
+		window.location.href = "{:U('WeMall/Store/storeList', array('sid' => $sid), '')}";
+	});
+	
+	// 悬浮按钮聊天窗
+	$("#gotoTalk, .talk").click(function(){
+		var param = { 
+				sid : sid, // 分店信息
+		}
+		$.post(webchatRequestURL, param, function(result){
+			if (result.errCode == 0) {
+				location.href = result.data.chaturl; // 跳转顾客与导购聊天窗页面
+			} else if (result.errCode == 20001) {
+				window.location.href = loginurl+"?from="+curpage;
+				return false;
+			} else {
+				mobileAlert(result.errMsg); // 弹出错误信息
+				return false;
+			}
+		}, "json");
+	});
+	
+});
+</script>
+</body>
+</html>

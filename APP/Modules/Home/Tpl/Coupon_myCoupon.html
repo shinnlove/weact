@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weact.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>我的优惠券列表</title>
+</head>
+
+<body>
+	<div class="lay_header" style="height: 45px">
+        <div class="lay_toptab mod_tab" id="lay_head">
+            <div class="tab_item go_back" onclick="window.history.go(-1);">
+                <i class="qb_icon icon_goback"></i>
+            </div>
+            <a class="tab_item" href='{:U("Home/Index/index", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_home"></i></a>
+            <a class="tab_item" href='{:U("Home/MemberHandle/customerCenter", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_icenter"></i></a>
+            <a class="tab_item" href='{:U("Home/Cart/shoppingCart", array("e_id"=>$e_id), "")}'>
+            	<i class="qb_icon icon_cart"></i>
+                <i class="qb_icon icon_number_bubble qb_none" id="cartNum">0</i>
+            </a>
+        </div>
+    </div><!-- lay_header结束div -->
+    
+    <div class="lay_page page_coupon">
+        <div class="lay_page_wrap">
+            <div class="fn_tinytab">
+                <div class="tab_item tab_coupon active" data-type="0">可使用</div>
+                <div class="tab_item tab_coupon" data-type="-1">已结束</div>
+            </div>
+            
+            <div class="fn_coupon">
+                <ul class="coupon_list"></ul><!-- 优惠券列表 -->
+                <div class="noResult qb_tac qb_none" style="height: 30px;">暂无可使用的优惠券</div>
+            </div>
+        </div>
+    </div>
+	
+	<div class="lay_footer qb_tac qb_fs_s mod_mb15">
+        <div class="fn_quicklinks">
+			<a class="mod_color_weak" href='{:U("Home/Index/index",array("e_id"=>$e_id),"")}'>商户首页</a>
+			<for start="0" end="3" step="1">
+				<span class="mod_color_comment">|</span>
+				<a class="mod_color_weak" href="{$pageinfo [navigation] [foot] [$i] [url]}">{$pageinfo [navigation] [foot] [$i] [nav_name]}</a>
+			</for>
+		</div>
+        <div class="fn_copyright">
+            <div class="mod_color_comment fn_copyright_agreement ui-fz-x-small ui-ta-c"><a href="#">Powered By WeAct</a></div>
+            <div class="mod_color_comment fn_copyright_text">Copyright &copy; 2014 WeAct.<br/>All Rights Reserved. </div>
+            <div class="mod_color_comment fn_copyright_text">微动公司 版权所有</div>
+        </div>
+    </div><!-- lay_footer结束div -->
+
+<!-- 可用优惠券模板 js arttemplate begin -->
+<script type="text/html" id="availabletpl">
+{{each couponlist as e i}}
+	<li class="coupon_item available" data-cid="{{e.coupon_id}}" data-coupontype="{{e.coupon_type}}" data-lowestconsume="{{e.lowest_consume}}" data-denomination="{{e.denomination}}" data-discount="{{e.discount}}">
+		<div class="coupon_main">
+			<div class="coupon_usage">
+				<div class="coupon_name">{{e.coupon_name}}</div>
+				<p class="use_condition">{{if e.lowest_consume <= 0}}无额度限制{{else}}满¥{{e.lowest_consume}}{{/if}}可用</p>
+				<p>{{if e.original_price_only == 0}}适用所有商品{{else if e.original_price_only == 1}}仅限正价商品{{/if}}</p>
+			</div>
+			<div class="coupon_sum">
+				<h3 class="coupon_number">
+					{{if e.coupon_type == 1}} 
+						<span class="cv">¥{{e.denomination}}</span> 
+					{{else if e.coupon_type == 2}} 
+						<span class="cv">{{e.discount}} %</span> 
+					{{else if e.coupon_type == 3}} 
+						<span class="cv">特价 ¥{{e.special_price}}</span> 
+					{{/if}}
+				</h3>
+				<p class="coupon_state">
+					<a href="javascript:;" class="detail-info">详情</a>
+				</p>
+			</div>
+		</div>
+		<div class="coupon_date mod_color_weak">有效时间：{{e.start_time}} 00:00 - {{e.end_time}} 23:59</div>
+	</li>
+{{/each}}
+</script>
+<!-- 可用优惠券模板 js arttemplate end -->
+
+<!-- 过期优惠券模板 js arttemplate begin -->
+<script type="text/html" id="overduetpl">
+{{each couponlist as e i}}
+	<li class="coupon_item overdue" data-cid="{{e.coupon_id}}" data-coupontype="{{e.coupon_type}}" data-lowestconsume="{{e.lowest_consume}}" data-denomination="{{e.denomination}}" data-discount="{{e.discount}}">
+		<div class="coupon_main">
+			<div class="coupon_usage">
+				<div class="coupon_name">{{e.coupon_name}}</div>
+				<p class="use_condition">{{if e.lowest_consume <= 0}}无额度限制{{else}}满¥{{e.lowest_consume}}{{/if}}可用</p>
+				<p>{{if e.original_price_only == 0}}适用所有商品{{else if e.original_price_only == 1}}仅限正价商品{{/if}}</p>
+			</div>
+			<div class="coupon_sum">
+				<h3 class="coupon_number">
+					{{if e.coupon_type == 1}} 
+						<span class="cv">¥{{e.denomination}}</span> 
+					{{else if e.coupon_type == 2}} 
+						<span class="cv">{{e.discount}} %</span> 
+					{{else if e.coupon_type == 3}} 
+						<span class="cv">特价 ¥{{e.special_price}}</span> 
+					{{/if}}
+				</h3>
+				<p class="coupon_state">已过期</p>
+			</div>
+		</div>
+		<div class="coupon_date mod_color_weak">有效时间：{{e.start_time}} 00:00 - {{e.end_time}} 23:59</div>
+	</li>
+{{/each}}
+</script>
+<!-- 过期优惠券模板 js arttemplate end -->
+
+<script type="text/javascript">
+var e_id = "{$e_id}", 						// 商家编号
+	type = 0, 								// 默认查询全部可用优惠券（以后如果有页卡的话可以切换查询）
+	hasMoreData = true, 					// 本js模块全局变量：后续是否还有数据
+	isLoadingData = false, 					// 本js模块全局变量：本模块正在请求数据标记
+	nextstart = 0, 							// 页面默认下一次请求开始的数据位置
+	requestCouponListURL = "{:U('Home/Coupon/queryMyCoupon', '', '')}", // 分页请求可用优惠券
+	availablecouponjson = '{$couponjson}'; 	// 可用优惠券列表
+	
+$(function(){
+	
+	// 可使用和已结束页卡点击
+	$(".tab_coupon").click(function() {
+		var _t = $(this), ctype = _t.data("type");
+		if (!_t.hasClass("active")) {
+			$(".tab_coupon").removeClass("active"); 
+			_t.addClass("active"); 
+			window.type = ctype;
+			getCouponList('pull', 0); 
+		} 
+	});
+	
+	// 第一次直出渲染模板（第一次是可用优惠券）
+	var couponlist = $.parseJSON(window.availablecouponjson); 
+	var tmpl = template('availabletpl', couponlist.data); 
+	var couponListObj = $('.coupon_list'); 
+	if (tmpl == '{Template Error}') {
+		tmpl = ""; 
+		$(".noResult").removeClass("qb_none").html("好像出了点问题，请联系管理员");
+	} else if (tmpl == "") {
+		hasMoreData = false; // 没有更多的优惠券了
+		$(".noResult").removeClass("qb_none").html("当前没有更多优惠券了");
+	}
+	couponListObj.html(tmpl);	
+	window.nextstart = couponlist.nextstart; 
+	
+	// 向上推（到底部才加载）与向下拉（不是很敏感）
+	$(window).scroll(function() {
+		var scrollh = document.body.scrollHeight; // 网页正文全文高
+		var clienth = document.documentElement.clientHeight; // 网页可见区域高度
+		var scrollt = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop; // 网页被卷去的高
+		var limitheight = 30; // 触碰屏幕的距离底部（增加到30px，预留一下）
+		if (scrollt + clienth + limitheight >= scrollh && !isLoadingData && hasMoreData) {
+			isLoadingData = true; 
+			getCouponList('drag'); 
+		}
+		scrollPosition = $(window).scrollTop();
+	}).swipeDown(function(){
+		if (! isLoadingData && document.body.scrollTop <= 1) {
+            isLoadingData = true; 
+            getCouponList('pull', 0); 
+        }
+	});
+	
+	if(sessionStorage.usedCoupon){
+		// 如果之前选择过优惠券，则将当前选中优惠券本身出现取消使用按钮
+	    var usedId = JSON.parse(sessionStorage.usedCoupon).id;
+	    $(".coupon_list .available .coupon_state").each(function(i,e){
+	    	var _t = $(this), curId = _t.closest(".coupon_item").data("cid");
+	        if(curId == usedId){
+	        	_t.find(".cancel-now").removeClass("qb_none"); // 出现取消使用按钮
+	        	_t.find(".use-now").addClass("qb_none"); // 去除立即使用按钮
+	        	return false;
+	        } 
+	    });
+	}
+	
+	// 查看优惠券详情
+	$(".coupon_list").on("click", ".coupon_main", function(){
+	    var _t = $(this), cid = _t.closest(".coupon_item").data("cid");
+	    window.location.href = "{:U('Home/Coupon/couponInfo', array('e_id' => $e_id), '')}/cid/"+cid; // 跳转优惠券详情页面
+	});
+	
+});
+	
+//分页请求可用优惠券信息
+function getCouponList(action, nextstart) {
+	// Step1：定义请求参数
+	var start = 0; // 定义起始页为0
+	if (typeof nextstart == 'undefined') {
+		start = window.nextstart; // 如果没有定义nextstart下一页数据，就用window.nextstart这个值
+	} 
+	var url = requestCouponListURL + "?e_id=" + e_id + "&nextstart=" + start; // 分页请求数据的地址
+	
+	// Step2：根据不同的请求方式
+	switch (action) {
+		case 'pull':
+			$(".noResult").addClass("qb_none").html(""); // 默认已显示全部的div隐藏
+			break;
+		case 'drag':
+			// 如果是上推操作
+			MLoading.show('加载中');
+			break;
+		default:
+			MLoading.show('加载中');
+			break;
+	}
+	hasMoreData = true; 
+	isLoadingData = true;
+	
+	// 准备请求参数
+	var params = {
+			e_id : e_id, 				// 商家编号
+			type : window.type, 		// 优惠券类型
+			nextstart : start 			// 下一页店铺开始的位置
+	}
+	// Step3：请求并且完成界面不同显示
+	$.post(url, params, function(result){
+		MLoading.hide(); 
+		isLoadingData = false; 
+		if (result.errCode == 0) {
+			// 如果正确请求到了优惠券数据
+			var couponListObj = $('.coupon_list'); 
+			
+			if (action == 'pull') {
+				// 如果加载数据的动作是下拉，需要清空原来的
+				couponListObj.html('');	
+				var tmpl = "";
+				if (window.type == 0) {
+					tmpl = template('availabletpl', result.data); // 如果是所有可用优惠券
+				} else {
+					tmpl = template('overduetpl', result.data); 
+				}
+				if (tmpl == '{Template Error}') {
+					tmpl = ""; // 如果渲染模板出错，置空tmpl
+					$(".noResult").removeClass("qb_none").html("出了点小问题，请联系管理员");
+				} else if (tmpl == "") {
+					hasMoreData = false; 
+					$(".noResult").removeClass("qb_none").html("当前没有更多优惠券了");
+				}
+				couponListObj.html(tmpl); // 写入新html数据
+			} else {
+				// 上推加载下一页的处理
+				var tmpl = "";
+				if (window.type == 0) {
+					tmpl = template('availabletpl', result.data); // 如果是所有可用优惠券
+				} else {
+					tmpl = template('overduetpl', result.data); 
+				}
+				if (tmpl == '{Template Error}') {
+					tmpl = ""; // 如果渲染模板出错，置空tmpl
+					$(".noResult").removeClass("qb_none").html("出了点小问题，请联系管理员");
+				}
+				couponListObj.append(tmpl); 
+				
+				if (result.data.couponlist.length == 0) {
+					hasMoreData = false; 
+					$(".noResult").removeClass("qb_none").html("当前没有更多优惠券了");
+				}
+			}
+			window.nextstart = nextstart = result.nextstart; 
+		} else {
+			utils.showBubble("请求优惠券列表失败！");
+			return false; 
+		}
+	}, 'json');
+}
+</script>
+</body>
+</html>

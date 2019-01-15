@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>我的活动</title>
+</head>
+
+<body class="easyui-layout">
+	<div data-options="region:'center',title:'店铺活动',border:false">
+		<table id="myactivity"></table>
+		<div id="d" class="easyui-window" title="我的分享链接" iconCls="icon-edit" closed="true" minimizable="false" maximizable="false" style="width: 500px; height: 140px; padding: 5px; background: #fafafa;">
+			<div class="easyui-layout" fit="true">
+				<div region="center" border="false" style="padding: 10px; background: #fff; border: 1px solid #ccc;">
+					活动地址： <input name="outaddress" id="shareurl" size="50" value="" />
+					<input type="hidden" id="eid" value="{$_SESSION['curEnterprise']['e_id']}" />
+				</div>
+				<div region="south" border="false" style="text-align: right; height: 50px; line-height: 30px;">
+					<label style="color: red; font-size: 10px; margin-bottom: 0px;">选择链接,Ctrl+c复制链接进行微信推送</label>
+					<a class="easyui-linkbutton" iconCls="icon-redo" href="https://mp.weixin.qq.com/" target="_blank">推送链接</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<script type="text/javascript">
+$(function() {
+	myactivity = $('#myactivity').datagrid({
+		url : "{:U('Admin/Activity/readMyActivity','','')}",
+		method : 'post',
+		fitColumns : true,
+		fit : true,
+		pagination : true,
+		rownumbers : true,
+		singleSelect : true,
+		idField : 'activity_id',
+		striped : true,
+		toolbar : [ { id : 'addicon', text : '添加活动', iconCls : 'icon-add', handler : function() { addactivity(); } },
+		            { id : 'editicon', text : '推广活动', iconCls : 'icon-edit', handler : function() { getshareurl(); } } ],
+		columns : [ [ 
+		              { field : 'activity_name', title : '活动名字', width : 250 }, 
+		              { field : 'activity_type', title : '活动类型', width : 50, formatter : activitytype }, 
+		              { field : 'start_time', title : '开始时间', sortable : true, width : 100 }, 
+		              { field : 'end_time', title : '截止时间', sortable : true, width : 100 }, 
+		              { field : 'add_time', sortable : true, title : '添加时间', width : 100 }, 
+		              { field : 'is_del', title : '状态', width : 100, sortable : true, formatter : formatdel }, 
+		              { field : 'activity_id', title : '操作', width : 100, formatter : formatopt } 
+		          ] ],
+		view : detailview,
+		detailFormatter : function(rowIndex, rowData) {
+			var activity_description = rowData.activity_description == null ? '' : rowData.activity_description;
+			return '<table><tr><td><font color=\'red\'>优惠：</font>'
+					+ rowData.activity
+					+ '</td></tr><tr><td><font color=\'red\'>说明：</font>'
+					+ activity_description
+					+ '</td></tr></table>';
+		}
+	});
+});
+
+function activitytype(val, row) {
+	if (val == 0)
+		return "直接打折";
+	if (val == 1)
+		return "直接减价";
+	if (val == 2)
+		return "微电商活动";
+}
+
+//判断是否删除
+function formatdel(val, row) {
+	if (val == 0) {
+		return '正在进行中';
+	}
+	if (val == 1) {
+		return '已删除或已过期'
+	}
+}
+
+//添加删除按钮
+function formatopt(val, row) {
+	var url = "{:U('Admin/Activity/delMyActivity','','')}?activity_id=" + row.activity_id;
+	if (row.is_del == 1)
+		return "不可操作";
+	if (row.is_del == 0)
+		return "<a href='"+url+"'><font color='red'>删除</font></a>";
+}
+
+function formatshare(val, row) {
+	var url = "{:U('Admin/Activity/delMyActivity','','')}?activity_id=" + row.activity_id;
+	if (row.is_del == 1)
+		return "不可操作";
+	if (row.is_del == 0)
+		return "<button onclick='javascript:alert(\'ok\')'>推送微信消息</button>";
+}
+
+function addactivity(){
+	window.location.href = "{:U('preaddActivity')}";
+}
+
+function getshareurl() {
+	var rows = myactivity.datagrid('getSelections');
+	if (rows.length == 0) {
+		$.messager.alert('提示', '请先选择一个活动', 'info');
+	} else {
+		if (rows[0].is_del == 1) {
+			$.messager.alert('提示', '请选择一个有效活动', 'info');
+		} else {
+			$('#d').window('open');
+			var e_id = $("#eid").val();
+			document.getElementById("shareurl").value = "{:U('Home/Activity/getMyActivity','','','',true)}?activity_id=" + rows[0].activity_id + '&e_id=' + e_id;
+		}
+	}
+}
+
+function copyToClipboard(theField, isalert) {
+	var obj = document.getElementById(theField);
+	if (obj != null) {
+		var clipBoardContent = obj.value;
+		obj.select();
+		windows.clipboardData.setData("Text", clipBoardContent);
+		if (isalert != false) {
+			alert("复制成功");
+		} else {
+			alert("复制失败");
+		}
+	}
+}
+</script>
+</body>
+</html>

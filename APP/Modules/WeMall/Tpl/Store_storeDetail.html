@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/myToushSlider.js"></script>
+<title>{$sinfo.subbranch_name} - 门店详情</title>
+<style>
+body{background: #fff;}
+.swiper-containter{border-bottom: solid 1px #e4e4e4;}
+.main_image{height: 180px;}
+.main_image li img{height: 180px;}
+.flicking_con{top: 160px;}
+.flicking_con a.on{background: #000;}
+
+.storeMsg{padding: 10px 0 0;margin: 0 15px;line-height: 22px;}
+.storeMsg .name{font-size: 16px;font-weight: bold;}
+.allStore{display: block;line-height: 40px;padding-left: 15px;border-top: solid 1px #e4e4e4;border-bottom: solid 1px #e4e4e4;margin: 20px 0;}
+</style>
+</head>
+
+<body>
+	<div class="swiper-containter">
+		<div class="flicking_con"></div>
+		<div class="main_image">
+		     <ul></ul>
+		</div>
+	</div>
+	
+	<div class="storeMsg">
+		<div class="name">{$sinfo.subbranch_name}</div>
+		<div class="addr fc-grey">{$sinfo.subbranch_address}</div>
+		<!-- <div class="time fc-grey">00:00 - 24:00</div> -->
+	</div>
+	
+	<div class="storeSales"></div>
+	
+	<a href="{:U('WeMall/Store/storeList', array('sid' => $sid), '')}" class="allStore with-go-right">查看所有店铺</a>
+	
+<!-- 店铺导购列表 js arttemplate begin -->
+<script type="text/html" id="guidelisttpl">
+{{each guidelist as e i}}
+	<div class="item wbox">
+		<div class="wbox-1">
+			<a href="{{e.guide_id | guideCommentURL}}" class="salesLink">
+				<div class="wbox">
+					<div class="roundWrap"><img src="{{e.headimg}}" class="size43 round"></div>
+					<div class="name wbox-1">
+						<div>{{e.guide_name}}</div>
+						<div>
+							<div class="appProgress"><span class="val" data-stars="{{e.star_level}}" style="width:0;"></span></div>
+							<div class="grade">{{e.star_level}}</div>
+						</div>
+					</div>
+				</div>
+			</a>
+		</div>
+		<div class="talk pt5"><a href="" data-id="{{e.guide_id}}" class="salesListTalk btn">咨询</a></div>
+	</div>
+{{/each}}
+</script>
+<!-- 店铺导购列表 js arttemplate end -->
+
+<script type="text/javascript">
+var previewArr = "http://www.qiakr.com/file/img/2015031321/1426252572370.jpg,http://www.qiakr.com/file/img/2015031321/1426252573073.jpg,http://www.qiakr.com/file/img/2015031321/1426252576137.jpg".split(",");
+var guidejson = '{$guidelistjson}'; // 导购列表json
+var eid = '{$eid}', 
+	sid = '{$sid}', // 商家编号和分店编号
+	webchatRequestURL = "{:U('WeMall/GuideChatRequest/initWebChat', '', '')}"; // 请求聊天窗URL
+
+// 页面初始化函数
+$(function(){
+	// 初始化店铺图片
+	initShopImage(window.previewArr);
+	
+	// 第一次直出渲染模板
+	var guidelist = $.parseJSON(window.guidejson); 	// 解析页面的json数据（不管是带了反斜杠，还是没有反斜杠，都可以解析json数据） 
+	var tmpl = template('guidelisttpl', guidelist.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+	var guideListObj = $('.storeSales'); 			// 抓取class为storeSales，定义为guideListObj对象
+	if (tmpl == '{Template Error}') {
+		tmpl = ""; // 置空tmpl
+	} 
+	guideListObj.html(tmpl);						// 渲染成功就把模板渲染的信息写入
+	
+	// 渲染后初始化导购评星
+	$(".storeSales .appProgress").each(function(i,e){
+	    var stars = parseFloat($(e).find(".val").data("stars"));
+	    $(e).find(".val").width((stars*20).toFixed(1) + "%");
+	    $(e).siblings(".grade").html(stars.toFixed(1));
+	});
+	
+	// 生成咨询导购事件
+	$(".storeSales .talk a").on("click",function(e){
+		e.preventDefault(); // 阻止超链接跳转
+		scscms_alert("只能与自己的导购聊天，或者更换导购后再聊天!", "ok", "", 2);	// 定时3秒后关闭窗口
+		setTimeout(function(){
+			var param = { 
+					sid : sid, // 分店信息
+			}
+			$.post(webchatRequestURL, param, function(result){
+				if (result.errCode == 0) {
+					location.href = result.data.chaturl; // 跳转顾客与导购聊天窗页面
+				} else if (result.errCode == 20001) {
+					window.location.href = loginurl+"?from="+curpage;
+					return false;
+				} else {
+					mobileAlert(result.errMsg); // 弹出错误信息
+					return false;
+				}
+			}, "json");
+		},2000);
+		/* return false;
+	    var id=$(this).data("id"); // 获取导购编号
+	    window.location.href="#?gid="+id; // 跳转聊天界面 */
+	});
+	
+});
+
+// 初始化店铺图片（传入店铺图片数组）
+function initShopImage(previewArr) {
+	var previewStr="", iconStr = "";
+	if(previewArr[0] == "") {
+		previewArr = ["http://static.qiakr.com/mall/Store@2x.png"];
+	}
+	Zepto.each(previewArr,function(i,e){
+	    previewStr += '<li style="width:'+document.body.clientWidth+'px;"><img src="'+e+'?imageView2/2/h/360"></li>';
+	    iconStr += '<a href="#" class="">'+i+'</a>';
+	});
+	$('.main_image ul').append(previewStr);
+	if(previewArr.length > 1){
+	    $('.flicking_con').append(iconStr);
+	    $('.flicking_con a:eq(0)').addClass("on");
+	    $('.flicking_con').css("margin-left","-"+$('.flicking_con a').length*7.5+"px");
+	    $.mggScrollImg('.main_image ul',{
+	        loop : true,//循环切换
+	        auto : true,//自动切换
+	        callback : function(ind){ 
+	        	//这里传过来的是索引值
+	            $('.flicking_con a').removeClass("on");
+	            $('.flicking_con a:eq('+ind+')').addClass("on");
+	        }
+	    });
+	}
+}
+</script>
+</body>
+</html>

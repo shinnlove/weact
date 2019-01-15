@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/ui-dialog.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artdialog/dialog-min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonutil.js"></script>
+<title>设置微信支付Version2</title>
+</head>
+
+<body>
+	<div class="widget">
+		<div class="widget-head">
+			<div class="pull-left">
+            	<span class="text-success">微信支付Version2</span> <span class="v2-open-status text-warning">已启用</span>
+			</div>
+            <div class="clearfix"></div>
+		</div>
+        
+		<div class="widget-content">
+			<div class="padd">
+            
+            	<form name="myForm" class="form-horizontal uniform" action='' method="post">
+					<div class="control-group">
+			            <div class="controls controls-row"><h2>配置微信支付Version2</h2></div>
+			            <div class="controls controls-row">
+				        	<font style="font-weight:bold; color:#666;">说明：</font><font style="color:highlight; line-height:22px;">若不配置支付信息，商城将只能浏览商品，不能完成支付，带<span class="text-error">(*)</span>为必填信息！</font><br />
+							<font style="font-weight:bold; color:#666;">申请方式：</font><font style="color:highlight; line-height:22px;">微信支付必须认证的服务号方可申请，详询微信客服人员。</font><br />
+						</div>
+			        </div>
+					
+					<hr />
+					
+			        <div class="control-group success" style="margin-top:20px;">
+						<label class="control-label"> JS API支付授权目录 </label>
+						<div class="controls controls-row">
+							<input type="text" class="uniform myinput" id="paymentauthorization" name="paymentauthorization" placeholder="请刷新页面，并将此链接复制到公众平台。"  value="http://www.we-act.cn/weact/Home/WeChatPay/" />
+						</div>
+                    </div>
+                    
+                    <div class="control-group success">
+						<label class="control-label"> JS API支付请求实例 </label>
+						<div class="controls controls-row">
+							<input type="text" class="uniform myinput" id="paymentrequests" name="paymentrequests" placeholder="请刷新页面，并将此链接复制到公众平台。"  value="http://www.we-act.cn/weact/Home/WeChatPay/webPayCall/e_id/{$appinfo.e_id}/" />
+						</div>
+                    </div>
+                    
+                    <div class="control-group success">
+						<label class="control-label"> Native原生支付回调URL </label>
+						<div class="controls controls-row">
+							<input type="text" class="uniform myinput" id="paymentcallback" name="paymentcallback" placeholder="请刷新页面，并将此链接复制到公众平台。"  value="http://www.we-act.cn/weact/Home/WeChatPay/nativeCallback/e_id/{$appinfo.e_id}/" />
+						</div>
+                    </div>
+                    
+                    <div class="control-group success">
+						<label class="control-label"> 维权通知URL </label>
+						<div class="controls controls-row">
+							<input type="text" class="uniform myinput" id="rightsnotice" name="rightsnotice" placeholder="请刷新页面，并将此链接复制到公众平台。"  value="http://www.we-act.cn/weact/Home/WeChatPay/guardLegalRight/e_id/{$appinfo.e_id}/" />
+						</div>
+                    </div>
+                    
+                    <div class="control-group success">
+						<label class="control-label"> 告警通知URL </label>
+						<div class="controls controls-row">
+							<input type="text" class="uniform myinput" id="warningnotice" name="warningnotice" placeholder="请刷新页面，并将此链接复制到公众平台。"  value="http://www.we-act.cn/weact/Home/WeChatPay/payInfoOrWarn/e_id/{$appinfo.e_id}/" />
+						</div>
+                    </div>
+                    
+                    <div class="control-group hide" id="copyhintDiv">
+						<div class="alert alert-info" style="margin-top: 5px;" id="copyhint"> </div>
+                    </div>
+                    
+                    <hr />
+			        
+					<div class="control-group">
+			            <label class="control-label">
+							paysignkey<span class="text-error">(*)</span>
+			            </label>
+			            <div class="controls controls-row">
+			                <input type="text" class="uniform myinput" id="paysignkey" name="paysignkey" placeholder="请输入财付通邮件中提供的paysignkey" required="required" value="{$appinfo.paysignkey}" />
+			            </div>
+			        </div>
+			
+					<div class="control-group">
+			            <label class="control-label">
+							partnerid<span class="text-error">(*)</span>
+			            </label>
+			            <div class="controls controls-row">
+			                <input type="text" class="uniform myinput" id="partnerid" name="partnerid" placeholder="请输入财付通邮件中提供的partnerid" required="required" value="{$appinfo.partnerid}" />
+			            </div>
+			        </div>
+			        
+					<div class="control-group">
+			            <label class="control-label">
+							partnerkey<span class="text-error">(*)</span>
+			            </label>
+			            <div class="controls controls-row">
+			                <input type="text" class="uniform myinput" id="partnerkey" name="partnerkey" placeholder="请输入财付通邮件中提供的partnerkey" required="required" value="{$appinfo.partnerkey}" />
+			            </div>
+			        </div>
+			     	
+			     	<div class="control-group">
+			            <label class="control-label">开启微信V2支付</label>
+			            <div class="controls controls-row">
+			                <input type="checkbox" class="uniform" id="open_payv2" name="open_tenpay" />只有开启后，才能进行微支付
+			            </div>
+			        </div>
+					
+					<hr />
+					
+					<div class="handle-action">
+			            <a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">提交</a>
+			            &nbsp;&nbsp;
+			            <a id="resetbtn" class="large ui-color-button blue" href="javascript:void(0)">重置</a>
+			            <a href="javascript:history.go(-1);">
+			                <img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/images/goback.png" />
+			            </a>
+			        </div>
+				</form>
+            
+			</div><!--包裹form的div class="padd"的结束div-->
+
+		</div><!--widget-head结束div-->
+	</div><!--widget结束div-->
+
+<script type="text/javascript">
+var payv2open = {$appinfo.tenpay_open}; // 当前支付状态
+
+var old_paysignkey = '{$appinfo.paysignkey}';
+var old_partnerid = '{$appinfo.partnerid}';
+var old_partnerkey = '{$appinfo.partnerkey}';
+var pa = $ ('#paymentauthorization');
+var pr = $ ('#paymentrequests');
+var pc = $('#paymentcallback');
+var rn = $('#rightsnotice');
+var wn = $('#warningnotice');
+var psk = $("#paysignkey");
+var pi = $("#partnerid");
+var pk = $("#partnerkey");
+
+$(function(){
+	$(".uniform").uniform();					//文本框的uniform格式化，必不可少
+	
+	if (payv2open == 2) {
+		$("#open_payv2").attr("checked", "checked"); // checkbox自身选中
+		$("#open_payv2").parent().addClass("checked"); // uniform也选中
+		// 上面的字显示
+		$(".v2-open-status").removeClass("text-warning").addClass("text-success").html("已启用");
+	} else {
+		$(".v2-open-status").removeClass("text-success").addClass("text-warning").html("未启用");
+	}
+	
+	//提交按钮
+	$('#submitbtn').click(function(){
+	  	if(psk.val()==""){
+	  		util.alert("请输入paysignkey！", function(){
+	  			psk.focus();					//注意聚焦和return的顺序！
+	  		});
+	  		return								//注意聚焦和return的顺序！
+	  	}else if(pi.val()==""){
+	  		util.alert("请输入partnerid！", function(){
+	  			pi.focus();					//注意聚焦和return的顺序！
+	  		});
+	  		return								//注意聚焦和return的顺序！
+	  	}else if(pk.val()==""){
+	  		util.alert('请输入partnerkey！', function(){
+	  			pk.focus();						//注意聚焦和return的顺序！
+	  		});
+	  		return								//注意聚焦和return的顺序！
+	  	}else{
+	  		util.confirm("确定提交所配置的微支付信息吗？", function(){
+	  			var new_paysignkey = psk.val();
+				var new_partnerid = pi.val();
+				var new_partnerkey = pk.val();
+				var checked = 0;
+				var temp = $('.checker span').attr("class");
+				if(temp=="checked"){
+					checked = 1;
+				}
+				
+				$.post('{:U("Admin/EnterpriseSetRequest/wechatPayV2Confirm", "", "")}',
+					{ paysignkey:new_paysignkey, partnerid:new_partnerid, partnerkey:new_partnerkey, checked: checked },
+					function(result){
+						if(result.errCode == 0){
+							$.messager.alert('温馨提示', '保存成功!', 'info');
+							setTimeout(function(){
+								window.location.reload(); // 页面刷新下
+							},1000);
+						} else {
+							$.messager.alert('温馨提示', '信息配置失败，'+result.errMsg, 'error');
+							return false;
+						}
+					}
+				,'json');
+	  		}, function(){});
+	     }
+	});
+	
+	//重置按钮
+	$("#resetbtn").click(function(){
+		util.confirm("确定重置信息？", function(){
+			psk.val(old_paysignkey);
+			pi.val(old_partnerid);
+			pk.val(old_partnerkey);
+			//checkBoxInit();
+  		}, function(){});
+	});
+}); 
+</script>
+</body>
+</html>

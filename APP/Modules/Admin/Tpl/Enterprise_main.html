@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="__PUBLIC__/bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" href="__PUBLIC__/lib/jquery-ui/css/Aristo/Aristo.css" /><!-- jQuery UI theme -->
+<link rel="stylesheet" href="__PUBLIC__/lib/jBreadcrumbs/css/BreadCrumb.css" /><!-- tooltips 洋葱皮动态滑动css -->
+<link rel="stylesheet" href="__PUBLIC__/img/splashy/splashy.css" /><!-- aditional icons -->
+<link rel="stylesheet" href="__PUBLIC__/img/flags/flags.css" />
+<link rel="stylesheet" href="__PUBLIC__/css/style.css" />
+<link rel="stylesheet" href="__PUBLIC__/css/blue.css" id="link_theme" /><!-- theme color-->
+<script type="text/javascript"  src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery-migrate.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lib/jquery-ui/jquery-ui-1.10.0.custom.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/forms/jquery.ui.touch-punch.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.easing.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.debouncedresize.min.js"></script><!-- smart resize event -->
+<script type="text/javascript" src="__PUBLIC__/js/jquery_cookie_min.js"></script><!-- js cookie plugin -->
+<script type="text/javascript" src="__PUBLIC__/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/bootstrap.plugins.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lib/typeahead/typeahead.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lib/jBreadcrumbs/js/jquery.jBreadCrumb.1.1.min.js"></script><!-- jBreadcrumbs 洋葱皮滑动效果 -->
+<script type="text/javascript" src="__PUBLIC__/js/jquery.actual.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lib/slimScroll/jquery.slimscroll.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/ios-orientationchange-fix.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lib/UItoTop/jquery.ui.totop.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/selectNav.js"></script><!-- mobile nav -->
+<script type="text/javascript" src="__PUBLIC__/js/indexInit.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/selffit.js"></script><!-- 移动端的自适应 -->
+<!--[if lte IE 8]>
+	<link rel="stylesheet" href="__PUBLIC__/css/ie.css" />
+<![endif]-->
+<!--[if lt IE 9]>
+	<script src="__PUBLIC__/js/ie/html5.js"></script>
+	<script src="__PUBLIC__/js/ie/respond.min.js"></script>
+	<script src="__PUBLIC__/lib/flot/excanvas.min.js"></script>
+<![endif]-->
+<title>微动 -- 品牌企业管理系统</title>
+</head>
+
+<body class="full_width">
+	<div class="style_switcher">
+		<div class="sepH_c">
+			<p>主题风格:</p>
+			<div class="clearfix">
+				<a href="javascript:void(0)" class="style_item jQclr blue_theme style_active" title="blue">蓝色</a>
+				<a href="javascript:void(0)" class="style_item jQclr dark_theme" title="dark">低调灰</a> 
+				<a href="javascript:void(0)" class="style_item jQclr green_theme" title="green">绿色</a> 
+				<a href="javascript:void(0)" class="style_item jQclr brown_theme" title="brown">棕色</a> 
+				<a href="javascript:void(0)" class="style_item jQclr eastern_blue_theme" title="eastern_blue">湖蓝</a> 
+				<a href="javascript:void(0)" class="style_item jQclr tamarillo_theme" title="tamarillo">洋红</a>
+			</div>
+		</div>
+		<div class="sepH_c">
+			<p>背景装饰:</p>
+			<div class="clearfix">
+				<span class="style_item jQptrn style_active ptrn_def" title=""></span>
+				<span class="ssw_ptrn_a style_item jQptrn" title="ptrn_a"></span> 
+				<span class="ssw_ptrn_b style_item jQptrn" title="ptrn_b"></span> 
+				<span class="ssw_ptrn_c style_item jQptrn" title="ptrn_c"></span> 
+				<span class="ssw_ptrn_d style_item jQptrn" title="ptrn_d"></span> 
+				<span class="ssw_ptrn_e style_item jQptrn" title="ptrn_e"></span>
+			</div>
+		</div>
+		<div class="sepH_c">
+			<p>屏幕缩放:</p>
+			<div class="clearfix">
+				<label class="radio-inline">
+					<input name="ssw_layout" id="ssw_layout_fluid" value="" checked="" type="radio">全屏</label> 
+					<label class="radio-inline"><input name="ssw_layout" id="ssw_layout_fixed" value="gebo-fixed" type="radio">固定</label>
+			</div>
+		</div>
+		<div class="sepH_c">
+			<p>侧栏导航位置:</p>
+			<div class="clearfix">
+				<label class="radio-inline"><input name="ssw_sidebar" id="ssw_sidebar_left" value="" checked="" type="radio">靠左</label> 
+				<label class="radio-inline"><input name="ssw_sidebar" id="ssw_sidebar_right" value="sidebar_right" type="radio">靠右</label>
+			</div>
+		</div>
+		<div class="sepH_c">
+			<p>顶端菜单展开方式:</p>
+			<div class="clearfix">
+				<label class="radio-inline"><input name="ssw_menu" id="ssw_menu_click" value="" checked="" type="radio">点击展开</label>
+				<label class="radio-inline"><input name="ssw_menu" id="ssw_menu_hover" value="menu_hover" type="radio">悬浮展开</label>
+			</div>
+		</div>
+
+		<div class="gh_button-group">
+			<!-- <a href="#" id="showCss" class="btn btn-primary btn-sm">主题列表</a> -->
+			<a href="#" id="" class="btn btn-primary btn-sm">主题列表</a>
+			<a href="#" id="resetDefault" class="btn btn-default btn-sm">恢复默认</a>
+		</div>
+		<div class="hide">
+			<ul id="ssw_styles">
+				<li class="small ssw_mbColor sepH_a" style="display: none">body
+					{<span class="ssw_mColor sepH_a" style="display: none">
+						color: #<span></span>;
+				</span> <span class="ssw_bColor" style="display: none">background-color:
+						#<span></span>
+				</span>}
+				</li>
+				<li class="small ssw_lColor sepH_a" style="display: none">a {
+					color: #<span></span> }
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<div id="maincontainer" class="clearfix">
+		<header>
+			<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+				<div class="navbar-inner">
+					<div class="container">
+						<a class="brand pull-left" href="javascript:location.reload();"><font class="brand-logo">微动品牌管理系统</font><!-- <span class="sml_t">weact</span> --></a>
+						<ul class="nav navbar-nav top-nav" id="mobile-nav">
+							<li class="dropdown"></li><!-- 必须保留一个dropdown，不然会出错 -->
+							<!-- 此处载入数据库导航，并初始化点击事件 -->
+						</ul>
+						<ul class="nav navbar-nav user_menu pull-right">
+							<li class="hidden-phone hidden-tablet">
+								<div class="nb_boxes clearfix">
+									<a data-toggle="modal" data-backdrop="static" href="#" class="label ttip_b" title="New messages">0 
+										<i class="splashy-mail_light"></i>
+									</a> 
+									<a data-toggle="modal" data-backdrop="static" href="#" class="label ttip_b" title="New tasks">0 
+										<i class="splashy-calendar_week"></i>
+									</a>
+								</div>
+							</li>
+							<!-- <li class="divider-vertical hidden-sm hidden-xs"></li>
+							<li class="dropdown">
+								<a href="#" class="dropdown-toggle nav_condensed" data-toggle="dropdown">
+									<i class="flag-gb"></i> <b class="caret"></b>
+								</a>
+								<ul class="dropdown-menu">
+									<li><a href="javascript:void(0)"><i class="flag-de"></i>Deutsch</a></li>
+									<li><a href="javascript:void(0)"><i class="flag-fr"></i> Français</a></li>
+									<li><a href="javascript:void(0)"><i class="flag-es"></i> Español</a></li>
+									<li><a href="javascript:void(0)"><i class="flag-ru"></i> Pусский</a></li>
+								</ul>
+							</li> -->
+							<li class="divider-vertical hidden-sm hidden-xs"></li>
+							<li class="dropdown" style="width:170px;">
+								<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+									<img src="__PUBLIC__/img/user_avatar.png" alt="" class="user_avatar">{$brandname} <b class="caret"></b>
+								</a>
+								<ul class="dropdown-menu">
+									<li><a href="#">总店信息</a></li>
+									<li><a href="javascrip:void(0)">修改密码</a></li>
+									<li class="divider"></li>
+									<li><a href="#" id="loginout">注销登录</a></li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</nav>
+			
+			<div class="modal fade" id="myMail">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+							<h3 class="modal-title">New Messages</h3>
+						</div>
+						<div class="modal-body">
+							<div class="alert alert-info">In this table jquery plugin turns a table row into a clickable link.</div>
+							<table class="table table-condensed table-striped" data-provides="rowlink">
+								<thead>
+									<tr>
+										<th>Sender</th>
+										<th>Subject</th>
+										<th>Date</th>
+										<th>Size</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>Declan Pamphlett</td>
+										<td><a href="javascript:void(0)">Lorem ipsum dolor
+												sit amet</a></td>
+										<td>23/05/2012</td>
+										<td>25KB</td>
+									</tr>
+									<tr>
+										<td>Erin Church</td>
+										<td><a href="javascript:void(0)">Lorem ipsum dolor
+												sit amet</a></td>
+										<td>24/05/2012</td>
+										<td>15KB</td>
+									</tr>
+									<tr>
+										<td>Koby Auld</td>
+										<td><a href="javascript:void(0)">Lorem ipsum dolor
+												sit amet</a></td>
+										<td>25/05/2012</td>
+										<td>28KB</td>
+									</tr>
+									<tr>
+										<td>Anthony Pound</td>
+										<td><a href="javascript:void(0)">Lorem ipsum dolor
+												sit amet</a></td>
+										<td>25/05/2012</td>
+										<td>33KB</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default">Go to mailbox</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="modal fade" id="myTasks">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+							<h3 class="modal-title">New Tasks</h3>
+						</div>
+						<div class="modal-body">
+							<div class="alert alert-info">In this table jquery plugin turns a table row into a clickable link.</div>
+							<table class="table table-condensed table-striped" data-provides="rowlink">
+								<thead>
+									<tr>
+										<th>id</th>
+										<th>Summary</th>
+										<th>Updated</th>
+										<th>Priority</th>
+										<th>Status</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>P-23</td>
+										<td><a href="javascript:void(0)">Admin should not break if URL…</a></td>
+										<td>23/05/2012</td>
+										<td><span class="label label-danger">High</span></td>
+										<td>Open</td>
+									</tr>
+									<tr>
+										<td>P-18</td>
+										<td><a href="javascript:void(0)">Displaying submenus in custom…</a></td>
+										<td>22/05/2012</td>
+										<td><span class="label label-warning">Medium</span></td>
+										<td>Reopen</td>
+									</tr>
+									<tr>
+										<td>P-25</td>
+										<td><a href="javascript:void(0)">Featured image on post types…</a></td>
+										<td>22/05/2012</td>
+										<td><span class="label label-success">Low</span></td>
+										<td>Updated</td>
+									</tr>
+									<tr>
+										<td>P-10</td>
+										<td><a href="javascript:void(0)">Multiple feed fixes and…</a></td>
+										<td>17/05/2012</td>
+										<td><span class="label label-warning">Medium</span></td>
+										<td>Open</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default">Go to task manager</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</header>
+		
+		<div id="contentwrapper">
+			<div class="main_content">
+				<div id="jCrumbs" class="breadCrumb module">
+					<ul>
+						<li><a href="#"><i class="glyphicon glyphicon-home"></i></a></li>
+						<li class="rootli"><a href="#">品牌管理系统</a></li>
+						<li class="secondli"><a href="#">主页</a></li>
+						<li class="leafli"><a href="#">欢迎页</a></li>
+						<li><a href="#">点击返回</a></li>
+					</ul>
+				</div>
+
+				<div class="row myframecontent" style="padding: 0px 15px;">
+					<!--在此处以下嵌入框架页面-->
+					<iframe id="myframe" name="myframe" src="{:U('Admin/Index/welcome')}" frameborder="false" scrolling="auto" style="overflow-x: hidden; border: none;" width="100%" height="100%" allowtransparency="true"></iframe>
+					<!--在此处以上嵌入框架页面-->
+				</div>
+			</div>
+		</div>
+
+		<a href="javascript:void(0)" class="sidebar_switch on_switch ttip_r" title="Hide Sidebar">Sidebar switch</a>
+		<div class="sidebar">
+		
+			<div class="sidebar_inner_scroll">
+				<div class="sidebar_inner">
+					<!-- 搜索框 -->
+					<form action="#" class="input-group input-group-sm" method="post">
+						<input autocomplete="off" name="query" class="search_query form-control input-sm" size="16" placeholder="Search..." type="text"> 
+						<span class="input-group-btn">
+							<!-- <button type="submit" class="btn btn-default"> <i class="glyphicon glyphicon-search"></i> </button> -->
+							<button type="button" class="btn btn-default" id="search-content"> <i class="glyphicon glyphicon-search"></i> </button>
+						</span>
+					</form>
+					<!-- 搜索框 -->
+					<div id="side_accordion" class="panel-group">
+						<div class="panel panel-default">
+							<div class="panel-heading">
+								<a href="#collapse7" data-parent="#side_accordion" data-toggle="collapse" class="accordion-toggle"> 
+									<i class="glyphicon glyphicon-phone"></i> Calculator
+								</a>
+							</div>
+							<div class="accordion-body collapse" id="collapse7">
+								<div class="panel-body">
+									<form name="Calc" id="calc">
+										<div class="formSep input-group input-group-sm">
+											<input class="form-control" name="Input" type="text" /> 
+											<span class="input-group-btn">
+												<button type="button" class="btn btn-default" name="clear" value="c" onclick="Calc.Input.value = ''">
+													<i class="glyphicon glyphicon-remove"></i>
+												</button>
+											</span>
+										</div>
+										<div class="form-group">
+											<input class="btn form-control btn-default input-sm" name="seven" value="7" onclick="Calc.Input.value += '7'" type="button"> 
+											<input class="btn form-control btn-default input-sm" name="eight" value="8" onclick="Calc.Input.value += '8'" type="button">
+											<input class="btn form-control btn-default input-sm" name="nine" value="9" onclick="Calc.Input.value += '9'" type="button"> 
+											<input class="btn form-control btn-default input-sm" name="div" value="/" onclick="Calc.Input.value += ' / '" type="button">
+										</div>
+										<div class="form-group">
+											<input class="btn form-control btn-default input-sm" name="four" value="4" onclick="Calc.Input.value += '4'" type="button"> 
+											<input class="btn form-control btn-default input-sm" name="five" value="5" onclick="Calc.Input.value += '5'" type="button">
+											<input class="btn form-control btn-default input-sm" name="six" value="6" onclick="Calc.Input.value += '6'" type="button"> 
+											<input class="btn form-control btn-default input-sm" name="times" value="x" onclick="Calc.Input.value += ' * '" type="button">
+										</div>
+										<div class="form-group">
+											<input class="btn form-control btn-default input-sm" name="one" value="1" onclick="Calc.Input.value += '1'" type="button"> 
+											<input class="btn form-control btn-default input-sm" name="two" value="2" onclick="Calc.Input.value += '2'" type="button">
+											<input class="btn form-control btn-default input-sm" name="three" value="3" onclick="Calc.Input.value += '3'" type="button"> 
+											<input class="btn form-control btn-default input-sm" name="minus" value="-" onclick="Calc.Input.value += ' - '" type="button">
+										</div>
+										<div class="formSep form-group">
+											<input class="btn form-control btn-default input-sm" name="dot" value="." onclick="Calc.Input.value += '.'" type="button"> 
+											<input class="btn form-control btn-default input-sm" name="zero" value="0" onclick="Calc.Input.value += '0'" type="button">
+											<input class="btn form-control btn-default input-sm" name="DoIt" value="=" onclick="Calc.Input.value = Math.round( eval(Calc.Input.value) * 1000)/1000" type="button"> 
+											<input class="btn form-control btn-default input-sm" name="plus" value="+" onclick="Calc.Input.value += ' + '" type="button">
+										</div>
+										小工具 <a href="#">计算器</a>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="push"></div>
+				</div>
+
+				<div class="sidebar_info">
+					<ul class="list-unstyled">
+						<li><span class="act act-warning">{$todaycuscount}</span> <strong>今日新增会员数</strong></li>
+						<li><span class="act act-success">{$couponcount}</span> <strong>今日优惠券使用</strong></li>
+						<li><span class="act act-danger">{$allcuscount}</span> <strong>品牌全国会员数</strong></li>
+						<!-- <li>65,10,85</li> -->
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+
+<!-- js arttemplate top begin -->
+<script type="text/html" id="servicenavtoptpl">
+{{each servicenavlist as e i}}
+	<li class="dropdown">
+		<a data-toggle="dropdown" class="dropdown-toggle firstnav" href="#" data-name="{{e.servicenav_name}}">
+			<span class="{{e.nav_icon}}"></span> {{e.servicenav_name}} <b class="caret"></b>
+		</a>
+		{{if e.children.length != 0}}
+		<ul class="dropdown-menu">
+			{{each e.children as t j}}
+				<li class="dropdown">
+					<a href="#" class="secondnav" data-name="{{t.servicenav_name}}">{{t.servicenav_name}}<b class="caret-right"></b></a>
+					{{if t.children.length != 0}}
+					<ul class="dropdown-menu">
+						{{each t.children as w k}}
+							{{if w.action == null || w.action == ''}}
+								<li><a href="javascript:;" data-link="#" class="thirdnav">{{w.servicenav_name}}</a></li>
+							{{else}}
+								<li><a href="javascript:;" data-link="/weact/Admin/{{w.controller}}/{{w.action}}" class="thirdnav">{{w.servicenav_name}}</a></li>
+							{{/if}}
+						{{/each}}
+					</ul>
+					{{/if}}
+				</li>
+			{{/each}}
+		</ul>
+		{{/if}}
+	</li>
+{{/each}}
+</script>
+<!-- js arttemplate top end -->
+
+<!-- js arttemplate left begin -->
+<script type="text/html" id="servicenavlisttpl">
+{{each servicenavlist as e i}}
+	<div class="panel panel-default">
+		<div class="panel-heading">
+			<a href="#{{e.servicenav_id}}" data-name="{{e.servicenav_name}}" data-parent="#side_accordion" data-toggle="collapse" class="accordion-toggle"> 
+				<i class="{{e.nav_icon}}"></i> <!--{{e.servicenav_name}}-->{{e.english_name}}
+			</a>
+		</div>
+		<div class="accordion-body collapse" id="{{e.servicenav_id}}">
+			<div class="panel-body">
+				<ul class="nav nav-pills nav-stacked">
+					{{each e.children as t j}}
+						<li class="nav-header" data-name="{{t.servicenav_name}}"><!--{{t.servicenav_name}}-->{{t.english_name}}</li>
+						{{each t.children as w k}}
+							{{if w.action == null || w.action == ''}}
+								<li><a href="javascript:;" data-link="#" class="thirdlistnav"><!--{{w.servicenav_name}}-->{{w.english_name}}</a></li>
+							{{else}}
+								<li><a href="javascript:;" data-link="/weact/Admin/{{w.controller}}/{{w.action}}" class="thirdlistnav"><!--{{w.servicenav_name}}-->{{w.english_name}}</a></li>
+							{{/if}}
+						{{/each}}
+					{{/each}}
+				</ul>
+			</div>
+		</div>
+	</div>
+{{/each}}
+</script>
+<!-- js arttemplate left end -->
+
+<script type="text/javascript">
+var iframe = $('#myframe');
+var topnavtarget = $('#mobile-nav');
+var servicenavlistjson = '{$servicenavlistjson}'; 
+
+$(function(){
+	// 渲染顶部模板
+	var servicenavtop = $.parseJSON(window.servicenavlistjson); 
+	var toptmpl = template('servicenavtoptpl', servicenavtop); 
+	var servicenavtopObj = $('.top-nav'); 
+	if (toptmpl == '{Template Error}') {
+		toptmpl = ""; 
+	} 
+	servicenavtopObj.prepend(toptmpl);		
+	
+	// 渲染左侧模板
+	var servicenavlist = $.parseJSON(window.servicenavlistjson); 
+	var lefttmpl = template('servicenavlisttpl', servicenavlist); 
+	var servicenavListObj = $('.panel-group'); 
+	if (lefttmpl == '{Template Error}') {
+		lefttmpl = ""; 
+	} 
+	servicenavListObj.prepend(lefttmpl);			
+	
+	// 退出登录按钮
+	$('#loginout').click(function(){
+		//window.location.href="{:U('Subbranch/Index/index')}";
+		$.post("{:U('Admin/Enterprise/loginOut')}", {outflag:true}, function(result){
+			if(result.errCode == 0){
+				window.location.href = "{:U('Admin/Enterprise/main')}";
+			}else{
+				alert('温馨提示', '注销失败，请稍候再试!', 'warning');
+			}
+		},'json')
+	});
+	
+	//* main menu mouseover
+	gebo_nav_mouseover.init();
+	//* top submenu
+	gebo_submenu.init();
+	
+	//* mobile navigation
+	selectnav('mobile-nav', {
+		indent: '-'
+	});
+	
+	// 触摸dropdown，停止事件冒泡
+	$('body').on('touchstart.dropdown', '.dropdown-menu', function (e) { e.stopPropagation(); });
+	
+	// 控制三级导航的点击效果（一定要放在最后）
+	$('.thirdnav').click(function(){
+		var obj = $(this);
+		var url = obj.attr('data-link');
+		if(url == '#') return;
+		iframe.attr('src', url);
+		//处理洋葱皮
+		var secondnav = obj.closest('ul').prev();
+		var secondnavname = secondnav.attr('data-name');
+		var rootnavname = secondnav.parent().parent().prev().attr('data-name');
+		var leafnavname = obj.html();
+		
+		$(".rootli span a").html(rootnavname);		//根节点
+		$(".secondli span a").html(secondnavname);	//二级节点
+		$(".leafli span a").html(leafnavname);		//叶子节点
+	});
+	
+	// 控制三级导航的点击效果（一定要放在最后）
+	$('.thirdlistnav').click(function(){
+		var obj = $(this);
+		var url = obj.attr('data-link');
+		if(url == '#') return;
+		iframe.attr('src', url);
+		//处理洋葱皮
+		var secondnav = obj.closest('ul');
+		var secondnavname = secondnav.children().first().attr('data-name');
+		var rootnavname = secondnav.parent().parent().prev().children().attr('data-name');
+		var leafnavname = obj.html();
+		$(".rootli a").html(rootnavname);		//根节点
+		$(".secondli a").html(secondnavname);	//二级节点
+		$(".leafli a").html(leafnavname);		//叶子节点
+	});
+	
+	$('#search-content').click(function(){
+		alert('搜索功能暂未开放！');
+	});
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/appmsgview.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/emotion.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/select2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uploadstyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/webuploader.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/diywebuploader.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type='text/javascript' src="__PUBLIC__/js/plugins/select2/select2.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/emotion.js"></script>
+<title>添加关键字</title>
+</head>
+
+<body>
+	<div class="widget">
+		<div class="widget-content">
+			<div class="padd">
+				
+				<form class="form-horizontal" id="reply_form">
+					
+					<div class="control-group">
+						<div class="controls controls-row">
+							<h2>添加关键字回复</h2>
+						</div>
+						<div class="controls controls-row">
+							<font style="font-weight:bold; color:#666;">提示：</font><font style="color:highlight; line-height:22px;">根据您添加的关键字，设定相应回复给客户的信息。</font><br />
+							<font style="font-weight:bold; color:#666;">说明：</font><font style="color:highlight; line-height:22px;">当用户向你平台发送的内容有您设置的关键字之后，平台才会自动回复您设置好的内容。</font><br />
+						</div>
+					</div>
+					
+					<hr />
+					
+					<div class="control-group">
+						<label class="control-label">
+			            	关键字<span class="text-error">(*)</span>：
+			            </label>
+			            <div class="controls controls-row">
+			                <input type="text" class="uniform myinput" style="width:540px" id="keyword" name="keyword" placeholder="请输入关键字，字数限制在30个以内。" required value="" maxlength="30" />
+			            </div>
+			        </div>
+					<div class="control-group">
+						<label class="control-label" for="answertype"> 回复类型<span class="text-error">(*)</span>：</label>
+						<div class="controls controls-row">
+							<select id="answertype" name="answertype" class="uniform myselected">
+								<option value='text' selected>文本</option>
+								<option value='link'>链接</option>
+								<option value='image'>图片</option>
+								<option value='voice'>语音</option>
+								<option value='video'>视频</option>
+								<option value='news'>图文</option>
+							</select>
+						</div>
+						<input type="hidden" id="current_type" name="current_type" value="" />
+					</div>
+					
+					<!-- 回复文本区块开始 -->
+					<div class="control-group res-tab qb-none" id="response-text">
+						<label class="control-label" for="reply">
+							回复文本<span class="text-error">(*)</span>：
+						</label>
+						<div class="controls">
+							<div class="txtArea">
+								<div class="functionBar">
+									<div class="opt">
+										<a class="icon18C iconEmotion block" href="javascript:;" style="text-decoration: none; height: 20px; font-size: 16px;">
+											<font style="font-size: 14px;">表情</font>
+										</a>
+									</div>
+									<div class="tip"></div>
+									<div class="emotions">
+										<script type="text/javascript">
+											var mood = $('.emotions');		//取得emotion的div
+											var mood_content = '<table cellspacing="0" cellpadding="0"><tbody>';
+											var total = 105;				//总共的表情数目
+											var start_position = 0;
+											for(var j=0; j<7; j++){
+												mood_content += '<tr>';
+												for(var i=0; i<15; i++){
+													//循环15次拼接表情
+													mood_content += '<td><div class="eItem" style="background-position: '+ ( (j*15 + i)*(-24) ) +'px 0;" data-title="'+ Emotion.data[j*15 + i] +'" data-gifurl="images/emotion/'+ (j*15 + i) +'.gif"></div></td>';
+												}
+												mood_content += '</tr>';
+											}
+											mood_content += '</tbody></table>';
+											mood.html(mood_content);
+										</script>
+										<div class="emotionsGif"></div>
+									</div>
+									<div class="clr"></div>
+								</div>
+								<div class="editArea">
+									<textarea id="welcome" name="welcome" style="display: none;"></textarea>
+									<div contenteditable="true" style="overflow-y: auto; overflow-x: hidden; height: 150px;"></div>
+								</div>
+								<span class="text-error">(*)</span>
+								<span class="help-inline">必填,用户添加您的时候自动回复语 &nbsp;&nbsp;<font style="color:#F20;">请手动编辑，不要复制html代码，微信回复并不支持html标签。</font></span>
+							</div>
+						</div>
+					</div>
+					<!-- 回复文本区块结束 -->
+					
+					<!-- 回复链接区块开始 -->
+					<div class="control-group res-tab qb-none" id="response-link">
+						<div class="control-group">
+							<label class="control-label"> 
+							链接地址<span class="text-error">(*)</span>:<br />
+							</label>
+							<div class="controls controls-row">
+								<input type="text" class="uniform myinput" id="focus_url" name="focus_url" placeholder="请输入关注跳转的URL地址，请以http://开头" required="required" value="" />
+							</div>
+							<div class="controls controls-row">
+								说明：输入的有效链接必须以&nbsp;
+								<font style="font-size: 12px; font-weight: bold; color: #F20;">http://</font>
+								&nbsp;开头。<br />
+							</div>
+						</div>
+					</div>
+					<!-- 回复链接区块结束 -->
+					
+					<!-- 回复图片区块开始 -->
+					<div class="control-group res-tab qb-none" id="response-image">
+			        	<label class="control-label">回复图片<span class="text-error">(*)</span>：</label>
+				        <div class="controls controls-row">
+					        <input type="hidden" id="CSRFtoken" name="CSRFtoken" value="123456" /><!-- （可选参数）图片防注入提交 -->
+							<input type="hidden" id="imgPath1" name="imgPath1" value="" /><!-- （必选参数）单次上传的图片path1 -->
+							<div class="webUploaderWrap ui-sortable">
+						        <div id="previewUpload" class="webuploader-container">点击上传</div>
+					    	</div>
+				    	</div>
+				    	<div class="controls controls-row" style="margin-top:10px;">
+							<img id="resImg" name="resImg" src="" style="width:200px;" alt="" />
+						</div>
+				    	<div class="controls controls-row" style="margin-top:10px;">
+			            	温馨提示：推荐最佳图片尺寸（比例）：300px × 300px，jpeg、png格式。
+			            </div>
+			    	</div>
+					<!-- 回复图片区块结束 -->
+					
+					<!-- 回复语音区块开始 begin -->
+					<div class="control-group res-tab qb-none" id="response-voice">
+			        	<label class="control-label">回复语音<span class="text-error">(*)</span>：</label>
+				        <div class="controls controls-row">
+					        <div class="uploadifyBox tc">
+								<div class="webUploaderWrap">
+						            <div id="voiceUpload" class="webuploader-container">点击上传</div>
+						        </div>
+						        <input type="hidden" id="voiceFileUrl">
+						    </div>
+						    <div id="voiceFileName"></div>
+				    	</div>
+				    	<div class="controls controls-row" style="margin-top:10px;">
+			            	<p class="infotip">温馨提示：请选择.amr|.mp3|.wav|.wma文件按进行上传。</p>
+			            </div>
+			    	</div>
+					<!-- 回复语音区块结束 end -->
+					
+					<!-- 回复视频区块开始 begin -->
+					<div class="control-group res-tab qb-none" id="response-video">
+			        	<label class="control-label">回复视频<span class="text-error">(*)</span>：</label>
+				        <div class="controls controls-row">
+					        <div class="uploadifyBox tc">
+								<div class="webUploaderWrap">
+						            <div id="videoUpload" class="webuploader-container">点击上传</div>
+						        </div>
+						        <input type="hidden" id="videoFileUrl">
+						    </div>
+						    <div id="videoFileName"></div>
+				    	</div>
+				    	<div class="controls controls-row" style="margin-top:10px;">
+			            	<p class="infotip">温馨提示：请选择.mp4文件按进行上传。</p>
+			            </div>
+			    	</div>
+					<!-- 回复视频区块结束 end -->
+					
+					<!-- 回复图文区块开始 -->
+					<div class="control-group res-tab qb-none" id="response-news">
+						<div class="control-group">
+							<label class="control-label" for="answertype">选择现有图文:</label>
+							<div class="controls controls-row">
+				            	<select id="newsopt" style="width:199px;">
+			                        <foreach name="option_news" item="on">
+									<option value='{$on.msgnews_id}'>{$on.title}</option>
+									</foreach>
+			                    </select>
+				            </div>
+							<input type="hidden" id="current_news" name="current_news" value="" /><!-- 记录当前所选图文的主键，供提交时候用 -->
+						</div>
+						<div class="control-group">
+							<label class="control-label" for="answertype">所选图文预览:</label>
+							<div class="controls controls-row">
+								<div class="none-news" style="display: none;">
+									<font style="font-size: 12px; font-weight: bold;">还没有设置图文信息，请先设置图文信息。</font>
+								</div>
+								<div class="has-news b-dib vt msg-col">
+									<div class="msg-item-wrapper"></div><!--msg-item-wrapper是图文列表的div-->
+								</div>
+							</div>
+						</div><!--control-group结束div-->
+					</div><!--multiArticle结束div-->
+					<!-- 回复图文区块结束 -->
+					
+					<hr />
+                   
+					<div class="handle-action">
+						<a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">保存</a>
+                        <a href="javascript:history.go(-1);">
+			                <img style="width:50px; float:right;" src="__PUBLIC__/images/goback.png" alt="返回" />
+			            </a>
+					</div>
+					
+				</form>
+			</div><!--包裹form的div class="padd"的结束div-->
+		</div><!--widget-head结束div-->
+	</div><!--widget结束div-->
+	
+<!-- 图文消息 js arttemplate begin -->
+<script type="text/html" id="newstpl">
+<div class="msg-item">
+	{{each newslist as e i}}
+		{{if e.detail_order == -1}}
+			<div class="appmsgItem">
+        		<!--主图文-->
+        		<h4 class="msg-t">
+            		<a href="{{e.link_url}}" class="i-title" target="_blank">{{e.title}}</a>
+        		</h4>
+        		<p class="msg-meta" style="text-indent:16px;">
+            		<span class="msg-date">{{e.add_time}}</span>
+        		</p>
+        		<div class="cover">
+            		<p class="default-tip" style="display:none">封面图片</p>
+            		<img src="{{e.cover_image}}" class="i-img" alt="">
+        		</div>
+        		<p class="msg-text"></p>
+    		</div>
+		{{else}}
+			<div class="rel sub-msg-item appmsgItem">
+				<!--子图文-->
+				<span class="thumb">
+					<img src="{{e.cover_image}}" class="i-img" alt="">
+				</span>
+				<h4 class="msg-t">
+					<a href="{{e.link_url}}" target="_blank" class="i-title">{{e.title}}</a>
+				</h4>
+			</div>
+		{{/if}}
+	{{/each}}
+</div>
+</script>
+<!-- 图文消息 js arttemplate end -->
+
+<script type="text/javascript">
+var init_news = '{$option_news[0].msgnews_id}';
+var $textarea = $(".editArea textarea");
+var $contentDiv = $(".editArea div");
+
+//定义webuploader的js位置、flash位置和上传处理图片的服务器地址（必须的参数，否则无法处理图片）
+var serverhandleimg = '{:U("Admin/AutoResponseRequest/singleUploadHandle", "", "")}', // 上传的服务器处理图片地址
+	serverhandlevideo = "{:U('Admin/AutoResponseRequest/videoHandle', '', '')}", // video文件上传
+	serverhandlevoice = "{:U('Admin/AutoResponseRequest/voiceHandle', '', '')}"; // voice文件上传
+	
+$(function(){
+	
+	$(".uniform").uniform(); // 初始化uniform
+	
+	$("#newsopt").select2(); // 初始化查询select2
+	
+	// 初始化回复图片及预览
+	$("#previewUpload").singleImgUploader({
+		width : 300,
+		height : 300, 
+		limitSizeLarger : true, 
+		imgPathInput : $("#imgPath1"), 
+		imgPreview : $("#resImg"), 
+	});
+	
+	// 初始化voice上传
+	$("#voiceUpload").singleVoiceUploader({
+		voiceFileName : $("#voiceFileName"), // voice文件名
+		voicePathInput : $("#voiceFileUrl"), // voice回传路径
+	});
+	
+	// 初始化video上传
+	$("#videoUpload").singleVideoUploader({
+		videoFileName : $("#videoFileName"), // video文件名
+		videoPathInput : $("#videoFileUrl"), // video回传路径
+	});
+	
+	// 绑定页面DOM事件
+	$("body").on("change", "#answertype", function(){
+		// 回复类型切换
+		var type = $(this).val();						// 获取当前选择的类型
+		$(".res-tab").addClass("qb-none"); 				// 隐藏所有标签卡
+		$("#response-" + type).removeClass("qb-none"); 	// 展现当前标签卡
+		$("#current_type").val(type);					// 重要：将当前类型写入input框内
+	}).on("change", "#newsopt", function(){
+		// 图文select2选择框变动函数
+		var selected = $("#newsopt option:selected").val();
+		$("#current_news").val(selected); 				// 写入当前input框
+		initNews(selected); 							// 请求展示选中图文函数
+	}).on("click", "#submitbtn", function(){
+		// 保存按钮， 写入提交关键字及其回复的类型和信息
+		var keyword = $("#keyword").val();
+		var type_cfm = $("#answertype").val();			//获取回复类型
+		var res_info = '';
+		
+		// 判断关键字是否合法输入
+		if(keyword == '' || keyword.length >= 30){
+			$.messager.alert('温馨提示', '请输入关键字（字数限制在30个以内）！','warning', function(){
+				$("#keyword").focus();
+	  		});
+			return;
+		}
+		
+		// 判断回复信息是否合法输入
+		if(type_cfm == 'text'){
+			var inittext = '请在此输入针对关键字回复的文本信息。';
+			res_info = Emotion.replaceInput($contentDiv.html()); // 获取文本内容，并替换emotion表情
+			if(res_info == inittext || res_info == ''){
+				$.messager.alert('温馨提示', '请输入回复文本内容！','warning');
+				return;
+			}
+		} else if(type_cfm == 'news'){
+			var res_info = $("#current_news").val();
+			if(typeof(res_info) == "undefined" || res_info == ''){
+				$.messager.alert('温馨提示', '请选择回复图文，若没有请先前往图文素材中心添加图文！','warning');
+				return;
+			}
+		} else if(type_cfm == 'image'){
+			var res_info = $("#imgPath1").val();
+			if(res_info == ''){
+				$.messager.alert('温馨提示', '请上传回复图片！', 'warning');
+				return;
+			}
+		} else if(type_cfm == 'voice'){
+			var res_info = $("#voiceFileUrl").val();
+			if(res_info == ''){
+				$.messager.alert('温馨提示', '请上传回复声音，不要超过2MB的amr|mp3|wav|wma格式！', 'warning');
+				return;
+			}
+		} else if(type_cfm == 'video'){
+			var res_info = $("#videoFileUrl").val();
+			if(res_info == ''){
+				$.messager.alert('温馨提示', '请上传回复视频，不要超过10MB的mp3格式！', 'warning');
+				return;
+			}
+		} else if(type_cfm == 'link'){
+			var reg = /^(http|ftp|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/; // 匹配网址的正则表达式
+			res_info = $("#focus_url").val();
+			if(!res_info.match(reg) || res_info == ''){
+				$.messager.alert('温馨提示', '请输入合法的网址！', 'warning', function(){
+					$("#focus_url").focus();
+		  		});
+				return;
+			}
+		}
+		// 在此处进行确认的post提交
+		var params = {
+				keyword : keyword, // 关键字
+				type : type_cfm, // 回复类型
+				res : res_info 
+		};
+		//console.log(params);
+		$.messager.confirm('温馨提示', '确定提交所编辑的关键字信息吗?', function(result){
+			if(result){
+				$.post("{:U('Admin/AutoResponseRequest/addKeywordCfm', '', '')}", params, function(result){
+					if(result.errCode == 0){
+						$.messager.alert('温馨提示', '关键字信息设置成功！', 'info');
+						setTimeout(function(){
+							location.href = "{:U('Admin/AutoResponse/keywordsReplyView', '', '')}";
+						},500);
+					} else {
+						$.messager.alert('温馨提示', '关键字信息设置失败！'+result.errMsg, 'warning'); 
+					}
+				},"json"); 
+			}
+		});
+	});
+	
+	//初始化文本选择，及图文的信息
+	$("#answertype").val('text');					//类型选择框初始化类型
+	$("#current_type").val('text');					//初始化：将选中的类型type写入隐藏框中
+	$("#answertype").change();						//类型选择框改变
+	
+	$("#newsopt").val(init_news);					//图文选择预设的那一条
+	$("#newsopt").change();							//图文选择框改变
+	$("#current_news").val(init_news);				//初始化：将选中的图文id写入隐藏框中 
+	
+});
+
+// 读取图文信息列表
+function initNews(nid) {
+	MLoading.show("读取中，请稍后...");
+	$.post("{:U('Admin/AutoResponseRequest/requestNewsInfo', '', '')}", { nid : nid }, function(result){
+		MLoading.hide();
+		if(result.errCode == 0) {
+			var tmpl = template("newstpl", result.data);
+			if (tmpl == "{Template Error}") {
+				tmpl = "";
+			}
+			$(".msg-item-wrapper").html(tmpl); // 写入图文
+		} else {
+			$.messager.alert('温馨提示', result.errMsg, 'error', function(){
+				$(".msg-item-wrapper").empty().html("该图文已不存在");
+			}); // 提示请求图文出错
+			return false;
+		}
+	}, "json");
+}
+
+/*-----------------------以下关于emotion的表情js------------------------------*/
+$(".functionBar .iconEmotion").click(function(){
+	//Emotion.saveRange();
+	$(".emotions").show();
+});
+$(".emotions").hover(function(){
+
+},function(){
+	$(".emotions").fadeOut();
+});
+
+$(".emotions .eItem").mouseenter(function(){
+	$(".emotionsGif").html('<img src="__PUBLIC__/'+$(this).attr("data-gifurl")+'">');	//特别注意这里噢~!__PUBLIC__/
+}).click(function(){
+	Emotion.insertHTML('<img src="__PUBLIC__/' + $(this).attr("data-gifurl") + '"' + 'alt="mo-' + $(this).attr("data-title") + '"' + "/>");		//特别注意这里噢~!__PUBLIC__/
+	$(".emotions").fadeOut();
+	$textarea.trigger("contentValueChange");
+});
+
+$contentDiv.bind("keyup",function(){
+	$textarea.trigger("contentValueChange");
+	Emotion.saveRange();
+}).bind("keydown",function(e){
+    switch (e.keyCode) {
+    case 8:
+        var t = Emotion.getSelection();
+        t.type && t.type.toLowerCase() === "control" && (e.preventDefault(), t.clear());
+        break;
+    case 13:
+        e.preventDefault(),
+        Emotion.insertHTML("<br/>");
+        Emotion.saveRange();
+    }
+});/* .bind("mouseup",function(e){
+	e.stopPropagation();
+	var content = $(this).html();
+	if(content == "请在此输入针对关键字回复的文本信息。") {
+		$(this).html('');
+	}
+}).bind("mouseout",function(e){
+	e.stopPropagation();
+	var content = $(this).html();
+	if(content == "") {
+		$(this).html("请在此输入针对关键字回复的文本信息。");
+	}
+}) */
+
+/* bind("mouseup",function(e){
+    Emotion.saveRange();
+    if ($.browser.msie && />$/.test($contentDiv.html())) {
+        var n = Emotion.getSelection();
+        n.extend && (n.extend(cursorNode, cursorNode.length), n.collapseToEnd()),
+        Emotion.saveRange();
+        Emotion.insertHTML(" ");
+    }
+}); */
+$textarea.bind("contentValueChange",function(){
+	$(this).val(Emotion.replaceInput($contentDiv.html()));
+});
+$contentDiv.html(Emotion.replaceEmoji($contentDiv.html()));
+</script>
+</body>
+</html>

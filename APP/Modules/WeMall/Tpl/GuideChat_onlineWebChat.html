@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-touch-fullscreen" content="yes">
+<meta name="full-screen" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/webchatindex.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/iscroll.js"></script>
+<script type="text/javascript">
+function GetQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) return unescape(r[2]); return null;
+}
+$("#eid").val(GetQueryString("eid"));
+$("#gid").val(GetQueryString("gid"));
+$("#cid").val(GetQueryString("cid"));
+</script>
+<style type="text/css">
+    .g { background-color: #B8B8B8; }
+</style>
+</head>
+
+<body>
+    <img src="__PUBLIC__/images/message-resend@2x.png" style="display:none;">
+    <div class="wrap">
+
+        <div id="convo" class="chat-bouble">
+            <div class="salesInfo">
+                <div class="wbox">
+                    <img src="__PUBLIC__/images/default-photo.png" class="size40 round" id="shopImg">
+                    <div class="wbox-1">
+                        <div class="sales"><span id="shopGName">-</span><span class="star"></span><span class="val" id="shopStar" data-star="10.0"></span></div>
+                        <a href="javascript:void();" class="store" id="shopName">-</a>
+                    </div>
+                    <a style='display:none;' href="messageCenter.htm?ownerId=131312" class="newMsg"><img src="__PUBLIC__/images/newMsg.png"><span></span></a>
+                </div>
+            </div>
+            <div id="chatList">
+                <ul class="chat-thread" id="chatThread">
+                    <li class="time"><span id="getChatHistory">查看历史消息</span></li>
+                    <li id="loading" class="time" style="display: none;">
+                        <img src="__PUBLIC__/images/loading.gif" /><br />正在加载
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="bottom" id="bottom">
+            <!-- 显示 图片 按钮时去除样式 input-finish -->
+            <div class="bottom-input input-finish">
+                <!--<a class="btn btn-sound" href="#">
+                        <i class="icon icon-sound"></i>
+                    </a>-->
+                <div class="input">
+                    <textarea id="chatContent"></textarea>
+                </div>
+                <a id="face-control" class="btn btn-face" href="javascript:;">
+                    <i class="icon icon-face"></i>
+                </a>
+                <a class="btn btn-more" href="#">
+                    <i class="icon icon-more"></i>
+                </a>
+                <a class="btn btn-send g" id="btnSend">发送</a>
+            </div>
+            <div class="face-box" id="faceSlider">
+                <div class="page-wrap clearfix">
+
+                    <div class="page">
+                        <ul class="face-list">
+                            <li title="[微笑]"><img src="__PUBLIC__/images/emo000.png"></li>
+                            <li title="[撇嘴]"><img src="__PUBLIC__/images/emo001.png"></li>
+                            <li title="[色]"><img src="__PUBLIC__/images/emo002.png"></li>
+                            <li title="[发呆]"><img src="__PUBLIC__/images/emo003.png"></li>
+                            <li title="[得意]"><img src="__PUBLIC__/images/emo004.png"></li>
+                            <li title="[流泪]"><img src="__PUBLIC__/images/emo005.png"></li>
+                            <li title="[害羞]"><img src="__PUBLIC__/images/emo006.png"></li>
+                            <li title="[闭嘴]"><img src="__PUBLIC__/images/emo007.png"></li>
+                            <li title="[睡]"><img src="__PUBLIC__/images/emo008.png"></li>
+                            <li title="[大哭]"><img src="__PUBLIC__/images/emo009.png"></li>
+                            <li title="[尴尬]"><img src="__PUBLIC__/images/emo010.png"></li>
+                            <li title="[发怒]"><img src="__PUBLIC__/images/emo011.png"></li>
+                            <li title="[调皮]"><img src="__PUBLIC__/images/emo012.png"></li>
+                            <li title="[呲牙]"><img src="__PUBLIC__/images/emo013.png"></li>
+                            <li title="[惊讶]"><img src="__PUBLIC__/images/emo014.png"></li>
+                            <li title="[难过]"><img src="__PUBLIC__/images/emo015.png"></li>
+                            <li title="[酷]"><img src="__PUBLIC__/images/emo016.png"></li>
+                            <li title="[冷汗]"><img src="__PUBLIC__/images/emo017.png"></li>
+                            <li title="[抓狂]"><img src="__PUBLIC__/images/emo018.png"></li>
+                            <li title="[吐]"><img src="__PUBLIC__/images/emo019.png"></li>
+                            <li title="[偷笑]"><img src="__PUBLIC__/images/emo020.png"></li>
+                            <li title="[愉快]"><img src="__PUBLIC__/images/emo021.png"></li>
+                            <li title="[白眼]"><img src="__PUBLIC__/images/emo022.png"></li>
+                            <li title="[傲慢]"><img src="__PUBLIC__/images/emo023.png"></li>
+                        </ul>
+                    </div>
+
+                    <div class="page">
+                        <ul class="face-list">
+                            <li title="[饥饿]"><img srcr="__PUBLIC__/images/emo024.png"></li>
+                            <li title="[困]"><img srcr="__PUBLIC__/images/emo025.png"></li>
+                            <li title="[惊恐]"><img srcr="__PUBLIC__/images/emo026.png"></li>
+                            <li title="[流汗]"><img srcr="__PUBLIC__/images/emo027.png"></li>
+                            <li title="[憨笑]"><img srcr="__PUBLIC__/images/emo028.png"></li>
+                            <li title="[悠闲]"><img srcr="__PUBLIC__/images/emo029.png"></li>
+                            <li title="[奋斗]"><img srcr="__PUBLIC__/images/emo030.png"></li>
+                            <li title="[咒骂]"><img srcr="__PUBLIC__/images/emo031.png"></li>
+                            <li title="[疑问]"><img srcr="__PUBLIC__/images/emo032.png"></li>
+                            <li title="[嘘]"><img srcr="__PUBLIC__/images/emo033.png"></li>
+                            <li title="[晕]"><img srcr="__PUBLIC__/images/emo034.png"></li>
+                            <li title="[疯了]"><img srcr="__PUBLIC__/images/emo035.png"></li>
+                            <li title="[衰]"><img srcr="__PUBLIC__/images/emo036.png"></li>
+                            <li title="[骷髅]"><img srcr="__PUBLIC__/images/emo037.png"></li>
+                            <li title="[敲打]"><img srcr="__PUBLIC__/images/emo038.png"></li>
+                            <li title="[再见]"><img srcr="__PUBLIC__/images/emo039.png"></li>
+                            <li title="[擦汗]"><img srcr="__PUBLIC__/images/emo040.png"></li>
+                            <li title="[抠鼻]"><img srcr="__PUBLIC__/images/emo041.png"></li>
+                            <li title="[鼓掌]"><img srcr="__PUBLIC__/images/emo042.png"></li>
+                            <li title="[糗大了]"><img srcr="__PUBLIC__/images/emo043.png"></li>
+                            <li title="[坏笑]"><img srcr="__PUBLIC__/images/emo044.png"></li>
+                            <li title="[左哼哼]"><img srcr="__PUBLIC__/images/emo045.png"></li>
+                            <li title="[右哼哼]"><img srcr="__PUBLIC__/images/emo046.png"></li>
+                            <li title="[哈欠]"><img srcr="__PUBLIC__/images/emo047.png"></li>
+                        </ul>
+                    </div>
+
+                    <div class="page">
+                        <ul class="face-list">
+                            <li title="[鄙视]"><img srcr="__PUBLIC__/images/emo048.png"></li>
+                            <li title="[委屈]"><img srcr="__PUBLIC__/images/emo049.png"></li>
+                            <li title="[快哭了]"><img srcr="__PUBLIC__/images/emo050.png"></li>
+                            <li title="[阴险]"><img srcr="__PUBLIC__/images/emo051.png"></li>
+                            <li title="[亲亲]"><img srcr="__PUBLIC__/images/emo052.png"></li>
+                            <li title="[吓]"><img srcr="__PUBLIC__/images/emo053.png"></li>
+                            <li title="[可怜]"><img srcr="__PUBLIC__/images/emo054.png"></li>
+                            <li title="[菜刀]"><img srcr="__PUBLIC__/images/emo055.png"></li>
+                            <li title="[西瓜]"><img srcr="__PUBLIC__/images/emo056.png"></li>
+                            <li title="[啤酒]"><img srcr="__PUBLIC__/images/emo057.png"></li>
+                            <li title="[篮球]"><img srcr="__PUBLIC__/images/emo058.png"></li>
+                            <li title="[乒乓]"><img srcr="__PUBLIC__/images/emo059.png"></li>
+                            <li title="[咖啡]"><img srcr="__PUBLIC__/images/emo060.png"></li>
+                            <li title="[饭]"><img srcr="__PUBLIC__/images/emo061.png"></li>
+                            <li title="[猪头]"><img srcr="__PUBLIC__/images/emo062.png"></li>
+                            <li title="[玫瑰]"><img srcr="__PUBLIC__/images/emo063.png"></li>
+                            <li title="[凋谢]"><img srcr="__PUBLIC__/images/emo064.png"></li>
+                            <li title="[嘴唇]"><img srcr="__PUBLIC__/images/emo065.png"></li>
+                            <li title="[爱心]"><img srcr="__PUBLIC__/images/emo066.png"></li>
+                            <li title="[心碎]"><img srcr="__PUBLIC__/images/emo067.png"></li>
+                            <li title="[蛋糕]"><img srcr="__PUBLIC__/images/emo068.png"></li>
+                            <li title="[闪电]"><img srcr="__PUBLIC__/images/emo069.png"></li>
+                            <li title="[炸弹]"><img srcr="__PUBLIC__/images/emo070.png"></li>
+                            <li title="[刀]"><img srcr="__PUBLIC__/images/emo071.png"></li>
+                        </ul>
+                    </div>
+
+                    <div class="page">
+                        <ul class="face-list">
+                            <li title="[足球]"><img srcr="__PUBLIC__/images/emo072.png"></li>
+                            <li title="[瓢虫]"><img srcr="__PUBLIC__/images/emo073.png"></li>
+                            <li title="[便便]"><img srcr="__PUBLIC__/images/emo074.png"></li>
+                            <li title="[月亮]"><img srcr="__PUBLIC__/images/emo075.png"></li>
+                            <li title="[太阳]"><img srcr="__PUBLIC__/images/emo076.png"></li>
+                            <li title="[礼物]"><img srcr="__PUBLIC__/images/emo077.png"></li>
+                            <li title="[拥抱]"><img srcr="__PUBLIC__/images/emo078.png"></li>
+                            <li title="[强]"><img srcr="__PUBLIC__/images/emo079.png"></li>
+                            <li title="[弱]"><img srcr="__PUBLIC__/images/emo080.png"></li>
+                            <li title="[握手]"><img srcr="__PUBLIC__/images/emo081.png"></li>
+                            <li title="[胜利]"><img srcr="__PUBLIC__/images/emo082.png"></li>
+                            <li title="[抱拳]"><img srcr="__PUBLIC__/images/emo083.png"></li>
+                            <li title="[勾引]"><img srcr="__PUBLIC__/images/emo084.png"></li>
+                            <li title="[拳头]"><img srcr="__PUBLIC__/images/emo085.png"></li>
+                            <li title="[差劲]"><img srcr="__PUBLIC__/images/emo086.png"></li>
+                            <li title="[爱你]"><img srcr="__PUBLIC__/images/emo087.png"></li>
+                            <li title="[NO]"><img srcr="__PUBLIC__/images/emo088.png"></li>
+                            <li title="[OK]"><img srcr="__PUBLIC__/images/emo089.png"></li>
+                            <li title="[爱情]"><img srcr="__PUBLIC__/images/emo090.png"></li>
+                            <li title="[飞吻]"><img srcr="__PUBLIC__/images/emo091.png"></li>
+                            <li title="[跳跳]"><img srcr="__PUBLIC__/images/emo092.png"></li>
+                            <li title="[发抖]"><img srcr="__PUBLIC__/images/emo093.png"></li>
+                            <li title="[怄火]"><img srcr="__PUBLIC__/images/emo094.png"></li>
+                            <li title="[转圈]"><img srcr="__PUBLIC__/images/emo095.png"></li>
+                        </ul>
+                    </div>
+
+                    <div class="page">
+                        <ul class="face-list">
+                            <li title="[磕头]"><img srcr="__PUBLIC__/images/emo096.png"></li>
+                            <li title="[回头]"><img srcr="__PUBLIC__/images/emo097.png"></li>
+                            <li title="[跳绳]"><img srcr="__PUBLIC__/images/emo098.png"></li>
+                            <li title="[投降]"><img srcr="__PUBLIC__/images/emo099.png"></li>
+                        </ul>
+                    </div>
+
+                </div>
+                <div class="pages-thumbs">
+                    <span class="cur"></span><span></span><span></span><span></span><span></span>
+                </div>
+            </div>
+            <!-- end face-box -->
+        </div>
+    </div>
+
+
+    <!-- 以下4个参数进入页面就会有 -->
+    <input type="hidden" id="historyStart" name="historyStart" value="0">
+    <input type="hidden" id="nowStart" name="nowStart" value="0">
+    <input type="hidden" id="sAvatar" name="sAvatar" value="">
+    <input type="hidden" id="dAvatar" name="dAvatar" value="">
+	
+    <input type="hidden" name="eid" id="eid" value="{$eid}"><!-- 商家品牌编号 -->
+    <input type="hidden" name="gid" id="gid" value="{$gid}"><!-- 该顾客当前直接聊天的导购编号 -->
+    <input type="hidden" name="cid" id="cid" value="{$cid}"><!-- 当前操作聊天窗的顾客编号 -->
+    <input type="hidden" name="openid" id="openid" value=""><!-- 顾客微信openid，不一定用得着 -->
+    
+<script type="text/javascript">
+    //消息类型包括文本、图片、语音，默认0代表文本消息，1代表图片，2代表声音，3代表视频（短视频），4代表音乐，5代表商品图文推送
+    //type = 0 接收消息  1 发送消息
+    //hsitorymsg[i].msg_type, hsitorymsg[i].content, hsitorymsg[i].time, hsitorymsg[i].msgto
+    function appendContent(type, msg) {
+        appendTime(new Date().getTime());
+        var cs = "odd";
+        var head = "";
+
+        var statusIcon = [];
+        if (msg.msgto == $("#gid").val()) {
+            cs = "odd";
+            head = $("#dAvatar").val();
+        } else {
+            cs = "even";
+            head = $("#sAvatar").val();
+        }
+
+
+        if (type == 0) {
+            //接受消息
+            var content = messageFormat(msg);
+
+            content = content.replace(/\\/g, "&#92;").replace(/\//g, "&#47;").replace(/\n/g, "<br>");
+
+
+            $("#chatThread").append("<li class='" + cs + " msg' data-time=" + (msg.time ? msg.time : new Date().getTime()) + "><div class='pic'><img class='img' src='" + (head || "__PUBLIC__/images/default-photo.png") + "'/></div>" + content + "</li>");
+        } else if (type == 1) {
+            //发送消息
+            var content = formatTextWithUrl(msg.content).replaceFace();
+            content = content.replace(/\\/g, "&#92;").replace(/\//g, "&#47;").replace(/\n/g, "<br>");
+            $("#chatThread").append("<li class='" + cs + " msg' data-time=" + (msg.time ? msg.time : new Date().getTime()) + "><div class='pic'><img class='img' src='" + (head || "__PUBLIC__/images/default-photo.png") + "'/></div>" + content + "</li>");
+        }
+        page.setHeight();
+    }
+
+    function messageFormat(msg) {
+        var content;
+        if (msg.msg_type == "0") { // 文字
+            content = formatTextWithUrl(msg.content);
+            try {
+                content = content.replaceFace();
+            } catch (e) {
+                content = JSON.stringify(msg.content);
+            }
+
+        } else if (msg.msg_type == "1") { //图片
+            content = "<img class='img' style='max-width:" + ($(window).width() - 100) + "px;max-height:120px;' src='" + msg.media_path + "?imageView2/2/h/120' />";
+        } else if (msg.msg_type == "2") { // 语音
+            content = "<div class='audio'><img class='talk' src='__PUBLIC__/images/talkIcon.png' /><img class='talking fn-hide' src='__PUBLIC__/images/talking.gif' /></div><audio src=" + msg.media_path.replace(/.amr/gi, ".mp3") + "></audio>";
+        }
+        //else if (msg.msg_type == "7") { // 图文
+        //    try {
+        //        cont = JSON.parse(msg.content)
+        //    } catch (e) {
+        //        cont = msg.content
+        //    }
+        //    content = "<a class='imgText' href=" + cont.Url.replace(/&from=.*/, "") + "><div class='wbox'><img class='proImg' src='" + cont.PicUrl + "' /><div class='desc wbox-1'>" + cont.Description + "</div></div></a>"
+        //}
+        return content;
+    }
+
+
+    function formatTextWithUrl(str) {
+        var Expression = '((https://)|(http://)|(www\\.)){1}[A-Za-z0-9-_:\/]+\\.[A-Za-z0-9-_:#%&\?\/.=]+';
+        var objExp = new RegExp(Expression, "g");
+        var hasUrl = objExp.test(str);
+        if (hasUrl) {
+            var r = str.match(objExp);
+            var newStr = str;
+            for (var i = 0; i < r.length; i++) {
+                if (r[i].indexOf("webim/face") < 0) {
+                    newStr = newStr.replace(r[i], '<a href="' + ((r[i].indexOf("https://") < 0 && r[i].indexOf("http://") < 0) ? "http://" + r[i] : r[i]) + '">' + r[i] + '</a>');
+                }
+            }
+            return newStr;
+        } else {
+            return str;
+        }
+    }
+
+    function appendTime(msgTime) {
+        msgTime = parseInt(msgTime);
+        var ctObj = $('li.msg').last();
+        var reviceTimeS = new Date(msgTime).format("yyyy-MM-dd HH:mm");
+        var today = new Date().format("yyyy-MM-dd");
+        if (reviceTimeS.startWith(today)) { // 这条消息是今天的
+            var h = new Date(msgTime).getHours();
+            if (h < 7) {
+                reviceTimeS = "凌晨 ";
+            } else if (h >= 7 && h < 9) {
+                reviceTimeS = "早上 ";
+            } else if (h >= 9 && h < 11) {
+                reviceTimeS = "上午 ";
+            } else if (h >= 11 && h < 13) {
+                reviceTimeS = "中午 ";
+            } else if (h >= 13 && h < 19) {
+                reviceTimeS = "下午 ";
+            } else if (h >= 19) {
+                reviceTimeS = "晚上 ";
+            }
+            reviceTimeS += new Date(msgTime).format("HH:mm");
+        }
+
+        // 第一条
+        if (!ctObj.length) {
+            $(chatThread).append("<li class='time'><span>" + reviceTimeS + "</span></li>");
+        } else {
+            var lastTime = parseInt(ctObj.attr('data-time'));
+            // 超过5分钟
+            if (msgTime - lastTime > 1 * 60 * 1000) {
+                $(chatThread).append("<li class='time'><span>" + reviceTimeS + "</span></li>");
+            }
+        }
+    }
+
+
+    String.prototype.startWith = function (str) {
+        var reg = new RegExp("^" + str);
+        return reg.test(this);
+    };
+
+    String.prototype.endWith = function (str) {
+        var reg = new RegExp(str + "$");
+        return reg.test(this);
+    };
+
+    Date.prototype.format = function (fmt) {
+        var o = {
+            "M+": this.getMonth() + 1,                 //月份
+            "d+": this.getDate(),                    //日
+            "H+": this.getHours(),                   //小时
+            "m+": this.getMinutes(),                 //分
+            "s+": this.getSeconds(),                 //秒
+            "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+            "S": this.getMilliseconds()             //毫秒
+        };
+        if (/(y+)/.test(fmt)) {
+            fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+        }
+        for (var k in o) {
+            if (new RegExp("(" + k + ")").test(fmt)) {
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            }
+        }
+        return fmt;
+    };
+
+
+    var page = {
+        startX: 0,
+        startY: 0,
+        pages: $(".page-wrap .page"),
+        curPage: 0,
+        pageWidth: 0,
+        secWidth: 0,
+        targetElement: null,
+        scrollPrevent: false,
+        movePrevent: false,
+        touchDown: false,
+        contentList: $(".page-wrap"),
+        thumbs: $(".face-box .pages-thumbs"),
+        initPage: function () {
+            page.pageWidth = $(window).width();
+            if (page.pageWidth > 750) {
+                page.pageWidth = 750;
+            }
+            $(".page-wrap .page").each(function (i) {
+                $(this).css({
+                    "width": page.pageWidth + "px"
+                });
+            });
+            page.secWidth = page.pageWidth * ($(".page-wrap .page").length);
+            $(".page-wrap").width(page.secWidth);
+            page.thumbs.find("span").removeClass("cur");
+            page.thumbs.find("span").eq(0).addClass("cur");
+            page.contentList.addClass("drag");
+            page.animatePage(page.curPage);
+        },
+        //设置聊天内容区域高度，并滚动到底部
+        setHeight: function () {
+            var bottomHeight = $("#bottom").height();
+            setTimeout(function () {
+                var pageHeight = $(window).height();
+                $("body").height(pageHeight)
+                $("#chatList").height(pageHeight - bottomHeight - 64).css("overflow", "auto");
+                var chatHeight = $("#chatThread").height();
+                $("#chatList").scrollTop(chatHeight);
+                $("body").scrollTop(0);
+                // $("#chatList").append('<p>'+(pageHeight - bottomHeight - 64)+'</p>');
+            }, 0);
+        },
+        onStart: function (e) {
+            if (page.movePrevent == true) {
+                event.preventDefault();
+                return false;
+            }
+            page.touchDown = true;
+            // 起始点，页面位置
+            page.startX = e.pageX;
+            page.startY = e.pageY;
+
+
+        },
+        onMove: function (e) {
+            if (page.movePrevent == true || page.touchDown != true) {
+                event.preventDefault();
+                return false;
+            }
+            event.preventDefault();
+        },
+        onEnd: function (e) {
+            if (page.movePrevent == true) {
+                event.preventDefault();
+                return false;
+            }
+            page.touchDown = false;
+            if (page.scrollPrevent == false) {
+                // 抬起点，页面位置
+                page.endX = e.pageX;
+                page.endY = e.pageY;
+                if (page.endX && page.endX !== page.startX && page.endX - page.startX <= -25) {
+                    page.nextPage();
+
+                } else if (page.endX && page.endX !== page.startX && page.endX - page.startX >= 25) {
+                    page.prevPage();
+                }
+            }
+            page.contentList.removeClass("drag");
+        },
+        prevPage: function () {
+            var newPage = page.curPage - 1;
+            page.animatePage(newPage);
+        },
+        nextPage: function () {
+            var newPage = page.curPage + 1;
+            $("#faceSlider .page:eq(" + newPage + ")").find("img").each(function (i, e) {
+                var src = $(this).attr("srcr");
+                $(this).attr("src", src).removeAttr("srcr");
+            });
+            page.animatePage(newPage);
+        },
+        animatePage: function (newPage) {
+
+            if (newPage < 0) {
+                newPage = 0;
+            }
+            if (newPage > ($(".page-wrap .page").length - 1)) {
+                newPage = $(".page-wrap .page").length - 1;
+            }
+            page.curPage = newPage;
+            var newMarginLeft = newPage * (-page.pageWidth);
+            page.contentList.css({
+                "-webkit-transform": "matrix(1, 0, 0, 1, " + newMarginLeft + ", 0)"
+            });
+            page.thumbs.find("span").removeClass("cur");
+            page.thumbs.find("span").eq(page.curPage).addClass("cur");
+            page.movePrevent = true;
+            setTimeout(function () { page.movePrevent = false; }, 300);
+        }
+    }
+
+    var faces = {}, cursorPosition = 0;
+    var chatContent = $("#chatContent");
+    $('.face-list li').each(function () {
+        faces[$(this).attr('title')] = $(this).find('img').attr('src') || $(this).find('img').attr('srcr');
+    });
+    $('.face-list li').on('click', function () {
+        var _val = chatContent.val();
+        chatContent.val(_val.substr(0, cursorPosition) + $(this).attr('title') + _val.substr(cursorPosition));
+        cursorPosition += $(this).attr('title').length;
+    });
+    chatContent.focus(function () {
+        $("#btnSend").removeClass("g");
+        if ($("#faceSlider").is(":visible")) {
+            $("#faceSlider").hide();
+            $("#face-control").removeClass("selected");
+
+        }
+        //page.setHeight();
+    }).blur(function () {
+        cursorPosition = this.selectionStart;
+        page.setHeight();
+    });
+    String.prototype.replaceFace = function () {
+        var p = /\[[^\]]+\]/g;
+        var result = this.match(p);
+        var s = this;
+        for (var i in result) {
+            var face = result[i];
+            if (!faces[face]) {
+                continue;
+            }
+            s = s.replace(face, '<img class="face" src="' + faces[face] + '" />');
+        }
+        return s.toString();
+    };
+
+
+    $("body").on("click", "img.img", function (e) {
+        var src = $(this).attr("src").split("?")[0];
+        var imgHtml = '<div class="imageView"><img src="' + src + '" /></div>'
+        $("body").append(imgHtml);
+    }).on("click", ".imageView", function (e) {
+        $(this).remove();
+    })
+
+    var webchat = {
+        access_token: "3943203027FB0083DBDA35652B8DABED1B3A9BF98B2A01B34F9DB1F188949FF2470EC692D0906034D74D1412799372FF",
+        getGuideInfoURL: "http://www.we-act.cn/weact/Interface/WebChatGuide/guideInfo",
+        getCustomerInfoURL: "http://www.we-act.cn/weact/Interface/WebChatCustomer/customerInfo",
+        sendMsgURL: "http://www.we-act.cn/weact/Interface/WebChatMsg/receiveWebMsg",
+        queryNewMsgURL: "http://www.we-act.cn/weact/Interface/WebChatMsg/queryNewMsg",
+        webMsgConfirmURL: "http://www.we-act.cn/weact/Interface/WebChatMsg/receiveMsgConfirm",
+        queryMsgPositionURL: "http://www.we-act.cn/weact/Interface/WebChatMsg/queryMsgPos",
+        queryHistoryMsgURL: "http://www.we-act.cn/weact/Interface/WebChatMsg/queryHistoryMsg",
+        getGuideInfo: function (opt) {
+            $.ajax({
+                url: this.getGuideInfoURL,
+                data: opt,
+                type: "GET",
+                dataType: "jsonp",
+                jsonpCallback: "weactCallback1",
+                success: function (data) {
+                    if (data.errMsg == "ok") {
+                        $("#shopImg").attr("src", data.data.headimg);
+                        $("#shopGName").html(data.data.gname);
+                        $("#shopName").html(data.data.sname);
+                        $("#sAvatar").val(data.data.headimg);
+                    }
+                    //console.log(data);
+                }
+            });
+        }, getCustomerInfo: function (opt) {
+            $.ajax({
+                url: this.getCustomerInfoURL,
+                data: opt,
+                type: "GET",
+                dataType: "jsonp",
+                jsonpCallback: "weactCallback8",
+                success: function (data) {
+                    if (data.errMsg == "ok") {
+                        $("#dAvatar").val(data.data.headimgurl);
+                    }
+                    //console.log(JSON.stringify(data));
+                }
+            });
+        },
+        sendMsg: function (opt) {
+            $.ajax({
+                url: this.sendMsgURL + "?access_token=" + this.access_token, // POST类型请拼接
+                data: opt,
+                type: "post",
+                dataType: "jsonp",
+                jsonpCallback: "weactCallback2",
+                success: function (data) {
+                    var chatContent = $("#chatContent").val();
+                    var msg = { msg_type: 0, content: chatContent, time: Math.round(new Date().getTime() / 1000), msgto: $("#gid").val() };
+                    appendContent(1, msg);
+                    $("#chatContent").val('');
+                    $("#faceSlider").hide();
+                    $("#face-control").removeClass("selected");
+                    if (navigator.userAgent.indexOf('Android') > -1) {
+                        $(chatContent).focus();
+                    } else {
+                        page.setHeight();
+                    }
+                    if (data.errMsg == "ok") {
+                        var total = $("#nowStart").val();
+                        $("#nowStart").val(parseInt(total) + 1);
+                    } else {
+
+                    }
+                }
+            });
+        },
+        queryNewMsg: function (opt) {
+            $.ajax({
+                url: this.queryNewMsgURL + "?access_token=" + this.access_token, // POST类型请拼接
+                data: opt,
+                type: "post",
+                dataType: "jsonp",
+                jsonpCallback: "weactCallback3",
+                success: function (data) {
+                    //console.log(JSON.stringify(data));
+                }
+            });
+        },
+        webMsgConfirm: function (opt) {
+            $.ajax({
+                url: this.webMsgConfirmURL + "?access_token=" + this.access_token, // POST类型请拼接
+                data: opt,
+                type: "post",
+                dataType: "jsonp",
+                jsonpCallback: "weactCallback4",
+                success: function (data) {
+                    //console.log(JSON.stringify(data));
+                }
+            });
+        },
+        queryMsgPosition: function (opt) {
+
+            $.ajax({
+                url: this.queryMsgPositionURL + "?access_token=" + this.access_token, // POST类型请拼接
+                data: opt,
+                type: "post",
+                dataType: "jsonp",
+                jsonpCallback: "weactCallback5",
+                success: function (data) {
+
+                    //console.log(JSON.stringify(data));
+                }
+            });
+        },
+        queryHistoryMsg: function (opt) {
+            $.ajax({
+                url: this.queryHistoryMsgURL + "?access_token=" + this.access_token, // POST类型请拼接
+                data: opt,
+                type: "post",
+                dataType: "jsonp",
+                jsonpCallback: "weactCallback6",
+                success: function (data) {
+                    try {
+                        if (data.errMsg == "ok") {
+                            var hsitorymsg = data.data.historymsg.reverse();
+                            for (var i = 0; i < hsitorymsg.length; i++) {
+                                appendContent(0, hsitorymsg[i]);
+                            }
+                        }
+                        if (parseInt($("#historyStart").val()) <= 0) {
+                            $("#historyStart").val(data.data.total - 20);
+                        }
+                        $("#nowStart").val(data.data.total);
+                    } catch (e) {
+
+                    }
+
+
+
+                    //console.log(JSON.stringify(data));
+                }
+            });
+        },
+        queryHistoryMsg1: function (opt) {
+            $.ajax({
+                url: this.queryHistoryMsgURL + "?access_token=" + this.access_token, // POST类型请拼接
+                data: opt,
+                type: "post",
+                dataType: "jsonp",
+                jsonpCallback: "weactCallback7",
+                success: function (data) {
+
+                    //回看历史消息
+                    if ($("#getChatHistory").hasClass("all")) return false;
+                    var _t = $("#getChatHistory").parent();
+                    _t.hide();
+                    $("#loading").show();
+                    if (data.errMsg == "ok") {
+
+                        var historyStart = $("#historyStart").val();
+                        if (parseInt(historyStart) - 20 > 0) {
+                            $("#historyStart").val(parseInt(historyStart) - 20);
+                        } else {
+                            $("#historyStart").val("0");
+                        }
+
+                        var log = data.data.historymsg;
+                        var logHtml = "", hasTime = true;
+                        if (log.length == 0) {
+                            _t.show().find("span").addClass("all").html("没有更多消息了");
+                            $("#loading").hide();
+                        } else {
+                            var firstTime = log[0].time;
+                        }
+
+                        for (var i = 0; i < log.length; i++) {
+                            var e = log[i];
+                            var contenter = messageFormat(e);
+                            var timestamp = e.time;
+                            var d = new Date(timestamp * 1000);    //根据时间戳生成的时间对象
+                            var date = (d.getMonth() + 1) + "-" +
+						   (d.getDate()) + " " +
+						   (d.getHours()) + ":" +
+						   (d.getMinutes());
+                            reviceTime = date;
+                            if (hasTime) {
+                                logHtml += "<li class='time'><span>" + reviceTime + "</span></li>";
+                                hasTime = false;
+                            }
+                            if (e.time > (firstTime + 5 * 50 * 1000)) {
+                                firstTime += 5 * 50 * 1000;
+                                hasTime = true;
+                            }
+
+
+                            if (e.msgto == $("#gid").val()) { // 发送者为客户，表示发送
+                                logHtml += "<li class='odd msg' data-time=" + e.time + "><div class='pic'><img src='" + ($("#dAvatar").val() || "__PUBLIC__/images/default-photo.png") + "'/></div>" + contenter + "</li>";
+                            } else { // 表示接收
+                                logHtml += "<li class='even msg' data-time=" + e.time + "><div class='pic'><img class='img' src='" + ($("#sAvatar").val() || "__PUBLIC__/images/default-photo.png") + "'/></div>" + contenter + "</li>";
+                            }
+                        }
+                        _t.show();
+                        $("#loading").hide().after(logHtml);
+                        if (scrollToBottom) {
+                            page.setHeight();
+                            scrollToBottom = false;
+                        }
+
+                    }
+                }
+            });
+        }
+    }
+
+    window.onorientationchange = page.initPage;
+    $(function () {
+        page.setHeight();
+        page.initPage();
+        $(window).resize(function () {
+            page.setHeight();
+        });
+        $("#face-control").click(function () {
+            $(this).toggleClass("selected");
+            $("#faceSlider").toggle();
+            page.setHeight();
+        });
+
+        // GET请求导购身份信息
+        var ginfodemo = {
+            access_token: webchat.access_token, 	// GET接口需要token
+            gid: $("#gid").val()
+        }
+        webchat.getGuideInfo(ginfodemo);
+
+
+        // GET请求导购身份信息
+        var ginfodemo1 = {
+            access_token: webchat.access_token, 	// GET接口需要token
+            gid: $("#gid").val(),
+            cid: $("#cid").val()
+        }
+        webchat.getCustomerInfo(ginfodemo1);
+
+
+        $("#btnSend").click(function () {
+
+            if ($("#chatContent").val().length > 0) {
+                // POST发送消息给导购
+                var sendmsgdemo = {
+                    webmsg_id: "msg_" + Math.round(new Date().getTime() / 1000) + Math.round(1000), 		// 模拟一个网页端消息的主键（用来排重），每次都必须不同
+                    eid: $("#eid").val(), 			// 商家编号
+                    from_customer: $("#cid").val(), // 消息来自的顾客编号
+                    to_guide: $("#gid").val(), 			// 消息送达的导购编号
+                    msg_type: 0, 						// 消息类型包括文本、图片、语音，默认0代表文本消息，1代表图片，2代表声音，3代表视频（短视频），4代表音乐，5代表商品图文推送
+                    time: Math.round(new Date().getTime() / 1000), 					// 消息时间，格林尼治事件，PHP用time ()
+                    content: $("#chatContent").val().replace(/\\/g, "&#92;").replace(/\//g, "&#47;").replace(/\n/g, "<br>"),
+
+
+
+                }
+                webchat.sendMsg(sendmsgdemo);
+            } else {
+                alert('请输入信息！');
+            }
+            $("#btnSend").addClass("g");
+        });
+
+
+        // POST请求某导购新消息
+        var msgdemo = {
+            gid: $("#gid").val()
+        }
+        webchat.queryNewMsg(msgdemo);
+
+        // POST确认收到新消息
+        var msgconfirmdemo = {
+            confirmlist: {
+                msgid: "woaixiaobaobao",
+                msgid: "testnew00002"
+            }
+        }
+        webchat.webMsgConfirm(msgconfirmdemo);
+
+        // POST请求某消息在历史消息的位置
+        var msgposdemo = {
+            gid: $("#gid").val(),  						// 消息所属导购编号
+            cid: $("#cid").val(), 		// 模拟某顾客编号
+            msg_id: "0" 			// 模拟某顾客和该导购聊天的某消息编号
+        }
+        //webchat.queryMsgPosition(msgposdemo);
+
+        // POST请求历史消息
+        var historymsgdemo = {
+            cid: $("#cid").val(), 	// 模拟某顾客编号
+            gid: $("#gid").val(), 	// 消息所属导购编号
+            next_start: 0, 	     	// 下一条消息是要读取第几条，如果没有该参数，默认读取第一条消息（历史消息数组下标从0开始）
+            perpage: 10, 			// 每页所查询的消息数目，最小10条，最大100条，如果不给出参数，默认一页50条消息
+            reverse: 1
+        }
+        webchat.queryHistoryMsg(historymsgdemo);
+    });
+    
+    
+    //表情分页划动
+    Zepto("#faceSlider").on('touchstart', function (e) {
+        e = e.changedTouches[0];
+        page.onStart(e);
+    });
+    Zepto("#faceSlider").on('touchmove', function (e) {
+        page.onMove(e.changedTouches[0], e);
+    });
+    Zepto("#faceSlider").on('touchend', function (e) {
+        page.onEnd(e.changedTouches[0]);
+    });
+    
+    
+    var scrollToBottom = true;
+    $("#getChatHistory").on("click", function () {
+        var historymsgdemo = {
+            cid: $("#cid").val(), 	// 模拟某顾客编号
+            gid: $("#gid").val(), 	// 消息所属导购编号
+            next_start: $("#historyStart").val(),// 下一条消息是要读取第几条，如果没有该参数，默认读取第一条消息（历史消息数组下标从0开始）
+            perpage: 10, 			// 每页所查询的消息数目，最小10条，最大100条，如果不给出参数，默认一页50条消息
+            reverse: 0
+        }
+        webchat.queryHistoryMsg1(historymsgdemo);
+    });
+    
+    
+    function GetRTime() {
+        var historymsgdemo = {
+            cid: $("#cid").val(), 	// 模拟某顾客编号
+            gid: $("#gid").val(), 	// 消息所属导购编号
+            next_start: $("#nowStart").val(),// 下一条消息是要读取第几条，如果没有该参数，默认读取第一条消息（历史消息数组下标从0开始）
+            perpage: 10, 			// 每页所查询的消息数目，最小10条，最大100条，如果不给出参数，默认一页50条消息
+            reverse: 0
+        }
+        webchat.queryHistoryMsg(historymsgdemo);
+    }
+    setInterval(GetRTime, 5000);
+        
+</script>
+</body>
+</html>

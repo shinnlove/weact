@@ -1,0 +1,139 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/customerCommonStyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<meta name="viewport" content="width=device-width,height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>商家注册</title>
+</head>
+
+<body>
+	<div id="wrap">
+    	<div class="head">coletta</div>
+        <div class="content">
+        	
+            <div class="main">
+                <form id="registerform" name="registerform">
+                <input type="hidden" name="refer" value="">
+                    <div class="p_mod o_address">
+                        <h2 class="p_mod_title">注册帐号</h2>
+                        <div id="city">
+                        <ul>
+                          <li><strong>账号：</strong><input type="tel" placeholder="请输入账号/手机号" id="account" name="account" value="" style="width:130px;" /></li>
+                            <li><strong>密码：</strong><input type="password" placeholder="请输入密码" id="password" name="password" value="" style="width:130px;" /></li>
+                            <li><strong>确认密码：</strong><input type="password" placeholder="请输入确认密码" id="password2" name="password2" value="" style="width:130px;" /></li>
+                            <li><strong>联系人：</strong><input type="text" placeholder="请输入姓名" id="contact_person" name="contact_person" value="" style="width:130px;" /></li>
+                            <li><strong>联系号码：</strong><input type="text" placeholder="联系号码" id="contact_number" name="email" value="" style="width:130px;" /></li>
+                            <li><strong>邮箱：</strong><input type="text" placeholder="密码找回邮箱" id="email" name="email" value="" style="width:130px;" /></li>
+                        </ul>
+                        </div>
+                    </div>
+                    <div class="o_btn clearfix">
+                        <input id="registerbtn" type="button" class="o_btn_back ts1" value="注册" style="margin-bottom:10px;" />
+                    </div>
+                </form>
+			</div>
+            
+            <div class="bottom">
+            	<div class="weActName">微信公众名称:Coletta法国科瑞塔品牌</div>
+                <div class="weActNumber">微信号：Coletta</div>
+                <div class="weActProducer">Powered by <a href="#">微动团队</a></div>
+            </div>
+        </div><!--content-->
+        <div class="footer">
+        	<div class="footerLeft">
+            	<a href="javascript:history.go(-1);">
+                	<div class="backBtn">
+                    	<span class="glyphicon glyphicon-circle-arrow-left"></span>
+                    </div>
+                </a>
+                <a href='{:U("Home/Manage/customerCenter")}'>
+                	<div class="cardBtn">
+                    	<span class="glyphicon glyphicon-list-alt"></span>
+                    </div>
+                </a>
+            </div>
+            <div class="footerRight">
+            	<a href="javascript:history.go(0);">
+                	<div class="refreshBtn">
+                    	<span class="glyphicon glyphicon-refresh"></span>
+                    </div>
+                </a>
+                <a href='{:U("Home/Index/index")}'>
+                	<div class="homeBtn">
+                    	<span class="glyphicon glyphicon-home"></span>
+                    </div>
+                </a>
+            </div>
+        </div><!--footer-->
+    </div><!--wrap-->
+
+<script type="text/javascript">
+$(function() {
+	$('#registerbtn').click(function() {
+		var reg = /^([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+@([a-zA-Z0-9]+[_|\_|\.]?)*[a-zA-Z0-9]+\.[a-zA-Z]{2,3}$/;
+		var userEmail = $('#email').val().trim();
+		if ($('#account').val().trim() == '') {
+			alert("请填写用户名！");
+			$('#account').focus();
+			return false;
+		} else if ($('#password').val().trim() == '') {
+			alert("请填写密码！");
+			$('#password').focus();
+			return false;
+		} else if ($('#password2').val().trim() == '') {
+			alert("请再次确认密码！");
+			$('#password2').focus();
+			return false;
+		} else if ($('#password').val().trim() != $('#password2').val().trim()) {
+			alert("两次密码填写不一致！");
+			$('#password2').focus();
+			return false;
+		} else if ($('#contact_person').val().trim() == '') {
+			alert("请输入联系人，以便及时沟通！");
+			$('#contact_person').focus();
+			return false;
+		} else if ($('#contact_number').val().trim() == '') {
+			alert("请输入联系号码，以便及时沟通！");
+			$('#contact_number').focus();
+			return false;
+		} else if ($('#email').val().trim() == '') {
+			alert("请输入邮箱，方便密码找回！");
+			$('#email').focus();
+			return false;
+		} else if (!reg.test(userEmail)) {
+			alert("输入的邮箱格式不正确！");
+			$('#email').focus();
+			return false;
+		}
+
+		$.post("{:U('Admin/Index/register','','')}", {
+			account: $('#account').val().trim(),
+			password: $('#password').val().trim(),
+			contact_person: $('#contact_person').val().trim(),
+			contact_number: $('#contact_number').val().trim(),
+			email: $('#email').val().trim(),
+		}, function(data) {
+			if (data.status == 0) {
+				alert("注册失败，请重试！");
+				$('#account').focus();
+				return false;
+			} else if (data.status == 1) {
+				alert("账号已经存在！");
+				$('#account').focus();
+				return false;
+			} else {
+				alert("注册成功！");
+				window.location.href = '{:U("Admin/Enterprise/main","","")}';
+			}
+		});
+	});
+});
+</script>
+</body>
+</html>

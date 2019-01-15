@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/My97DatePicker/skin/WdatePicker.css" />
+<script type="text/javascript" src="__PUBLIC__/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>商品信息维护</title>
+</head>
+
+<body class="easyui-layout">
+	<!-- easyui 表头 -->
+	<div data-options="region:'north',title:'',border:false"
+		style="height: 80px; margin-left: -10px;">
+		<div style="margin-left: 20px;">
+			<h3 style="color: highlight;font-size: 20px;">步骤：第2步,共3步(<font color="red" style="font-size: 15px;" >添加活动适用的商品</font>)</h3>
+		</div>
+		<div style="margin-left: 20px;">
+			<hr style="width: 200px; float: left; border-color: lightgreen;" />
+		</div>
+		<div style="font-size: 18px;margin-top: 10px;">
+			<label style="float: left; color: red;font-size: 2px;">&nbsp;提示：'全选'和'取消选择'只支持当前页,支持跨页保存</label>
+			<div style="float: right; margin-top: -15px;">
+				<a id="btnnext" href="javascript:void(0)" class="easyui-linkbutton" style="font-size: 15px;" onclick="next()">下一步</a>
+			</div>
+			<input type="hidden" name="activity_id" id="activity_id" value="{$activity_id}" />
+		</div>
+	</div>
+	<!-- easyUI的内容 -->
+	<!-- easyUI的表格 -->
+	<div data-options="region:'center',border:false">
+		<table id="dg" title="商品信息" toolbar="#toolbar" style="width: 100%; height: 100%;"></table>
+	</div>
+	<!-- easyUI的工具条 -->
+	<div id="toolbar">
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="selectAll()">全选</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="cancelSelect()">取消选择</a>
+	</div>
+
+<script type="text/javascript">
+	function currentTime() {
+		var now = new Date();
+		console.info(now);
+		var year = now.getFullYear(); //年
+		var month = now.getMonth() + 1; //月
+		var day = now.getDate(); //日
+		var hh = now.getHours(); //时
+		var mm = now.getMinutes(); //分
+		var clock = year + "-";
+		if (month < 10)
+			clock += "0";
+		clock += month + "-";
+		if (day < 10)
+			clock += "0";
+		clock += day + " ";
+		if (hh < 10)
+			clock += "0";
+		clock += hh + ":";
+		if (mm < 10)
+			clock += "0";
+		clock += mm;
+		return clock;
+	}
+	function getStartTime() {
+		var starttime = $("#start_time").val();
+		return starttime;
+	}
+	function sub() {
+		var starttime = $("#start_time").val();
+		alert(starttime);
+	}
+</script>
+<script type="text/javascript">
+$(function() {
+	$('#dg').datagrid({
+		url: "{:U('Admin/Activity/read','','')}",
+		singleSelect: false,
+		collapsible: true,
+		method: 'post',
+		fitColumns: true,
+		fit: true,
+		pagination: true,
+		rownumbers: true,
+		idField: 'product_id',
+		columns: [
+			[{
+				field: 'product_id',
+				title: '编号',
+				width: 100
+			}, {
+				field: 'product_name',
+				title: '名称',
+				width: 100
+			}, {
+				field: 'sex',
+				title: '性别',
+				width: 100
+			}, {
+				field: 'material',
+				title: '质地',
+				width: 100
+			}, {
+				field: 'original_price',
+				title: '原价',
+				sortable: true,
+				width: 100
+			}, {
+				field: 'current_price',
+				title: '现价',
+				sortable: true,
+				width: 100
+			}, {
+				field: 'units',
+				title: '产品（计量）单位',
+				width: 100
+			}, {
+				field: 'storage_amount',
+				title: '库存量',
+				sortable: true,
+				width: 100
+			}, {
+				field: 'create_time',
+				title: '添加时间',
+				sortable: true,
+				width: 120
+			}]
+		],
+		view: detailview,
+		detailFormatter: function(rowIndex, rowData) {
+			var html_description = rowData.html_description == null ? '' : rowData.html_description;
+			return '<table>' + '<tr>' + '<td rowspan=2 style="border:0">' + '<img src="../../../Updata/images/' + rowData.e_id + '/product/' + rowData.product_id + '/' + rowData.macro_path + '" ' + 'style="height:50px;width:50px"></td>' + '<td style="border:0">' + '<p>描述:</p><p>' + html_description + '</p>' + '</td>' + '</tr></table>';
+		}
+	});
+});
+</script>
+<script type="text/javascript">
+function selectAll() {
+	$('#dg').datagrid('selectAll');
+}
+
+function cancelSelect() {
+	$('#dg').datagrid('unselectAll');
+}
+
+function next() {
+	var rows = $("#dg").datagrid('getSelections');
+	var activity_id = $("#activity_id").val();
+	//判断是否为空
+	if ($.isEmptyObject(activity_id)) {
+		$.messager.confirm('确认', '亲，你还没添加活动哦，是否先添加活动呢？', function(cf) {
+			if (cf) {
+				window.location = "{:U('Admin/Activity/preaddActivity','','')}";
+			} else {
+				return;
+			}
+		});
+	}
+	var ids = [];
+	if (rows.length > 0) {
+		$.messager.confirm('确认', '亲，你确定要选择这些商品参加活动吗？', function(cf) {
+			if (cf) {
+				$('#btnnext').linkbutton('disable');
+				for (var i = 0; i < rows.length; i++)
+				ids.push(rows[i].product_id);
+				var url = "{:U('Admin/Activity/addActivityProduct','','')}";
+				$.post(url, {
+					activity_id: activity_id,
+					ids: ids.join(',')
+				}, function(data) {
+					if (data.status == 1) {
+						window.location = "{:U('Admin/Activity/success','','')}";
+					} else {
+						$('#btnnext').linkbutton('enable');
+						$.messager.alert('提示', '添加商品失败', 'error');
+					}
+				});
+			}
+		});
+	} else {
+		$.messager.alert('提示', '请选择商品', 'error');
+	}
+}
+</script>
+</body>
+</html>

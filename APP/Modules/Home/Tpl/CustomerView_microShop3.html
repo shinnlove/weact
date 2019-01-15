@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="__PUBLIC__/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css" />
+<link href="__PUBLIC__/css/dialog.css" rel="stylesheet" type="text/css" />
+<link href="__PUBLIC__/css/lilymain.css" rel="stylesheet" type="text/css" />
+<link href="__PUBLIC__/css/lilystyle.css" rel="stylesheet" type="text/css" />
+<link href="__PUBLIC__/css/lilyhome.css" rel="stylesheet" type="text/css" />
+<link href="__PUBLIC__/css/lilyhomemenu.css" rel="stylesheet" type="text/css" />
+<link href="__PUBLIC__/css/lilyfooter.css" rel="stylesheet" type="text/css" />
+<link href="__PUBLIC__/css/lilyhomereset.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto3.js"></script>
+<title>{$pageinfo [currentnav] [nav_name]}</title>
+</head>
+
+<body onselectstart="return true;" ondragstart="return false;">
+    <div class="body">
+        <header>
+            <div class="snower">
+                <script type="text/javascript"></script>
+                <script type="text/javascript" src="http://stc.weimob.com/src/template/snower.js"></script>
+            </div>
+        </header>
+        <section>
+            <div>
+                <div class="header2">
+                    <hgroup>
+                        <h2>{$einfo.brand}微商城</h2>
+                        <h4>众多产品正在促销，赶紧去看看吧……</h4>
+                    </hgroup>
+                    <figure style="background-image:url('__PUBLIC__/images/erdosindex.jpg');">&nbsp;</figure>
+                </div>
+                <ul class="list_ul">
+                	<foreach name="pageinfo.secondnavigation" item="pisec">
+	                	<a href="{$pisec.url}">
+	                		<li><a style="background-image:url('{$pisec.nav_image_path}');"><label>{$pisec.nav_name}</label></a><i></i></li>
+	                	</a>
+                    </foreach>
+                </ul>
+            </div>
+        </section>
+	</div>
+	<!-- 导航菜单 后台设置的快捷菜单 -->
+	<div class="top_bar footer_bar">
+		<section>
+			<div class="nav_7">
+				<ul class="box">
+					<li>
+                    	<a href='{:U("Home/MemberHandle/customerCenter")}?e_id={$e_id}'><span>我的账户</span></a>
+                    </li>
+                    <li>
+                    	<a href='{:U("Home/CartView/shoppingCart","","")}?e_id={$e_id}'><span>我的购物车</span></a>
+                    </li>
+				</ul>
+			</div>
+		</section>
+	</div>
+	
+	<footer style="overflow:visible;">
+		<div class="weimob-copyright" style="padding-bottom:50px;">
+			<a href="#">© 武汉ERDOS</a>
+		</div>
+	</footer>
+    
+	<div mark="stat_code" style="width:0px; height:0px; display:none;"></div>
+
+<script type="text/javascript">
+var e_id = '{$einfo.e_id}';				//要分享的商家编号
+//分享的信息
+var shareData = {
+	appid: "{$pageinfo [shareinfo] [appid]}", // 分享的商家编号
+    img_url: "{$pageinfo [shareinfo] [img_url]}", // 分享的图片
+    img_width: "160", // 宽度
+    img_height: "160", // 高度
+    title: "{$pageinfo [shareinfo] [title]}", // 分享的标题
+    desc: "{$pageinfo [shareinfo] [desc]}", // 分享的描述
+    link: "{$pageinfo [shareinfo] [link]}", // 分享的超链接
+    fakeid : "{$openid}",																		//分享用户的id
+    callback:function(result){
+    	if(result != 'send_app_msg:cancel' && result != 'share_timeline:cancel' && result != 'share_weibo:cancel' && result != 'share_fb:cancel'){
+    		$.post("{:U('Home/MobileCommon/shareRecord','','')}",
+    				{ e_id : e_id, link : shareData.link, openid : shareData.fakeid },			//分享的时候传3个参数：1、商家编号；2、链接地址（区分授权和不授权两种）；3、分享的微信号（只有开启授权登录才有）
+    				function(data){
+    					if(data.status == 1){
+    						scscms_alert("谢谢您的分享!", "ok", "", 2);//定时关闭窗口
+    					}else{
+    						scscms_alert("服务器繁忙，请稍后再试!"+data.msg, "warning", "", 2);//定时关闭窗口
+    					}
+    				},
+    				'json');
+    	}else{
+    		scscms_alert("下次记得分享噢!", "ok", "", 2);//定时关闭窗口
+    	}
+    }	/*分享后的回调函数，发送给朋友的类型分为send_app_msg:confirm或send_app_msg:cancel；对应发送给朋友、分享到朋友圈、分享到腾讯微博、分享到facebook都有4种类型*/
+};
+</script>
+<script type="text/javascript">
+var str_domain = location.href.split('/',4)[2];
+var boolIsTest = true;
+if(str_domain == 'www.weimob.com' || str_domain.indexOf('m.weimob.com') > 0){
+	boolIsTest = false;
+}
+new ChatFloat({
+        AId: '22730',
+        openid: "oz-R-jtxZBO5fzinX_Av7RcYCL6s",
+		top:150,
+		right:0,
+		IsTest:boolIsTest
+});
+</script>
+</body>
+</html>

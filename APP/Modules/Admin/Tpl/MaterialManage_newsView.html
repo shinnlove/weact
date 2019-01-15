@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/appmsgview.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<title>图文素材管理页面</title>
+</head>
+
+<body>
+	<div class="container">
+		<div class="containerBox">
+			<div class="boxHeader">
+				<h4>素材管理</h4>
+			</div>
+			<div class="newscontent">
+				<h3 class="page-sub-hd">图文列表(共<span>{$finalcount}条</span>，每页10条)</h3>
+				
+		   		<div class="page-bd"><!--图文page-bd开始div，结束div 见下标注-->
+		   			
+		   			<if condition="$finalinfo neq null">
+
+		   			<div class="tj msg-list"><!--偶数是左侧，奇数是右侧，这里开始。-->
+		   				<!-- 偶数内容 -->
+		   				<div id="first_col" class="b-dib vt msg-col">
+							
+							<span class="create_access">
+								<i class="icon36_common add_gray"></i>
+								<a href="{:U('Admin/MaterialManage/singleNews','','')}">
+									<i class="icon_appmsg_create"></i><strong>单图文消息</strong>
+								</a>
+	                    		<a href="{:U('Admin/MaterialManage/multipleNews','','')}">
+	                    			<i class="icon_appmsg_create multi"></i><strong>多图文消息</strong>
+	                    		</a>
+                            </span>
+							
+							<!-- <div id="addAppmsg" class="tc add-access">       
+								<a href="{:U('Admin/MaterialManage/singleNews','','')}" class="dib vm add-btn">+单图文消息</a>         
+								<a href="{:U('Admin/MaterialManage/multipleNews','','')}" class="dib vm add-btn multi-access">+多图文消息</a>
+							</div> -->
+							
+							<!-- 偶数进行偶数的循环，从数组下标0开始，step2 -->
+							<for start="0" end="$finalcount" step="2">
+								<div class="msg-item-wrapper"><!--特别注意：这里是多图文！-->
+					   				<div class="msg-item">
+	                                    <for start="0" end="count($finalinfo[$i][newsdetail])" step="1" name="j">
+	                                    	<if condition="$finalinfo[$i][newsdetail][$j][detail_order] eq -1">
+	                                    	<div class="appmsgItem"><!--主图文-->
+		                                        <h4 class="msg-t"><a href="#" class="i-title" target="_blank">{$finalinfo[$i][newsdetail][$j][title]}</a></h4>
+		                                        <p class="msg-meta"><span class="msg-date">{$finalinfo[$i][add_time]}</span></p>
+		                                        <div class="cover">
+		                                            <p class="default-tip" style="display:none">封面图片</p>
+		                                            <img src="{$finalinfo[$i][newsdetail][$j][cover_image]}" class="i-img" alt="" />
+		                                        </div>
+		                                        <p class="msg-text"></p>         
+		                                    </div>
+		                                    </if>
+	                                    	
+	                                    	<if condition="$finalinfo[$i][newsdetail][$j][detail_order] neq -1">
+	                                    	<div class="rel sub-msg-item appmsgItem"><!--子图文1-->
+		                                        <span class="thumb">                 
+		                                            <img src="{$finalinfo[$i][newsdetail][$j][cover_image]}" class="i-img" alt="" />
+		                                        </span>       
+		                                        <h4 class="msg-t"><a href="#" target="_blank" class="i-title">{$finalinfo[$i][newsdetail][$j][title]}</a></h4>       
+		                                    </div>
+		                                    </if>
+	                                    </for>
+	                                </div>
+	                                                
+	                                <div class="msg-opr">
+	                                    <ul class="f0 msg-opr-list">
+	                                        <li class="b-dib opr-item"><a data-mul="{$finalinfo[$i][msg_category]}" class="block tc opr-btn edit-btn" href="javascript:void(0);" data-mid="{$finalinfo[$i][msgnews_id]}"><span class="th vm dib opr-icon edit-icon">编辑</span></a></li>           
+	                                        <li class="b-dib opr-item"><a class="block tc opr-btn del-btn" href="javascript:void(0);" data-mid="{$finalinfo[$i][msgnews_id]}"><span class="th vm dib opr-icon del-icon">删除</span></a></li>         
+	                                    </ul>       
+	                                </div>
+	                            </div><!--msg-item-wrapper结束div-->
+							</for>
+		   				</div><!--偶数内容结束div-->
+                        
+		   				<!-- 奇数内容 -->
+		   				<div id="second_col" class="b-dib vt msg-col">
+			   				<!-- 奇数进行奇数的循环，从数组下标1开始，step2 -->
+                            <for start="1" end="$finalcount" step="2">
+                            <div class="msg-item-wrapper"><!--特别注意：这里是多图文！-->
+				   				<div class="msg-item">
+                                    <for start="0" end="count($finalinfo[$i][newsdetail])" step="1" name="j">
+                                    	<if condition="$finalinfo[$i][newsdetail][$j][detail_order] eq -1">
+                                    	<div class="appmsgItem"><!--主图文-->
+	                                        <h4 class="msg-t"><a href="#" class="i-title" target="_blank">{$finalinfo[$i][newsdetail][$j][title]}</a></h4>
+	                                        <p class="msg-meta"><span class="msg-date">{$finalinfo[$i][add_time]}</span></p>
+	                                        <div class="cover">
+	                                            <p class="default-tip" style="display:none">封面图片</p>
+	                                            <img src="{$finalinfo[$i][newsdetail][$j][cover_image]}" class="i-img" alt="" />
+	                                        </div>
+	                                        <p class="msg-text"></p>         
+	                                    </div>
+	                                    </if>
+                                    	
+                                    	<if condition="$finalinfo[$i][newsdetail][$j][detail_order] neq -1">
+                                    	<div class="rel sub-msg-item appmsgItem"><!--子图文1-->
+	                                        <span class="thumb">                 
+	                                            <img src="{$finalinfo[$i][newsdetail][$j][cover_image]}" class="i-img" alt="" />
+	                                        </span>       
+	                                        <h4 class="msg-t"><a href="#" target="_blank" class="i-title">{$finalinfo[$i][newsdetail][$j][title]}</a></h4>       
+	                                    </div>
+	                                    </if>
+                                    </for>
+                                </div>
+                                                
+                                <div class="msg-opr">
+                                    <ul class="f0 msg-opr-list">
+                                        <li class="b-dib opr-item"><a data-mul="{$finalinfo[$i][msg_category]}" class="block tc opr-btn edit-btn" href="javascript:void(0);" data-mid="{$finalinfo[$i][msgnews_id]}"><span class="th vm dib opr-icon edit-icon">编辑</span></a></li>           
+                                        <li class="b-dib opr-item"><a class="block tc opr-btn del-btn" href="javascript:void(0);" data-mid="{$finalinfo[$i][msgnews_id]}"><span class="th vm dib opr-icon del-icon">删除</span></a></li>         
+                                    </ul>       
+                                </div>
+                            </div><!--msg-item-wrapper结束div-->
+							</for>
+
+		   				</div><!-- 奇数内容 div id="second_col"结束div -->
+
+		   			</div><!--偶数是左侧，奇数是右侧，这里结束。-->
+                    </if><!-- 如果图文信息至少有一条 -->
+                    
+                    <if condition="$finalinfo eq null">
+		                <div class="emptyTip">你还没有添加图文素材噢。</div>
+					</if><!-- 如果图文信息一条都没有 -->
+                    
+		   		</div><!--图文page-bd结束div-->
+			</div><!--newscontent结束div-->
+			<div class="group page-nav">
+				<div class="pagination">
+                	<if condition="$finalinfo neq null">
+                		<div class="pagerBar" style="text-align: center">当前页/总页数：&nbsp;&nbsp;{$page}</div>
+                	</if>
+                	
+                	<if condition="$finalinfo eq null">
+                		<div id="addAppmsg" class="tc add-access">       
+							<a href="{:U('Admin/MaterialManage/singleNews','','')}" class="dib vm add-btn">+单图文消息</a>         
+							<a href="{:U('Admin/MaterialManage/multipleNews','','')}" class="dib vm add-btn multi-access">+多图文消息</a>
+						</div>
+                	</if>
+                </div>
+				<div class="clr"></div>
+			</div>
+			<div class="bottomPage" style="height:30px;"></div>
+		   	<div class="clr" />
+	   	</div><!--containerBox结束div-->
+   	</div><!--container结束div-->
+
+<script type="text/javascript">
+$(function(){
+	//绑定删除事件
+	$(".del-btn").click(function(){
+		var $delTarget = $(this);					//先抓取对象
+		$.messager.confirm('温馨提示', '确定删除本图文？', function(cf){
+			if(cf){
+				$.post("{:U('Admin/MaterialManageRequest/delNewsConfirm', '', '')}",
+						{ mid : $delTarget.attr("data-mid") },
+						function(data){
+							if(data.status == 1){
+								$.messager.alert('温馨提示', '操作成功! '+data.msg, 'info', function(){
+									$delTarget.closest(".msg-item-wrapper").remove();
+								});
+							}else{
+								if(100 == data.errorCode || 101 == data.errorCode || 102 == data.errorCode){
+									//这个地方换成微动的图文删除，要特别注意，必须取消关联才能删除！
+									$.messager.alert('温馨提示', '删除图文失败! '+data.errorMsg, 'warning');
+								}else{
+									$.messager.alert('温馨提示', '删除图文信息失败!', 'error');
+								}
+							}
+						},"json");
+			}
+		});
+	});
+	
+	//绑定编辑事件
+	$(".edit-btn").click(function(){
+		if($(this).attr("data-mul") == 1){
+			//编辑多图文，此处自己定义微动的跳转url
+			location.href = "{:U('Admin/MaterialManage/editMultipleNews', '', '')}?mid="+$(this).attr("data-mid");
+		} else{
+			//编辑单图文，此处自己定义微动的跳转url
+			location.href = "{:U('Admin/MaterialManage/editSingleNews', '', '')}?mid="+$(this).attr("data-mid");
+		}
+	});
+});
+</script>
+</body>
+</html>

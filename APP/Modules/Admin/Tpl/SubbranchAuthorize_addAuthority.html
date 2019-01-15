@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/select2.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type='text/javascript' src="__PUBLIC__/js/plugins/select2/select2.min.js"></script>
+<title>添加分店授权信息</title>
+</head>
+
+<body>
+    <form name="authForm" class="form-horizontal uniform" method="post" action="">
+        <div class="control-group">
+            <div class="controls controls-row"><h2>添加分店授权信息</h2></div>
+            <div class="controls controls-row">
+				<font style="font-weight:bold; color:#666;">说明：</font><font style="color:highlight; line-height:22px;">每一家分店只允许添加一个账号，带<span class="text-error">(*)</span>的为必填项</font><br />
+			</div>
+        </div>
+        
+        <hr />
+        
+        <input type="hidden" id="a_id" name="a_id" value="{$a_id}" />
+       
+	    <div class="control-group">
+        	<label class="control-label">
+            	选择分店<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row" style="padding-top:2px;">
+            	<!--让搜索下拉框对齐到标签，此div必须加上style="padding-top:2px;"-->
+            	<div class="span7" style="margin-left:0px; width:230px;">
+                	<!--span7标签在bootstrap2.2里有一个margin-left:20px，这里去掉，并且规定搜索下拉框长度为230px最好看-->
+                    <select name="select" id="search_select" style="width: 100%; display: none;">
+                        <option value="-1">请选择分店...</option>
+                        <foreach name="sinfo" item="si">
+                        	<option value="{$si.subbranch_id}">{$si.subbranch_name}</option>
+                        </foreach>
+                    </select>
+                </div>
+            </div>
+            <input type="hidden" id="current_sub" name="current_sub" value="-1" /><!--存档当前店铺-->
+            <div class="controls controls-row">
+            	<font style="color:#666;">温馨提示：可以输入关键字搜索选择要授予登录权限的分店。</font>
+            </div>
+        </div>
+	        
+	    <div class="control-group">
+			<label class="control-label">授权账号<span class="text-error">(*)</span>：</label>
+	            <div class="controls controls-row">
+	                <input type="text" class="uniform mybriefinput" id="a_account" name="a_account" placeholder="请输入分店授权帐号" value="" required="required" />
+	            </div>
+	        </div>
+	        
+	        <div class="control-group">
+				<label class="control-label">登录密码<span class="text-error">(*)</span>：</label>
+	            <div class="controls controls-row">
+	                <input type="text" class="uniform mybriefinput" id="a_password" name="a_password" placeholder="请输入分店登录密码" required="required" />
+	            </div>
+	            <div class="controls controls-row">
+            		<font style="color:#666;">格式要求：以字母开头，长度在6-18之间，只能包含字符、数字和下划线。</font>
+            	</div>
+	        </div>
+        
+         <div class="control-group">
+            <label class="control-label" for="enableMulti">权限状态：</label>
+            <div class="controls controls-row" style="margin-top:5px;">
+                <input type="checkbox" class="uniform" id="is_open" name="is_open" /><!-- &nbsp;&nbsp;注：若添加的分店授权信息即刻开启权限，则勾选。 -->
+            </div>
+            <div class="controls controls-row">
+            	<font style="color:#666;">温馨提示：若添加授权信息的分店即刻开启权限，则勾选。</font>
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="handle-action">
+            <a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">提交</a>
+            &nbsp;&nbsp;
+            <a id="resetbtn" class="large ui-color-button blue" href="javascript:void(0)">重置</a>
+            <a href="javascript:history.go(-1);">
+                <img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/images/goback.png" />
+            </a>
+        </div> 
+	</form>
+    
+<script type="text/javascript">
+var checkStatus = 0;
+$(function (){
+	//抓取授权信息所有DOM对象
+	var aid = $("#a_id");
+	var ssl = $("#search_select");
+	var cus = $("#current_sub");
+	var aac = $("#a_account");						
+	var apa = $("#a_password");
+	var iop = $("#is_open");
+	
+	$(".uniform").uniform();							// 初始化uniform，文本框的uniform格式化
+	
+	$("#search_select").select2();						// 带搜索的选择框初始化
+	
+	checkBoxInit();										// 初始化单选框
+	
+	//分店选择框更改事件
+	ssl.change(function(){
+		cus.val($(this).val());							// 获取option选中的subbranch的value，并写入input里
+	});
+	
+	$("#submitbtn").click(function(){
+		//Step1: 判断分店是否选择
+		if(cus.val() == '-1'){
+			$.messager.alert('温馨提示', '请选择分店!', 'warning', function(){
+				cus.focus();
+	  		});
+	  		return
+		}
+		
+		//Step2: 判断账号是否添加
+		if(aac.val() == ''){
+			$.messager.alert('温馨提示', '请设置授权账号!', 'warning', function(){
+				aac.focus();
+	  		});
+	  		return
+		}
+		
+		//Step3: 判断登录密码是否按要求填写
+		if(apa.val() == ''){
+			$.messager.alert('温馨提示', '请设置登录密码!', 'warning', function(){
+				apa.focus();
+	  		});
+	  		return
+		}else if(!isalphanumber(apa.val())){
+			$.messager.alert('温馨提示', '密码格式有误，请按照要求重新输入!', 'warning', function(){
+				apa.focus();
+	  		});
+	  		return
+		}
+		
+		//验证通过，post提交
+		$.messager.confirm('温馨提示', '确定提交所编辑的分店授权信息吗?', function(result){
+			if(result) {
+				var checked = 0;
+				var temp = $('.checker span').attr("class");
+				if(temp=="checked"){
+					checked = 1;
+				}
+				var usoptions=$("#search_select option:selected");
+			$.post("{:U('Admin/SubbranchAuthorizeRequest/addAuthorityConfirm')}", 
+				{ 
+					aid : aid.val(),
+					cus : cus.val(),
+					aac : aac.val(),
+					apa : apa.val(),
+					iop: checked
+					}, function(result){
+						if (result.errCode == 0) {
+							$.messager.alert('温馨提示', '分店授权信息添加成功！', 'info', function() {
+								window.location.href = "{:U('Admin/SubbranchAuthorize/subAuthorityView')}";
+							})
+						} else {
+							$.messager.alert('温馨提示', '分店授权信息添加失败！' + result.errMsg, 'error');
+						}
+					},'json');
+				}
+			});
+			return
+		});
+	// 表单重置按钮
+	$("#resetbtn").click(function(){
+			$.messager.confirm('温馨提示', '确定重置吗?', function(result){
+				if(result) {
+					//重置所有
+					cus.val('-1');
+					ssl.val('-1');
+					ssl.change();
+					aac.val('');
+					apa.val('');
+					checkBoxInit();
+				}
+			});
+	});
+});
+
+//以字母开头，长度在6-18之间，只能包含字符、数字和下划线。
+function isalphanumber(str) { 
+	var result=str.match(/^[a-zA-Z]\w{5,17}$/); 
+	if(result==null) return false; 
+	return true; 
+} 
+
+//单选框初始化函数
+function checkBoxInit(){
+	if(checkStatus==1){
+		document.getElementById("is_open").checked=true;
+		$('.checker span').attr("class","checked");
+	}else{
+		document.getElementById("is_open").checked=false;
+		$('.checker span').attr("class","");
+	}
+}
+
+</script>
+</body>
+</html>

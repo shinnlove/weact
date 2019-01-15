@@ -1,0 +1,329 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/My97DatePicker/skin/WdatePicker.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/tableCommonStyle.css" />
+<script type="text/javascript" src="__PUBLIC__/My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/customerQueryAnother.js"></script><!-- 客户端增删查改的js -->
+<title>选取题目列表</title>
+</head>
+
+
+<body class="easyui-layout">
+	<!-- easyui 表头 -->
+	<div data-options="region:'north',title:'',border:false"
+		style="height: 80px; margin-left: -10px;">
+		<div style="margin-left: 20px;">
+			<h3 style="color: highlight;font-size: 20px;">步骤：第2步,共3步(<font color="red" style="font-size: 15px;" >所有题目列表</font>)</h3>
+		</div>
+		<div style="margin-left: 20px;">
+			<hr style="width: 200px; float: left; border-color: lightgreen;" />
+		</div>
+		<div style="font-size: 18px;margin-top: 10px;">
+			<label style="float: left; color: red;font-size: 2px;">&nbsp;提示：'全选'和'取消选择'只支持当前页,支持跨页保存</label>
+			<div style="float: right; margin-top: -15px;">
+				<a id="btnnext" href="javascript:void(0)" class="easyui-linkbutton"
+					style="font-size: 15px;" onclick="next()">下一步</a>
+			</div>
+			<input type="hidden" name="question_activity_id" id="question_activity_id"
+				value="{$question_activity_id}" />
+		</div>
+	</div>
+	<!-- easyUI的表格 -->
+	<div data-options="region:'center',border:false">
+		<table id="dg" title="题目信息" toolbar="#toolbar"
+			style="width: 100%; height: 100%;">
+		</table>
+	</div>
+	<!-- easyUI的工具条 -->
+	<div id="toolbar">
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addNewQuestion(addURL)">添加新题</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="selectAll()">全选</a> 
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" plain="true" onclick="cancelSelect()">取消选择</a>
+		<a href="javascript:location.reload();" class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
+						<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="exportData()">导出记录</a>
+	</div>
+	
+	<!-- easyUI的添加对话框 -->
+    <div id="dlg" class="easyui-dialog" style="width:600px;height:310px;padding:10px 20px" closed="true" buttons="#dlg-buttons">
+        <form id="fm" method="post" novalidate>
+        	<table width="500px" border="0" cellspacing="0" cellpadding="0" align="left">
+				<tr>
+				    <td valign="top" bgcolor="#E1ECEE">
+	        			<table width="100%" border="0" cellspacing="1" cellpadding="0" style="font-size: 12px;">
+				        	<tr>
+							    <td height="20" colspan="4" bgcolor="#FFFFFF" class="Menu">题目基本信息</td>
+							</tr>	      
+			        	      
+			        	    <tr>
+						        <td bgcolor="#FFFFFF" align="center" class="style1">题目类型:</td>
+						        <td bgcolor="#FFFFFF" align="left" class="style1">
+						        	<input id="group_id" name="group_id" style="width:150px;" class="easyui-validatebox h01" required="true"/>
+						        </td>
+						        <td bgcolor="#FFFFFF" align="center" class="style1">选项类型</td>
+						        
+							    <td bgcolor="#FFFFFF" class="style1">
+						            <select id="option_type" name="option_type" class="easyui-combobox" style="width:154px;">
+						                <option value="2选1">2选1</option>
+						                <option value="3选1">3选1</option>
+						                <option value="4选1">4选1</option>
+						                <option value="5选1">5选1</option>
+						                <option value="6选1">6选1</option>
+						            </select>
+							    </td>
+						    </tr>
+							  
+							<tr>
+						        <td bgcolor="#FFFFFF" align="center" class="style1">题目</td>
+						        <td bgcolor="#FFFFFF" class="style1">
+						            <input id="title" name="title" style="width:150px;" class="easyui-validatebox" required="true"/>
+						        </td>
+						        <!-- <td bgcolor="#FFFFFF" align="center" class="style1">密码</td>
+						        <td bgcolor="#FFFFFF" class="style1">
+						            <input id="password" name="password" style="width:150px;" type="password" class="easyui-validatebox" required="true">
+						        </td> -->
+						    </tr>
+							  
+						    <tr>
+						        <td bgcolor="#FFFFFF" align="center" class="style1">选项A</td>
+						        <td bgcolor="#FFFFFF" class="style1">
+						            <input id="option_a" name="option_a" style="width:150px;" class="easyui-validatebox" required="true"/>
+						        </td>
+						        <td bgcolor="#FFFFFF" align="center" class="style1">选项B</td>
+						        <td bgcolor="#FFFFFF" class="style1">
+						            <input id="option_b" name="option_b" style="width:150px;"  class="easyui-validatebox" required="true"/>
+						        </td>
+						    </tr>
+						
+						    <!-- <tr id = "cd" style="display:none">
+						        <td bgcolor="#FFFFFF" align="center" class="style1">选项C</td>
+						        <td bgcolor="#FFFFFF" class="style1">
+						            <input id="option_c" name="option_c" style="width:150px;" class="easyui-validatebox" required="true"/>
+						        </td>
+						        <td bgcolor="#FFFFFF" align="center" class="style1">选项D</td>
+						        <td bgcolor="#FFFFFF" class="style1">
+						            <input id="option_d" name="option_d" style="width:150px;" class="easyui-validatebox" required="true"/>
+						        </td>
+						    </tr>
+						
+						    <tr id = "ef" style="display:none">
+						        <td bgcolor="#FFFFFF" align="center" class="style1">选项E</td>
+						        <td bgcolor="#FFFFFF" class="style1">
+						            <input id="option_e" name="option_e" style="width:150px;" class="easyui-validatebox" required="true"/>
+						        </td>
+						        <td bgcolor="#FFFFFF" align="center" class="style1">选项F</td>
+						        <td bgcolor="#FFFFFF" class="style1">
+						            <input id="option_f" name="option_f" style="width:150px;" class="easyui-validatebox" required="true"/>
+						        </td>
+						    </tr> -->
+						    
+						    <tr>
+						        <td bgcolor="#FFFFFF" align="center" class="style1">正确选项</td>
+						        <td bgcolor="#FFFFFF" class="style1">
+						            <input id="correct_option" name="correct_option" style="width:150px;"/>
+						        </td>
+						        <td bgcolor="#FFFFFF" align="center" class="style1">答案解释</td>
+						        <td bgcolor="#FFFFFF" class="style1">
+						            <input id="answer_explain" name="answer_explain" style="width:150px;"/>
+						        </td>
+						    </tr>
+		   				 </table>
+		    		</td>
+		    	</tr>
+			</table>
+        </form>
+    </div>
+   <div id="dlg-buttons" style="text-align:right;background:#FFF;">
+       <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="saveCustomer()">确定</a>
+       <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">取消</a>
+   </div>
+   <!-- easyUI的添加对话框 -->
+
+<script type="text/javascript">
+	var addURL = "{:U('Admin/PluginManage/addNewQuestion','','')}";		//增加客户的控制器action处理函数地址
+	var gi = $('#group_id').val();
+	var oi = $('#option_id').val()
+	var ti = $('#title').val();
+	var oa = $('#option_a').val()
+	var ob = $('#option_b').val() 
+	var ca = $('#correct_answer').val()
+	var ae = $('#answer_explain').val()
+</script>
+<script type="text/javascript">
+	$(function() {
+		$('#dg').datagrid({
+							url : "{:U('Admin/PluginManage/read','','')}",
+							singleSelect : false,
+							collapsible : true,
+							method : 'post',
+							fitColumns : true,
+							fit : true,
+							pagination : true,
+							pageSize: 10,
+					        pageList: [5,10,20],
+							rownumbers : true,
+							idField : 'question_id',
+							columns : [ [  {
+								field : 'question_group',
+								title : '题目类型',
+								width : 50
+							}, {
+								field : 'question',
+								title : '题目',
+								width : 250
+							}, {
+								field : 'answer',
+								title : '正确选项',
+								width : 50
+							}, {
+								field : 'answer_reason',
+								title : '答案解释',
+								sortable : true,
+								width : 150
+							} ,{
+								field : 'enroll_time',
+								title : '添加时间',
+								sortable : true,
+								width : 100
+							}]],
+							view : detailview,
+							detailFormatter : function(rowIndex, rowData) {
+								return '<div id="answerlist_' + rowIndex + '" style="padding:5px 10px;background:#f7f7f7;"></div>';
+							},
+							onExpandRow: function(rowIndex, rowData){
+								var html_final = '';
+								html_final = '<table>'
+											+	'<tr>'
+											+ 		'<td style="border:0">';
+								var letters = new Array(
+										"a","b","c","d","e","f");
+								for(var i=0; i<rowData.question_type; i++){
+									var field = 'option_' + letters[i];
+									if(rowData[field] !='' && rowData[field]!=null && rowData.answer == letters[i].toUpperCase()){
+										html_final	+= 	'<p style="color:#68EE68">选项'+ letters[i].toUpperCase() +'：' + rowData[field] + '</p>'
+									}else if(rowData[field] !='' && rowData[field]!=null && rowData.answer != letters[i].toUpperCase()){
+										html_final	+= 	'<p>选项'+ letters[i].toUpperCase() +'：' + rowData[field] + '</p>'
+									}
+								}
+								html_final	+= 		'</td>' 
+											+ 	'</tr>'
+											+ '</table>'; 
+								$('#answerlist_'+rowIndex).html(html_final);
+							}
+						});
+	});
+</script>
+<script type="text/javascript">
+	var a=$('#title').val();
+	$(function(){
+		var optionNum = $('#member_level').val();
+		//alert('');
+		if(optionNum=='4选1'){
+			alert(4);
+			$('#cd').css("display:block");
+		}
+		if(optionNum==6){
+			$('#cd').style("display:block");
+			$('#ef').style("display:block");
+		}
+	})
+	function selectAll() {
+		$('#dg').datagrid('selectAll');
+	}
+
+	function cancelSelect() {
+		$('#dg').datagrid('unselectAll');
+	}
+
+	function next() {
+		var rows = $("#dg").datagrid('getSelections');
+		var question_activity_id = $("#question_activity_id").val();
+		//判断是否为空
+		if ($.isEmptyObject(question_activity_id)){
+			$.messager.confirm('确认','亲，你还没添加活动哦，是否先添加活动呢？',function(cf) {
+				if(cf){
+					window.location.reload();
+				}else{
+					return;
+				}
+			});
+		}
+		var ids = [];
+		if (rows.length > 0) {
+			$.messager.confirm('确认','亲，你确定要选择这些题目参加活动吗？',function(cf) {
+				if (cf) {
+					$('#btnnext').linkbutton('disable');
+					for (var i = 0; i < rows.length; i++)
+						ids.push(rows[i].question_id);
+					var url = "{:U('Admin/PluginManage/addActivityQuestions','','')}";
+					$.post(url,{question_activity_id : '637f95b672a379409b57d2f489675179',ids : ids.join(',')},
+						function(data) {
+							if (data.status == 1) {
+								window.location = "{:U('Admin/PluginManage/success','','')}";
+							} else {
+								$('#btnnext').linkbutton('enable');
+								$.messager.alert('提示','添加题目失败','error');
+							}
+					});
+				}else{
+					return;
+				}
+			});
+		} else {
+			$.messager.alert('提示', '请选择题目', 'error');
+		}
+	}
+	function addNewQuestion(addURL){
+    	dlg.dialog('open').dialog('setTitle','添加题目');
+    	fm.form('clear');
+        url=addURL;
+    }
+	
+	function exportData(){
+		
+		
+		var data = $('#dg').datagrid('getData');
+		//var data = $('#dg').rowData;
+		//alert(data);
+	    var postURL = "{:U('Admin/PluginManage/test','','')}";
+		$.post(postURL,data,function(data){
+			if(data.status==1){
+				
+			}
+		},'json');
+
+	//window.location.href="{:U('Admin/Excel/index','','')}";
+	}
+/* 	function addCustomer(addURL){
+    	dlg.dialog('open').dialog('setTitle','添加题目');
+    	fm.form('clear');
+        url=addURL;
+        if(gi&&oi&&ti&&oa&&ab&&ca&&ae){
+        	 $.post(url,{gi:gi,oi:oi,ti:ti,oa:oa,ob:ob,ca:ca,ae:ae},
+     				function(data) {
+     					if (data.status == 1) {
+     						$.messager.confirm('确认','亲，您确定要添加该题吗？',function(cf) {
+     							if(cf){
+     								window.location =  "{:U('Admin/PluginManage/addQuestionList','','')}";
+     							}else{
+     								return;
+     							}
+     						});
+     						
+     					} else {
+     						$('#btnnext').linkbutton('enable');
+     						$.messager.alert('提示','添加题目失败','error');
+     					}
+     });
+        }
+    } */
+</script>
+</body>
+</html>

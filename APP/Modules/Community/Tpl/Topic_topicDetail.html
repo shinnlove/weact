@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="format-detection" content="telephone=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="description" content="" />
+<meta name="keywords" content="" />
+<link rel="shortcut icon" href="" />
+<title>微社区</title>
+<script type="text/javascript">
+    window.g_module = [];
+    var STATIC_DOMAIN = '__PUBLIC__',
+        ARS_TIME = '',
+        IMG_LOADING = 'data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==';
+    
+    var g_tsBase = new Date(),g_ts = {};
+    var PathUtil = {
+        getCPath: function() {
+        	return STATIC_DOMAIN + '/js/';
+        }
+    };
+    
+    g_ts.css_start=new Date();
+    var pageName = '';
+</script>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/postquan.css" />
+<!--debug-->
+<script type="text/javascript">
+    var sId = '{$site_id}',
+		e_id = '{$sinfo.e_id}',					// 企业编号（在微动企业编号就是微社区编号）
+        tId = 173,
+        openid = '{$openid}',				// 用户微信号
+        uId = '105339320',
+        isNullNick = '0' | false,
+        isManager = 0,
+        authUrl = '',
+        siteLogo = '{$sinfo.site_logo}',	// 站点Logo
+        CSRFToken = "{$sinfo.csrf_token}",
+        debug = '' | false,
+        DOMAIN = 'http://localhost/',
+        _speedMark = new Date(),
+        isWX = '' | false,
+        isMQ = '' | false,
+        isAppBar = '' | false,
+        isQQBrowser = '' | false,
+        isWeixinLink = '' | false,
+        newMsgCount = '2',
+        isFriendSite = '0',
+        enabledSmiley = '1';
+    
+    window.addEventListener("DOMContentLoaded", function() {g_ts.domready = new Date();});
+    window.addEventListener("load", function() {g_ts.domload = new Date();});
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideToolbar');
+        WeixinJSBridge.call('showOptionMenu');
+    });
+</script>
+</head>
+
+<body class="pb">
+<script>
+    var jsonData = '{\"dataList\":[{\"content\":\"\\u4f60\\u597d\",\"authorUid\":132468946,\"author\":\"\\u8303\\u7279\\u897f\",\"createTime\":1412044089,\"tId\":173,\"pId\":194,\"isLZ\":false,\"toPId\":0,\"toAuthorUid\":0,\"toAuthor\":\"\",\"picIds\":[],\"appId\":0,\"appName\":\"\",\"floorCount\":1,\"likeNum\":2,\"fCreatedTime\":\"2014-09-30 10:28\",\"hCreatedTime\":\"2014-09-30 10:28\",\"floorList\":{\"1209\":{\"content\":\"\\u4f5c\",\"author\":\"\\u827e\\u5ea6\",\"authorUid\":142863039,\"createTime\":1413053973,\"tId\":173,\"pId\":194,\"floorPId\":1209,\"toAuthor\":\"\\u8303\\u7279\\u897f\",\"toPId\":0,\"toUid\":132468946,\"isLZ\":false,\"fCreatedTime\":\"2014-10-12 02:59:33\",\"hCreatedTime\":\"2014-10-12 02:59:33\",\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/vd8yNL3TS9CZypv1aoblcW1UreXLLqnXiasQ3ibMNiaz6G9A0rQhZNBT9yOrTAQiaicsAicI5mBxkWVPKDQHOrc1pXsJnjibDXm5n3t\\/64?max-age=1296000\"}},\"authorExps\":{\"num\":4,\"rank\":1,\"limit\":{\"thread\":2,\"reply\":1,\"reward\":0}},\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/zPHK62E0q5gEVtMyFCaEz7lX9jDKqhgax1juHoKxOZhrpchU16AXIJDphceZT50wzIF79umuic7lxY71L0Atpic8Y8ibIOAuMky\\/64?max-age=1296000\",\"restCount\":0},{\"content\":\"\\u6211\\u770b\\u4e86\\u4e00\\u4e0b\\u4e5f\\u592a\\u591a\\u4eba\\u53d1\\u5c0f\\u5e7f\\u544a\\u4e86\\u5427\\uff01\\u8fd9\\u662f\\u4e2a\\u5e7f\\u544a\\u9006\\u88ad\\u7684\\u65f6\\u4ee3\\u3002\",\"authorUid\":139257533,\"author\":\"macro\",\"createTime\":1412702698,\"tId\":173,\"pId\":204,\"isLZ\":false,\"toPId\":0,\"toAuthorUid\":0,\"toAuthor\":\"\",\"picIds\":[],\"appId\":0,\"appName\":\"\",\"fCreatedTime\":\"2014-10-08 01:24\",\"hCreatedTime\":\"2014-10-08 01:24\",\"floorList\":false,\"floorCount\":0,\"authorExps\":{\"num\":0,\"rank\":1},\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/vd8yNL3TS9CZypv1aoblcWNMK1Y6ZwJ7ZcyAdv48E8meib2xPcVcibv49YIeW1qX2FTyqIfSiac1tDBkSqyoXbjwYzPyCtiajmhU\\/64?max-age=1296000\",\"restCount\":0},{\"content\":\"<img class=\\\"expimg\\\" src=\\\"http:\\/\\/dzqun.gtimg.cn\\/quan\\/images\\/smiley\\/default\\/e102.gif\\\" \\/>\",\"authorUid\":94460970,\"author\":\"\\u2665\\u8a69\\u4eba\\u706c\\u00d5\",\"createTime\":1413267556,\"tId\":173,\"pId\":1215,\"isLZ\":false,\"toPId\":0,\"toAuthorUid\":0,\"toAuthor\":\"\",\"picIds\":[],\"appId\":0,\"appName\":\"\",\"fCreatedTime\":\"2014-10-14 14:19\",\"hCreatedTime\":\"2014-10-14 14:19\",\"floorList\":false,\"floorCount\":0,\"authorExps\":{\"num\":7,\"rank\":2,\"limit\":{\"thread\":0,\"reply\":1,\"reward\":0}},\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/Q3auHgzwzM4lU0k1MctGicHhpugl7eHp4B3j0lyljVictPN4zYcialHQlpLAarIV5XLLAjjRQXQ0iamC3PziaVLTrNw\\/64?max-age=1296000\",\"restCount\":0},{\"content\":\"\\u6c42\\u52a9\",\"authorUid\":146317093,\"author\":\"\\u5510\\u5510\",\"createTime\":1414150201,\"tId\":173,\"pId\":1228,\"isLZ\":false,\"toPId\":0,\"toAuthorUid\":0,\"toAuthor\":\"\",\"picIds\":[],\"appId\":0,\"appName\":\"\",\"fCreatedTime\":\"2014-10-24 19:30\",\"hCreatedTime\":\"2014-10-24 19:30\",\"floorList\":false,\"floorCount\":0,\"authorExps\":{\"num\":3,\"rank\":1,\"limit\":{\"thread\":4,\"reply\":0,\"reward\":0}},\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/icicIvSc9Yf6UCeK5zYUH9W01via95ZpX9moyVicdPwDWwBTjqPGtwvwicKQzL2NHic3yq9sZhicjR89ibd7vbSnC5viacicgzQPhIsTRO\\/64?max-age=1296000\",\"restCount\":0},{\"content\":\"\\u52a0\\u6211\",\"authorUid\":155133368,\"author\":\"uncle\",\"createTime\":1414735329,\"tId\":173,\"pId\":1241,\"isLZ\":false,\"toPId\":0,\"toAuthorUid\":0,\"toAuthor\":\"\",\"picIds\":[],\"appId\":0,\"appName\":\"\",\"fCreatedTime\":\"2014-10-31 14:02\",\"hCreatedTime\":\"2014-10-31 14:02\",\"floorList\":false,\"floorCount\":0,\"authorExps\":{\"num\":0,\"rank\":1},\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/rPibt62gfVOj0qs1BLicaAMou8xPqcibPqSxtHYuibvJgjQBxq2FR9mXTs5boy3iayVdzAtAW7iadtOSVLczUomlvZfuStdE88PaFU\\/64?max-age=1296000\",\"restCount\":0},{\"content\":\"\\u4ec0\\u4e48\\u60c5\\u51b5\",\"authorUid\":129595487,\"author\":\"Connie\",\"createTime\":1415718201,\"tId\":173,\"pId\":1253,\"isLZ\":false,\"toPId\":0,\"toAuthorUid\":0,\"toAuthor\":\"\",\"picIds\":[],\"appId\":0,\"appName\":\"\",\"fCreatedTime\":\"2014-11-11 23:03\",\"hCreatedTime\":\"2014-11-11 23:03\",\"floorList\":false,\"floorCount\":0,\"authorExps\":{\"num\":0,\"rank\":1},\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/icicIvSc9Yf6WUGI1UoEoicElkbfToDvJpAasVCKa9psA3AMQwoAibJz1Y2rQuQbKdPMZHunaQtHJlzWQiaO7q6Tia3g\\/64?max-age=1296000\",\"restCount\":0},{\"content\":\"\\u53ef\\u6076\",\"authorUid\":163785899,\"author\":\"A\\u5218\\u65ed\\u2606\\u4e4c\\u6c5f\\u9c7c\\u706b\\u9505(\\u6b66\\u965f\\u5206\\u5e97)\\u2606\",\"createTime\":1415775516,\"tId\":173,\"pId\":1257,\"isLZ\":false,\"toPId\":0,\"toAuthorUid\":0,\"toAuthor\":\"\",\"picIds\":[],\"appId\":0,\"appName\":\"\",\"fCreatedTime\":\"2014-11-12 14:58\",\"hCreatedTime\":\"2014-11-12 14:58\",\"floorList\":false,\"floorCount\":0,\"authorExps\":{\"num\":3,\"rank\":1,\"limit\":{\"thread\":2,\"reply\":0,\"reward\":0}},\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/vd8yNL3TS9CZypv1aoblceAzqicBhiconkAct7odLB1jhibA8uj9gMfTHmxNpte0aZ7VLvMCmuAC9Cg0rdTLxQRHZvBODqII7Lq\\/64?max-age=1296000\",\"restCount\":0},{\"content\":\"\\u6211\\u7684\\u80a4\\u8272\\u6bd4\\u8f83\\u9ed1\\u8c8c\\u4f3c\\u9a7e\\u9a6d\\u4e0d\\u4e86\\u9ec4\\u8272\\u7684\\u5927\\u8863\\uff0c\\u4e0d\\u8fc7\\u6211\\u7a7f\\u84dd\\u8272\\u7684\\u5927\\u8863\\u8fd8\\u53ef\\u4ee5\\u3002\",\"authorUid\":200991046,\"author\":\"Lee\\u5a01\\u5ec9\",\"createTime\":1417937169,\"tId\":173,\"pId\":1285,\"isLZ\":false,\"toPId\":0,\"toAuthorUid\":0,\"toAuthor\":\"\",\"picIds\":[],\"appId\":0,\"appName\":\"\",\"fCreatedTime\":\"2014-12-07 15:26\",\"hCreatedTime\":\"2014-12-07 15:26\",\"floorList\":false,\"floorCount\":0,\"authorExps\":{\"num\":0,\"rank\":1},\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/rPibt62gfVOjbNbibMo9lJHrDh3LBCYFjaibsGibEPeala50UkicP7icSwnzuhfTWIXpnibib7DWzDU82cxic9ibG6pIRyNetZBq4evOfu\\/64?max-age=1296000\",\"restCount\":0},{\"content\":\"\\u7b2c\\u4e00\\u5bf9NIKE\\u7684\\u62fc\\u8272\\u978b\\u4f1a\\u662f\\u7206\\u6b3e\\uff0c\\u592a\\u5e05\\u4e86\",\"authorUid\":208609478,\"author\":\"ROGER.CHAN\",\"createTime\":1418140948,\"tId\":173,\"pId\":1292,\"isLZ\":false,\"toPId\":0,\"toAuthorUid\":0,\"toAuthor\":\"\",\"picIds\":[],\"appId\":0,\"appName\":\"\",\"aio\":[{\"url\":[],\"isSafe\":true,\"title\":\"\",\"type\":1}],\"floorCount\":0,\"fCreatedTime\":\"2014-12-10 00:02\",\"hCreatedTime\":\"1\\u5929\\u524d\",\"floorList\":false,\"authorExps\":{\"num\":0,\"rank\":1},\"avatar\":\"http:\\/\\/wx.qlogo.cn\\/mmopen\\/icicIvSc9Yf6U85hW9BvQAFRS38K8I3KTr4j6aKWkttYtxm9Nagu29E9ETMEtibUkP6NIiau9apMUPOLWYK5M4DInBicsMKmvBU8D\\/64?max-age=1296000\",\"restCount\":0}],\"nextStart\":9,\"groupStar\":2,\"verifyDeveloper\":1,\"verifyStar\":2,\"sitePv\":\"80093\",\"threadCount\":216,\"enabledSmiley\":\"1\",\"site\":{\"sName\":\"TOPMEN\\u7537\\u88c5\\u7f51\",\"sId\":\"187471671\"},\"desc\":0,\"shareData\":{\"url\":\"http:\\/\\/m.wsq.qq.com\\/187471671\\/t\\/173?_wv=1&source=custom\",\"title\":\"\\u5206\\u4eab\\u81ea#TOPMEN\\u7537\\u88c5\\u7f51#\",\"desc\":\"\\u53d1\\u5e7f\\u544a\\u8005\\uff0c\\u8bf7\\u7ed5\\u884c\\u3002\\u4e00\\u65e6\\u53d1\\u73b0\\uff0c\\u6c38\\u4e45\\u7981\\u8a00\\uff0c\\u62c9\\u9ed1\\uff01\",\"imageUrl\":\"http:\\/\\/shp.qlogo.cn\\/gqclogo\\/0\\/187471671\\/200?max-age=2592000&t=1394112055\",\"qzone\":\"http:\\/\\/m.wsq.qq.com\\/shareDirect?site=TOPMEN%E7%94%B7%E8%A3%85%E7%BD%91&title=%E5%88%86%E4%BA%AB%E8%87%AA%23TOPMEN%E7%94%B7%E8%A3%85%E7%BD%91%23&summary=%E5%8F%91%E5%B9%BF%E5%91%8A%E8%80%85%EF%BC%8C%E8%AF%B7%E7%BB%95%E8%A1%8C%E3%80%82%E4%B8%80%E6%97%A6%E5%8F%91%E7%8E%B0%EF%BC%8C%E6%B0%B8%E4%B9%85%E7%A6%81%E8%A8%80%EF%BC%8C%E6%8B%89%E9%BB%91%EF%BC%81&targetUrl=http%3A%2F%2Fm.wsq.qq.com%2Fttp%3A%2F%2Fm.wsq.qq.com%2F187471671%2Ft%2F173%3F_wv%3D1%26source%3Dcustom&pageUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671&imageUrl=http%3A%2F%2Fshp.qlogo.cn%2Fgqclogo%2F0%2F187471671%2F200%3Fmax-age%3D2592000%26t%3D1394112055&type=qzone\"}}';
+</script>
+<div class="warp" onselectstart="return false;">
+    <!-- 暂且隐藏广告区域 <div class="topicM worldC" style="display:none;" id="pEvent">
+        <img class="topicMImg" src="" alt="图片" id="pEventImg">
+    </div> -->
+    <div class="detail">
+	    <div class="detailTitle pr">
+	        <h2 class="c6 f16">话题来自：<span class="c7">{$sinfo.site_name}</span></h2>
+	        <span class="iconArrowR db pa c9 cf"></span>
+	    </div>
+    </div>
+	<div class="detailBox">
+		<div class="topicCon" id="t_173_0_0">
+            <div class="personImgDate bn pr">
+				<i class="perImg mr db fl pr">
+					<a href="/profile/87919782"><img src="data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" data-original="http://wx.qlogo.cn/mmopen/icicIvSc9Yf6XH4BUDIszjQyjgkGkmZJx0ia4ZpyH0k0q9XtKMr9vb1Kicmnv0wWLibQ5RUbiabk0SpQIWKcBxObcFQM7Stj01wpbb/64?max-age=1296000" class="bImg brBig" width="35" height="35" alt="avatar"></a>
+					<span class="statusBg1 brBig db c2 pa"><i class="iconStationmaster cf f11"></i></span>
+                </i>
+                <h3 class="title f13 fn c6">木头</h3>
+                <p class="f11"><span class="time c9 mr">2014-09-23 21:34</span><span class="address c6"><i class="iconloc f14 c1 cf"></i>广州市</span></p>
+                <a class="iconAd cf f16 c9 pa db PerPopBtn" tid="173" href="javascript:;"></a>
+                <div class="adPop pa perPop" style="display:none;">
+                    <div class="adBCon pr  f12" tId="173" uId="87919782" author="木头">
+						<p btnType="pmDialog">私信</p>
+					</div>
+                </div>
+			</div>
+			<div class="detailCon">
+                <div class="dCon f16">发广告者，请绕行。一旦发现，永久禁言，拉黑！</div>
+				<div class="threadPic pr"></div>
+                <div class="operation oh">
+                    <span class="replyShare db c9 fr f13">
+                        <a href="javascript:;" class="like c9" tId="173"><i class="iconNoPraise f18 cf"></i>5</a>
+                        <a href="javascript:;" id="support" class="shareBtn c9" _qzone="http://m.wsq.qq.com/shareDirect?site=TOPMEN%E7%94%B7%E8%A3%85%E7%BD%91&amp;title=%E5%88%86%E4%BA%AB%E8%87%AA%23TOPMEN%E7%94%B7%E8%A3%85%E7%BD%91%23&amp;summary=%E5%8F%91%E5%B9%BF%E5%91%8A%E8%80%85%EF%BC%8C%E8%AF%B7%E7%BB%95%E8%A1%8C%E3%80%82%E4%B8%80%E6%97%A6%E5%8F%91%E7%8E%B0%EF%BC%8C%E6%B0%B8%E4%B9%85%E7%A6%81%E8%A8%80%EF%BC%8C%E6%8B%89%E9%BB%91%EF%BC%81&amp;targetUrl=http%3A%2F%2Fm.wsq.qq.com%2Fttp%3A%2F%2Fm.wsq.qq.com%2F187471671%2Ft%2F173%3F_wv%3D1%26source%3Dcustom&amp;pageUrl=http%3A%2F%2Fm.wsq.qq.com%2F187471671&amp;imageUrl=http%3A%2F%2Fshp.qlogo.cn%2Fgqclogo%2F0%2F187471671%2F200%3Fmax-age%3D2592000%26t%3D1394112055&amp;type=qzone"><i class="iconShare f18 cf"></i></a>
+                        <a href="javascript:;" class="threadReply c9" tId="173" onclick="pgvSendClick({hottag:'QUAN.INDEX.REPLY.LINK'});"><i class="iconReply f18 cf"></i><span id="rCount">9</span></a>
+                    </span>
+                </div>
+            </div>
+            <div id="similarTopicBox" style="display: none"></div>
+		</div>
+		<div id="hotLabelBox" class="hotLabel" style="display: none"><h3 class="fl pr"><i class="iconDetailReply cf f16 mr5 c4"></i>热门回复</h3></div>
+		<div class="topicList" >
+			<ul id="hotReplyList">
+			</ul>
+		</div>
+		<div id="allLabelBox" class="hotLabel" style="display: none">
+			<h3 class="fl allTitle pr"><i class="iconDetailReply cf f16 mr5 c7"></i>全部回复</h3>
+			<span class="sortCon fr db"><a href="javascript:;" class="db c6 f12 evtReplySort"><i class="iconReverse cf mr5 f16"></i></a></span>
+		</div>
+		<div class="topicList" >
+			<ul id="allReplyList">
+			</ul>
+		</div>
+	</div>
+	<div class="loading" id="loadNext" style="">
+		<div class="loadicon">
+			<span class="blockG" id="rotateG_01"></span>
+			<span class="blockG" id="rotateG_02"></span>
+			<span class="blockG" id="rotateG_03"></span>
+			<span class="blockG" id="rotateG_04"></span>
+			<span class="blockG" id="rotateG_05"></span>
+			<span class="blockG" id="rotateG_06"></span>
+			<span class="blockG" id="rotateG_07"></span>
+			<span class="blockG" id="rotateG_08"></span>
+		</div>
+          正在加载...
+	</div>
+	<div class="loading" id="showAll" style="display:none;">已显示全部</div>
+	<div class="loading" id="showAllReply" style="display:none;">点击查看全部回复</div>
+
+	<div id='loadNextPos'></div>
+</div>
+
+<!--底部bar-->
+<script id="tmpl_sideBar" type="text/html">
+<div class="sideBar" style="display:none;">
+    <div class="searchContent evtSearchWrap">
+        <div class="sInputIn br">
+            <i class="searchInco cf pa db"></i>
+            <div class="f12 sInput2" style="line-height: 20px">搜索</div>
+        </div>
+    </div>
+    <div class="sideBarCon" id="sideBarCon">
+        <h3 class="sideTit f14 fn c2">话题筛选</h3>
+        <ul style="position: relative;">
+            <li class="filter<%if (!filterType) {%> on<%}%>"><a class="<%if (!filterType) {%>iconSucc cf s_succ db<%} else {%>c9<%}%>" href="javascript:;">全部</a></li>
+            <li class="filter<%if (filterType == 'hot') {%> on<%}%>" labelId="hot"><a class="<%if (filterType == 'hot') {%>iconSucc cf s_succ db<%} else {%>c9<%}%>" href="javascript:;">热门</a></li>
+            <li class="filter<%if (filterType == 'showPic') {%> on<%}%>" labelId="showPic"><a class="<%if (filterType == 'showPic') {%>iconSucc cf s_succ db<%} else {%>c9<%}%>" href="javascript:;">晒图</a></li>
+        </ul>
+        <div class="loading pd10" id="customTagWait">
+            <div class="loadicon">
+                <span class="blockG" id="rotateG_01"></span>
+                <span class="blockG" id="rotateG_02"></span>
+                <span class="blockG" id="rotateG_03"></span>
+                <span class="blockG" id="rotateG_04"></span>
+                <span class="blockG" id="rotateG_05"></span>
+                <span class="blockG" id="rotateG_06"></span>
+                <span class="blockG" id="rotateG_07"></span>
+                <span class="blockG" id="rotateG_08"></span>
+            </div>
+            正在加载...
+        </div>
+        <div class="customTag" id="customTag">
+        </div>
+        <ul class="sidePerMan">
+            <li id="sideProfile"><a href="javascript:;" class="iconPrfile f16 c9 cf"><i class="db numP" id="sideMsgNum"<%if (newMsgCount < 1) {%> style="display:none;"<%}%>><%if (newMsgCount < 100) {%><%=newMsgCount%><%}else{%>99+<%}%></i>个人主页</a></li>
+            <li id="sideUnfollow" sid="<%=sId%>"<%if (isLiked != 1) {%> style="display:none;"<%}%>><a href="javascript:;" class="iconExit f16 c9 cf">退出社区</a></li>
+        </ul>
+    </div>
+</div>
+</script>
+<script id="tmpl_customTag" type="text/html">
+<div>
+<% for (var i in labelList) { %>
+    <a href="javascript:;" class="f12 filter<%if (filterType == labelList[i].labelId) {%> on<%}%>" labelId="<%=labelList[i].labelId%>"><%=labelList[i].labelName%></a>
+<%}%>
+</div>
+</script>
+<!-- <div class="topBar">
+    <div class="topBarCon pr">
+        <a href="javascript:;" class="qBackBtn" id="goback"><i class="upBtn cf db"></i>返回</a>
+        <h2 class="qTitle">TOPMEN男装网</h2>
+		<a href="javascript:;" id="mqOption" isSite="1" class="moreC qMore db"><i class="circle">●</i><i class="circle">●</i><i class="circle">●</i><i class="db numP" id="navMsgNum" ">2</i></a>
+	</div>
+</div> -->
+<div class="bottomBar" id="bottomBar">
+	<div class="bottomBarCon pr">
+        <a href="javascript:;" class="backBtn" id="goback"><i class="iconAnswer cf back db"></i></a><!-- 如果少了back，方向就会反 -->
+        <a href="javascript:;" class="threadReply publish db" tid="173"><i class="iconReply f18 cf">回复</i></a>
+		<a href="javascript:;" id="mqOption" isSite="1" class="moreC qMore db"><i class="circle">●</i><i class="circle">●</i><i class="circle">●</i><i class="db numP" id="navMsgNum">2</i></a>
+	</div>
+</div>
+<script type="text/javascript">
+var isForceReload = '0',
+    isLiked = '1',
+    inviteUrl = '#';
+//g_module.push('module/topBar');
+g_module.push('module/navBar');
+</script>
+<div id="goTop" class="floatLayer br db" ><a href="javascript:;" class="upBtn cf db"></a></div>
+    
+    <script id="tmpl_reply" type="text/html">
+        <%
+        if (typeof(replyList) == 'undefined') {
+        var replyList = dataList;
+        }
+        if (typeof(tmplType) == 'undefined') {
+            var tmplType = 'all';
+        }
+        %>
+        <% for (var i in replyList) { %>
+        <% if (!isDOMExist('p_' + replyList[i].tId + '_' + replyList[i].pId) && ((tmplType==='hot' && replyList[i].hotReply) || (tmplType!='hot' && !replyList[i].hotReply))) { %>
+        <li id="p_<%=replyList[i].tId%>_<%=replyList[i].pId%>_0" uId="<%=replyList[i].authorUid%>" author="<%= replyList[i].author %>">
+            <div class="f13 c3 replyUser">
+            <a href="/profile/<%=replyList[i].authorUid%>"><img src="<%=getWinParams('IMG_LOADING');%>" data-original="<%=replyList[i].avatar%>" class="sImg brBig pa db" width="20" height="20"></a>
+            <span class="c7"><%= replyList[i].author %><% if (replyList[i].isLZ) {%><i class="cardBtn br fn db c2">楼主</i><%}%>
+            <% if (isWX && replyList[i].authorExps) {%>
+                <% if (replyList[i].authorExps.rank <= 6) {%>
+                    <span class="gBg1 brSmall fb f8 c2">LV<%=replyList[i].authorExps.rank%></span>
+                <%} else if (replyList[i].authorExps.rank <= 12) {%>
+                    <span class="gBg2 brSmall fb f8 c2">LV<%=replyList[i].authorExps.rank%></span>
+                <%}else{%>
+                    <span class="gBg3 brSmall fb f8 c2">LV<%=replyList[i].authorExps.rank%></span>
+                <%}%>
+            <%}%>：
+            </span>
+            <%== replyList[i].content %>
+            <% if (replyList[i].verifyType) {%>
+                <% if (replyList[i].verifyType == verifyDeveloper || replyList[i].verifyType == replyList[i].verifyDeveloper) { %>
+                <span class="statusBg brBig db c2 pa"><i class="iconDeveloper cf f12"></i></span>
+                <% } else if (replyList[i].verifyType == verifyStar || replyList[i].verifyType == replyList[i].verifyStar) { %>
+                <span class="statusBg3 brBig db c2 pa"><i class="iconVUser cf f12"></i></span>
+                <% } %>
+            <% } else if (replyList[i].isAdmin) { %>
+            <span class="statusBg1 brBig db c2 pa"><i class="iconStationmaster cf f12"></i></span>
+            <% } else if (replyList[i].gId && (replyList[i].gId == groupStar || replyList[i].gId == replyList[i].groupStar)) { %>
+            <span class="statusBg2 brBig db c2 pa"><i class="iconActiveUser cf f12"></i></span>
+            <%}%>
+            </div>
+            <div class="operation pr">
+                <div class="replyImg ">
+                    <%if (replyList[i].picUrls) {%>
+                        <%if (replyList[i].picUrls.length > 1) {%>
+                        <dl>
+                            <% for (j in replyList[i].picUrls) { %>
+                                <dd><img src="<%=getWinParams('IMG_LOADING');%>" data-original="<%= replyList[i].picUrls[j].small %>" alt=""></dd>
+                            <%}%>
+                        </dl>
+                    <%} else {%>
+                        <dl class="replyImg rsingleImg">
+                            <dd><img src="<%=getWinParams('IMG_LOADING');%>" data-original="<%=replyList[i].picUrls[0].middle%>" width="90%" alt="photo"></dd>
+                        </dl>
+                    <%}%>
+                <%}%>
+            </div>
+            <span class="source db c6 f11 fl"><%== replyList[i].hCreatedTime || '刚刚' %></span>
+            <span class="replyShare db c9 fr f13">
+                <a href="javascript:;" class="like c9" pId="<%= replyList[i].pId %>"><i class="<% if (replyList[i].liked) { %>iconP<%  } else { %>iconNoP<%  } %>raise f18 cf"></i><% if (replyList[i].likeNum) { %><%= replyList[i].likeNum %> <%  } else { %>赞<%  } %></a>
+                <a class="c9 replyFloor" href="javascript:;" id="p_<%= replyList[i].tId %>_<%= replyList[i].pId %>" uid="<%= replyList[i].authorUid %>" author="<%= replyList[i].author %>"><i class="iconReply f18 cf"></i></a>
+            </span>
+            <div class="replyPop" <%if (!replyList[i].floorList) {%> style="display:none;"<%}%> >
+                <div class="replyBg brSmall pr">
+                    <div class="topicList floorList" id="fl_<%=replyList[i].pId%>">
+                        <ul>
+                        <% include('tmpl_reply_floor', {'floorList':replyList[i].floorList}) %>
+                        </ul>
+                        <a href="javascript:;" start="0" pid="<%=replyList[i].pId%>" <%if (replyList[i].restCount < 1) {%>style="display:none;"<% }%> class="db f12 moreInReply">更多</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </li>
+    <% } %>
+    <% } %>
+</script>
+<script id="tmpl_thread_recommend" type="text/html">
+<div class="similarTopic">
+    <div class="similarTopicCon evtTopicCon" data-link="/<%=thread.sId%>/t/<%=thread.tId%>">
+        <a href="javascript:;" class="evtAuthorUrl" data-link="/profile/<%=thread.authorUid%>"><img src="<%=getWinParams('IMG_LOADING');%>" data-original="<%=thread.avatar%>" class="sImg brBig pa db" width="20" height="20" alt="头像">
+            <span class="c7"><%=thread.author%></span>
+        </a>
+        <p><%==thread.summary%></p>
+        <%if (thread.picUrls) {%>
+        <div class="replyImg">
+            <%if (thread.picUrls.length > 1) {%>
+            <dl>
+            <% for (j in thread.picUrls) { %>
+                <dd><img src="<%=getWinParams('IMG_LOADING');%>" data-original="<%= thread.picUrls[j].small %>" alt=""></dd>
+            <%}%>
+            </dl>
+            <%} else {%>
+            <dl>
+                <dd><img src="<%=getWinParams('IMG_LOADING');%>" data-original="<%=thread.picUrls[0].middle%>" width="90%" alt="photo"></dd>
+            </dl>
+            <%}%>
+        </div>
+        <%}%>
+    </div>
+    <%if (recommendCount > 1) {%>
+    <div class="similarTopicTit">
+        <a href="javascript:;" class="evtMoreHot" data-link="//<%=sId%>/recommend?tId=<%=tId%>">更多相关话题<i class="iconReply f18 cf"></i></a>
+    </div>
+    <%}%>
+</div>
+</script>
+
+<script id="tmpl_reply_floor" type="text/html">
+<% for (var k in floorList) {%>
+    <% if (!isDOMExist('p_' + floorList[k].tId + '_' + floorList[k].pId + '_' + floorList[k].floorPId)) { %>
+        <% if (floorList[k].floorPId > 0) {%>
+            <li id="p_<%=floorList[k].tId%>_<%=floorList[k].pId%>_<%=floorList[k].floorPId%>" author="<%=floorList[k].author%>" uId="<%=floorList[k].authorUid%>">
+            <div class="f13 c3 replyFloor">
+                <span class="c7"><%=floorList[k].author%><% if (floorList[k].isLZ) {%><i class="cardBtn br fn db c2">楼主</i><%}%><% if (floorList[k].toPId) {%> 回复 <%=floorList[k].toAuthor%><%}%>：</span><%==floorList[k].content%>
+            </div>
+            </li>
+        <%}%>
+    <% }%>
+<% }%>
+</script>
+
+<script id="tmpl_replyForm" type="text/html">
+<div class="popLayer pSpace brNone" style="width:100%">
+<form method="post" action="/187471671/r/new/submit" id="replyForm">
+    <input type="hidden" name="CSRFToken" value="dc60d1b9">
+    <input type="hidden" name="sId" value="<%= data.sId %>">
+    <input type="hidden" name="tId" value="<%= data.tId %>">
+    <input type="hidden" name="pId" value="<%= data.pId %>">
+    <input type="hidden" name="floorPId" value="<%= data.floorPId %>">
+    <input type="hidden" name="parentId" value="<%= data.parentId %>">
+    <div class="sendRCon">
+        <textarea id="content" name="content" cols="" rows="" class="sInput f13" placeholder="回两句吧..."></textarea>
+    </div>
+    <div class="sendNav">
+        <ul>
+            <li>
+                <a data-id='0' href="javascript:;" class="operatIcon iconExpression f21 db c9 cf"></a>
+            </li>
+            <li class="pr uploadPicBox">
+                <a data-id='1' href="javascript:;" class="operatIcon iconSendImg db f21 c9 cf pr" style="z-index:1;"></a>
+            </li>
+            <li>&nbsp;</li>
+            <li>&nbsp;</li>
+            <li><a id="cBtn" href="javascript:;" class="cancelNewBtn brSmall f13 db fr c3 close">取消</a></li>
+            <li><a id="comBtn" href="javascript:;" class="sendBtn brSmall f13 db c2">发送</a>
+            </li>
+        </ul>
+    </div>
+    <div class="operatingBox">
+        <div class="operatList tipLayer" style="display:none;margin:0;border:0;">
+        </div>
+        <div class="operatList photoTipsBox" style="display:none;height:213px;background-color:#efefef;border-top:1px solid #e2e2e2;">
+            <div class="photoList">
+                <ul>
+                    <li class="on" id="addPic">
+                    <input type="file" class="on needsclick" style="z-index:200;opacity:0;filter:alpha(opacity=0);-ms-filter:'alpha(opacity=0)';" id="uploadFile" accept="image/*" single>
+                    </li>
+                </ul>
+                <p class="textTip f12">还可上传<span id="onlyUploadNum">8</span>张照片呦~</p>
+            </div>
+        </div>
+        
+    </div>
+</form>
+</div>
+</script>
+
+<script id="tmpl_expreBox" type="text/html">
+<div class="expreBox" style="display:none;" id="expreBox">
+    <div class="expressionTab pr">
+        <div class="expressionMenu">
+            <% var def = null %>
+            <% for (var i in cate) {%>
+            <% if (def === null) { def = i }%>
+            <a href="javascript:;"<% if (def == i) {%> class="on"<%}%> id="emo<%=i%>" title="<%=cate[i]%>"><%=cate[i]%></a>
+            <% }%>
+        </div>
+        <a href="javascript:;" class="eR db iconArrowR cf pa c9" style="display:none;"></a>
+    </div>
+    <% var pageNum = []%>
+    <div class="expreList" id="expreList">
+        <% for (var i in emo) {%>
+        <ul class="expreCon <%=emo[i].ulClass%>" id="exp_emo<%=i%>" style="<%if(i != def) {%>display:none;<%}%>">
+            <% var emoNum = 0%>
+            <% var page = 0%>
+        <% for (var j in emo[i].icon) {%>
+            <% ++emoNum%>
+            <% if (emoNum % emo[i].perPage == 1) { %>
+                <% ++page%>
+                <% pageNum[i] = page%>
+                <li class="<%=emo[i].liClass%><%=page%>">
+            <% } %>
+                <a href="javascript:;" title="<%=j%>"></a>
+            <% if (emoNum % emo[i].perPage == 0) { %>
+                <%if (emo[i].delBtn) {%><a href="javascript:;"></a><%}%>
+                </li>
+            <% } %>
+        <% }%>
+        </ul>
+        <% }%>
+    </div>
+    <% for (var k in pageNum) {%>
+    <p class="pNumCon" id="exp_emo<%=k%>_page"<% if (def != k) {%> style="display:none;"<%}%>>
+        <% for(var i = 1; i <= pageNum[k]; i++) { %>
+        <a href="javascript:;" class="<% if(i == 1) { %> on <% } %> pNum db"></a>
+        <%}%>
+    </p>
+    <% }%>
+</div>
+</script>
+
+<script id="tmpl_manage" type="text/html">
+<div class="manageLayer br" style="margin:0 auto;">
+    <ul>
+      
+      <%if (isReply) {%>
+        <li><a href="javascript:;" btnType="reply">回复</a></li>
+        <li><a href="javascript:;" btnType="delReply">删除</a></li>
+      <% } else {%>
+        <li><a href="javascript:;" btnType="delThread">删除</a></li>
+      <% } %>
+	</ul>
+</div>
+</script>
+<form id="delThreadForm" name="delThreadForm" action="/187471671/t/del" method="post">
+    <input type="hidden" name="CSRFToken" value="dc60d1b9" />
+    <input type="hidden" name="tIds[]" />
+</form>
+
+<script id="manage" type="text/html">
+    <div class="manageLayer" style="margin:0 auto;">
+        <ul>
+        	<% if(isReply) {%>
+            	<li><a href="javascript:;" btnType="reply">回复</a></li>
+            	<li><a href="javascript:;" btnType="delReply">删除</a></li>
+        	<% } else {%>
+            	<li><a href="javascript:;" btnType="delThread">删除</a></li>
+        	<% } %>
+        </ul>
+    </div>
+</script>
+
+<script type="text/javascript">
+    var tId = '173';
+    var isLive = false;
+    var parentId = '0';
+    var isLiked = '1';
+    var nextStart = 9;
+    var gId = '0';
+    var threadLabelId = '0';
+    var groupStar = 2;    
+    window.statConf = {id:2, map:{9:'first_render_end'}};
+    g_module.push('module/viewthread');
+</script>
+
+        <div onclick="location.href='#'" class="copyRight ht" style="margin-bottom:50px;">微社区，精彩在你身边</div>
+
+<script type="application/javascript">g_ts.body_view = new Date();</script>
+<script id="tmpl_pageTip" type="text/html">
+
+<div class="tipInfo" id="showShare">
+    <p class="tipBor"><%=msg || '请点击右上角图标分享'%><span class="arrLeft"></span></p>
+</div>
+
+</script>
+<script src="__PUBLIC__/js/qqapi.js"></script>
+<script type="text/javascript">
+var shareUrl = 'http://m.wsq.qq.com/187471671/t/173?_wv=1&source=custom',
+shareTitle = '分享自#TOPMEN男装网#',
+shareDesc = '发广告者，请绕行。一旦发现，永久禁言，拉黑！',
+shareImgUrl = 'http://shp.qlogo.cn/gqclogo/0/187471671/200?max-age=2592000&amp;t=1394112055';
+    g_module.push('module/common', 'module/share');
+</script>
+<script type="application/javascript">
+var url = '__PUBLIC__/js/seajs-0.1.5.js';
+var node = document.createElement('script');node.onload = function(){g_ts.seajs = new Date();};node.src = url;document.body.appendChild(node);
+if (window.statConf) {
+    setTimeout(function() {
+        window.seajs && seajs.use('lib/stat', function(_a) {
+            _a.init();
+        });
+    }, 2000);
+}
+</script> 
+</body>
+</html>

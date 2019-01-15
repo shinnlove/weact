@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/MobileCommonStyle.min.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/wishStyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/wish.js"></script>
+<title>许愿墙</title>
+</head>
+
+<body>
+	<div class="wrap">
+		<div class="head">{$einfo.brand}</div>
+		<div id="wish"> 	
+    		<volist name="wishlist" id="w" key="i">
+	        	<div>
+		        	<div class="wishWrap">
+		                <div class="myCardTop"></div>
+		                <div class="myCardMiddle">
+		                    <div class="wishTime">第[{$i}]条 {$w.wish_time}</div>
+		                    <div class="wishContent">{$w.wish_content}</div>
+		                    <div>
+		                    	<a href="{:U('Home/Plugin/addWish')}?e_id={$w.e_id}" class="u_btn1 ts1" style="text-align: center; text-decoration: none;">我要许愿</a>
+		                    </div>
+		                </div>
+		                <div class="myCardBottom">
+		                    <div class="cardDecoImg">
+		                        <img src="__PUBLIC__/images/card1/1.gif" alt="" />
+		                    </div>
+		                    <div class="cardWisher">{$w.wisher}</div>
+		                </div>
+		            </div>
+	            </div>
+	        </volist>
+		</div>
+		{:W('Footer', array('e_id' => $e_id))}<!--footer-->
+	</div><!-- wrap -->
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$('#wish').wish();
+	$('.wish').draggable({
+		containment: "#wish",
+		scroll: true
+	});
+});
+$(".wish.close").click(function(){
+	$(this).hide();
+});
+$(".wishWrap").each(function() {
+    var imgArrTop = [ "__PUBLIC__/images/card1/card1top.gif",
+					  "__PUBLIC__/images/card2/card2top.gif",
+					  "__PUBLIC__/images/card3/card3top.gif",
+ 					  "__PUBLIC__/images/card4/card4top.gif",
+					  "__PUBLIC__/images/card5/card5top.gif",
+					  "__PUBLIC__/images/card6/card6top.gif",
+					  "__PUBLIC__/images/card7/card7top.gif",
+ 					  "__PUBLIC__/images/card8/card8top.gif" ];
+	
+	var imgArrMiddle = [ "__PUBLIC__/images/card1/card1middle.gif",
+					     "__PUBLIC__/images/card2/card2middle.gif",
+					     "__PUBLIC__/images/card3/card3middle.gif",
+ 					     "__PUBLIC__/images/card4/card4middle.gif",
+					     "__PUBLIC__/images/card5/card5middle.gif",
+					     "__PUBLIC__/images/card6/card6middle.gif",
+					     "__PUBLIC__/images/card7/card7middle.gif",
+ 					     "__PUBLIC__/images/card8/card8middle.gif" ];
+					  
+	var imgArrBottom = [ "__PUBLIC__/images/card1/card1bottom.gif",
+					     "__PUBLIC__/images/card2/card2bottom.gif",
+					     "__PUBLIC__/images/card3/card3bottom.gif",
+ 					     "__PUBLIC__/images/card4/card4bottom.gif",
+					     "__PUBLIC__/images/card5/card5bottom.gif",
+					     "__PUBLIC__/images/card6/card6bottom.gif",
+					     "__PUBLIC__/images/card7/card7bottom.gif",
+ 					     "__PUBLIC__/images/card8/card8bottom.gif" ];
+					  
+	var index = parseInt(Math.random()*(imgArrTop.length-1));
+
+	$(this).css("background","url("+ imgArrTop[index] +") no-repeat center top");
+	$(this).find(".myCardMiddle").css("background","url("+ imgArrMiddle[index] +") repeat-y");
+	$(this).find(".myCardBottom").css("background","url("+ imgArrBottom[index] +") no-repeat center top");
+});
+</script>
+</body>
+</html>

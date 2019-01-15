@@ -1,0 +1,260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/myUniformStyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>会员等级设置</title>
+</head>
+
+<body class="easyui-layout" fit="true">
+	<table id="mldg" class="easyui-datagrid" title="所有会员等级一览 (只有添加了会员等级才能在积分商城显示对应会员专区)" toolbar="#mltoolbar" data-options="region:'center'"></table>
+	<!-- easyUI的工具条 -->
+	<div id="mltoolbar">
+	     <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addMemberLevel()">添加会员等级</a>
+	     <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editMemberLevel()">编辑会员等级</a>
+	     <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delMemberLevel()">删除会员等级</a>
+	</div>
+		
+	<!-- easyUI的添加对话框 -->
+    <div id="smldg" class="easyui-dialog" data-options="resizable:true" style="width:860px;" closed="true" buttons="#smldg-buttons">
+        <form id="myForm" name="myForm" class="form-horizontal uniform" method="post" action="#" style="padding:10px;background:#fafafa;border:1px solid #DDD;min-width:800px;">
+	        <div class="control-group">
+	            <div class="controls controls-row">
+	               <span style ="font-weight:bold">会员等级设置</span> （带<span class="text-error"> * </span>为必填项）
+	            </div> 
+	        </div>
+	        
+	        <input type="hidden" id="editflag" name="editflag" value="" /><!-- 是否编辑标志 -->
+	        <input type="hidden" id="mlpk" name="mlpk" value="" /><!-- 如果编辑，编辑的主键 -->
+	        
+	        <div class="control-group">
+				<label class="control-label">等级名称<span class="text-error">(*)</span></label>
+	            <div class="controls controls-row">
+	                <input type="text" class="uniform mybriefinput" style="width:180px" id="level_name" name="level_name" placeholder="输入该会员等级的名称" value="" required="required" />
+	                &nbsp;&nbsp;<span style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; font-size:12px; color:#666;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注：等级名称如：普通会员，白金会员，钻石会员等。</span>
+	            </div>
+	        </div>
+	        
+	        <div class="control-group">
+				<label class="control-label">等级级数<span class="text-error">(*)</span></label>
+	            <div class="controls controls-row">
+	            	<select id="sel" class="uniform" onchange="levelSelected(this)" style="width:170px">
+						<option value="1" selected="selected">一级会员等级</option>
+						<option value="2">二级会员等级</option>
+						<option value="3">三级会员等级</option>
+					</select>
+					<input type="hidden" id="level" name="level" value=""  style="width:180px"/>
+	                &nbsp;&nbsp;<span style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; font-size:12px; color:#666;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注：值越大代表等级越高， 目前只支持三级。</span>
+	            </div>
+	        </div>
+	        
+	        <div class="control-group">
+				<label class="control-label">累积积分<span class="text-error">(*)</span></label>
+	            <div class="controls controls-row">
+	                <input type="text" class="uniform mybriefinput" id="min_consumption" name="min_consumption" placeholder="输入该会员等级最低积分要求" value="" required="required" style="width:180px" />
+	                &nbsp;&nbsp;<span style="font-family:'Helvetica Neue', Helvetica, Arial, sans-serif; font-size:12px; color:#666;">分&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注：商品积分在添加商品信息时设定。</span>
+	            </div>
+	        </div>
+	        
+	        <div class="control-group">
+	            <label class="control-label">简要描述</label>
+	            <div class="controls controls-row">
+	                <textarea id="brief_description" name="brief_description" class="uniform mytextarea" style="width:420px;height:80px" placeholder="输入该会员等级的简要描述信息"></textarea>
+	            </div>
+	        </div>
+		</form>
+		
+		<div id="smldg-buttons" style="text-align:right;background:#FFF;">
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="levelConfirm()">确定</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#smldg').dialog('close')">取消</a>
+		</div>
+    </div>
+   <!-- easyUI的添加对话框 -->
+
+<script type="text/javascript">
+var mldg = $("#mldg");						//会员等级一览easyUI表
+var smldg = $("#smldg");					//会员等级对话框setmemberlevel
+$(function() {
+	$(".uniform").uniform();				//初始化uniform，文本框的uniform格式化
+	
+	mldg.datagrid({
+		url : "{:U('Admin/MemberInfoRequest/allMemberLevel','','')}",
+		singleSelect : true,
+		collapsible : true,
+		method : 'post',
+		fitColumns : true,
+		fit : true,
+		pagination : true,					//是否开启分页
+		pageSize: 10,						//默认初始化每页几行
+        pageList: [5,10,20,30,50],			//可供选择的一页几行列表
+		rownumbers : true,					//开启行编号
+		idField : 'member_level_id',		//绑定主键字段
+		columns : [ [ 						//定义表格字段：field→数据库字段；title→表头显示中文字段
+					{ field : 'member_level_id', title : 'member_level_id', width : 100, hidden:true },	//主键字段不显示
+					{ field : 'level_name', title : '等级名称', width : 100, align : 'center' },
+					{ field : 'level', title : '等级级数', sortable:true, width : 100, align : 'right' },
+					{ field : 'min_consumption', title : '最低积分', sortable:true, width : 100, align : 'right' },
+					{ field : 'description', title : '等级描述', width : 200, align : 'center' }
+				] ],
+		//view : detailview,
+		detailFormatter : function(rowIndex, rowData) {
+			return '<div id="memberlevel_' + rowIndex + '" style="padding:5px 10px;background:#efefef;"></div>';
+		}
+	});
+});
+//清空对话框内信息函数formClear
+function formClear(){
+	$("#editflag").val('');							//清空编辑标志
+	$("#mlpk").val('');								//清空编辑等级的主键
+	$("#level_name").val('');						//清空等级名称
+	$("#level").val('1');							//初始化等级级数，默认为1级
+	$("#min_consumption").val('');					//清空最低消费
+	$("#discount").val('');							//清空享受折扣
+	$("#brief_description").val('');				//清空简要描述
+}
+//新增会员等级函数（无需填写主键）
+function addMemberLevel(){
+	var data=mldg.datagrid('getData');
+	var membernumber = data.total;
+	if(membernumber>=3){
+		$.messager.alert('温馨提示', '目前最高只支持三种会员等级!', 'warning');
+		return;
+	}
+	smldg.dialog('open').dialog('setTitle', '添加会员等级');
+	formClear();									//先清空
+	$("#sel").val(1);
+	$("#sel").change();
+	$("#editflag").val(0);							//再设置新增标记
+}
+//编辑会员等级函数（需要填写主键）
+function editMemberLevel(){
+	var row = mldg.datagrid('getSelected'); 		//获取选中的行（已经绑定过主键member_level_id列）
+	if (row) {
+		formClear();													//先清空
+		$("#editflag").val(1);											//再设置编辑标记
+		$("#mlpk").val(row.member_level_id);							//填入编辑会员等级的主键
+		$("#level_name").val(row.level_name);							//填入等级名称
+		$("#level").val(row.level);										//清空等级排序
+		$("#sel").val(row.level);
+		$("#sel").change();	
+		$("#min_consumption").val(row.min_consumption);					//填入最低消费
+		//$("#discount").val(row.discount);								//填入享受折扣
+		$("#brief_description").val(row.description);					//填入简要描述
+		smldg.dialog('open').dialog('setTitle', '编辑会员等级');
+	} else {
+		$.messager.alert('温馨提示', '请选择您要编辑的会员等级!', 'warning');
+	}
+}
+
+//行业选择框改变，将值写到数据库里
+function levelSelected(obj){	
+	$('#level').val(obj.options[obj.selectedIndex].value);		//获取option的value，并写入input里
+}
+
+//删除会员等级函数
+function delMemberLevel(){
+	var row = mldg.datagrid('getSelected'); 		//获取选中的行（已经绑定过主键member_level_id列）
+	if (row) {
+		$.messager.confirm('温馨提示', '是否确定删除所选会员等级？', function(result){
+			if(result){
+				$.post("{:U('Admin/MemberInfoRequest/delLevelConfirm','','')}", 
+						{ mp : row.member_level_id }, 
+						function(data){
+							if(data.status == 1){
+								$.messager.alert('温馨提示', '删除成功!','info', function(){
+									mldg.datagrid('reload');
+									mldg.datagrid('clearSelections');                 //清除datagrid选项记录
+								});
+							}else{
+								$.messager.alert('温馨提示', '删除失败!'+data.msg, 'warning', function(){
+									return;
+								});
+							}
+						}, 'json');
+			}else
+				return;
+		});
+	} else {
+		$.messager.alert('温馨提示', '请选择您要删除的会员等级!', 'warning');
+	}
+}
+//用户提交等级编辑确认
+function levelConfirm(){
+	var ef = $("#editflag").val();									//读取编辑标记
+	var mp = $("#mlpk").val();										//读取编辑的主键
+	var ln = $("#level_name");										//读取等级名称
+	var lv = $("#level");											//读取等级排序
+	var mc = $("#min_consumption");									//读取最低积分
+	//var dis = $("#discount");										//读取享受折扣
+	var bd = $("#brief_description");								//读取简要描述
+	
+	if(!ln.val()){
+		$.messager.alert('温馨提示', '请输入会员等级名称!','warning', function(){
+			ln.focus();												//注意聚焦和return的顺序！
+		});
+		return;
+	}
+	
+	if(!lv.val()){
+		$.messager.alert('温馨提示', '请选择会员等级级数!','warning', function(){
+			lv.focus();												//注意聚焦和return的顺序！
+		});
+		return;
+	}else{
+		if(!isPositiveNum(lv.val())){
+			$.messager.alert('温馨提示', '请输入大于或等于0的整数等级排序!','warning', function(){
+				lv.focus();											//注意聚焦和return的顺序！
+			});
+			return;
+		}
+	}
+	
+	if(!mc.val()){
+		$.messager.alert('温馨提示', '请填写该等级最低积分要求!','warning', function(){
+			mc.focus();												//注意聚焦和return的顺序！
+		});
+		return;
+	}else{
+		if(!isPositiveNum(mc.val())){
+			$.messager.alert('温馨提示', '请输入大于或等于0的整数金额，0表示无积分限制!','warning', function(){
+				mc.focus();											//注意聚焦和return的顺序！
+			});
+			return;
+		}
+	}
+	
+	if(!mp) mp='-1';
+	$.post("{:U('Admin/MemberInfoRequest/setLevelConfirm','','')}", 
+			{ ef:ef, mp:mp, ln:ln.val(), lv:lv.val(), mc:mc.val(), bd:bd.val() }, 
+			function(data){
+				if(data.status == 1){
+					$.messager.alert('温馨提示', '保存成功!','info', function(){
+						smldg.dialog('close');
+						mldg.datagrid('reload');
+					});
+				}else{
+					$.messager.alert('温馨提示', '保存失败!'+data.msg, 'warning', function(){
+						return;
+					});
+				}
+			}, 'json');
+}
+
+//判断大于或等于0的整数  
+function isPositiveNum(s){
+    var re = /^[0-9]*[0-9][0-9]*$/ ;  
+    return re.test(s)  
+} 
+</script>
+</body>
+</html>

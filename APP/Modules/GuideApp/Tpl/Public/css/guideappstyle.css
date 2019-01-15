@@ -1,0 +1,143 @@
+@charset "utf-8";
+/* CSS Document */
+/*页面样式*/
+*, *:before, *:after { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
+body { margin:0px; padding:0px; font-size:12px; background:url(../images/appbkg2.png); background-size:cover; color:#FFF; }
+.wrap { margin:10px 10px 0px 10px; }
+
+/*共用样式*/
+.num-green { color:#0F6; font-size:14px; font-weight:bold; }
+.price-orange { color:#F60; font-size:14px; font-weight:bold; }
+.stress { font-weight:bold; }
+.clear { clear:both; }
+.hide { display:none; }
+
+/*刷新部分*/
+#loadNext { text-align:center; }
+#showAll { width:100%; height:50px; text-align:center; font-size:13px; text-align:center; line-height:24px;color:#FFF; }
+.deco { clear:both; width:100%; height:50px; }
+#refreshWait { height:44px; background-image:url('../images/refreshbkg.png'); background-size:100% 100%; color:#FFF; text-align:center; line-height:40px }
+
+/*--------------导购——扫码选导购后的信息---------------*/
+.guide-title { margin:50px; }
+.guide-title h1 { text-align:center; }
+.guide-info { text-align:center }
+.guide-qrcode img { width:200px; height:200px; border:0px; border-radius:5px; }
+.guide-btn { margin-top:30px; text-align:center; }
+.enter-shop { margin-bottom:20px; }
+
+/*----------------导购——我的订单模块----------------*/
+/*订单搜索*/
+.search-bar { height:45px; }
+.search-section1 { width:80%; height:40px; float:left; }
+.search-section1 input { color:#FFF; }
+.search-section2 { width:20%; height:40px; float:left; text-align:center; }
+.search-section1 img { float:left; margin-right:5px; border:0px; border-radius:5px; width:40px; height:40px; }
+.search-info { float:left; width:80%; height:40px; border:2px solid #06db16; border-radius:5px; background:#000; font-size:14px; }
+.order-search-btn, .pro-search-btn { margin:0px auto; display:block;  height:40px; border-radius:5px; text-decoration:none; text-align:center; font-size:14px; line-height:39px; background:#06db16; color: #FFF;}
+.order-search-btn:hover, .pro-search-btn:hover { text-decoration:none; }
+/*状态条*/
+.status-tab { clear:both; }
+.status-tab ul { margin:0px; padding:0px; color:#FFF; font-size:14px; text-align:center; }
+.status-tab ul li { list-style-type:none; margin:0px; padding:0px; display:block; float:left; width:20%; height:40px; background:#666; line-height:38px; border-bottom:2px solid #666; }
+.status-tab ul .li-on { color:#0F6; border-bottom:2px solid #0F6; }
+/*订单主内容*/
+.order-content { margin-top:10px; }
+.order-list ul { margin:0px; padding:0px; }
+.order-list ul li { list-style-type:none; margin:0px; margin-bottom:10px; border-radius:5px; background:#434a4c; opacity:0.85 }
+/*订单信息*/
+.order-main { height:80px; }
+.order-detail { float:left; width:90%; }
+.order-title, .order-info, .delivery-info, .order-status { text-indent:12px; line-height:20px; }
+.detail-btn { float:right; width:10%; height:80px; }
+#detail-info-btn { margin:0px auto; margin-top:25px; display:block; width:30px; height:30px; }
+.detail { background:url(../images/detail-btn.png) ; background-size:cover;  }
+.detail-on { background:url(../images/detail-btn-on.png) ; background-size:cover;  }
+/*订单结算*/
+.order-total { clear:both; height:30px; border-top:2px solid #0F6; }
+.total-price, .total-pro-num { float:right; margin-right:10px; line-height:26px; }
+/*订单商品信息*/
+.order-detail-list { height:0px; }
+.order-detail-list ul li { list-style-type:none; margin:0px; padding:0px; display:block; }
+.detail-pro { height:80px; }
+.pro-image, .pro-info { float:left; height: 20px; }
+.pro-num-price { float:right; margin-top:15px; margin-right:10px; height:50px; line-height:24px; }
+.pro-image { width:70px; margin:5px; }
+.pro-image img { border: 0; border-radius: 5px; margin:0px; width:70px; height:70px; opacity:1 !important; }
+.pro-info { margin-left:10px; line-height:24px; }
+
+/*----------------导购——业绩排行/店铺排行----------------*/
+
+/*导购店铺状态条*/
+.rank-tab { clear:both; }
+.rank-tab ul { margin:0px; padding:0px; color:#FFF; font-size:14px; text-align:center; }
+.rank-tab ul li { list-style-type:none; margin:0px; padding:0px; display:block; float:left; width:50%; height:40px; background:#666; line-height:38px; border-bottom:2px solid #666; }
+.rank-tab ul .li-on { color:#0F6; border-bottom:2px solid #0F6; }
+/*头部*/
+.rank-header { height:35px; margin-bottom:10px; font-size:24px; font-weight:bold; line-height:44px; text-align:center; /*background:#F69;*/ }
+.rank-list ul { margin:0px; padding:0px; }
+.rank-list ul li { margin:0px; margin-bottom:5px; padding:0px; list-style-type:none; }
+.rank-box { height:90px; background:#434a4c; opacity:0.85; border-radius:5px; overflow:hidden; }
+.rank-self { background:#0ab44e; }
+.rank-order { position:relative; display:inline-block; top:5px; left:-80px; background:#F9F; text-align:center; background: url(../images/ranksbg.png) no-repeat -75px 0; font-family: Arial; font-size: 13px; font-style: normal; width: 18px; height: 28px; line-height: 20px; text-indent: -4px; }
+.rank-first { background-position: 0 0; } 
+.rank-second { background-position: -25px 0; } 
+.rank-third { background-position: -50px 0; } 
+.shop-img { float:left; width:80px; margin:5px; border:0px; border-radius:5px; }
+.performance { position:relative; top:-25px; left:10px; font-size:14px; }
+.sale-price { font-size:16px; font-size:20px; font-weight:bold; color:#F60; }
+.shop-info { position:relative; top:-20px; left:10px; }
+.basic-info { line-height:19px; }
+.shop-manager, .shop-name { margin-right:10px; }
+
+/*----------------导购——提效神器----------------*/
+.kpiwrap { font-family:Verdana, "微软雅黑", sans-serif; }
+.kpi-title { margin-top:60px; margin-bottom:20px; font-size:24px; text-align:center; }
+.kpi-amount { margin-bottom:20px; font-size:46px; text-align:center; }
+.kpi-target { color:#0C3; }
+.date { margin-bottom:20px; font-size:30px; text-align:center; }
+.today { color:#0C3; }
+.left-indicator { float:left; width:50%; height:100px; text-align:center; background:#434a4c; opacity:0.7; border:1px solid #DDD; } 
+.right-indicator { float:left; width:50%; height:100px; text-align:center; background:#434a4c; opacity:0.7; border:1px solid #DDD; } 
+.content-title { height:50px; font-size:20px; line-height:46px; }
+.content-number { height:50px; font-size:26px; line-height:46px; color:#0F6; }
+.calculation { margin-bottom:20px; }
+
+/*--------------导购——库存信息商品搜索---------------*/
+
+/*横条排序区块*/
+.category-search { background:#000; margin-top:15px; margin-bottom:20px; }
+.category-search ul { margin:0px; padding:0px; }
+.category-search ul li { width:20%; height:40px; list-style-type:none; float:left; display:block; text-align:center; }
+.category-name { font-family:Verdana, Geneva, sans-serif; font-size:14px; font-weight:bold; line-height:36px; text-align:center; }
+.sort-type { width:10px; height:10px; }
+.sort-up { display:inline-block; background:url(../images/sortup.png) no-repeat center center; }
+.sort-down { display:inline-block; background:url(../images/sortdown.png) no-repeat center center; }
+.sort-none { display:none; }
+/*商品图片和区块*/
+.product-list ul { margin:0px; padding:0px; }
+.product-list ul li { list-style-type:none; margin-bottom:10px; }
+.product-one { background:#000; }
+.pro-img { width:120px; height:120px; float:left; margin-right:10px; }
+.pro-img img { margin:10px; border:0px; border-radius:5px; }
+/*商品信息*/
+.product-info { float:left; max-width:200px; }
+.product-name { font-size:14px; font-weight:bold; line-height:28px; }
+.info-label { line-height:20px; }
+.price-del { text-decoration:line-through; }
+.price-discount { color:#00cf10; }
+/*操作商品按钮*/
+.product-handle { height:45px; background:#000; border-top:2px solid #666; }
+.handle-btn { float:left; width:33.33%; text-align:center; line-height:26px; }
+.handle-btn span { width:30px; height:30px; margin-top:5px; }
+/*
+为何原生的arttemplate不支持li中有li？
+.product-handle ul { margin:0px; padding:0px; }
+.product-handle ul li { list-style-type:none; float:left; width:33.33%; text-align:center; line-height:26px; }
+.product-handle ul li span { width:30px; height:30px; margin-top:5px; }*/
+.weixin-share { display:inline-block; background:url(../images/weixinshare.png) no-repeat center center; }
+.pro-link { display:inline-block; background:url(../images/productlink.png) no-repeat center center; }
+.pro-handle { display:inline-block; background:url(../images/pophandle.png) no-repeat center center; }
+
+
+

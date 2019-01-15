@@ -1,0 +1,15 @@
+@charset "utf-8";
+/* CSS Document */
+
+/* Store修改 */
+.page-con .buy {display:block; width:180px; height:48px; background:rgba(0,0,0,0.5) url(../../images/basic/btn_normal.png) no-repeat 0 0; position:absolute; left:50%; bottom:11%; margin-left:-90px; border-radius:24px;}
+.page-con .buy:active {background-color:rgba(0,0,0,1);}
+/**
+ * 声音元件
+ * -u-audio
+ 
+.u-weixin {margin-left:0; position:absolute; top:280px; right:73px; z-index:200;}
+.u-weixin .bigTxt-btn {width:44px; height:44px; margin-left:0;  background:none !important;}
+.u-weixin .bigTxt-btn a {height:44px;}
+.market-notice {color:#FFF;}
+*/

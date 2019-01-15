@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/evaluateorder.min.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>订单评价</title>
+</head>
+
+<body>
+    <div class="order-list"></div>
+    
+    <div class="order-button">
+        <a href="javascript:;" id="comment">发表评论</a>
+    </div>
+
+<!-- 导购评价 js arttemplate begin -->
+<script type="text/html" id="guidetpl">
+{{each guidelist as e i}}
+	<section>
+		<div class="order-list-top">
+			<p class="order-list-top-img">
+				<img src="{{e.headimg}}" />
+			</p>
+			<div class="order-list-top-info">
+				<h1> {{e.guide_name}} </h1>
+				<h2> {{e.subbranch_name}} </h2>
+			</div>
+		</div>
+		<div class="order-list-Below" data-type="1" data-id="{{e.guide_id}}" data-sid="{{e.subbranch_id}}">
+			<h1>导购评价</h1>
+			<ul>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+			</ul>
+			<div class="order-textbox">
+				<textarea placeholder="在此输入对该导购评价"></textarea>
+			</div>
+		</div>
+	</section>
+{{/each}}
+</script>
+<!-- 导购评价 js arttemplate end -->
+
+<!-- 商品评价 js arttemplate begin -->
+<script type="text/html" id="producttpl">
+{{each productlist as e i}}
+	<section>
+		<div class="order-list-top">
+			<p class="order-list-top-img">
+				<img src="{{e.micro_path}}" />
+			</p>
+			<div class="order-list-top-info">
+				<h1> {{e.product_name}} </h1>
+				<h2><span>￥</span>{{e.unit_price}}</h2>
+			</div>
+		</div>
+		<div class="order-list-Below" data-type="2" data-id="{{e.product_id}}" data-sid="{{e.subbranch_id}}">
+			<h1>商品评价</h1>
+			<ul>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+				<li></li>
+			</ul>
+			<div class="order-textbox">
+				<textarea placeholder="在此输入该商品评价"></textarea>
+			</div>
+		</div>
+	</section>
+{{/each}}
+</script>
+<!-- 商品评价 js arttemplate end -->
+
+<script type="text/javascript">
+var eid = "{$eid}", 			// 商家编号
+	sid = "{$sid}", 			// 分店编号
+	oid = "{$oid}", 			// 要评价的订单编号
+	curpage = "{:U('WeMall/Comment/guideProduct', array('sid' => $sid), '')}?oid="+oid, // 当前位置
+	loginurl = "{:U('WeMall/GuestMall/login', array('sid' => $sid), '')}", // 登录地址
+	orderinfojson = '{$oinfo}'; // 打开页面一屏orderinfojson信息; 
+
+// 页面初始化函数
+$(function() {
+	
+	// 根据推送的信息渲染页面导购和商品
+	var orderlist = $.parseJSON(window.orderinfojson); 	// 解析页面的json数据（不管是带了反斜杠，还是没有反斜杠，都可以解析json数据） 
+	var gtmpl = template('guidetpl', orderlist.data); 	// 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+	var ptmpl = template('producttpl', orderlist.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+	var orderListObj = $('.order-list'); 				// 抓取class为order-list，定义为orderListObj对象
+	if (gtmpl == '{Template Error}') {
+		gtmpl = ""; // 置空gtmpl
+	} 
+	if (ptmpl == '{Template Error}') {
+		ptmpl = ""; // 置空ptmpl
+	}
+	orderListObj.html(gtmpl);	// 渲染成功就把导购模板渲染的信息写入
+	orderListObj.append(ptmpl);	// 渲染成功就把商品模板渲染的信息写入
+	
+	// 点击评价星数
+	$(".order-list-Below ul li").click(function() {
+		var num = $(this).index() + 1;
+		var len = $(this).index();
+		var thats = $(this).parent(".order-list-Below ul").find("li");
+		if ($(thats).eq(len).attr("class") == "on") {
+			if ($(thats).eq(num).attr("class") == "on") {
+				$(thats).removeClass();
+				for (var i = 0; i < num; i++) {
+					$(thats).eq(i).addClass("on");
+				}
+			} else {
+				$(thats).removeClass();
+				for (var k = 0; k < len; k++) {
+					$(thats).eq(k).addClass("on");
+				}
+			}
+		} else {
+			$(thats).removeClass();
+			for (var j = 0; j < num; j++) {
+				$(thats).eq(j).addClass("on");
+			}
+		}
+	});
+	
+	// 提交评论按钮
+	$("#comment").click(function(e){
+		e.preventDefault();
+		var btnObj = $(this); 		// 当前点击的按钮
+		// 计算顾客的评价
+		var allappraised = true; 	// 都评价过了
+		var guidescore = []; 		// 导购评分
+		var productscore = []; 		// 商品评分
+		$(".order-list .order-list-Below").each(function(i, e){
+			var _t = $(this); 		// 当前评分框
+			var len = _t.find("ul li[class=on]").length; // 打钩数量
+			var content = _t.find(".order-textbox textarea").val(); // 获取评价内容
+			if (len <= 0) {
+				allappraised = false; // 有没有评价的
+				scscms_alert("请完整评价订单，点击❤进行评分！", "warn", "", 2);
+				return false;
+			}
+			if (content == "") {
+				allappraised = false; // 有没有评价的
+				scscms_alert("请完整评价订单，给点评价内容吧！", "warn", "", 2);
+				_t.find(".order-textbox textarea").focus(); // 聚焦
+				return false;
+			}
+			// 当前有评价
+			var temp = {
+					type : _t.data("type"), 	// 导购或商品
+					sid : _t.data("sid"), 		// 导购或商品所属分店
+					id : _t.data("id"), 		// id
+					score : len, 				// 得分
+					content : content, 			// 评价
+			}
+			temp.type == 1 ? guidescore.push(temp) : productscore.push(temp);
+		});
+		
+		if (!allappraised) {
+			return false; // 评价不完整，返回
+		}
+		
+		// 解决ok，然后推送到后台
+		var params = {
+				sid : sid, // 通行证
+				oid : oid, // 评论的订单编号
+				gslist : JSON.stringify(guidescore), 	// 导购评分
+				pslist : JSON.stringify(productscore), 	// 商品评分
+		}
+		MLoading.show('提交中...'); 				// 体验度等待
+		btnObj.attr('disabled',true); 			// 冻结按钮防止重复点
+		$.post("{:U('WeMall/CommentRequest/guideProductConfirm', '', '')}", params, function(result){
+			MLoading.hide(); 					// 得到响应关闭等待框
+			btnObj.removeAttr('disabled'); 		// 恢复按钮
+			if (result.errCode == 0) {
+				scscms_alert("评价成功，谢谢您的支持与厚爱！", "ok", "", 1);
+				setTimeout(function(){
+					window.location.href = "{:U('WeMall/Order/myOrder', array('sid' => $sid), '')}"; // 跳转回我的订单页面
+				},1000);
+			} else {
+				scscms_alert("评价失败，"+result.errMsg, "error", "", 2);
+				return false;
+			}
+		}, "json");
+	});
+});
+</script>
+</body>
+</html>

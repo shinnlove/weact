@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiColorButtonStyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/myUniformStyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/template-native.js"></script><!-- arttemplate js模板引擎 -->
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<title>查看订单详情信息</title>
+<style type="text/css">
+.myselected { width:120px; line-height:36px; }
+</style>
+</head>
+
+<body>
+ <form id="orderDetail" name="orderDetail" class="form-horizontal uniform" method="post" action="" enctype="multipart/form-data" style="margin:0px; padding:10px;background:#fafafa;border:1px solid #DDD;min-width:800px;">
+        <div class="control-group">
+            <div class="controls controls-row"><h2>查看订单详情</h2></div>
+            <div class="controls controls-row">
+				<font style="font-weight:bold; color:#666;">说明：</font><font style="color:highlight; line-height:22px;">此处允许在<font style="font-weight:bold;">付款前</font>对订单应付金额进行修改或<font style="font-weight:bold;">发货前</font>对收货人信息进行修改</font><br />
+			</div>
+        </div>
+        
+        <hr />
+        
+        <input type="hidden" id="o_id" name="o_id" value="{$detailinfo.order_id}" /><!-- 隐藏框：订单的id编号 -->
+        
+        <div class="control-group">
+            <div class="controls controls-row">
+            	<h4>订单信息</h4>
+            </div>
+            <div class="controls controls-row">
+	                订单编号：<input type="text" class="uniform mytimeinput" name="o_num" value="{$detailinfo.visual_number}" style="margin-right:10px;" readonly/>
+	                下单时间：<input type="text" class="uniform mytimeinput" name="o_time" value="{$detailinfo.order_time}" style="margin-right:10px;" readonly/>
+            </div>
+            <div class="controls controls-row">
+                            订单状态：<input type="text" class="uniform mytimeinput" name="o_status" value="{$orderstatus}" style="margin-top:6px; margin-right:10px;" readonly/><!-- 未付款、已付款待发货、已发货待确认、交易完成、交易关闭 -->
+                            支付方式：<input type="text" class="uniform mytimeinput" name="o_method" value="{$detailinfo.pay_method}" style="margin-top:6px; margin-right:10px;" readonly/>
+            </div>
+            <div class="controls controls-row">
+                            顾客留言：<input type="text" class="uniform mybriefinput" name="o_remark" value="{$detailinfo.special_remark}" style="margin-top:6px; width:431px;" readonly/>
+            </div>
+        </div>
+        
+        <hr />
+        <div class="control-group">
+            <div class="controls controls-row"><h4>收货人信息<a id="update-receiver" class="small ui-color-button blue" style="float:right;" onclick="changeReceiveInfo()">修改收货人信息</a></h4></div>
+            <div class="controls controls-row">
+	 	    收货人名：<input type="text" class="uniform mytimeinput" name="receiver" value="{$detailinfo.receive_person}" style="margin-right:10px;" required readonly/>
+	                手机号码：<input type="text" class="uniform mytimeinput" name="telphone" value="{$detailinfo.receive_tel}" style="margin-right:10px;" required readonly/>
+            </div>
+            <div class="controls controls-row" id="receiveAddr">
+                            收货地址：<input type="text" class="uniform myinput" name="address" value="{$detailinfo.receive_address}" style="margin-top:6px; margin-right:10px; width:431px;" required readonly/>
+            </div>
+            <div class="controls controls-row" id="changeRec" style="display:none;">
+            	<a id="submitbtn1" class="small ui-color-button light-green" style="margin-top:6px; margin-left:514px;" href="javascript:void(0)">保存</a>
+            &nbsp;&nbsp;
+            	<a id="cancelbtn1" class="small ui-color-button blue" href="javascript:void(0)" onclick="cancelChangeRec()">取消</a>
+           </div>
+        </div>
+        
+        <hr />
+        <div class="control-group">
+            <div class="controls controls-row"><h4>付款信息<a id="update-pay" class="small ui-color-button blue" style="float:right;" onclick="changePayInfo()">修改订单金额</a></h4></div>
+            <div class="controls controls-row">
+	 	    优惠金额：<input type="text" class="uniform mytimeinput" name="discount" value="0" style="margin-right:10px;" readonly/>
+	                订单金额：<input type="text" class="uniform mytimeinput" name="o_price" value="{$detailinfo.total_price}" style="margin-right:10px;" required readonly/>
+	        </div>
+	        <div class="controls controls-row">
+	                邮费金额：<input type="text" class="uniform mytimeinput" name="postage" value="{$detailinfo.express_fee}" style="margin-top:6px; margin-right:10px;" readonly/>
+	                应付金额：<input type="text" class="uniform mytimeinput" name="pay_indeed" value="{$detailinfo.pay_indeed}" style="margin-top:6px; margin-right:10px;" readonly/>
+	                实付金额：<input type="text" class="uniform mytimeinput" name="payindeed" value="{$detailinfo.payindeed}" style="margin-top:6px; margin-right:10px;" readonly/>(元)
+            </div>
+            <div class="controls controls-row" id="changePri" style="display:none;">
+            	<a id="submitbtn2" class="small ui-color-button light-green" style="margin-top:6px; margin-left:514px;" href="javascript:void(0)">保存</a>
+            &nbsp;&nbsp;
+            	<a id="cancelbtn2" class="small ui-color-button blue" href="javascript:void(0)" onclick="cancelChangePay()">取消</a>
+           </div>
+        </div>
+        
+        <hr />
+        <div class="control-group" id="logistics">
+            <div class="controls controls-row"><h4>物流信息</h4></div>
+            <div class="controls controls-row">
+                            物流公司：<input type="text" class="uniform mytimeinput" name="expresscompany" value="{$expinfo.express_company}" style="margin-right:10px;" readonly/>
+	                物流单号：<input type="text" class="uniform mytimeinput" name="expressnum" value="{$expinfo.express_number}" style="margin-right:10px;" readonly/>
+	        </div>
+        </div>
+        
+        <hr />
+        <div class="control-group">
+            <div class="controls controls-row"><h4>商品信息</h4></div>
+            <div class="controls controls-row" id="order_pro"></div>
+        </div>
+        
+        <div class="form-actions no-margin" style="margin-bottom:0px; background:#fafafa;">
+            <a href="javascript:history.go(-1);">
+                <img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/img/goback.png" />
+            </a>
+        </div> 
+	</form>
+<script type="text/html" id="detailinfotpl">
+<table>
+    <tbody>
+        <tr style="border:0;height:30px;">
+            <td style="font-weight:bold; border:0; width:70px; text-align:center;">序号</td>
+            <td style="font-weight:bold; border:0; width:100px; text-align:center;">缩略图</td>
+			<td style="font-weight:bold; border:0; width:150px; text-align:center;">商品编号</td>
+            <td style="font-weight:bold; border:0; width:150px; text-align:center;">商品名称</td>
+			<td style="font-weight:bold; border:0; width:120px; text-align:center;">属性规格</td>
+            <td style="font-weight:bold; border:0; width:100px; text-align:center;">单价</td>
+            <td style="font-weight:bold; border:0; width:100px; text-align:center;">数量</td>
+            <td style="font-weight:bold; border:0; width:100px; text-align:center;">小计</td>
+        </tr>
+		<% for (var i in detaillist) {%>
+			<tr>
+            	<td style="border:0; width:70px; text-align:center;"><%=i*1+1%></td>
+            	<td style="border:0; width:100px; text-align:center;"><img src="<%=detaillist[i].micro_path%>" style="width:60px;" alt=""></td>
+				<td style="border:0; width:150px; text-align:center;"><%=detaillist[i].product_number%></td>
+            	<td style="border:0; width:150px; text-align:center;"><%=detaillist[i].product_name%></td>
+				<td style="border:0; width:120px; text-align:center;"><%=detaillist[i].pro_size%> <%=detaillist[i].pro_color%></td>
+            	<td style="border:0; width:100px; text-align:center;"><%=detaillist[i].unit_price%></td>
+            	<td style="border:0; width:100px; text-align:center;"><%=detaillist[i].amount%></td>
+            	<td style="border:0; width:100px; text-align:center;"><%=detaillist[i].unit_price*detaillist[i].amount%></td>
+        	</tr>
+		<% } %>
+		<tr style="border:0;height:20px;"></tr>
+    </tbody>
+</table>
+</script>
+<script type="text/javascript">
+var orderid = "{$detailinfo.order_id}";
+var orderrec = "{$detailinfo.receive_person}";
+var ordertel = "{$detailinfo.receive_tel}";
+var orderaddr = "{$detailinfo.receive_address}";
+var orderpri = "{$detailinfo.total_price}";
+var orderpay = "{$detailinfo.pay_indeed}";
+var ispayed = "{$detailinfo.is_payed}";
+var issend = "{$detailinfo.is_send}";
+var expressid = "{$expinfo.express_id}";
+var expcompany = "{$expinfo.express_company}";
+var showtype = "{$showtype}";
+
+//页面初始化函数
+$(function (){
+	$(".uniform").uniform();						//uniform表单初始化
+	
+	//若在对账信息中查看订单详情，隐藏修改收货人和付款信息;
+	if(showtype == 1){
+		$("#update-receiver").css('display','none');
+		$("#update-pay").css('display','none');
+	}
+	
+	//在未付款时不可编辑订单实付金额，在已发货之后也不可再对订单信息进行编辑。
+	if(issend == 1){
+		$("#update-receiver").css('display','none');
+		$("#update-pay").css('display','none');
+	}else if(ispayed == 1){
+		$("#update-pay").css('display','none');
+	}
+	
+	//物流信息显示
+	if(expressid == ''){
+		$('#logistics').css('display','none');
+	}else{
+		//初始化物流公司的显示
+		if(expcompany == "CNEMS"){
+			$("input[name=expresscompany]").val("中国邮政EMS");
+		}else if(expcompany == "CNST"){
+			$("input[name=expresscompany]").val("申通快递");
+		}else if(expcompany == "CNTT"){
+			$("input[name=expresscompany]").val("天天快递");
+		}else if(expcompany == "CNYT"){
+			$("input[name=expresscompany]").val("圆通速递");
+		}else if(expcompany == "CNSF"){
+			$("input[name=expresscompany]").val("顺丰速运");
+		}else if(expcompany == "CNYD"){
+			$("input[name=expresscompany]").val("韵达快递");
+		}else if(expcompany == "CNZT"){
+			$("input[name=expresscompany]").val("中通速递");
+		}else if(expcompany == "CNLB"){
+			$("input[name=expresscompany]").val("龙邦物流");
+		}else if(expcompany == "CNZJS"){
+			$("input[name=expresscompany]").val("宅急送");
+		}else if(expcompany == "CNQY"){
+			$("input[name=expresscompany]").val("全一快递");
+		}else if(expcompany == "CNHT"){
+			$("input[name=expresscompany]").val("汇通速递");
+		}else if(expcompany == "CNMH"){
+			$("input[name=expresscompany]").val("民航快递");
+		}else if(expcompany == "CNYF"){
+			$("input[name=expresscompany]").val("亚风速递");
+		}else if(expcompany == "CNKJ"){
+			$("input[name=expresscompany]").val("快捷速递");
+		}else if(expcompany == "DDS"){
+			$("input[name=expresscompany]").val("DDS快递");
+		}else if(expcompany == "CNHY"){
+			$("input[name=expresscompany]").val("华宇物流");
+		}else if(expcompany == "CNZY"){
+			$("input[name=expresscompany]").val("中铁快运");
+		}else if(expcompany == "FEDEX"){
+			$("input[name=expresscompany]").val("FedEx");
+		}else if(expcompany == "UPS"){
+			$("input[name=expresscompany]").val("UPS");
+		}else if(expcompany == "DHL"){
+			$("input[name=expresscompany]").val("DHL");
+		}else{
+			$("input[name=expresscompany]").val("其它");
+		}
+	}
+	
+	//模板渲染初始化订单关联商品详情信息
+	$.post('{:U("Subbranch/ProOrder/getSubOrderDetail", "", "")}',
+			{ oid : orderid },
+			function(result){
+				if(result.errCode == 0){
+					var detailinfo = template( 'detailinfotpl', result.data ); 			// artTemplate渲染模板引擎
+					if (detailinfo == '{Template Error}') {
+						detailinfo = ''; 												// 如果渲染失败，则detailinfo置空
+						$.messager.alert('温馨提示', '网络繁忙，接收订单关联商品数据错误！', 'error');	// 提示用户出错了
+                    }
+					$("#order_pro").html(detailinfo); 									// 写入展开详情中
+				}
+			},'json');
+	
+	//保存修改的收货人信息
+	$("#submitbtn1").click(function(){
+		var receiver = $("input[name=receiver]").val();
+		var telphone = $("input[name=telphone]").val();
+		var address = $("input[name=address]").val();
+		
+		if(receiver == ''){
+			$.messager.alert('温馨提示', '请填写收货人姓名!', 'warning');
+	  		return
+		}
+		
+		if(telphone == ''){
+			$.messager.alert('温馨提示', '请填写收货人手机号码!', 'warning');
+	  		return
+		}else if(!isTel(telphone)){
+			$.messager.alert('温馨提示', '收货人手机号码请填写7~18位数字格式!', 'warning');
+	  		return
+		}
+		
+		if(address == ''){
+			$.messager.alert('温馨提示', '请填写收货人收货地址!', 'warning');
+	  		return
+		}
+		
+		if(receiver == orderrec && telphone == ordertel && address == orderaddr){
+			cancelChangeRec();
+		}else{
+			$.post('{:U("Subbranch/ProOrder/changeRecInfo","","")}',{orderid:orderid, receiver:receiver, telphone:telphone, address:address},function(result){
+				if(result.errCode == 0){
+					//设置收货人信息不可编辑
+					var tempobj = $("input[name=receiver]");
+					tempobj.attr('readonly',true);
+					tempobj.next().attr('readonly',true);
+					tempobj.parent().next().children().attr('readonly',true);
+					orderrec = tempobj.val();
+					ordertel = tempobj.next().val();
+					orderaddr = tempobj.parent().next().children().val();
+					$('#changeRec').css('display','none');
+				}else{
+					$.messager.alert('温馨提示', result.errMsg, 'warning');
+				}
+			},'json');
+		}
+	});
+	//保存修改的付款信息
+	$("#submitbtn2").click(function(){
+		var pay_indeed = $("input[name=pay_indeed]").val();
+		
+		if(pay_indeed == ''){
+			$.messager.alert('温馨提示', '订单应付金额不允许为空!', 'warning', function(){
+				$("input[name=pay_indeed]").focus();
+	  		});
+			return
+		}else if(isNaN(pay_indeed) || parseFloat(pay_indeed)<0){
+			$.messager.alert('温馨提示', '订单应付金额请输入大于或等于0的数字!', 'warning', function(){
+				$("input[name=pay_indeed]").focus();
+	  		});
+			return
+		}
+		
+		if(pay_indeed == orderpay){
+			cancelChangePay();
+		}else{
+			$.messager.alert('温馨提示', '确定修改订单应付金额？修改后顾客将按该金额支付订单！', 'warning', function(){
+				$.post('{:U("Subbranch/ProOrder/changePayInfo","","")}',{orderid:orderid, payindeed:pay_indeed},function(result){
+					if(result.errCode == 0){
+						//设置付款金额信息不可编辑
+						var tempobj = $("input[name=pay_indeed]");
+						tempobj.attr('readonly',true);
+						orderpay = tempobj.val();
+						//隐藏保存div
+						$('#changePri').css('display','none');
+						
+					}else{
+						$.messager.alert('温馨提示', result.errMsg, 'warning');
+					}
+				},'json');
+			});
+		}
+	});
+});	
+
+//修改收货人信息
+function changeReceiveInfo(){
+	var tempobj = $("input[name=receiver]");
+	tempobj.attr('readonly',false);//收货人名修改
+	tempobj.next().attr('readonly',false);//收货人手机号码可修改
+	tempobj.parent().next().children().attr('readonly',false);//收货人地址可修改
+	tempobj.focus();
+	$('#changeRec').css('display','block');
+}
+//关闭收货人信息修改窗口
+function cancelChangeRec(){
+	//设置收货人信息不可编辑
+	var tempobj = $("input[name=receiver]");
+	tempobj.attr('readonly',true);
+	tempobj.next().attr('readonly',true);
+	tempobj.parent().next().children().attr('readonly',true);
+	//重置收货人信息
+	$("input[name=receiver]").val(orderrec);
+	$("input[name=telphone]").val(ordertel);
+	$("input[name=address]").val(orderaddr);
+	//隐藏保存div
+	$('#changeRec').css('display','none');
+}
+
+//修改付款信息：订单金额
+function changePayInfo(){
+	var tempobj = $("input[name=pay_indeed]");
+	tempobj.attr('readonly',false);//实付金额可修改
+	tempobj.focus();
+	$('#changePri').css('display','block');
+}
+
+//关闭付款信息修改窗口
+function cancelChangePay(){
+	//设置付款金额信息不可编辑
+	var tempobj = $("input[name=pay_indeed]");
+	tempobj.attr('readonly',true);
+	//重置付款信息
+	//var price = $("input[name=o_price]").val(orderpri);
+	var pay_indeed = $("input[name=pay_indeed]").val(orderpay);
+	//隐藏保存div
+	$('#changePri').css('display','none');
+}
+
+//判断联系方式是否为正确的手机号码/电话号码格式
+function isTel(str){
+    var reg=/^([0-9]|[\-])+$/g ;
+    if(str.length<7 || str.length>18){
+     return false;
+    }
+    else{
+      return reg.exec(str);
+    }
+}
+</script>    
+</body>
+</html>

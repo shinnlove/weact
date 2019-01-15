@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css?v=1.0.3" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>订单详情</title>
+<style>
+body { background: #fff; margin-bottom:50px; }
+footer { position: fixed; bottom: 0; left: 0; width: 100%; height: 43px; }
+#cover { position: fixed; z-index: 103; top: 0; left: 0; width: 100%; height: 100%; display: none; }
+.img-normal { border-radius:5px; }
+.font-red { color:#F20; }
+.font-green { color:#449103; }
+.fn-hide { display:none; }
+</style>
+</head>
+
+<body>
+	<div class="orderMsg">
+		<section>
+			<div class="item">
+				<div class="name">订单状态</div>
+				<div class="msg">
+					<span id="orderStatus">查询状态中...</span> 
+					<!-- <input type="hidden" id="cName" value="150****7551" />  -->
+					<!-- <a href="javascript:;" class="action closeOrder">关闭订单</a> -->
+				</div>
+			</div>
+			<div class="item">
+				<div class="name">订单编号</div>
+				<div class="msg">{$orderlistinfo [0] ['visual_number']}</div>
+			</div>
+			<div class="item">
+				<div class="name">订单类型</div>
+				<div class="msg">在线购买</div>
+			</div>
+			<div class="item">
+				<div class="name">商品总价</div>
+				<div class="msg">
+					￥<span id="price">{$orderlistinfo [0] ['total_price']}</span>
+				</div>
+			</div>
+			<div class="item">
+				<div class="name">应付总额</div>
+				<div class="msg">￥{$orderlistinfo [0] ['pay_indeed']}</div>
+			</div>
+			<div class="item">
+				<div class="name">下单时间</div>
+				<div class="msg" id="createTime">{$orderlistinfo [0] ['order_time']}</div>
+			</div>
+			<div class="item">
+				<div class="name">店铺导购</div>
+				<div class="msg">
+					<span class="guide-name">{$ginfo ['guide_name']}-{$ginfo ['nickname']}</span>
+				</div>
+			</div>
+		</section>
+		<section>
+			<div class="item">
+				<div class="name">配送方式</div>
+				<div id="deliveryType" class="msg">查询中...</div>
+			</div>
+			<div class="item">
+				<div class="name">收货人</div>
+				<div class="msg">{$orderlistinfo [0] ['receive_person']}</div>
+			</div>
+			<div class="item">
+				<div class="name">联系电话</div>
+				<div class="msg">{$orderlistinfo [0] ['receive_tel']}</div>
+			</div>
+		</section>
+		<div class="order-product-list">
+			<!-- 订单商品详情section -->
+		</div>
+	</div>
+	
+	<!-- 底部按钮 begin -->
+	<div class="ft-cart">
+		<div class="btn-box period-first fn-hide">
+			<a href="javascript:;" class="pay-later btn btn-orange fav fs16 fixed-btn">稍后付款</a>
+			<a href="javascript:;" class="pay-now btn btn-rose fav fs16 fixed-btn">立即付款</a>
+		</div>
+		<div class="btn-box period-second fn-hide">
+			<a href="javascript:;" class="refund-order btn btn-orange fav fs16 fixed-btn">取消订单</a>
+		</div>
+		<div class="btn-box period-third fn-hide">
+			<a href="javascript:;" class="refund-order btn btn-orange fav fs16 fixed-btn">退货退款</a>
+			<a href="javascript:;" class="sign-order btn btn-rose fav fs16 fixed-btn">确认收货</a>
+		</div>
+		<div class="btn-box period-fourth fn-hide">
+			<a href="javascript:;" class="refund-order btn btn-orange fav fs16 fixed-btn">退货退款</a>
+			<a href="javascript:;" class="appraise-order btn btn-rose fav fs16 fixed-btn">评价订单</a>
+		</div>
+		<div class="btn-box period-fifth fn-hide">
+			<a href="javascript:history.go(-1);" class="btn btn-orange fav fs16 fixed-btn">返回</a>
+		</div>
+	</div>
+	<!-- 底部按钮 end -->
+	
+	<!-- 关闭订单弹窗 begin -->
+	<div class="mobilePrompt">
+		<div class="box">
+			<div class="item">
+				<input type="hidden" name="refund_oid" id="refund_oid" value="" /><!-- 要协商撤销退款的订单编号 -->
+				<textarea class="comment" name="refund_reason" id="refund_reason" placeholder="请输入协商撤销订单的理由"></textarea>
+			</div>
+			<div class="item">
+				<input class="refund-confirm changeBtn btn" type="button" value="确认" /> 
+				<input class="refund-cancel cancelBtn btn fr" type="button" value="取消" />
+			</div>
+		</div>
+	</div>
+	<!-- 关闭订单弹窗 end -->
+	
+	<input type="hidden" id="noTalking" />
+	
+<!-- 订单商品 js arttemplate begin -->
+<script type="text/html" id="orderproducttpl">
+{{each orderproductlist as e i}}
+	<section>
+		<div class="item">
+			<a class="stock" href="{{e | productDetailURL}}">
+				<div class="wbox">
+					<div class="name">
+						<img class="img-normal" src="{{e.micro_path}}" alt="" />
+					</div>
+					<div class="msg long">
+						<div class="stockTitle">{{e.product_name}}</div>
+						<p> {{e.pro_size}} / {{if e.pro_color}}{{e.pro_color}}{{else}}默认{{/if}} </p>
+						<p>￥{{e.unit_price}} x {{e.amount}}</p>
+					</div>
+				</div>
+			</a>
+		</div>
+	</section>
+{{/each}}
+</script>
+<!-- 订单商品 js arttemplate end -->
+
+<script type="text/javascript">
+var eid = "{$eid}", 			// 商家编号
+	sid = "{$sid}", 			// 分店编号
+	oid = "{$oid}", 			// 订单编号
+	openid = "{$openid}", 		// 订单用户微信号
+	receivestatus = '{$orderlistinfo[0][receive_status]}', 	// 商家是否接收订单
+	paymethod = '{$orderlistinfo[0][pay_method]}', 			// 用户支付订单的方式
+	logistics = '{$orderlistinfo[0][logistics_method]}', 	// 配送方式
+	flagstatus = '{$orderlistinfo[0][status_flag]}', 		// 订单状态标记
+	normalstatus = '{$orderlistinfo[0][normal_status]}', 	// 正常流水状态标记
+	refundstatus = '{$orderlistinfo[0][refund_status]}', 	// 退款流水状态标记
+	curpage = "{:U('WeMall/Order/orderInfo', array('sid' => $sid, 'oid' => $oid), '')}", // 当前位置
+	loginurl = "{:U('WeMall/GuestMall/login', array('sid' => $sid), '')}", // 登录地址
+	orderjsondata = '{$orderlistjson}'; // 订单的jsondata
+	
+// 页面初始化函数
+$(function(){
+	
+	// 根据支付状态控制订单按钮的显示
+	if (flagstatus == "0") {
+		// 正常流程状态
+		if (normalstatus == "0") {
+			$(".period-first").removeClass("fn-hide"); // 订单未支付，处于第一阶段
+		} else if (normalstatus == "1") {
+			$(".period-second").removeClass("fn-hide"); // 订单已经支付但未付款，处于第二阶段，但是商家还没有发货（此时可以退单）
+		} else if (normalstatus == "2") {
+			$(".period-third").removeClass("fn-hide"); // 订单已经支付但未付款，处于第二阶段，但是商家还没有发货（此时可以退单）
+		} else if (normalstatus == "3") {
+			$(".period-fourth").removeClass("fn-hide"); // 订单已支付也已发货，等待买家签收，处于第三阶段，买家还是可以退单
+		} else if (normalstatus == "4") {
+			$(".period-fifth").removeClass("fn-hide"); 
+		} 
+	} else if (flagstatus == "1") {
+		// 退款流程状态，全部显示返回
+		$(".period-fifth").removeClass("fn-hide"); 
+	}
+	
+	// Step1：写入订单状态
+	var orderstatus = orderStatus(flagstatus, normalstatus, refundstatus, true); // 得到订单状态
+	$("#orderStatus").html(orderstatus); 
+	
+	// Step2：配送方式
+	var deliverytype = "快递配送";
+	if (logistics == 1) {
+		deliverytype = "到店自提";
+	}
+	$("#deliveryType").html(deliverytype); // 写入配送方式
+	
+	// 直出渲染模板
+	var orderlist = $.parseJSON(window.orderjsondata); 
+	var tmpl = template('orderproducttpl', orderlist); 
+	var orderlistobj = $('.order-product-list'); 	
+	if (tmpl == '{Template Error}') {
+		tmpl = ""; // 置空tmpl
+	} 
+	orderlistobj.html(tmpl);						// 渲染成功就把模板渲染的信息写入
+	
+	// 生成DOM结构事件
+	$("body").on("click", ".pay-later", function(e){
+		// 稍后付款
+		mobileAlert("请及时在2小时内完成付款，超时订单将会被取消！");
+		setTimeout(function() {
+			location.href = "{:U('WeMall/Order/myOrder', array('sid' => $sid), '')}"; // 跳转订单中心
+		}, 1200);
+	}).on("click", ".pay-now", function(e){
+		// 立即微信支付
+		scscms_alert("用微信支付为该笔订单付款？", "confirm", function() {
+			var params = {
+					oid : window.oid,
+					sid : sid, 		// 当前店铺（订单并不一定是该店铺的）
+					method : 2, 	// 这里默认2是微信支付
+					openid : openid // 微信用户的openid
+			}; // 准备提交参数
+			$.post("{:U('WeMall/OrderRequest/wechatPay', '', '')}", params, function(result) {
+				if (result.errCode == 0) {
+					var payurl = "{:U('Home/WeChatPay/wechatPayV3', '', '')}?wcpid="+result.data.wcpid+"&redirecturi="+result.data.redirecturi+"&showwxpaytitle=1";
+					scscms_alert("即将开启微信支付，请及时确认支付!", "ok", "", 2);	// 定时2秒后关闭窗口
+					setTimeout(function() {
+						// to do 2.5秒后调起微信支付
+						window.location.href = payurl;
+					}, 2500);
+				} else{
+					scscms_alert(result.errMsg, "error", "", 3);
+				}
+			});
+		});
+	}).on("click", ".refund-order", function(e){
+		// 订单协商退款申请（弹窗），订单退款，撤销订单，取消订单
+		e.stopPropagation();
+		scscms_alert("若非情况所需不建议撤销，已谨慎考虑确定协商退款？", "confirm", function() {
+			$("#refund_oid").val(oid); 	// 写入要退款的订单编号
+			$("#refund_reason").val("");// 清空协商撤销退款理由
+			$(".mobilePrompt").show(); 	// 弹出关闭订单输入框
+		});
+	}).on("click", ".refund-confirm", function(e){
+		var _t = $(this);
+		// 订单协商撤销确认
+		e.stopPropagation();
+		var reason = $("#refund_reason").val(); // 协商撤销退款理由
+		if (reason == "") {
+			scscms_alert("请输入协商撤销订单的原因！", "warn", "", 2); 
+			$("#refund_reason").focus();
+			return false;
+		}
+		var params = {
+				oid : $("#refund_oid").val(), // 要退款的订单编号
+				reason : reason, 
+				sid : sid 
+		}
+		scscms_alert("确认协商撤销理由填写无误并提交给商家？", "confirm", function() {
+			MLoading.show('提交中...'); 
+			_t.attr('disabled',true); 
+			$.post("{:U('WeMall/OrderRequest/refundApplyOrder', '', '')}", params, function(result){
+				MLoading.hide(); 
+				_t.removeAttr('disabled'); 
+				$("#refund_reason").val(""); 	// 不管提交成功与否，清空协商撤销退款理由
+				$(".mobilePrompt").hide(); 		// 不管提交成功与否，都隐藏关闭订单输入框
+				// 处理结果
+				if (result.errCode == 0) {
+					scscms_alert("提交协商撤销申请成功，请等待商家与您取得联系！", "ok", "", 2); 
+					setTimeout(function(){
+						location.href = "{:U('WeMall/Order/myOrder', array('sid' => $sid), '')}";
+					},1500);
+				} else {
+					scscms_alert(result.errMsg, "error", "", 3); 
+				}
+			}, "json");
+		});
+	}).on("click", ".refund-cancel", function(e){
+		// 订单协商退款申请取消（关闭弹窗）
+		$(".mobilePrompt").hide(); // 隐藏关闭订单输入框
+	}).on("click", ".sign-order", function(e){
+		// 确认收货
+		var _t = $(this); // 获取点击的按钮
+		if (_t.attr("disabled")) {
+			return false;
+		}
+		e.preventDefault();
+		var params = {
+				oid : oid, 	// 当前点击要支付的订单编号（要确认收货的订单编号）
+				sid : sid 
+		}
+		scscms_alert("请在真正收到货的时候才确认收货，是否继续？", "confirm", function() {
+			MLoading.show('提交中...'); 
+			_t.attr('disabled',true); 
+			$.post("{:U('WeMall/OrderRequest/signReceiveOrder', '', '')}", params, function(result){
+				MLoading.hide(); 
+				_t.removeAttr('disabled'); 
+				if (result.errCode == 0) {
+					scscms_alert("确认收货成功！", "ok", "", 3);	
+					setTimeout(function(){
+						location.href = "{:U('WeMall/Order/myOrder', array('sid' => $sid), '')}";
+					},1500);
+				} else {
+					scscms_alert(result.errMsg, "error", "", 3); 
+				}
+			}, "json");
+		});
+	}).on("click", ".appraise-order", function(e){
+		// 交易完成评价订单
+		e.preventDefault();
+		window.location.href = "{:U('WeMall/Comment/GuideProduct', array('sid' => $sid), '')}?oid=" + oid;
+	}).on("click", ".viewExpress", function() {
+		// 查看快递点击后，查询爱查快递
+		$(this).hide();
+		$(".expressItem").html('<div class="loading-bottom">努力加载中...</div>')
+		var id = $(this).data("id"),
+			code = $(this).data("code");
+		$.ajax({
+			url: "http://api.ickd.cn/",
+			data: "id=" + baseOption.ickdID + "&secret=" + baseOption.ickdKey + "&com=" + id + "&nu=" + code + "&callback=expressCallback",
+			dataType: "jsonp",
+			success: function(data) {
+				console.log(data); // 记录日志文件
+				var dataStr = '';
+				if (data.status == "0") {
+					dataStr += data.message ? data.message : "暂时未跟踪到物流信息，请联系导购";
+				} else {
+					$.each(data.data, function(i, e) {
+						dataStr += '<div class="time">' + e.time + '</div>' + '<div class="msg">' + e.context + '</div>'
+					});
+				}
+				$(".expressItem").empty().append(dataStr);
+			}
+		});
+	});
+	
+});
+</script>
+</body>
+</html>

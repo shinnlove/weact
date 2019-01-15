@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<!--[if gt IE 8]>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<![endif]-->
+<!--[if lt IE 8]>
+    <link href="css/ie7.css" rel="stylesheet" type="text/css" />
+<![endif]-->
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type='text/javascript' src="__PUBLIC__/js/plugins/bootstrap.min.js"></script>
+<title>新增邮费模板</title>
+<style type="text/css">
+.postage_box li { padding:5px; float:left; width:140px; list-style:none; color:#666;}
+.control-group hr{margin-top:0; margin-bottom:5px; border:none; border-top:1px dotted #999}
+</style>
+</head>
+
+<body>
+    <form id="postageInfo" name="postageInfo" class="form-horizontal uniform" method="post" action="#" style="margin:0px; padding:10px;background:#fafafa;border:1px solid #DDD;min-width:800px;" enctype="multipart/form-data">
+        <div class="control-group">
+            <div class="controls controls-row"><h2>添加邮费模板</h2></div>
+            <div class="controls controls-row">
+                <font style="font-weight:bold; color:#666;">说明：</font><font style="color:highlight; line-height:22px;">此处为指定地区设置邮费模板信息，带<span class="text-error">(*)</span>为必填。</font><br />
+            </div>
+        </div>
+        
+        <hr />
+        <input type="hidden" class="uniform mybriefinput" id="mode-id" name="mode-id" placeholder="请填写邮费模板编号" required readonly value="{$mid}" />
+        
+       	<div class="control-group">
+			<label class="control-label">物流公司<span class="text-error">(*)</span>：</label>
+            <div class="controls controls-row">
+            	<select id="company-select" class="uniform myselected">
+                    <option value="-1">请选择物流公司</option>
+                    <option value="CNEMS" >中国邮政EMS</option>
+					<option value="CNST" >申通快递</option>
+					<option value="CNTT" >天天快递</option>
+					<option value="CNYT" >圆通速递</option>
+					<option value="CNSF" >顺丰速运</option>
+					<option value="CNYD" >韵达快递</option>
+					<option value="CNZT" >中通速递</option>
+					<option value="CNLB" >龙邦物流</option>
+					<option value="CNZJS" >宅急送</option>
+					<option value="CNQY" >全一快递</option>
+					<option value="CNHT" >汇通速递</option>
+					<option value="CNMH" >民航快递</option>
+					<option value="CNYF" >亚风速递</option>
+					<option value="CNKJ" >快捷速递</option>
+					<option value="DDS" >DDS快递</option>
+					<option value="CNHY" >华宇物流</option>
+					<option value="CNZY" >中铁快运</option>
+					<option value="FEDEX" >FedEx</option>
+					<option value="UPS" >UPS</option>
+					<option value="DHL" >DHL</option>
+					<option value="OTHER" >其它</option>
+                </select>
+			</div>
+            <input type="hidden" id="current-company" name="current-company" value="-1" /><!--当前选择的物流公司-->
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">模板名称<span class="text-error">(*)</span>：</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="m-name" name="m-name" required placeholder="请输入模板名称" value="" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">排序<span class="text-error">(*)</span>：</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="m-sort" name="m-sort" required placeholder="请输入模板序号" value="" />&nbsp;&nbsp;注：数字越小越靠前
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">首重<span class="text-error">(*)</span>：</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="first-weight" name="first-weight" placeholder="请输入最低的计费重量" required value="" />&nbsp;&nbsp;公斤（kg）
+            </div>
+        </div>
+
+        <div class="control-group">
+			<label class="control-label">续重<span class="text-error">(*)</span>：</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="add-weight" name="add-weight" placeholder="请输入续重部分计费度量" value="" />&nbsp;&nbsp;公斤（kg）
+            </div>
+        </div>
+        
+       	<div class="control-group">
+			<label class="control-label">配送地区<span class="text-error">(*)</span>：</label>
+            <div class="controls controls-row">
+                <a id="addbtn" class="small ui-color-button blue" onclick="$('#district-dialog').window('open');">指定配送地区</a>
+            </div> 
+        </div>
+        
+        <div class="control-group">
+	       <div class="controls controls-row" id="set-option"></div>
+        </div>
+       
+        <div class="control-group">
+            <label class="control-label">模板状态<span class="text-error">(*)</span>：</label>
+            <div class="controls controls-row">
+               <!--  <input type="checkbox" class="uniform" id="m-status" name="m-status" />只有开启模板状态后，才能使用模板 -->
+               	<input type="radio" class="uniform status" name="m-status" value="1" checked="checked">开启&nbsp;&nbsp;
+				<input type="radio" class="uniform status" name="m-status" value="0" >关闭
+				<div class="info-tip controls-row">只有开启模板状态后，才能使用该模板</div>
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	备注：
+            </label>
+            <div class="controls controls-row">
+                <textarea class="uniform mytextarea" id="m-remark" name="m-remark" placeholder="邮费模板说明，如发货时间、快递公司的单号查询地址等"/></textarea>
+            </div>
+        </div>
+        
+        <!-- 选择配送地区uniform对话框 begin -->
+		<div id="district-dialog" class="easyui-window" title="指定配送地区" data-options="modal:true,closed:true" style="width:660px; height:520px;">
+			<form name="district-form" class="form-horizontal uniform" method="post" action="#" >
+				<div class="control-group">
+					<div class="controls controls-row">
+						<label class="control-label"></label>
+						<ul><li style="padding-left:5px; list-style:none; color:#666; "><input type="checkbox" class="uniform checkall">全选</li></ul>
+						<hr />
+						<ul class="postage_box">
+							<li><input type="checkbox" class="uniform province" value="安徽省">安徽省</li>
+							<li><input type="checkbox" class="uniform province" value="澳门特别行政区">澳门特别行政区</li>
+							<li><input type="checkbox" class="uniform province" value="重庆市">重庆市</li>
+							<li><input type="checkbox" class="uniform province" value="广东省">广东省</li>
+							<li><input type="checkbox" class="uniform province" value="福建省">福建省</li>
+							<li><input type="checkbox" class="uniform province" value="甘肃省">甘肃省</li>
+							<li><input type="checkbox" class="uniform province" value="贵州省">贵州省</li>
+							<li><input type="checkbox" class="uniform province" value="广西壮族自治区">广西壮族自治区</li>
+							<li><input type="checkbox" class="uniform province" value="河北省">河北省</li>
+							<li><input type="checkbox" class="uniform province" value="河南省">河南省</li>
+							<li><input type="checkbox" class="uniform province" value="湖北省">湖北省</li>
+							<li><input type="checkbox" class="uniform province" value="湖南省">湖南省</li>
+							<li><input type="checkbox" class="uniform province" value="海南省">海南省</li>
+							<li><input type="checkbox" class="uniform province" value="黑龙江省">黑龙江省</li>
+							<li><input type="checkbox" class="uniform province" value="吉林省">吉林省</li>
+							<li><input type="checkbox" class="uniform province" value="江西省">江西省</li>
+							<li><input type="checkbox" class="uniform province" value="江苏省">江苏省</li>
+							<li><input type="checkbox" class="uniform province" value="辽宁省">辽宁省</li>
+							<li><input type="checkbox" class="uniform province" value="内蒙古自治区">内蒙古自治区</li>
+							<li><input type="checkbox" class="uniform province" value="宁夏回族自治区">宁夏回族自治区</li>
+							<li><input type="checkbox" class="uniform province" value="青海省">青海省</li>
+							<li><input type="checkbox" class="uniform province" value="上海市">上海市</li>
+							<li><input type="checkbox" class="uniform province" value="山东省">山东省</li>
+							<li><input type="checkbox" class="uniform province" value="山西省">山西省</li>
+							<li><input type="checkbox" class="uniform province" value="四川省">四川省</li>
+							<li><input type="checkbox" class="uniform province" value="陕西省">陕西省</li>
+							<li><input type="checkbox" class="uniform province" value="北京市">北京市</li>
+							<li><input type="checkbox" class="uniform province" value="天津市">天津市</li>
+							<li><input type="checkbox" class="uniform province" value="台湾省">台湾省</li>
+							<li><input type="checkbox" class="uniform province" value="新疆维吾尔自治区">新疆维吾尔自治区</li>
+							<li><input type="checkbox" class="uniform province" value="香港特别行政区">香港特别行政区</li>
+							<li><input type="checkbox" class="uniform province" value="西藏自治区">西藏自治区</li>
+							<li><input type="checkbox" class="uniform province" value="云南省">云南省</li>
+							<li><input type="checkbox" class="uniform province" value="浙江省">浙江省</li>
+							<li><input type="checkbox" class="uniform province" value="其它">其它</li>										
+						</ul>
+			        </div>
+			    </div>
+			</form>
+			<hr/>
+			<div class="control-group">
+				<div class="controls controls-row" style ="color:#666; margin-left:35px;" >
+					首重费用<span class="text-error">(*)</span>:<input type="text" class="uniform mytimeinput" id="m-first-fee" name="m-first-fee" required value="" />&nbsp;&nbsp;元
+		          	<span style ="color:#666; margin-left:35px;">续重费用</span><span class="text-error">(*)</span>:<input type="text" class="uniform mytimeinput" id="m-add-fee" name="m-add-fee" required value="" />&nbsp;&nbsp;元
+	            </div>
+        	</div>
+       
+        	<hr/>
+		    <div class="control-group" id="district-buttons" style="text-align:center;background:#FFF;">
+		        <div class="controls controls-row">
+		            <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="districtConfirm()">确定</a>
+					<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#district-dialog').dialog('close')">取消</a>
+				</div>
+		    </div>
+		</div>
+		<!-- 选择配送地区uniform对话框 end -->
+        
+        <div class="form-actions no-margin" style="margin-bottom:0px; background:#fafafa;">
+            <a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">提交</a>
+            &nbsp;&nbsp;
+            <a id="resetbtn" class="large ui-color-button blue" href="javascript:history.go(-1);">返回</a>
+            <a href="javascript:history.go(-1);">
+                <img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/images/goback.png" />
+            </a>
+        </div> 
+	</form>
+
+<script type="text/javascript">
+//页面初始化函数
+$(function (){
+	
+	$(".uniform").uniform();						//uniform表单初始化
+	
+	// 生成父级的checkbox全选反选功能事件
+	$(".checkall").on("click",function(){
+		var ischecked = $(this).attr("checked"); 				// 获取自身选中状态
+		var targetobj = $(".postage_box li"); 					// 获取ul的li
+		var provincelength = targetobj.length; 					// 获取多少个省
+		if (ischecked != "checked") {
+			$(this).attr("checked", true);
+			$(this).parent().addClass("checked");
+			// 选中状态（要全选状态）
+			targetobj.each(function(e){
+				var tempobj = $(this).find("input");
+				if (tempobj.attr("checked") != "checked" && tempobj.attr("disabled") != "disabled") {
+					// 如果是uniform非选中状态，且当前是要全选
+					tempobj.attr("checked", true); 				// 自身添加选中状态
+					tempobj.parent().addClass("checked"); 		// 父级uniform也选中
+				}
+			});
+		} else {
+			$(this).attr("checked", false);
+			$(this).parent().removeClass("checked");
+			// 未选中状态（反选状态）
+			targetobj.each(function(e){
+				var tempobj = $(this).find("input");
+				if (tempobj.attr("checked") == "checked") {
+					// 如果是uniform选中状态，且当前是要反选
+					tempobj.attr("checked", false); 			// 自身去除选中状态
+					tempobj.parent().removeClass("checked"); 	// 父级uniform也去除选中
+				}
+			});
+		}
+	});
+	
+	// 子级checkedbox选择引起父级的checkedbox的本身是否选中
+	$(".province").on("click",function(){
+		var self = $(this); 									// 抓取自身
+		var childlist = $(".postage_box li"); 					// 抓取子级的checkbox的列表对象
+		var globalobj = $(".checkall"); 						// 抓取全局的对象
+		if (self.attr("checked") != "checked") {
+			// 先处理自身的选中与否状态:如果他自己本来没有选中，现在处于要选中状态
+			self.attr("checked", true); 						// 自身也不选中
+			
+			// 检测自身是否最后一个选中的checkedbox,如果点击之后有checked属性，说明可能要勾选checkbox全选
+			var totalchecked = true; 							// 默认都选中
+			childlist.find("input[type='checkbox']").each(function(){
+				if ($(this).attr("checked") != "checked") {
+					totalchecked = false;
+				}
+			});
+			if (! totalchecked) {
+				globalobj.attr("checked", false); 				// 全选checkbox自身不选中
+				globalobj.parent().removeClass("checked"); 		// 全选checkbox的uniform不选中
+			} else {
+				// 如果他是最后一个被勾选的，全局的checkbox还是要勾选
+				globalobj.attr("checked", true); 				// 自身要选中
+				globalobj.parent().addClass("checked"); 		// uniform要选中
+			}
+			
+		} else {
+			// 如果他自己本来有选中，现在处于清除选中状态
+			self.attr("checked", false); 						// 自身不选中
+			self.parent().removeClass("checked"); 				// uniform不选中
+			
+			// 如果当前被点击以后没有checked属性，那就说明一定是不勾选全局的
+			globalobj.attr("checked", false); 					// 自身也不选中
+			globalobj.parent().removeClass("checked"); 			// uniform先不选中
+		}
+	});
+	
+	//删除指定配送地区邮费设定按钮
+	$("#set-option").on("click",'.btn_delete',function(){
+		var value = $(this).next().val();
+		enable(value);
+		$(this).parent().remove();
+	});
+
+	//物流公司选择框更改事件
+	$("#company-select").change(function(){
+		$("#current-company").val($(this).val());						//获取option选中的exp-company的value，并写入input里
+	});
+	
+	//提交按钮处理
+	$("#submitbtn").click(function(){
+		var mid = $("#mode-id");						//抓取邮费模板编号
+		var csl = $("#company-select");					//抓取物流公司
+		var cuc = $("#current-company");
+		var mna = $("#m-name");							//抓取邮费模板名称
+		var mso = $("#m-sort");							//抓取模板排序
+		var fwe = $("#first-weight");					//抓取首重重量
+		var awe = $("#add-weight");						//抓取续重重量
+		var mst = $("#m-status");						//抓取模板状态
+		var mre = $("#m-remark");
+		
+		//Step1：判断物流公司是否选择
+		if (cuc.val() == '-1'){
+			$.messager.alert('温馨提示', '请选择物流公司!', 'warning', function(){
+				cuc.focus();						//注意聚焦和return的顺序！
+	  		});
+	  		return									//注意聚焦和return的顺序！
+		}
+		//Step2：判断模板名称是否填写
+		if (mna.val() == ''){
+			$.messager.alert('温馨提示', '请填写邮费模板名称!', 'warning', function(){
+				mna.focus();
+	  		});
+	  		return
+		}
+		//Step3：判断模板排序是否填写
+		if(mso.val() == ''){
+			$.messager.alert('温馨提示', '请填写邮费模板排序!', 'warning', function(){
+				mso.focus();
+	  		});
+	  		return
+		}else if(!isPositiveNum(mso.val())){
+			$.messager.alert('温馨提示', '排序请输入大于或等于0的整数','warning', function(){
+				mso.focus();												//注意聚焦和return的顺序！
+			});
+			return;
+		}	
+		//Step4：判断首重是否填写
+		if (fwe.val() == ''){
+			$.messager.alert('温馨提示', '请填写首重!', 'warning', function(){
+				fwe.focus();						//注意聚焦和return的顺序！
+	  		});
+	  		return									//注意聚焦和return的顺序！
+		}else if(isNaN(fwe.val()) || fwe.val() < 0){
+			$.messager.alert('温馨提示', '首重请输入大于0的数字','warning', function(){
+				fwe.focus();												//注意聚焦和return的顺序！
+			});
+			return;
+		}	
+		//Step5：判断续重是否填写（重要）
+		if(awe.val() == ''){
+			$.messager.alert('温馨提示', '请填写续重!', 'warning', function(){
+				awe.focus();
+	  		});
+	  		return
+		}else if(isNaN(awe.val()) || awe.val() < 0){
+			$.messager.alert('温馨提示', '续重请输入大于0的数字','warning', function(){
+				awe.focus();												//注意聚焦和return的顺序！
+			});
+			return;
+		}	
+		//Step6：判断配送地区是否选择
+		if($('.district-box').length == 0){
+			$.messager.alert('温馨提示', '请指定配送地区!', 'warning', function(){
+		
+  			});
+  			return
+		}
+		
+		// 验证所有所选地区的首重续重费用是否填写
+		var emptyweight = false; 															// 默认所有框都填写了数值，然后检查一遍
+		var emptynum = -1; 																	// 没有填写首重续重的框下标，用于聚焦
+		var sectionobj = $("#set-option");
+		sectionobj.children(".district-box").each(function(i){
+			var tempchild = $(this); 														// 取当前的对象
+			var tempfirstinput = tempchild.children("input[name='first-fee']").val().trim();// 首重框值
+			var tempaddinput = tempchild.children("input[name='add-fee']").val().trim(); 	// 续重框值
+			if ((emptyweight == false && tempfirstinput == "") || (emptyweight == false && tempfirstinput != "" && (isNaN(tempfirstinput) || tempfirstinput < 0))) {
+				emptyweight = 1; 															// 首重未填写
+				emptynum = i; 																// 记录位置
+			} else if ((emptyweight == false && tempaddinput == "") || (emptyweight == false && tempaddinput != "" && (isNaN(tempaddinput) || tempaddinput < 0))) {
+				emptyweight = 2; 															// 续重未填写
+				emptynum = i; 																// 记录位置
+			}
+		});
+		if (emptyweight != false) {
+			if (emptyweight == 1) {
+				$.messager.alert('温馨提示', '请填写该地区首重费用!', 'warning',function(){
+					sectionobj.children(".district-box:eq(" + emptynum + ")").find("input[name='first-fee']").focus(); // 聚焦空的文本框
+				});
+			} else if (emptyweight == 2) {
+				$.messager.alert('温馨提示', '请填写该地区续重费用!', 'warning',function(){
+					sectionobj.children(".district-box:eq(" + emptynum + ")").find("input[name='add-fee']").focus(); 	// 聚焦空的文本框
+				});
+			}
+  			return false;
+		}
+		
+		//获取模板状态
+		var statusval=1;
+		$(".status").each(function(i){
+			var temp = $(this).parent();
+			if(temp.attr("class") == "checked"){
+				tempvalue = i;
+			}
+		});
+		if(tempvalue){
+			statusval = 0;
+		}
+		
+		//验证通过，post提交
+		$.messager.confirm('温馨提示', '确定添加新的邮费模板吗？', function(result){
+			if(result == true){
+				var vallist = [];
+				var deflist = [];
+				var inclist = [];
+				$(".district-box").each(function(i){
+					vallist[i] = $(this).children("input[name='district']").val();
+					deflist[i] = $(this).children("input[name='first-fee']").val();
+					inclist[i] = $(this).children("input[name='add-fee']").val();
+				});
+				
+				$.post("{:U('Admin/OrderManageRequest/addPostageModeCfm')}",
+					{
+					mid : mid.val(),
+					cuc : cuc.val(),
+					mna : mna.val(),
+					mso : mso.val(),
+					fwe : fwe.val(),
+					awe : awe.val(),
+					vallist : vallist.join('|'),
+					deflist : deflist.join('|'),
+					inclist : inclist.join('|'),
+					status : statusval,
+					mre : mre.val()
+					},function(result){
+						if(result.errCode==0){
+							$.messager.alert('温馨提示','邮费模板添加成功','info',function(){
+								window.location.href="{:U('Admin/OrderManage/postageModeView')}"
+							});
+						}else {
+							$.messager.alert('温馨提示', '邮费模板添加失败！' + result.errMsg, 'error');
+						}
+					},'json');
+			}
+		});
+		return
+	});
+});
+
+//选择配送地区确认
+function districtConfirm(){
+	var value = "";
+	var str = "";
+	//获得所有选择的省
+	$(".province:checked").each(function(){
+		value += value? ","+this.value: this.value;
+	});
+	if (value) {
+		str = makediv(value, $("#m-first-fee").val(), $("#m-add-fee").val());
+		$("#set-option").append(str);
+		unable(value);
+	}
+	$("#m-first-fee").val('');
+	$("#m-add-fee").val('');
+	$('#district-dialog').dialog('close');//隐藏弹窗
+}
+
+function unable(value){
+	var arr = value.split(",");
+	if(arr.length == 35){
+		var tempall = $(".checkall");
+		tempall.attr("checked", false);
+		tempall.parent().removeClass("checked");
+		tempall.attr("disabled","disabled");
+	}
+	$(".province").each(function(){
+		if ($.inArray(this.value, arr) > -1) {
+			$(this).attr("checked", false); 				// 全选checkbox自身不选中
+			$(this).parent().removeClass("checked"); 		// 全选checkbox的uniform不选中
+			$(this).attr("disabled","disabled");
+		}
+	});
+}
+function enable(value){
+	var arr = value.split(",");
+	if(arr.length){
+		$(".checkall").removeAttr("disabled");
+	}
+	$(".province").each(function(){
+		if ($.inArray(this.value, arr) > -1) {
+			$(this).removeAttr("disabled");
+		}
+	});
+}
+
+function makediv(val,def,inc){
+	var str = "";
+	str += '<div class="controls controls-row district-box" name="district-box" style ="color:#666; margin-left:0;margin-bottom:8px" >';
+	str += '<a href="javascript:void(0);" class="easyui-linkbutton 1-btn btn_delete" iconCls="icon-cancel" style ="margin-right:10px;"><span class="l-btn-left"><span class="l-btn-text"><span class="l-btn-empty icon-cancel"></span></span></span></a>';
+	str += '地区<input type="text" class="uniform mybriefinput uniform-input text district" style ="margin-right:10px;" id="district" name="district" required value="'+val+'" readonly/>';
+	str += '首重费用<input type="text" class="uniform mytimeinput uniform-input text first-fee" style ="margin-right:10px; width:110px;" id="first-fee" name="first-fee" value="'+def+'" required/>';
+	str += '续重费用<input type="text" class="uniform mytimeinput uniform-input text add-fee" id="add-fee" name="add-fee" style="width:110px;" value="'+inc+'" required />元';
+	str += '</div>';
+	return str;
+}
+
+//判断大于或等于0的整数  
+function isPositiveNum(s){
+    var re = /^[0-9]*[0-9][0-9]*$/ ;  
+    return re.test(s)  
+} 
+</script>
+</body>
+</html>

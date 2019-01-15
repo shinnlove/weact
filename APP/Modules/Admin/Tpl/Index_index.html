@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="login_page">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!-- Bootstrap framework -->
+<link rel="stylesheet" href="__PUBLIC__/bootstrap/css/bootstrap.min.css" />
+<!-- theme color-->
+<link rel="stylesheet" href="__PUBLIC__/css/blue.css" />
+<!-- tooltip -->
+<link rel="stylesheet" href="__PUBLIC__/lib/qtip2/jquery.qtip.min.css" />
+<!-- main styles -->
+<link rel="stylesheet" href="__PUBLIC__/css/style.css" />
+<!--[if lt IE 9]>
+	<script src="__PUBLIC__/js/ie/html5.js"></script>
+	<script src="__PUBLIC__/js/ie/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.actual.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lib/validation/jquery.validate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/bootstrap/js/bootstrap.min.js"></script>
+<title>品牌企业用户管理系统登录</title>
+</head>
+
+<body style="background:#418bdb;">
+	<div class="login_box">
+		<form action="#" method="post" id="login_form">
+			<div class="top_b">微动品牌管理系统</div>
+			<div class="cnt_b">
+				<div class="form-group">
+					<div class="input-group">
+						<span class="input-group-addon input-sm"><i class="glyphicon glyphicon-user"></i></span> 
+						<input class="form-control input-sm" type="text" id="username" name="username" placeholder="用户名" value="" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="input-group">
+						<span class="input-group-addon input-sm"><i class="glyphicon glyphicon-lock"></i></span> 
+						<input class="form-control input-sm" type="password" id="password" name="password" placeholder="密码" value="" />
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="input-group">
+						<span class="input-group-addon input-sm"><i class="glyphicon glyphicon-picture"></i></span> 
+						<input class="form-control input-sm" type="text" id="verify" name="verify" placeholder="验证码" maxlength="4" value="" style="width:35%; float:left; margin-right:10px;" />
+						<img id="verify_img" class="verifyrefresh" src="{:U('Admin/Index/getRandomVerifyCode')}" title="点击图片切换验证码" style="float:left; margin-top:3px;" />
+						<a href="javascript:;" class="verifyrefresh" title="看不清？点击刷新" style="margin-left:10px; text-align:center; line-height:30px;">看不清?</a>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="checkbox-inline"><input type="checkbox" />
+						记住密码</label>
+				</div>
+			</div>
+			<div class="btm_b clearfix">
+				<!-- <button class="btn btn-default btn-sm pull-right" type="submit">登录</button> -->
+				<button id="loginbtn" type="button" class="btn btn-default btn-sm pull-right" >登录</button>
+				<!-- <span class="linkform"><a href="#pass_form">忘记登录密码？</a></span> -->
+			</div>
+		</form>
+
+		<form action="#" method="post" id="pass_form" style="display: none">
+			<div class="top_b">不能登录？</div>
+			<div class="alert alert-info alert-login">
+				请输入您的邮箱地址，您将收到一个重置密码的链接！
+			</div>
+			<div class="cnt_b">
+				<div class="formRow clearfix">
+					<div class="input-group">
+						<span class="input-group-addon input-sm">@</span> 
+						<input type="text" placeholder="邮箱地址" class="form-control input-sm" />
+					</div>
+				</div>
+			</div>
+			<div class="btm_b tac">
+				<button class="btn btn-default" type="submit">重置密码</button>
+			</div>
+		</form>
+
+		<div class="links_b links_btm clearfix">
+			<span class="linkform" style="display: none">
+				<a href="#login_form">返回登录界面</a>
+			</span>
+		</div>
+	</div>
+
+<script type="text/javascript">
+$(document).ready(function() {
+
+	//* boxes animation
+	form_wrapper = $('.login_box');
+
+	function boxHeight() {
+		form_wrapper.animate({
+			marginTop: (-(form_wrapper.height() / 2) - 24)
+		}, 400);
+	};
+	
+	form_wrapper.css({
+		marginTop: (-(form_wrapper.height() / 2) - 24)
+	});
+	
+	$('.linkform a').on('click', function(e) {
+		var target = $(this).attr('href'),
+			target_height = $(target).actual('height');
+		$(form_wrapper).css({
+			'height': form_wrapper.height()
+		});
+		$(form_wrapper.find('form:visible')).fadeOut(400, function() {
+			form_wrapper.stop().animate({
+				height: target_height,
+				marginTop: (-(target_height / 2) - 24)
+			}, 500, function() {
+				$(target).fadeIn(400);
+				$('.links_btm .linkform').toggle();
+				$(form_wrapper).css({
+					'height': ''
+				});
+			});
+		});
+		e.preventDefault();
+	});
+
+	//* jquery validation
+	/* $('#login_form').validate({
+		onkeyup: false,
+		errorClass: 'error',
+		validClass: 'valid',
+		rules: {
+			username: {
+				required: true,
+				minlength: 3
+			},
+			password: {
+				required: true,
+				minlength: 3
+			}
+		},
+		highlight: function(element) {
+			$(element).closest('div').addClass("f_error");
+			setTimeout(function() {
+				boxHeight()
+			}, 200)
+		},
+		unhighlight: function(element) {
+			$(element).closest('div').removeClass("f_error");
+			setTimeout(function() {
+				boxHeight()
+			}, 200)
+		},
+		errorPlacement: function(error, element) {
+			$(element).closest('div').append(error);
+		}
+	}); */
+	
+	$(".verifyrefresh").on("click", function(){
+		$("#verify_img").attr('src','{:U("Admin/Index/getRandomVerifyCode")}');
+	});
+	
+	$("#loginbtn").click(function(){
+		var acc = $("#username");
+		var pwd = $("#password");
+		var ver = $("#verify");
+		if(acc.val()==''){
+			alert('请输入用户名!');
+			acc.focus();
+			return
+		}
+		if(pwd.val()==''){
+			alert('请输入密码!');
+			pwd.focus();
+			return
+		}
+		if(ver.val()==''){
+			alert('请输入验证码!');
+			ver.focus();
+			return
+		}
+		var params = {
+				account : acc.val(), 
+				password : pwd.val(), 
+				verify : ver.val()
+		}
+		$.post("{:U('Admin/IndexRequest/login')}", params, function(result){
+			if (result.errCode == 0) {
+				window.location.href = "{:U('Admin/Enterprise/main')}";
+			}else{
+				alert(result.errMsg);
+			}
+		},'json');
+	});
+	
+	// 回车键触发登录
+	$("#password, #verify").keypress(function(e){
+		if (e.keyCode == 13) {
+			$("#loginbtn").click(); 
+		}
+	});
+});
+</script>
+</body>
+</html>

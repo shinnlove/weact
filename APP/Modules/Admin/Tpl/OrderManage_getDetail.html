@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>订单详情</title>
+</head>
+
+<body class="easyui-layout">
+	<!-- easyui 表头 -->
+	<div data-options="region:'north',title:'订单详情',border:false,tools:'#tt'" style="height: 150px;">
+		<div id="order-info">
+			<ul>
+				<li>
+					<div class="order-item">订单编号：&nbsp;<span>{$mainOrder.main_order_id}</span></div>
+					<div class="order-item">订单状态：&nbsp;<span>{$mainOrder.status}</span></div>
+				</li>
+				<li>
+					<div class="order-item">收货人及联系方式：&nbsp;<span>{$mainOrder.consignor_name}，{$mainOrder.contact_number}</span></div>
+					<div class="order-item">发票：&nbsp;<span>{$mainOrder.invoice}</span></div>
+				</li>
+				<li>
+					<div class="order-item">实付款：&nbsp;<span>￥{$mainOrder.pay_indeed}</span></div>
+					<div class="order-item">收货地址：&nbsp;<span>{$mainOrder.send_address}</span></div>
+				</li>
+			</ul>
+		</div>
+	</div>
+	
+	<!-- easyUI的表格 -->
+	<div style="margin-top: 5px;" data-options="region:'center',border:false">
+		<table id="dg" title="订单中的产品"  style="width: 100%; height: 100%;">
+		</table>
+	</div>
+	<div class="panel-tool" id="tt">
+		<a href="javascript:history.back(-1);" class="icon-back"></a> 
+		<a href="javascript:location.reload();" class="icon-reload"></a>
+	</div>
+
+<script type="text/javascript">
+$(function() {
+	$('#dg').datagrid({
+		url: "{:U('Admin/OrderManage/getDetailOrder','','')}?main_order_id={$detaildata.main_order_id}",
+		singleSelect: false,
+		collapsible: true,
+		method: 'post',
+		fitColumns: true,
+		fit: true,
+		pagination: true,
+		pageSize: 10,
+		pageList: [5, 10, 20],
+		rownumbers: true,
+		idField: 'detail_order_id',
+		columns: [
+			[{
+				field: 'product_number',
+				title: '产品编号',
+				width: 100
+			}, {
+				field: 'product_name',
+				title: '产品名称',
+				width: 100
+			}, {
+				field: 'pro_size',
+				title: '产品尺寸',
+				width: 100
+			}, {
+				field: 'pro_color',
+				title: '产品颜色',
+				width: 100
+			}, {
+				field: 'unit_price',
+				title: '产品单价',
+				width: 100
+			}, {
+				field: 'detail_amount',
+				title: '购买数量',
+				width: 100
+			}]
+		]
+
+	});
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<title>安全中心</title>
+</head>
+
+<body>
+	 <form id="safetyCenter" name="safetyCenter" class="form-horizontal uniform" method="post" action="#" style="margin:0px; padding:10px;background:#fafafa;border:1px solid #DDD;min-width:800px;">
+        
+        <div class="control-group">
+			<div class="controls controls-row"><h2>安全中心</h2></div>
+	        <div class="controls controls-row">
+	        	<font style="font-weight:bold; color:#666;">说明：</font><font style="color:highlight; line-height:22px;">成功修改账户密码之后请重新登录平台！</font><br />
+	        </div>
+		</div>
+        
+        <hr />
+        
+        <div class="control-group">
+			<label class="control-label">
+            	原密码<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="password" class="uniform mybriefinput" id="old_pwd" name="old_pwd" placeholder="请输入当前密码" required value="" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	新密码<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="password" class="uniform mybriefinput" id="new_pwd" name="new_pwd" placeholder="请输入新密码" required value="" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	确认密码<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="password" class="uniform mybriefinput" id="confirm_pwd" name="confirm_pwd" placeholder="请输入新密码进行确认" required value="" />
+            </div>
+            <div class="controls controls-row">
+               	<font style="color:#666;">温馨提示：标准密码格式要求为4~16位数字、字母或下划线。</font>
+            </div>
+        </div>
+        
+        <div class="form-actions no-margin" style="margin-bottom:0px; background:#fafafa;">
+            <a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">提交</a>
+            &nbsp;&nbsp;
+            <a id="cancelbtn" class="large ui-color-button blue" href="javascript:history.go(-1);">取消</a>
+            <a href="javascript:history.go(-1);">
+                <img style="width:50px; float:right;" alt="返回" src="/weact/APP/Modules/Admin/Tpl/Public/images/goback.png" />
+            </a>
+        </div> 
+	</form>
+	
+<script type="text/javascript">
+$(function(){
+	$(".uniform").uniform();					//初始化uniform，文本框的uniform格式化
+	var reg = /^\w{4,16}$/; 					//验证账户密码格式：6~16位数字、字母和下划线
+
+	$("#submitbtn").click(function(){
+		var op = $("#old_pwd");
+		var np = $("#new_pwd");
+		var cp = $("#confirm_pwd");
+		
+		//判断是否正确输入密码
+		if(op.val()=='' || !reg.test(op.val())){
+			$.messager.alert('温馨提示', '请按标准密码格式输入原密码!', 'warning', function(){
+				op.focus();						         //注意聚焦和return的顺序！
+	  		});
+	  		return	
+		}
+		
+		if(np.val()==''|| !reg.test(np.val())){
+			$.messager.alert('温馨提示', '请按标准密码格式输入新密码!', 'warning', function(){
+				np.focus();						         //注意聚焦和return的顺序！
+	  		});
+	  		return
+		}else if(cp.val()=='' || !reg.test(cp.val())){
+			$.messager.alert('温馨提示', '请按标准密码格式输入确认密码!', 'warning', function(){
+				cp.focus();						         //注意聚焦和return的顺序！
+	  		});
+	  		return
+		}else if(cp.val()!=np.val()){
+			$.messager.alert('温馨提示', '两次输入的新密码不一致!', 'warning', function(){
+				cp.focus();						         //注意聚焦和return的顺序！
+	  		});
+	  		return
+		}
+		
+		$.post("{:U('Admin/SystemSecurityRequest/checkOldPwd','','')}", { op : op.val()}, function(data){
+				if(data.status == 1){
+					$.messager.confirm('温馨提示', '确认提交修改新密码吗?', function(cf){
+							if(cf) {
+								//验证通过，post提交
+								$.post("{:U('Admin/SystemSecurityRequest/alterPwdConfirm','','')}", 
+								{ 
+									op : op.val(),
+									cp : cp.val()
+								}, function(result){
+										if(result.errCode == 0){
+											$.messager.alert('温馨提示', '密码修改成功,请重新登录微动平台！', 'info',function(){
+												$.post("/weact/Admin/Index/logout",null,function(data){
+													//退出登录
+													if(data.status==1){
+														window.location.href='/weact/Admin/Index/Index.shtml';
+													}
+												});
+											});
+										}else{
+											$.messager.alert('温馨提示', '密码修改失败！' + result.errMsg, 'warning', function(){
+												np.focus();	
+									  		});
+									  		return	
+										}
+								},'json');
+							}
+					});
+				}else{
+					$.messager.alert('温馨提示', '原密码输入错误!', 'warning', function(){
+						op.focus();	
+			  		});
+			  		return	
+				}
+		},'json');
+	});
+});
+
+</script>
+</body>
+</html>

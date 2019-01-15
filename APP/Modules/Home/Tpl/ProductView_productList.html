@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/MobileCommonStyle.min.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.lazyload-1.9.3.js"></script>
+<script type="text/javascript" src="__PUBLIC__/bootstrap/js/bootstrap.min.js"></script><!-- 必须加入，搜索功能使用的就是bootstrap核心 -->
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>{$pageinfo [currentnav] [nav_name]}</title>
+<style type="text/css">
+{$pageinfo.csscontent}
+</style>
+</head>
+
+<body style="background:#efefef">
+	<div class="wrap">
+        <div class="navlist-content">
+			<div id="ui-header">
+                <div class="fixed">
+                    <h1 class="ui-title" id="popmenu">{$pageinfo [currentnav] [nav_name]}</h1>
+                    <li class="ui-btn-left_pre" onclick="javascript:history.go(-1);"></li>
+                    <li class="ui-btn-right" onclick="javascript:location.reload();"></li>
+                </div>
+            </div>
+            <div id="overlay"></div>
+            <div id="win">
+                <ul class="dropdown">
+                	<li onclick="goHomeClick();"><span>首页</span></li>
+                	<foreach name="pageinfo.navigation" item="pinav">
+                    	<li onclick="dourl('{$pinav.url}')"><span>{$pinav.nav_name}</span></li>
+                    </foreach>
+                    <div class="clr"></div>
+                </ul>
+            </div><!-- win结束div -->
+
+        	<div class="navContent">
+
+                <div class="searchBar">
+                    <form id="productSearchForm" name="productSearchForm" action="{:U('Home/ProductView/productList','','')}" method="get">
+                        <div class="input-group">
+                            <div class="input-group-btn">
+                                <button id="search-select-condition" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">请选择<span class="caret"></span></button>
+                                <input type="hidden" id="e_id" name="e_id" value="{$e_id}" />
+                            	<input type="hidden" id="nav_id" name="nav_id" value="{$nav_id}" />
+                            	<input type="hidden" id="Type" name="Type" value="1" />
+                                <input type="hidden" id="searchcondition" name="searchcondition" value="" />
+                                <ul style="min-width: 60px;" class="dropdown-menu pull-left">
+                                    <li><a class="select-condition" href="javascript:void(0)">商品名称<input type="hidden" value="product_name" /></a></li>
+                                    <li><a class="select-condition" href="javascript:void(0)">商品价格<input type="hidden" value="current_price" /></a></li>
+                                    <li><a class="select-condition" href="javascript:void(0)">适用性别<input type="hidden" value="sex" /></a></li>
+                                </ul>
+                            </div>
+                            <input id="searchcontent" name="searchcontent" type="text" class="form-control" required="required" data-placement="bottom" data-content="查询条件或内容不能为空！"/>
+                            <span class="input-group-btn">
+                                <button id="search-btn" type="button" class="btn btn-default">GO</button>
+                            </span>
+                        </div>
+                    </form>
+                </div><!--searchBar结束div-->
+                
+				<div class="listMain">
+                    <ul>
+						<for start="0" end="$pageinfo [listcount] / 2" step="1">
+						<li>
+							<div class="pro-Box">
+								<a href="{$pageinfo [productlist] [$i * 2] [detailURL]}">
+									<div class="proLeft" style="-webkit-box-shadow: 2px 2px 10px #909090;margin-bottom:8px;">
+										<div class="pro-Image"><img class="lazy" data-original="{$pageinfo [productlist] [$i * 2] [macro_path]}" src="__PUBLIC__/images/placeholder.png" width="150px" height="150px" alt="" /></div>
+										<div class="pro-Name">{$pageinfo [productlist] [$i * 2] [product_name]}
+											<if condition="($pageinfo[productlist][$i * 2][activity_id] neq NULL) and ($pageinfo[productlist][$i * 2][activity_id] neq '')">&nbsp;<span> <a href="{$pageinfo [productlist] [$i * 2] [activityURL]}">活动查看</a></span></if>
+										</div>
+										<div class="pro-Price">￥{$pageinfo [productlist] [$i * 2] [current_price]}</div>
+									</div>
+								</a>
+								<if condition="$pageinfo[productlist][$i * 2 + 1] neq null">
+									<a href="{$pageinfo [productlist] [$i * 2 + 1] [detailURL]}">
+										<div class="proRight" style="-webkit-box-shadow: 2px 2px 10px #909090;margin-bottom:8px;">
+											<div class="pro-Image"><img class="lazy" data-original="{$pageinfo [productlist] [$i * 2 + 1] [macro_path]}" src="__PUBLIC__/images/placeholder.png" width="150px" height="150px" alt="" /></div>
+											<div class="pro-Name">{$pageinfo [productlist] [$i * 2 + 1] [product_name]}
+												<if condition="($pageinfo[productlist][$i * 2 + 1][activity_id] neq NULL) and ($pageinfo[productlist][$i * 2 + 1][activity_id] neq '')">&nbsp;<span> <a href="{$pageinfo [productlist] [$i * 2 + 1] [activityURL]}">活动查看</a></span></if>
+											</div>
+											<div class="pro-Price">￥{$pageinfo [productlist] [$i * 2 + 1] [current_price]}</div>
+										</div>
+									</a>
+								</if>
+							</div>
+						</li>
+					    </for>
+					</ul>
+                </div><!--listMain结束div-->
+            
+            </div><!--navContent结束div-->
+            
+            <div class="pagerBar">{$page}</div>
+            <div class="bottomDeco"></div>
+            
+        </div><!--content结束div-->
+		{:W('Footer', array('e_id' => $e_id))}<!--footer-->
+	</div>
+
+<script type="text/javascript">
+var e_id = '{$e_id}';					//要分享的商家编号
+//分享的信息
+var shareData = {
+	appid: "{$pageinfo [shareinfo] [appid]}", // 分享的商家编号
+    img_url: "{$pageinfo [shareinfo] [img_url]}", // 分享的图片
+    img_width: "160", // 宽度
+    img_height: "160", // 高度
+    title: "{$pageinfo [shareinfo] [title]}", // 分享的标题
+    desc: "{$pageinfo [shareinfo] [desc]}", // 分享的描述
+    link: "{$pageinfo [shareinfo] [link]}", // 分享的超链接
+    fakeid : "{$openid}",																		//分享用户的id
+    callback:function(result){
+    	if(result != 'send_app_msg:cancel' && result != 'share_timeline:cancel' && result != 'share_weibo:cancel' && result != 'share_fb:cancel'){
+    		$.post("{:U('Home/MobileCommon/shareRecord','','')}",
+    				{ e_id : e_id, link : shareData.link, openid : shareData.fakeid },			//分享的时候传3个参数：1、商家编号；2、链接地址（区分授权和不授权两种）；3、分享的微信号（只有开启授权登录才有）
+    				function(data){
+    					if(data.status == 1){
+    						scscms_alert("谢谢您的分享!", "ok", "", 2);//定时关闭窗口
+    					}else{
+    						scscms_alert("服务器繁忙，请稍后再试!"+data.msg, "warning", "", 2);//定时关闭窗口
+    					}
+    				},
+    				'json');
+    	}else{
+    		scscms_alert("下次记得分享噢!", "ok", "", 2);//定时关闭窗口
+    	}
+    }	/*分享后的回调函数，发送给朋友的类型分为send_app_msg:confirm或send_app_msg:cancel；对应发送给朋友、分享到朋友圈、分享到腾讯微博、分享到facebook都有4种类型*/
+};
+var oWin = $('#win');
+var oLay = $('#overlay');
+var oBtn = $('#popmenu');
+var oClose = $('#close');
+
+$(function(){
+	// 延时加载图片
+	$("img.lazy").lazyload({
+		effect : "fadeIn"
+	});
+	
+	oBtn.click(function (){
+		oLay.css("display","block");
+		oWin.css("display","block");
+	});
+	oLay.click(function (){
+		oLay.css("display","none");
+		oWin.css("display","none");
+	});
+	
+	$('.select-condition').click(function(){
+		$html = $(this).text()+'<span class="caret"></span>';
+		$('#search-select-condition').html($html);
+		$value = $(this).find('input').val();
+		$('#searchcondition').val($value);
+	});
+	
+	// 搜索商品部分
+	$('#search-btn').click(function(){
+		var searchcondition = $('#searchcondition').val().trim();
+		var searchcontent = $('#searchcontent').val().trim();
+		if((searchcondition == "" || searchcondition == null) || (searchcontent == "" || searchcontent == null)){
+			$('#searchcontent').popover('show');
+		}else{
+			$('#productSearchForm').submit();
+		}
+	});
+	
+	// 搜索部分初始化
+	var searchcontent = '{$searchcontent}';	
+	var searchcondition = '{$searchcondition}';	
+	if(searchcontent != "" && searchcontent != null){
+		var text = "";
+		if(searchcondition == "product_name"){
+			text = "商品名称";
+		}else if(searchcondition == "current_price"){
+			text = "商品价格";
+		}else if(searchcondition == "sex"){
+			text = "适用性别";
+		}
+		$html = text+'<span class="caret"></span>';
+		$('#search-select-condition').html($html);
+		$('#searchcontent').val(searchcontent);
+		$('#searchcondition').val(searchcondition);
+	}
+});
+
+function dourl(url){
+	location.href= ''+url+'';
+}
+
+function goHomeClick(){
+	location.href='{:U("Home/Index/index", array("e_id" => $e_id), "")}';
+}
+</script>
+</body>
+</html>

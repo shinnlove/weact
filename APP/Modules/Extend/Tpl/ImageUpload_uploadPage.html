@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/popdialog.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/myuploadstyle.css" />
+<title>上传页面</title>
+<style type="text/css">
+
+</style>
+</head>
+
+<body>
+	自定义上传模块：您最多可以上传9张，现在还可以上传<span class="upload-remain">9</span>张
+	<div class="wrap upload-wrap">
+		<form name="my-upload">
+			<div class="control-group">
+				<div class="controls controls-row">
+		           	<input type="hidden" id="CSRFtoken" name="CSRFtoken" value="123456"><!-- 图片防注入提交 -->
+					<div class="webUploaderWrap ui-sortable">
+		       			<div class="webuploader-container" id="previewUpload">
+		       				<div class="webuploader-pick">点击上传</div>
+		       				<input class="webuploader-file" type="file" name="file" accept="image/*">
+		       			</div>
+		   			</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	
+	<div class="wrap">
+    	<a href="javascript:;" class="start">babysay</a>
+        <div class="display"></div>
+        <div class="baby"></div>
+        <div class="students"></div>
+    </div>
+
+<script type="text/html" id="studentstpl">
+{{each students as e i}}
+	<div class="single-student">
+		<div class="name">{{e.name}}</div>
+		<div class="sex">{{e.sex}}</div>
+	</div>
+{{/each}}
+</script>
+	
+<script>
+window.g_module = []; 							// 当前页需要的组件list
+g_module.push("module/uploadPage"); 			// uploadPage组件压栈
+g_module.push("module/main"); 					// main组件压栈
+var appsrc = "__PUBLIC__/js/seajs-3.3.0.js?v=1.0.1"; 	// apppath
+var node = document.createElement('script');node.src = appsrc;document.body.appendChild(node); // 加载app
+</script>
+</body>
+</html>

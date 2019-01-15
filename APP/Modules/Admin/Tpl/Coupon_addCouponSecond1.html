@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uploadstyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/ueditor/themes/default/css/ueditor.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/diywebuploader.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lhgcalendar/lhgcore.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lhgcalendar/lhgcalendar.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/ueditor/lang/zh-cn/zh-cn.js"></script>
+<title>添加抵扣券</title>
+</head>
+
+<body>
+    <form name="myCoupon" class="form-horizontal uniform" method="post" action="#">
+        <div class="control-group">
+            <div class="controls controls-row"><h2>添加抵扣券信息</h2></div>
+            <div class="controls controls-row">
+                <font style="font-size:1.17em; font-weight:bold; color:highlight;">步骤：第2步，共4步</font>
+            </div>
+             <div class="controls controls-row">
+                <font style="font-size:1.17em; font-weight:bold; color:highlight;">说明：消费时抵扣一定金额，可设起始额度</font>
+            </div>
+        </div>
+        
+        <hr />
+        
+        <input type="hidden" id="coupon_id" name="coupon_id" value="" /><!-- 隐藏框：优惠券的id编号 -->
+        <input type="hidden" id="coupon_type" name="coupon_type" value="1" /><!-- 隐藏框：优惠券的类型编号 -->
+        <div class="control-group">
+			<label class="control-label">
+            	名称<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mytimeinput" id="coupon_name" name="coupon_name" placeholder="请填写优惠券的名称" required value="" />
+            </div>
+            <div class="controls controls-row">
+            	如：生日券、抵扣券、年终红包等...
+            </div>
+        </div>
+        
+        <div class="control-group coupon_denomination">
+			<label class="control-label">
+            	面额<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mytimeinput" id="denomination" name="denomination" placeholder="请填写优惠券的面额" required value="" />&nbsp;(元)
+            </div>
+            <div class="controls controls-row dedu_denomination">
+            	给出直接减免的金额
+            </div>
+        </div>
+        
+        <div class="control-group coupon_lowest">
+			<label class="control-label">
+            	最低消费：<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mytimeinput" id="lowest_consume" name="lowest_consume" placeholder="请填写优惠券启用的最低消费" required value="" />&nbsp;(元)
+            </div>
+            <div class="controls controls-row">
+            	使用该券需消费的最低额度，没有限制请填写0
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	最多限领人数<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mytimeinput" id="limit_person" name="limit_person" placeholder="请填写优惠券最多限领人数" required value="0" />&nbsp;(人)
+            </div>
+            <div class="controls controls-row">
+            	<p>本券最多允许多少人领，<font class="rose-warning">总发行量 = 限领人数 × 每人几张。</font></p>
+                <div class="rose-warning">如果不限制人数，请填写0，代表不限总发行量</div>
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	一次可领几张<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mytimeinput" id="limit_perget" name="limit_perget" placeholder="请填写优惠券可以领取的张数" required value="1" />&nbsp;(张)
+            </div>
+            <div class="controls controls-row">
+            	如果希望该券一次能领多张，可以填写更多的张数。
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">
+            	生效时间<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mytimeinput" id="start_time" name="start_time" placeholder="请选择优惠券生效时间" required value="" /> 
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">
+				失效时间<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mytimeinput" id="end_time" name="end_time" placeholder="请选择优惠券失效时间" required value="" />
+            </div>
+        </div>
+		
+        <div class="control-group">
+            <label class="control-label"> 优惠券封面图片： </label>
+            <div class="controls controls-row">
+                <input type="hidden" id="CSRFtoken" name="CSRFtoken" value="123456" /><!-- （可选参数）图片防注入提交 -->
+                <input type="hidden" id="imgPath2" name="imgPath2" value="__PUBLIC__/images/coupon/activity-coupon-start.jpg6" />
+                <!-- 一个webuploader begin -->
+                <div class="webUploaderWrap ui-sortable" id="uploadWrap">
+                    <div id="couponimgupload" class="webuploader-container">
+                        <div class="webuploader-pick">点击上传</div>
+                    </div>
+                </div>
+                <!-- 一个webuploader end -->
+            </div>
+            <div class="controls controls-row" style="margin-top:10px;">
+            	<img id="cp_img" name="cp_img" src="__PUBLIC__/images/coupon/activity-coupon-start.jpg" alt="" style="width:360px;" />
+            </div>
+            <div class="controls controls-row" style="margin-top:10px;">
+                温馨提示：推荐最佳封面尺寸（比例）：600px × 300px，jpeg、png格式。
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">推广词：</label>
+            <div class="controls controls-row">
+                <textarea id="advertise_word" name="advertise_word" class="uniform mytextarea" placeholder="可填写该优惠券的推广信息"></textarea>
+            </div>
+            <div class="controls controls-row">
+            	在用户领取优惠券的时候，会看到商家定制的推广语。<br />如：庆祝×××××开业5周年，年中大促××××优惠券大放送......
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">说明备注：</label>
+            <div class="controls controls-row">
+                <textarea id="coupon_description" name="coupon_description" class="uniform mytextarea" placeholder="可填写该优惠券的其他信息与备注"></textarea>
+            </div>
+            <div class="controls controls-row">
+            	店家对优惠券的区别备注，可见度：自身。
+            </div>
+        </div>
+        
+		<div class="control-group">
+            <label class="control-label">
+                使用规则说明<span class="text-error">(*)</span>：
+            </label> 
+            <div class="controls controls-row">
+                <div class="ueditorContainer" id="instruction">
+                    <script id="container" type="text/plain" style="width:605px;height:300px;margin:0px;"></script>
+                </div>
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="handle-action">
+            <a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">下一步</a>
+            &nbsp;&nbsp;
+            <a id="resetbtn" class="large ui-color-button blue" href="javascript:void(0)">重置</a>
+            <a href="javascript:history.go(-1);">
+                <img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/images/goback.png" />
+            </a>
+        </div>
+	</form>
+    
+<script type="text/javascript">
+var o2otype = -1, serverhandleimg = '{:U("Admin/CouponRequest/singleUploadHandle", "", "")}'; // 上传优惠券图片的地址
+
+$(function (){
+	
+	$(".uniform").uniform();				//初始化uniform，文本框的uniform格式化
+	
+	/*有效日期的日历输出*/
+	J(function(){
+		J('#start_time').calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+		J('#end_time').calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+	});
+	
+	var ue = UE.getEditor('container',{
+		imageUrl : "{:U('Admin/Coupon/imageUpload')}",
+		imagePath : "__ROOT__"
+	});
+	
+	//监听ueditor图片插入，插入前设置图片宽度（不让图片太大）。
+	ue.addListener('beforeInsertImage', function (t, arg) {
+		 for(i=0; i<arg.length; i++){
+			 arg[i].width = 380;									//防止手机上显示超出屏幕
+		 }
+	});
+	
+	//初始化日期
+	var ct = currentTime();
+	$("#start_time").val(ct);
+	$("#end_time").val(ct);
+	
+	// 优惠券封面图片上传处理
+	$("#couponimgupload").singleImgUploader({
+		width : 700,
+		height : 300, 
+		limitSizeLarger : true, 
+		imgPathInput : $("#imgPath2"), 
+		imgPreview : $("#cp_img"), 
+	});
+	
+	// 检验有没有预先设置第一步的优惠券信息：如果没有，就跳转添加优惠券的第一个页面
+	if (sessionStorage.stepfirstinfo) {
+		var firststep = JSON.parse(sessionStorage.stepfirstinfo);
+		window.o2otype = firststep.o2otype;
+		//console.log(window.o2otype);
+	} else {
+		location.href = "{:U('Admin/Coupon/addCouponFirst', '', '')}"; // 没有添加过优惠券第一步信息，直接跳转添加优惠券信息
+	}
+	
+	// 检查有没有设置过第二步的优惠券信息：如果有就复原之前添加的样子
+	if (sessionStorage.stepsecondinfo) {
+		var secondstep = JSON.parse(sessionStorage.stepsecondinfo); 	// 转化为结构体
+		$("#coupon_name").val(secondstep.coupon_name); 					// 恢复名字
+		$("#denomination").val(secondstep.denomination); 				// 恢复面额
+		$("#lowest_consume").val(secondstep.lowest_consume); 			// 恢复最低消费
+		$("#limit_person").val(secondstep.limit_person); 				// 恢复人数限制
+		$("#limit_perget").val(secondstep.limit_perget); 				// 恢复一次领取几张
+		$("#start_time").val(secondstep.start_time); 					// 恢复开始时间
+		$("#end_time").val(secondstep.end_time); 						// 恢复开始时间
+		$("#coupon_logo").val(secondstep.coupon_logo); 					// 恢复优惠券logo
+		$("#advertise_word").val(secondstep.advertise); 				// 恢复广告词
+		$("#coupon_description").val(secondstep.remark); 				// 恢复描述
+		// editor准备好之后才可以使用
+		ue.addListener("ready", function () {
+			ue.setContent(secondstep.instruction); 						// 恢复使用说明
+		});
+		// 写入优惠券封面图片（预览地址和提交地址）
+		$("#couponimgupload").css("background-image", secondstep.previewpath); // 写入上传框预览
+		$("#imgPath2").val(secondstep.imgpath); 						// 写入图片提交地址
+		$("#cp_img").attr("src", "/weact"+secondstep.imgpath); 			// 写入图片预览
+	} 
+	
+	//提交信息：下一步
+	$("#submitbtn").click(function(){
+		//抓取优惠券所有DOM对象
+		var cn = $("#coupon_name");							//抓取优惠券名称文本框
+		var dn = $("#denomination");						//抓取优惠券面额文本框
+		var lc = $("#lowest_consume");		             	//抓取优惠券最低消费文本框
+		var lps = $("#limit_person"); 
+		var lpg = $("#limit_perget");
+		var st = $("#start_time");							//抓取优惠券生效日期文本框
+		var et = $("#end_time");			             	//抓取优惠券失效日期文本框
+		var cl = $("#coupon_logo");			             	//抓取优惠券封面图片路径文本框
+		var aw = $("#advertise_word");                   	//抓取优惠券推广词文本框
+		var cd = $("#coupon_description");	             	//抓取优惠券备注描述文本框
+		var ins = UE.getEditor('container').getContent(); 	//抓取优惠券规则描述的UEditor框
+		
+		//Step1：判断优惠券名称是否填写
+		if (cn.val() == ''){
+			$.messager.alert('温馨提示', '请填写优惠券的名称!', 'warning', function(){
+	  			cn.focus();						         //注意聚焦和return的顺序！
+	  		});
+	  		return								
+		}
+		
+		//Step2：判断优惠券面额是否合法输入
+		if (dn.val() == ''){
+			$.messager.alert('温馨提示', '请填写优惠券的面额!', 'warning', function(){
+	  			dn.focus();
+	  		});
+	  		return
+		}else{
+			if(isNaN(dn.val()) || dn.val() <= 0){
+				$.messager.alert('温馨提示', '请填写正确的优惠券面额!<br />只能是整数且大于0!', 'warning', function(){
+					dn.focus();											//注意聚焦和return的顺序！
+				});
+				return;
+			}
+		}
+		
+		//Step3：判断优惠券最低消费金额是否合法输入
+		if (lc.val().trim() == ''){
+			$.messager.alert('温馨提示', '请填写优惠券启用的最低消费金额!', 'warning', function(){
+	  			lc.focus();
+	  		});
+	  		return
+		}else{
+			if(isNaN(lc.val().trim()) || lc.val().trim() < 0){
+				$.messager.alert('温馨提示', '请填写正确的可使用优惠券最低消费金额!<br />最低消费金额只能是整数且不小于0!','warning', function(){
+					lc.focus();											//注意聚焦和return的顺序！
+				});
+				return;
+			}
+		}
+		
+		//Step4：判断优惠券发放最多限领人数是否合法
+		if (lps.val().trim() == ''){
+			$.messager.alert('温馨提示', '请填写优惠券最多限领人数!', 'warning', function(){
+				lps.focus();
+	  		});
+	  		return
+		}else{
+			if(isNaN(lps.val().trim()) || lps.val().trim() < 0){
+				$.messager.alert('温馨提示', '请正确填写优惠券最多限领人数!<br />如果不限制领取人数，则填写0代表去除限制!','warning', function(){
+					lps.focus();											//注意聚焦和return的顺序！
+				});
+				return;
+			}
+		}
+		
+		//Step5：判断优惠券发放一次领取获得几张
+		if (lpg.val().trim() == ''){
+			$.messager.alert('温馨提示', '请填写优惠券一次领取会获得几张!', 'warning', function(){
+				lpg.focus();
+	  		});
+	  		return
+		}else{
+			if(isNaN(lpg.val().trim()) || lpg.val().trim() <= 0){
+				$.messager.alert('温馨提示', '请正确填写优惠券一次领取张数!<br />默认一次只能领一张!','warning', function(){
+					lpg.focus();											//注意聚焦和return的顺序！
+				});
+				return;
+			}
+		}
+		
+		//Step6：判断是否填写开始日期
+		if(st.val() == ''){
+			$.messager.alert('温馨提示', '请选择优惠券生效日期!', 'warning', function(){
+	  			st.focus();
+	  		});
+	  		return
+		}
+		
+		//Step7：判断是否填写结束日期
+		if(et.val() == ''){
+			$.messager.alert('温馨提示', '请选择优惠券失效日期!', 'warning', function(){
+	  			et.focus();
+	  		});
+	  		return
+		}
+		
+		//Step8：判断优惠券的生效时间与失效时间段是否合法
+		if( Date.parse( st.val() ) > Date.parse( et.val() ) ){
+			$.messager.alert('温馨提示', '优惠券失效日期不得早于生效日期!', 'warning', function(){
+				et.focus();											   //注意聚焦和return的顺序！
+			});
+			return;
+		}
+		
+		//Step9：判断优惠券使用规则描述是否填写
+		if(ins == "" || ins == null){
+			$.messager.alert('温馨提示', '请填写使用规则描述信息!', 'warning');
+	  		return
+		}
+		
+		// 打包信息
+		var cinfostep2 = { 
+				coupon_name : cn.val(),
+				denomination : dn.val(),
+				lowest_consume : lc.val(),
+				limit_person : lps.val(), 
+				limit_perget : lpg.val(),
+				start_time : st.val(),
+				end_time : et.val(),
+				previewpath : $("#couponimgupload").css("background-image"), // 优惠券预览图片地址
+				imgpath : $("#imgPath2").val(), // 提交图片的路径
+				advertise : aw.val(), // 推广词
+				instruction : ins, // 使用规则说明
+				remark : cd.val(), // 说明备注
+		}
+		//console.log(JSON.stringify(cinfostep2));
+		sessionStorage.stepsecondinfo = JSON.stringify(cinfostep2); // 打包第一步的优惠券信息到本地H5存储
+		if (window.o2otype == 1) {
+			location.href = "{:U('Admin/Coupon/addCouponSubbranch')}"; // 线下选店
+		} else {
+			location.href = "{:U('Admin/Coupon/addCouponProduct')}"; // 非线下选货
+		}
+	});	
+	
+	//重置按钮
+	$("#resetbtn").click(function(){
+		$.messager.confirm('温馨提示', '确定重置吗?', function(result){
+			if(result) {
+				//重置所有
+				$("#coupon_name").val('');
+				$("#denomination").val('');
+				$("#lowest_consume").val('');
+				$("#publish_amount").val('');
+				$("#start_time").val(currentTime());
+				$("#end_time").val($("#start_time").val());
+								
+				//$("#coupon_logo").val('');
+				//$(".uploader span[class='filename']").html('未选择文件');
+				//$('#cp_img').attr('src', 'images/coupon/activity-coupon-start.jpg');
+				
+				$("#advertise_word").val('');
+				$("#coupon_description").val('');
+				UE.getEditor('container').setContent('');
+			}
+		});
+	});
+});
+
+//获得当前时间
+function currentTime(){
+	var now = new Date();
+	var year = now.getFullYear();       //年
+	var month = now.getMonth() + 1;     //月
+	var day = now.getDate();            //日
+	var hh = now.getHours();            //时
+	var mm = now.getMinutes();          //分
+	var ss = now.getSeconds();			//秒
+	var clock = year + "-";
+	if (month < 10) clock += "0";
+	clock += month + "-";
+	if (day < 10) clock += "0";
+	clock += day + " ";
+	if (hh < 10) clock += "0";
+	clock += hh + ":";
+	if (mm < 10) clock += "0";
+	clock += mm + ":";
+	if (ss < 10) clock += "0";
+	clock += ss;
+	console.info(clock);
+	return clock;
+}
+
+//判断str是否大于0或等于0的整数
+function isPositiveNum(str){
+	var reg=/^\d+$/;
+	return reg.test(str);
+}
+</script>
+</body>
+</html>

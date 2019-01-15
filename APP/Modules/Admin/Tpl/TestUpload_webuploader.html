@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uploadstyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/webuploader.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/diywebuploader.js"></script>
+<title>添加商品</title>
+</head>
+
+<body>
+	<input type="hidden" id="CSRFtoken" name="CSRFtoken" value="123456" /><!-- 图片防注入提交 -->
+	<input type="hidden" id="latest-upload" name="latest-upload" value="" /><!-- 最后一次上传的图片id -->
+	<div class="webUploaderWrap ui-sortable" id="previewUploadWrap">
+        <div id="previewUpload" class="webuploader-container">
+            <div class="webuploader-pick">点击上传</div>
+        </div>
+    </div>
+    
+<script type="text/javascript">
+// 定义webuploader的js位置、flash位置和上传处理图片的服务器地址（必须）
+var webuploaderjspath = "__PUBLIC__/js/webuploader.min.js", webuploaderswf = "__PUBLIC__/js/Uploader.swf", serverhandleimg = '{:U("Admin/TestUpload/swfupload", "", "")}';
+
+// 如果是编辑页面，这里$imagelist会有值
+var _previewJson = "{$imagelist}".split("^"); // 切割imagelist
+if(_previewJson[0] == "") {
+	_previewJson = []; // 如果没有图片，置空数组
+}
+
+// 回显已上传商品图片（编辑页面），页面ready马上立即执行一次这个函数
+;(function(){
+	var _previewImageDOM = ""; // 定义预览图片的DOM
+    $.each(_previewJson,function(i,e){
+    	_previewImageDOM += '<div class="webuploader-container loaded" data-url="'+e+'" style="background-image: url('+e+'?imageView2/2/w/80/h/80);"><span class="cancel">×</span></div>';
+    });
+    // 删除旧商品图片的处理
+    $("#previewUploadWrap").prepend(_previewImageDOM);
+})();
+
+// 页面初始化函数
+$(function(){
+	
+	// 对previewUpload使用拓展方法multiImgUploader
+	$("#previewUpload").multiImgUploader({
+	    length : 5, // 最多5张图
+	    resultInput : $("#latest-upload") // 上传完写入最后一次上传图片input框中
+	});
+	
+	// 当提交时写入（这不是必须的）
+	$("input[type=submit]").on("click",function(e){
+	    $("#latest-upload").val($("#previewUploadWrap").find(".loaded:first").data("url"));
+	});
+	
+});
+</script>
+</body>
+</html>

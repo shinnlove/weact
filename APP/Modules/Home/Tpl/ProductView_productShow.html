@@ -1,0 +1,612 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weact.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style-shop.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/productdetail.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<title>{$pinfo.product_name} 商品详情</title>
+</head>
+
+<body>
+    <div class="lay_header" style="height: 45px">
+        <div class="lay_toptab mod_tab" id="lay_head">
+            <div class="tab_item go_back" onclick="window.history.go(-1);">
+                <i class="qb_icon icon_goback"></i>
+            </div>
+            <a class="tab_item" href='{:U("Home/Index/index", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_home"></i></a>
+            <a class="tab_item" href='{:U("Home/MemberHandle/customerCenter", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_icenter"></i></a>
+            <a class="tab_item" href='{:U("Home/Cart/shoppingCart", array("e_id"=>$e_id), "")}'>
+                <i class="qb_icon icon_cart"></i>
+                <i class="qb_icon icon_number_bubble qb_none" id="cartNum">0</i>
+            </a>
+        </div>
+    </div><!-- lay_header结束div -->
+    
+    <div class="mod-product-slider">
+        <!--控制宽度和负 margin 滑动-->
+        <div class="mod_slider">
+            <div class="slider_cnt" style="height:200px;">
+                <ul id="detail-slider" style="visibility: hidden;">
+                	<!-- 商品宣传图5张 -->
+                </ul>
+            </div>
+        </div>
+        <!--导航点点-->
+        <ul class="mod-bullet__box"></ul>
+    </div>
+	
+    <div class="mod-product-detail">
+        <div class="mod-product-detail__box">
+            <div class="mod-product-detail__title">{$pinfo.product_name}-{$pinfo.product_number}</div>
+            
+            <div class="mod-product-detail__price-vip-box">
+                <span class="mod-product-detail__price-vip-name">价格:</span>
+                <span class="mod-product-detail__price-vip-number">
+                    <span class="mod-product-detail__price-vip-mark">￥</span>
+                    <span id="afterPrice">{$pinfo.current_price} </span>
+                </span>
+                <span class="ui-c-gray qb_none">/ <span style="text-decoration: line-through;">￥<font id="beforePrice">{$pinfo.original_price}</font></span></span>
+                <span class="mod-product-detail__price-vip-tag qb_none">限时折扣</span>
+            </div>
+            
+            <!--<div class="mod-product-detail__price-weixin-box">
+                <span class="mod-product-detail__price-weixin-name">微信专享价: </span>
+                <span class="mod-product-detail__price-weixin-number" id="beforePrice">￥129.00</span>
+                <span class="mod-product-detail__price-weixin-shipping">运费: 快递￥6.00/免运费</span>
+            </div>-->
+            
+            <!-- <div class="mod-product-detail__price-vip-box">
+                <span class="mod-product-detail__price-vip-name">微信专享价: </span>
+                <span class="mod-product-detail__price-vip-number">
+                    <span class="mod-product-detail__price-vip-mark">
+                        <span class="mod-product-detail__price-vip-mark">￥</span><span id="beforePrice">100.00</span>
+                    </span>
+                </span>
+                <span class="ui-c-gray ">/<span style="text-decoration: line-through;">￥296.00</span></span>
+            </div>
+            <div class="mod-product-detail__price-weixin-box">
+                <span class="mod-product-detail__price-weixin-shipping ui-fl-l">运费: 快递￥6.00/免运费</span>
+            </div> -->
+        </div>
+        
+        <div class="mod-product-detail__discount-box qb_none">
+            <div class="mod-product-detail__box mod-product-detail__box_inner">
+                <div>
+                    <i class="icon mod-product-detail__icon-discount"></i>
+                    <span class="mod-product-detail__discount-rules">活动期间，全场商品满足九折优惠，欢迎选购！</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mod-product-detail__property-box">
+        	<dl class="mod-product-detail__property-item ui-bfc">
+                <dt class="ui-bfc__left">颜色：</dt>
+                <dd class="ui-bfc__content mod_property skucolor" id="skucolor" skuName="{{=pro.pName }}" index="{{=index}}">
+                    <!-- sku颜色列表 -->
+                </dd>
+            </dl>
+            <dl class="mod-product-detail__property-item ui-bfc">
+                <dt class="ui-bfc__left">尺码：</dt>
+                <dd class="ui-bfc__content mod_property skusize" id="skusize" skuName="{{=pro.pName }}" index="{{=index}}">
+                	<!-- sku尺码列表 -->
+                </dd>
+            </dl>
+            <dl class="mod-product-detail__property-item ui-bfc">
+                <dt class="ui-bfc__left">数量：</dt>
+                <dd class="ui-bfc__content">
+                    <span class="mod-product-detail__property-quantity">
+                        <span class="mod-product-detail__property-minus" tag="sub" et="wg_tap:minusPlus"><i class="qb_icon icon_minus"></i></span>
+                        <input class="mod-product-detail__property-number" id="buyNum" et="input:handleInput" type="tel" value="1"/>
+                        <span class="mod-product-detail__property-plus" tag="add" et="wg_tap:minusPlus"><i class="qb_icon icon_plus"></i></span>
+                    </span>
+                    <span id="stockDesc" class="qb_none">无货</span> <span id="stockCount" data-limit="0">0</span> <!-- 无货与限购 -->
+                    <div id="countError"></div><!-- 库存不足或者下架 -->
+                </dd>
+            </dl>
+        </div>
+    </div>
+	
+    <div class="mod-product-handle">
+    	<div class="handle-btn">
+            <div class="mod-product-submit__btn mod-product-submit__btn_current" id="shopNearby">附近门店</div>
+            <div class="mod-product-submit__btn mod-product-submit__btn_current" id="addCollection">加入收藏</div>
+        </div>
+        
+        <div class="handle-btn">
+            <!--<div class="mod-product-submit__btn mod-product-submit__btn_disabled" et="wg_tap:demo">示例</div>-->
+            <div class="mod-product-submit__btn mod-product-submit__btn_current mod-product-submit__btn_disabled" id="addCart">加入购物车</div>
+            <div class="mod-product-submit__btn mod-product-submit__btn_current mod-product-submit__btn_disabled" id="buyNow">立即购买</div>
+        </div>
+    </div>
+	
+    <div class="mod-product-more">
+        <div class="mod-product-more__header">
+            <div class="mod-product-more__tab-list">
+                <span class="mod-product-more__tab-item mod-product-more__tab-item_current" opentag="showDetail" closetag="showComment" et="wg_tap:toggleTab">商品详情</span>
+                <span class="mod-product-more__tab-item" opentag="showComment" closetag="showDetail" et="wg_tap:toggleTab">相关推荐</span>
+            </div>
+        </div>
+        <div class="mod-product-more__area" id="detail-container">
+            <div class="mod-product-more__des showDetail">{$pinfo.html_description}</div>
+            <div class="mod-product-more__box qb_none showComment">
+                <ul>																			
+	                <!-- 推荐商品列表 -->
+	                <div class="clear h50 lh50 tc">暂无推荐商品</div>
+	            </ul>
+				<div class="clear h10"></div> 
+            </div>
+        </div>
+    </div>
+	
+	<div class="qb_quick_tip qb_none" id="bubble"></div>
+    <div class="mod_dialog qb_none" id="message-notice">
+        <div class="dialog_mask"></div>
+        <div class="dialog_main qb_br qb_tac">
+            <div class="dialog_bd" id="notice-content">成功加入购物车，去结算？</div>
+            <div class="dialog_ft qb_flex">
+            	<a href="javascript:void(0);" class="flex_box" id="notice-cancel">再逛逛</a>
+            	<a href="javascript:void(0);" class="flex_box" id="notice-sure">去结算</a>
+            </div>
+        </div>
+    </div>
+	
+	<div class="lay_footer qb_tac qb_fs_s mod_mb15">
+        <div class="fn_quicklinks">
+			<a class="mod_color_weak" href='{:U("Home/Index/index",array("e_id"=>$e_id),"")}'>商户首页</a>
+			<for start="0" end="3" step="1">
+				<span class="mod_color_comment">|</span>
+				<a class="mod_color_weak" href="{$pageinfo [navigation] [foot] [$i] [url]}">{$pageinfo [navigation] [foot] [$i] [nav_name]}</a>
+			</for>
+		</div>
+        <div class="fn_copyright">
+            <div class="mod_color_comment fn_copyright_agreement ui-fz-x-small ui-ta-c"><a href="#">Powered By WeAct</a></div>
+            <div class="mod_color_comment fn_copyright_text">Copyright &copy; 2014 WeAct.<br/>All Rights Reserved. </div>
+            <div class="mod_color_comment fn_copyright_text">微动公司 版权所有</div>
+        </div>
+    </div><!-- lay_footer结束div -->
+    
+<!-- 其他推荐商品 js arttemplate begin -->
+<script type="text/html" id="recommendtpl">
+{{each recommendlist as e i}}
+	<li>
+		<a href="{{e | productDetailURL}}">
+    		<img src="{{e.macro_path}}" width="100%" />
+    		<div class="goods_name qb_fs_s mod_color_weak">{{e.product_name}}-{{e.product_number}}</div>
+		<div class="price qb_fs_s mod_color_strong">¥{{e.current_price}}</div>
+		</a>
+	</li>
+{{/each}}
+</script>
+<!-- 其他推荐商品 js arttemplate begin -->
+
+<script type="text/javascript">
+var e_id = "{$e_id}", 					// 商家编号
+	pid = "{$pinfo.product_id}",		// 查看商品编号
+	pnumber = "{$pinfo.product_number}",// 查看商品型号
+	pname = "{$pinfo.product_name}",	// 查看商品名称
+	ptype = "{$pinfo.product_type}", 	// 商品类型
+	nid = "{$pinfo.nav_id}", 			// 商品导航编号（获取同类商品推荐）
+	original_price = "{$pinfo.original_price}", // 商品原价
+	current_price = "{$pinfo.current_price}", 	// 商品现价
+	onshelf = "{$pinfo.on_shelf}", 		// 商品是否上架
+	hasMoreComment = 1; 				// 是否请求过同类商品
+	
+//SKU处理
+var _skuId = "", 						// 点击选中准备购买的商品sku编号
+	SkuArray = {$pinfo.skulist}, 		// sku数组，用来比对
+	skuSizeArray = {$pinfo.sizelist}, 	// 用来初始化的尺码数组
+	skuColorArray = {$pinfo.colorlist}, // 用来初始化的颜色数组
+	colorStr = "", 						// 页面初始化时颜色DOM结构
+	sizeStr = "", 						// 页面初始化时尺寸DOM结构
+	totalCount = {$pinfo.skutotalnum}; 	// 该商品所有sku的总数量
+	
+	//定义图片预览变量，previewArr是预览数组
+	var previewArr = "{$pinfo.preview_images}".split("^"), // 图片预览数组
+	previewStr = "", // 等待加载图片的htmlDOM结构
+	iconStr = ""; // 点击切换的slider的.
+	//商品数控制
+	var limitBuyCount = ~~$("#stockCount").data("limit");
+	
+//页面初始化函数
+$(function(){
+	
+	// 初始化一下购物车
+	queryCart();
+	
+	// 初始化价格显示
+	var oprice = parseFloat($("#beforePrice").val()), cprice = parseFloat($("#afterPrice").val());
+	if (oprice > cprice) {
+		// 有减价的，显示打折前的价格
+		$("#beforePrice").parent().parent().removeClass("qb_none");
+	} 
+	$("#stockCount").html(totalCount); // 弹层面板总库存多少
+	
+	// 加载图片
+	Zepto.each(previewArr, function(i, e) {
+		previewStr += '<li><img index="' + i + '" back_src="' + e + '" class="default" /></li>';
+		if (i == 0) {
+			iconStr += '<li index="' + i + '" class="mod-bullet__item mod-bullet__item_current"><i class="mod-bullet__icon icon"></i></li> ';
+		} else {
+			iconStr += '<li index="' + i + '" class="mod-bullet__item"><i class="mod-bullet__icon icon"></i></li> ';
+		}
+	});
+	$('#detail-slider').html(previewStr); // 附加图片内容
+	$('.mod-bullet__box').html(iconStr); // 附加点点标签
+	
+	// 附加sku颜色数组
+	Zepto.each(skuColorArray, function(i, e) {
+		colorStr += '<span class="mod-product-detail__property-value {{=pl.className}}" data-value="{{=pl.key}}">' + e + '</span>';
+	});
+	$(".skucolor").html(colorStr);
+	
+	//附加sku尺码数组
+	Zepto.each(skuSizeArray, function(i, e) {
+		sizeStr += '<span class="mod-product-detail__property-value {{=pl.className}}" data-value="{{=pl.key}}">' + e + '</span>';
+	});
+	$(".skusize").html(sizeStr);
+	
+	// 获取商品SKU信息
+	var colorlen = $(".skucolor span").length, sizelen = $(".skusize span").length;
+	var skuFormatCount = colorlen + sizelen; // 计算商品有没有sku
+	// 如果商品不需要sku信息的（比如充值卡之类的）
+	if (skuFormatCount == 0) {
+		_skuId = SkuArray[0].id;
+		// 如果商品库存大于0
+		if (~~$("#stockCount").text() > 0) {
+			$("#addCart").removeClass("mod-product-submit__btn_disabled"); 
+			$("#buyNow").removeClass("mod-product-submit__btn_disabled"); 
+		}
+	}
+	
+	// 相册图片滑动
+	$(".mod_slider").scroll({
+		contentWrap: "#detail-slider",
+		autoGen: !1,
+		loadImg: !0,
+		margin: 20,
+		autoTime: 3e3,
+		autoAdapt: !0,
+		offset: !0,
+		onInit: function() {
+			this.param.container.css("visibility", "visible")
+		}
+	});
+	
+	// 切换商品详情和同类推荐
+	$(".mod-product-more__tab-list span").on("click", function(){
+		var _t = $(this), open = _t.attr("opentag"), close = _t.attr("closetag");
+		if (_t.hasClass("mod-product-more__tab-item_current")) {
+			return false;
+		}
+		// 切换tab
+		_t.siblings().removeClass("mod-product-more__tab-item_current");
+		_t.addClass("mod-product-more__tab-item_current");
+		$("."+open).removeClass("qb_none");
+		$("."+close).addClass("qb_none");
+		// 如果是第一次商品推荐，则请求数据（最多10条）
+		if(open == "showComment" && $(".mod-product-more__box ul li").length == 0 && hasMoreComment == 1) {
+			var params = {
+					pid : pid,
+					nid : nid,
+					e_id : e_id
+			}
+			$.post("{:U('Home/ProductRequest/recommendProduct', '', '')}", params, function(result){
+				hasMoreComment = 0; // 得到响应则代表已经请求过
+				if (result.errCode == 0) {
+					var tmpl = "";
+					tmpl = template("recommendtpl", result.data);
+					if (tmpl == "{Template Error}") {
+						tmpl = "";
+					} 
+					$(".mod-product-more__box ul").html(tmpl);
+				} else {
+					utils.showBubble(result.errMsg);
+				}
+			}, "json");
+		}
+	});
+	
+	// 为DOM结构绑定事件
+	$("body").on("click", "#notice-sure", function(e){
+		// 提醒框确认按钮
+		location.href = "{:U('Home/Cart/shoppingCart', array('e_id' => $e_id), '')}"; // 跳转购物车
+	}).on("click", "#notice-cancel", function(e){
+		// 继续购物按钮点击
+		$("#message-notice").addClass("qb_none"); // 提醒框取消按钮
+	}).on("blur", ".mod-product-detail__property-number", function(){
+		$("#countError").empty();
+		var count = ~~$(this).val(),
+			maxBuyCount = ~~$("#stockCount").text();
+		if (limitBuyCount) {
+			// 限购获取库存和限购数量的最小值
+			if (count > Math.min(limitBuyCount, maxBuyCount)) {
+				$(this).val(Math.min(limitBuyCount, maxBuyCount));
+				// 限购提示
+				if (limitBuyCount < maxBuyCount) {
+					$("#countError").html("该商品每人限购" + limitBuyCount + "件");
+				}
+				return false;
+			}
+		} else {
+			// 未限购
+			if (count > maxBuyCount) {
+				$(this).val(maxBuyCount);
+				return false;
+			}
+		}
+		if (count < 1) {
+			$(this).val("1"); // 数量最少也一件
+		} else {
+			$(this).val(count);
+		}
+	});
+	
+	// 颜色尺码选择
+	$(".skucolor span, .skusize span").click(function(){
+		var _t = $(this);
+		if (_t.hasClass("mod-product-detail__property-value_disabled")) {
+			return false; // 无效点击直接返回
+		}
+		$("#countError").empty(); // 计算数量错误重置
+		if (_t.hasClass("mod-product-more__tab-item_current")) {
+			// 如果原来已经被选中，选中取消
+			_t.removeClass("mod-product-more__tab-item_current");
+			$("#addCart").addClass("mod-product-submit__btn_disabled"); // 有颜色或尺码未选中，不能加入购物车
+			$("#buyNow").addClass("mod-product-submit__btn_disabled"); // 有颜色或尺码未选中，不能立即购买
+			$(".skucolor span, .skusize span").removeClass("mod-product-detail__property-value_disabled");
+			if ($(".skucolor .mod-product-more__tab-item_current, .skusize .mod-product-more__tab-item_current").length == 0) {
+				$("#stockCount").html(totalCount);
+				//$("#skuPriceBox").html("￥" + price);
+			} else {
+				// $("#stockCount").parent().hide();
+			}
+			return false;
+		}
+		// 原来没有选中该颜色或尺码
+		_t.siblings().removeClass("mod-product-more__tab-item_current"); // 移除周边其他色块选中状态
+		_t.addClass("mod-product-more__tab-item_current"); // 自己增加选中状态
+		if (_t.parent().hasClass("skusize")) {
+			// 如果点击的是尺码
+			var _size = _t.text(); 
+			Zepto.each($(".skucolor span"), function(t, v) {
+				var _tTag = $(v).text() + '-' + _size,
+					existedSku = false; // 存在sku标记置为false
+				Zepto.each(SkuArray, function(i, e) {
+					if (e.tag == _tTag) {
+						existedSku = true;
+						if (e.count <= 0) {
+							$(v).removeClass("mod-product-more__tab-item_current").addClass("mod-product-detail__property-value_disabled");
+						} else {
+							$(v).removeClass("mod-product-detail__property-value_disabled");
+						}
+					}
+				});
+				if (!existedSku) {
+					$(v).removeClass("mod-product-more__tab-item_current").addClass("mod-product-detail__property-value_disabled");
+				}
+			});
+		}
+		if (_t.parent().hasClass("skucolor")) {
+			// 如果点击的是颜色
+			var _color = _t.text();
+			Zepto.each($(".skusize span"), function(t, v) {
+				var _tTag = _color + '-' + $(v).text(),
+					existedSku = false;
+				Zepto.each(SkuArray, function(i, e) {
+					if (e.tag == _tTag) {
+						existedSku = true;
+						if (e.count <= 0) {
+							$(v).removeClass("mod-product-more__tab-item_current").addClass("mod-product-detail__property-value_disabled");
+						} else {
+							$(v).removeClass("mod-product-detail__property-value_disabled");
+						}
+					}
+				});
+				if (!existedSku) {
+					$(v).removeClass("mod-product-more__tab-item_current").addClass("mod-product-detail__property-value_disabled");
+				}
+			});
+		}
+		if (skuFormatCount == 2) {
+			// 单尺码单颜色的商品
+			if ($(".skusize .mod-product-more__tab-item_current").length > 0 && $(".skucolor .mod-product-more__tab-item_current").length > 0) {
+				$("#stockCount").html(""); // 重置库存数量
+				$(".mod-product-detail__property-number").val(1); // 默认当前数量为1件
+				var selected = $(".skucolor .mod-product-more__tab-item_current").text() + "-" + $(".skusize .mod-product-more__tab-item_current").text(); // 选中的sku规格为：颜色-尺码
+				Zepto.each(SkuArray, function(i, e) {
+					if (e.tag == selected) {
+						// 找到这样的库存
+						$("#stockCount").html(e.count); // 当前sku库存数量写入（count字段）
+						//$("#skuPriceBox").html("￥" + e.price.toFixed(2)); // 写入当前sku价格
+						$("#addCart").removeClass("mod-product-submit__btn_disabled"); // 可以加入购物车
+						$("#buyNow").removeClass("mod-product-submit__btn_disabled"); // 可以立即购买
+						_skuId = e.id; // 选中的skuid
+						return false;
+					}
+				});
+			}
+		} else {
+			// 多尺码多规格商品
+			if ($(".skusize .mod-product-more__tab-item_current").length > 0 || $(".skucolor .mod-product-more__tab-item_current").length > 0) {
+				//$("#stockCount").html("");
+				$(".mod-product-detail__property-number").val(1);
+				var selected = $(".skucolor .mod-product-more__tab-item_current").text() + "-" + $(".skusize .mod-product-more__tab-item_current").text(); // 选中的sku规格为：颜色-尺码
+				Zepto.each(SkuArray, function(i, e) {
+					if (e.tag == selected) {
+						$("#stockCount").html(e.count);
+						$("#addCart").removeClass("mod-product-submit__btn_disabled"); // 可以加入购物车
+						$("#buyNow").removeClass("mod-product-submit__btn_disabled"); // 可以立即购买
+						_skuId = e.id;
+						return false;
+					}
+				});
+			}
+		}
+	});
+	
+	// 购买数量加号点击后
+	$(".mod-product-detail__property-plus").click(function(){
+		var countInput = $(this).parent().find(".mod-product-detail__property-number"), // 找到数量框
+			count = ~~countInput.val(), // 数量框值取整
+			maxBuyCount = ~~$("#stockCount").text(); // 库存数量作为最多能够买的数量
+		if (limitBuyCount) {
+			// 如果有限购（目前好像没有这种处理）
+			if (count >= Math.min(limitBuyCount, maxBuyCount)) {
+				if (limitBuyCount < maxBuyCount) {
+					$("#countError").html("该商品每人限购" + limitBuyCount + "件");
+				}
+				return false;
+			}
+		} else {
+			// 不考虑限购情况下，超过库存点击+号也不会再叠加
+			if (count >= maxBuyCount) {
+				return false;
+			}
+		}
+		countInput.val(~~countInput.val() + 1); // 没有return false 情况下，数量+1
+	});
+	
+	// 购买数量减号点击后
+	$(".mod-product-detail__property-minus").click(function(){
+		$("#countError").empty(); // 清空统计数量错误
+		var countInput = $(this).parent().find(".mod-product-detail__property-number");
+		if (~~countInput.val() <= 1) return false; // 已经是1件了，点击减号也没反应
+		countInput.val(~~countInput.val() - 1); // 否则数量减少（减少总是不会超过库存的）
+	});
+	
+	// 附近的店
+	$("#shopNearby").click(function(){
+		var _t = $(this);
+		if (_t.hasClass("mod-product-submit__btn_disabled")) {
+			return false; // 无效点击直接返回
+		}
+		location.href = "{:U('WeMall/Store/storeList', array('sid' => $sid), '')}"; // 跳转线下微猫商城的店铺列表
+	});
+	
+	// 加入收藏夹
+	$("#addCollection").click(function(){
+		var _t = $(this);
+		if (_t.hasClass("mod-product-submit__btn_disabled")) {
+			return false; // 无效点击直接返回
+		}
+		// 准备参数请求加入收藏夹
+		var params = {
+				pid : pid, 
+				e_id : e_id 
+		}
+		$.post("{:U('Home/CollectionRequest/addCollection', '', '')}", params, function(result){
+			if (result.errCode == 0) {
+				utils.showBubble("加入收藏夹成功"); 
+			} else if (result.errCode == 20001) {
+				utils.showBubble(result.errMsg); 
+				setTimeout(function(){
+					location.href = "{:U('Home/MemberHandle/customerCenter', array('e_id' => $e_id), '')}";
+				},1500);
+			} else {
+				utils.showBubble(result.errMsg); 
+				return false;
+			}
+		}, "json");
+	});
+	
+	// 添加购物车
+	$("#addCart").click(function(){
+		var _t = $(this);
+		if (_t.hasClass("mod-product-submit__btn_disabled")) {
+			utils.showBubble("请选择商品颜色或尺码再添加购物车"); 
+			return false; // 无效点击直接返回
+		}
+		// 下架判断
+		if (onshelf != 1) {
+			utils.showBubble("该商品已下架");
+			return false;
+		}
+		// 准备参数
+		var params = {
+				pid : pid, 
+				ptype : ptype, 
+				skuid : _skuId, 
+				count : $(".mod-product-detail__property-number").val(), 
+				e_id : e_id 
+		}
+		$.post("{:U('Home/CartRequest/addCart', '', '')}", params, function(result){ 
+			if (result.errCode == 0) {
+				queryCart(); // 更新购物车数量
+				$("#message-notice").removeClass("qb_none"); // 弹窗询问是留下来继续购物还是跳转购物车...
+			} else if (result.errCode == 20001) {
+				// 未登录状态下模仿立即购买，请求服务端缓存然后去购物车
+				utils.showBubble(result.errMsg); 
+				setTimeout(function(){
+					location.href = "{:U('Home/Cart/shoppingCart', array('e_id' => $e_id), '')}"; // 未登录状态下，授权后去购物车逻辑也顺
+				},1500);
+			} else {
+				utils.showBubble(result.errMsg); 
+				return false;
+			}
+		}, "json");
+	});
+	
+	// 立即购买
+	$("#buyNow").click(function(){
+		var _t = $(this), buyamount = $(".mod-product-detail__property-number").val();
+		if (_t.hasClass("mod-product-submit__btn_disabled")) {
+			utils.showBubble("请选择商品颜色或尺码再购买"); 
+			return false; // 无效点击直接返回
+		}
+		// 下架判断
+		if (onshelf != 1) {
+			utils.showBubble("该商品已下架");
+			return false;
+		}
+		// 加入购物车，并且直接跳转预订单界面
+		// 准备参数
+		var params = {
+				pid : pid, 
+				ptype : ptype, 
+				skuid : _skuId, 
+				count : buyamount, 
+				e_id : e_id 
+		}
+		// 准备请求立即购买
+		_t.addClass("mod-product-submit__btn_disabled"); // 冻结按钮防止准备的时候重复点
+		$.post("{:U('Home/MobileFastBuyRequest/prepareFastBuy', '', '')}", params, function(result){
+			_t.removeClass("mod-product-submit__btn_disabled"); // 解除冻结
+			if (result.errCode == 0) {
+				location.href = "{:U('Home/Order/preOrder', array('e_id' => $e_id, 'fastbuy' => 1), '')}"; // 跳转预订单去立即购买（哪怕微信授权）
+			} else {
+				utils.showBubble("暂时无法立即购买该商品，"+result.errMsg); // 立即购买准备工作未完成
+				return false;
+			}
+		}, "json");
+	});
+	
+});
+
+// 查询购物车
+function queryCart() {
+	// 进行购物车的查询
+	var param = {
+			e_id : e_id
+	};
+	$.post("{:U('Home/ProductView/queryCartNumber', '', '')}", param, function(result) {
+		if (result.errCode == 0) {
+			var carnum = result.data.cart_count;
+			if (carnum > 0) {
+				$("#cartNum").text(carnum).removeClass("qb_none"); // 如果购物车有商品，移除qb_none并显示数量
+			}
+		} else {
+			return false;
+		}
+	}, "json");
+}
+</script>
+</body>
+</html>

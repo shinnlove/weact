@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/select2.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lhgcalendar/lhgcore.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lhgcalendar/lhgcalendar.min.js"></script>
+<script type='text/javascript' src="__PUBLIC__/js/plugins/select2/select2.min.js"></script>
+<title>编辑客户信息</title>
+</head>
+
+<body>
+    <form name="customerInfo" class="form-horizontal uniform" method="post" action="#">
+        <div class="control-group">
+            <div class="controls controls-row"><h2>编辑店铺会员</h2></div>
+            <div class="controls controls-row">
+                <font style="font-weight:bold; color:#666;">说明：</font><font style="color:highlight; line-height:22px;">编辑会员信息后请保存，带<span class="text-error">(*)</span>为必填。</font><br />
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="control-group">
+			<label class="control-label">
+            	线上客户编号<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="customer_number" name="customer_number" placeholder="请填写客户编号" required readonly value="{$cinfo.customer_id}" />
+            </div>
+            <div class="controls controls-row">
+            	<font style="color:#666;">客户编号无法编辑</font>
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	帐号<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="customer_account" name="customer_account" placeholder="请填写客户登录账号" required readonly value="{$cinfo.account}" />
+            </div>
+            <div class="controls controls-row">
+            	<font style="color:#666;">客户真实账号无法编辑</font>
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	线下会员卡号：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="card_number" name="card_number" placeholder="可输入在门店办理的会员卡号" value="{$cinfo.original_membercard}" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	姓名<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="customer_name" name="customer_name" placeholder="请填写客户的姓名" required value="{$cinfo.customer_name}" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	昵称：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="customer_nickname" name="customer_nickname" placeholder="可填写客户昵称" value="{$cinfo.nick_name}" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	联系方式<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="customer_phone" name="customer_phone" placeholder="请填写客户联系方式" required value="{$cinfo.contact_number}" />
+            </div>
+            <div class="controls controls-row">
+            	<font style="color:#666;">若登录账号为手机号，可作为联系方式。</font>
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	邮箱：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="customer_email" name="customer_email" placeholder="可填写客户邮箱" value="{$cinfo.email}" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	地址：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mybriefinput" id="customer_address" name="customer_address" placeholder="可填写联系地址" value="{$cinfo.customer_address}" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	性别<span class="text-error">(*)</span>： 
+            </label>
+            <div class="controls controls-row">
+            	<select id="sex_select" class="uniform myselected">
+                    <option value="-1">请选择性别</option>
+                    <option value="1">男</option>
+                    <option value="2">女</option>
+                </select>
+			</div>
+            <input type="hidden" id="current_sex" name="current_sex" value="{$cinfo.sex}" /><!--当前选择的性别-->
+        </div>
+                       
+        <div class="control-group">
+			<label class="control-label">
+            	会员等级：
+            </label>
+            <div class="controls controls-row"> 
+                <select id="level_select" class="uniform myselected">
+                    <option value="-1">请选择会员等级</option>
+                    <foreach name="current_level" item="cl">
+                    	<option value="{$cl.level}">{$cl.level_name}</option>
+                    </foreach>
+                </select>（选择前请在会员等级设置中添加会员等级，默认为普通会员）
+			</div>
+            <input type="hidden" id="current_level" name="current_level" value="{$cinfo.member_level}" /><!--当前选择的会员等级-->
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	出生年月：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mytimeinput" id="customer_birthday" name="customer_birthday" placeholder="请选择出生年月" value="{$cinfo.birthday}" /><!--id或者class配合日历的初始化-->
+            </div>
+        </div>
+        
+        <div class="control-group">
+			<label class="control-label">
+            	注册时间<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mytimeinput" id="reg_time" name="reg_time" placeholder="请填写客户注册时间" required value="{$cinfo.register_time}" />
+            </div>
+        </div>
+        
+		<div class="control-group">
+        	<label class="control-label">
+            	所属分店<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row" style="padding-top:2px;">
+            	<!--让搜索下拉框对齐到标签，此div必须加上style="padding-top:2px;"-->
+            	<div class="span7" style="margin-left:0px; width:230px;">
+                	<!--span7标签在bootstrap2.2里有一个margin-left:20px，这里去掉，并且规定搜索下拉框长度为230px最好看-->
+                    <select name="select" id="search_select" style="width: 100%; display: none;">
+                        <option value="0">请选择所属分店...</option>
+                        <!-- <optgroup label="浙江">
+                            <option value="0">嘉兴</option>
+                            <option value="1">杭州</option>
+                            <option value="2">宁波</option>
+                        </optgroup>
+                        <optgroup label="江苏">
+                            <option value="3">苏州</option>
+                            <option value="4">无锡</option>
+                            <option value="5">南京</option>
+                            <option value="6">南通</option>
+                        </optgroup>
+                        <optgroup label="海南">
+                            <option value="7">海口</option>
+                            <option value="8">三亚</option>
+                            <option value="9">三沙</option>
+                        </optgroup>
+                        <option value="10">大理</option>
+                        <option value="11">西双版纳</option>
+                        <option value="12">乌鲁木齐</option> -->
+                        <!-- 目前还未对省市县进行分类前先统一打印，分类后按省组输出 -->
+                        <option value="-1">直属总店（或无分店）</option><!-- 数据库分支值等于-1代表是直属总店 -->
+                        <foreach name="shopall" item="sa">
+                        	<option value="{$sa.subbranch_id}">{$sa.subbranch_name}</option>
+                        </foreach>
+                    </select>
+                </div>
+            </div>
+            <input type="hidden" id="current_shop" name="current_shop" value="{$cinfo.subordinate_shop}" /><!--存档当前会员所在门店-->
+        </div>
+        
+        <hr />
+        
+        <div class="handle-action">
+        	<a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">提交</a>
+        	&nbsp;&nbsp;
+            <a id="resetbtn" class="large ui-color-button blue" href="javascript:void(0)">重置</a>
+            <a href="javascript:history.go(-1);">
+                <img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/images/goback.png" />
+            </a>
+        </div>
+	</form>
+
+<script type="text/javascript">
+//初始化日历的js
+J(function(){
+    J('#customer_birthday').calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+	J('#reg_time').calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+});
+
+var cuscard='{$cinfo.original_membercard}';              //用于重置会员卡号
+var cusname='{$cinfo.customer_name}';                    //用于重置姓名
+var cusnick='{$cinfo.nick_name}';                        //用于重置昵称
+var cuspho='{$cinfo.contact_number}';                    //用于重置联系方式
+var cusmail='{$cinfo.email}';                            //用于重置邮箱
+var cusaddr='{$cinfo.customer_address}';                 //用于重置地址
+var cussex = '{$cinfo.sex}';                             //用于重置性别
+/* if(cussex == '男') cussex = 1;
+else if(cussex == '女') cussex = 2;
+else
+	cussex = -1; */
+var cuslev = '{$cinfo.member_level}';                    //用于重置会员等级
+var cusbirth = '{$cinfo.birthday}';                      //用于出生年月
+var cussub1 = '{$cinfo.subordinate_shop}';               //用于重置所属分店
+var cussub2 = (cussub1 == null || cussub1 == '') ? '-1' : cussub1;
+
+//页面初始化函数
+$(function (){
+	
+	var cnum = $("#customer_number");					//抓取客户编号
+	var cacc = $("#customer_account");					//抓取客户登录帐号
+	var card = $("#card_number");
+	var cnam = $("#customer_name");						//抓取客户姓名文本框
+	var nick = $("#customer_nickname");
+	var cpho = $("#customer_phone");					//抓取客户联系方式文本框
+	var mail = $("#customer_email");
+	var cadd = $("#customer_address");
+	var csex = $("#current_sex");
+	var clev = $("#current_level");						//抓取会员等级文本框
+	var cbir = $("#customer_birthday");					//抓取客户出生年月文本框
+	var rtim = $("#reg_time");
+	var shop = $("#current_shop");
+	var sexsel = $("#sex_select");
+	var lvsel = $("#level_select");
+	var shopsel = $("#search_select");
+	
+	$(".uniform").uniform();							//uniform表单初始化
+   
+	$("#search_select").select2();						//带搜索的选择框初始化
+	
+	//性别下拉框初始化
+	var sextag = '{$cinfo.sex}';
+	/* if(sextag == '男') sextag = 1;
+	else if(sextag == '女') sextag = 2;
+	else
+		sextag = -1; */
+	sexsel.val(sextag);
+	sexsel.change();
+	
+	//会员等级下拉框初始化
+	var leveltag = {$cinfo.member_level};
+	lvsel.val(leveltag);
+	lvsel.change();
+	
+	//所在分店下拉框初始化
+	var s1 = '{$cinfo.subordinate_shop}';
+	var s2 = (s1 == null || s1 == '') ? '-1' : s1;
+	var sname = $("#search_select option[value="+s2+"]").html();
+	$("#s2id_search_select").children("a").find("span").html(sname);
+	
+	//性别选择框更改事件
+	$("#sex_select").change(function(){
+		$('#current_sex').val($(this).val());			//获取option选中的sex的value，并写入input里
+	});
+	
+	//会员等级选择框更改事件
+	$("#level_select").change(function(){
+		$('#current_level').val($(this).val());			//获取option选中的member_level的value，并写入input里
+	});
+	
+	//所属分店选择框更改事件
+	$("#search_select").change(function(){
+		$('#current_shop').val($(this).val());			//获取option选中的subbranch的value，并写入input里
+	});
+	
+	$("#submitbtn").click(function(){
+		//Step1：判断客户姓名是否填写
+		if(cnam.val() == ''){
+			$.messager.alert('温馨提示', '请填写客户姓名!', 'warning', function(){
+				cnam.focus();
+	  		});
+	  		return
+		}
+		
+		//Step2：判断客户联系方式是否填写（重要）
+		if(cpho.val() == ''){
+			$.messager.alert('温馨提示', '请填写客户联系方式!', 'warning', function(){
+				cpho.focus();
+	  		});
+	  		return
+		}else if(!isTel(cpho.val())){
+			$.messager.alert('温馨提示', '请填写正确的电话号码格式!', 'warning', function(){
+				cpho.focus();
+	  		});
+			return
+		}
+		
+		//Step3：判断客户性别是否选择
+		if(csex.val() == '-1'){
+			$.messager.alert('温馨提示', '请选择当前客户性别!', 'warning', function(){
+				csex.focus();
+	  		});
+	  		return
+		}
+		
+		//Step4：判断客户会员等级是否选择
+		/* if(clev.val() == '-1'){
+			$.messager.alert('温馨提示', '请选择客户所属会员等级，如果不确定请选择默认等级!', 'warning', function(){
+				clev.focus();
+	  		});
+	  		return
+		} */
+		
+		//Step5：判断客户是否填写注册时间
+		if(rtim.val() == '-1'){
+			$.messager.alert('温馨提示', '请选择客户注册时间，默认为当前时间!', 'warning', function(){
+				rtim.focus();
+	  		});
+	  		return
+		}
+		
+		//Step6：判断客户是否填写所属分店
+		if(shop.val() == '0'){
+			$.messager.alert('温馨提示', '请选择客户所属分店，若无分店或不明确请选择总店（或无分店）!', 'warning', function(){
+				shop.focus();
+	  		});
+	  		return
+		}
+		
+		//验证通过，post提交
+		$.messager.confirm('温馨提示', '确定提交所编辑的客户信息吗?', function(result){
+			if(result) {
+				$.post("{:U('save')}", 
+				{ 
+					cnum : cnum.val(),
+					cacc : cacc.val(),
+					card : card.val(),
+					cnam : cnam.val(),
+					nick : nick.val(),
+					cpho : cpho.val(),
+					mail : mail.val(),
+					cadd : cadd.val(),
+					csex : csex.val(),
+					clev : clev.val(),
+					cbir : cbir.val(),
+					rtim : rtim.val(),
+					shop : shop.val()
+				}, function(data){
+						if(data.status == 1){
+							window.location = "{:U('customerView', '')}";
+						}else{
+							$.messager.alert('温馨提示', data.msg, 'warning');
+						}
+				},'json');
+			}
+		});
+	});
+	
+	$("#resetbtn").click(function(){
+		$.messager.confirm('温馨提示', '确定重置吗?', function(result){
+			if(result){
+				//重置所有
+				card.val(cuscard);                        //重置会员卡号	
+				cnam.val(cusname);                        //重置姓名
+				nick.val(cusnick);                        //重置昵称
+				cpho.val(cuspho);                         //重置联系方式
+				mail.val(cusmail);                        //重置邮箱
+				cadd.val(cusaddr);                        //重置地址
+				sexsel.val(cussex);                       //重置性别
+				sexsel.change();
+				lvsel.val(cuslev);                        //重置会员等级
+				lvsel.change();
+				cbir.val(cusbirth);                       //重置出生年月
+				cbir.change();
+				shopsel.val(cussub2);                     //重置所属分店
+				shopsel.change();
+				$.messager.alert('温馨提示', '重置成功!', 'info');
+			}
+		});
+	});
+});
+
+//判断联系方式是否为正确的手机号码/电话号码格式
+function isTel(str){
+    var reg=/^([0-9]|[\-])+$/g ;
+    if(str.length<7 || str.length>18){
+		return false;
+    } else {
+      return reg.exec(str);
+    }
+}
+</script>
+</body>
+</html>

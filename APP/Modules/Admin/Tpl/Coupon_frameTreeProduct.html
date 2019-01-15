@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.extend.js"></script><!-- 级联选择treegird的扩展版easyui -->
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>优惠券关联商品</title>
+</head>
+
+<body class="easyui-layout" fit="true">
+	<div data-options="region:'center',border:false">
+		<table id="dg" title="店铺商品一览：请选择优惠券适用的商品，支持跨页选择。温馨提示：使用搜索框可快速定位商品分类。" toolbar="#toolbar" style="width: 100%; height: 100%;"></table>
+	</div>
+
+	<!-- easyUI的工具条 -->
+	<div id="toolbar" style="height:30px; padding-top:5px;">
+		<span>
+			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="cancelSelect();">取消选择</a>
+			<a href="javascript:history.go(-1);" class="easyui-linkbutton" iconCls="icon-back" plain="true">后退</a> 
+			<a href="javascript:location.reload();" class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
+		</span>
+		<span class="searchbox" style="float: right; margin-right: 30px; height: 25px; text-align: center;">
+			<select id="pro_search_condition" name="pro_search_condition" style="border: 0px; width: 80px; height: 25px; text-align: center;">
+				<option value="product_name" selected="selected">名称</option>
+				<option value="product_number">编号</option>
+				<option value="nav_name">分类</option>
+				<option value="storage_amount">库存量</option>
+				<option value="sell_amount">卖出量</option>
+			</select>
+			<input id="pro_search_content" name="pro_search_content" type="text" class="searchbox-text mysearchbox" /> 
+			<span>
+				<span id="search_pro_btn" class="searchbox-button searchbox-button-hover mysearchspan"></span>
+			</span>
+		</span>
+	</div>
+	
+<script type="text/javascript">
+$(function() {
+	$('#dg').treegrid({
+		url : "{:U('Admin/CouponRequest/getTreeProduct','','')}",
+		method : 'post',
+		region:'center',
+        fit:true,
+        fitColumns : true,
+        rownumbers: true,
+        singleSelect : false,
+        pagination: true,							//开启分页
+        pageSize: 10,								//每页大小
+        pageList: [5,10,15],						//可供选择的页码范围
+        idField: 'product_id',						//treegrid的主键
+        treeField: 'nav_id',						//treegrid应用的行，nav_id即商品的分类
+        collapsible:true,							//整块easyUI可收起
+        animate:true,								//展开显示动画效果
+        onBeforeLoad: function(row, param){
+            if (!row) {    			// load top level rows
+                param.id = '-1';    // set id=0, indicate to load new page rows
+            }
+        },
+		columns : [ [ 
+					  { field : 'ck', checkbox : 'true', width : 100, hidden : true }, 
+		              { field : 'nav_id', title : '商品分类', width : 100, formatter : initCategoryName }, 
+		              { field : 'product_id', title : '商品系统编号', width : 100, hidden : true }, 
+		              { field : 'micro_path', title : '缩略图', width : 60, align : 'center', formatter : initPic }, 
+		              { field : 'product_number', title : '商品编号', width : 100, align : 'left', sortable : true }, 
+		              { field : 'product_name', title : '商品名称', width : 130, align : 'center', sortable : true }, 
+		              { field : 'sex', title : '适用性别', width : 70, align : 'center', sortable : true }, 
+		              { field : 'original_price', title : '原价', width : 70, align : 'right', sortable : true }, 
+		              { field : 'current_price', title : '现价', width : 70, align : 'right', sortable : true }, 
+		              { field : 'units', title : '单位', width : 70, align : 'right', sortable : true, }, 
+		              { field : 'storage_amount', title : '库存量', width : 70, align : 'right', sortable : true }, 
+		              { field : 'sell_amount', title : '卖出量', width : 70, align : 'right', sortable : true }, 
+		              { field : 'create_time', title : '上架时间', width : 120, align : 'center', sortable : true } 
+		          ] ],
+        onClickRow:function(row){  
+            //级联选择  
+            $(this).treegrid('cascadeCheck',{
+                id:row.product_id, //节点ID  
+                deepCascade:true //深度级联  
+            });  
+        }
+	});
+	
+	$('#search_pro_btn').click(function(){
+		var searchcondition = $('#pro_search_condition').val().trim();
+		var searchcontent = $('#pro_search_content').val();
+		if(searchcontent.trim() == "" || searchcontent == null){
+			$.messager.alert('警告','搜索内容不能为空！');
+			return
+		}
+       	$("#dg").treegrid({
+       		url:"{:U('Admin/ProductManage/searchProduct','','')}",
+       		queryParams:{ 
+       			searchcondition:searchcondition,
+       			searchcontent:searchcontent
+       		}
+       	},'load');
+	});
+});
+
+function initCategoryName(val, row) {
+	return row.nav_name;
+}
+
+function initPic(val, row){
+	if(row.create_time != '' && row.create_time!= null){
+		return '<img class="easyui-lh25-img img-round" src="' + row.micro_path + '" />';
+	}else{
+		return '<img class="easyui-lh25-img img-round" src="' + row.micro_path + '" />';
+	}
+}
+
+function cancelSelect() {
+	$('#dg').treegrid('unselectAll');
+}
+
+function getAllSelected() {
+	return $('#dg').treegrid('getSelections');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weact.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>用户反馈</title>	
+</head>
+
+<body>
+	<div class="lay_page page_cat_2" id="page_cat_2">
+        <div class="lay_page_wrap">
+        	
+        	<div class="lay_header" style="height: 45px">
+	            <div class="lay_toptab mod_tab" id="lay_head">
+	                <div class="tab_item go_back" onclick="window.history.go(-1);">
+	                    <i class="qb_icon icon_goback"></i>
+	                </div>
+	                <a class="tab_item" href='{:U("Home/Index/index", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_home"></i></a>
+	                <a class="tab_item" href='{:U("Home/MemberHandle/customerCenter", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_icenter"></i></a>
+	                <a class="tab_item" href='{:U("Home/Cart/shoppingCart", array("e_id"=>$e_id), "")}'>
+	                	<i class="qb_icon icon_cart"></i>
+	                    <i class="qb_icon icon_number_bubble qb_none" id="cartNum">0</i>
+	                </a>
+	            </div>
+	        </div><!-- lay_header结束div -->
+            
+            <div style="height:5px;"></div>
+            <h1 style="font-size:16px;text-align:center;line-height:32px;">反馈意见</h1>
+			<hr class="hr_microshop3" />
+            <form id="myForm" name="myForm" style="padding:20px;">
+                <textarea id="feedback_content" name="feedback_content" style="width:98%;height:200px;border:1px solid #DDD;border-radius:5px;" placeholder="反馈意见请写在这里"></textarea>
+                <div style="height:10px;"></div>
+                <div class="qb_flex">
+                    <span class="mod_btn btn_block btn_strong flex_box" id="feedback_submit" style="border-radius:7px;">提交</span>
+                </div>
+            </form>
+		</div>
+	</div>
+	
+	<div class="lay_footer qb_tac qb_fs_s mod_mb15">
+        <div class="fn_quicklinks">
+			<a class="mod_color_weak" href='{:U("Home/Index/index",array("e_id"=>$e_id),"")}'>商户首页</a>
+			<for start="0" end="3" step="1">
+				<span class="mod_color_comment">|</span>
+				<a class="mod_color_weak" href="{$pageinfo [navigation] [foot] [$i] [url]}">{$pageinfo [navigation] [foot] [$i] [nav_name]}</a>
+			</for>
+		</div>
+        <div class="fn_copyright">
+            <div class="mod_color_comment fn_copyright_agreement ui-fz-x-small ui-ta-c"><a href="#">Powered By WeAct</a></div>
+            <div class="mod_color_comment fn_copyright_text">Copyright &copy; 2014 WeAct.<br/>All Rights Reserved. </div>
+            <div class="mod_color_comment fn_copyright_text">微动公司 版权所有</div>
+        </div>
+    </div><!-- lay_footer结束div -->
+
+<script type="text/javascript">
+var e_id = '{$e_id}';
+function getSimpleInfo(nav_id){	
+	window.location.href = '{:U("Home/CustomerView/getSimpleInfo","","")}'+'/nav_id/'+nav_id+'/e_id/{$e_id}';
+}
+$(function(){
+	$('#feedback_submit').click(function(){
+		var feedback = $('#feedback_content').val();
+		if(feedback==''){
+			scscms_alert("请填写您要提交的问题！","warn",function(){
+				$('#feedback_content').focus();
+			});//回调函数用户体验指数更高
+			return false;
+	    }
+		
+		scscms_alert("确定提交此问题？","confirm",function(){		//询问对话框
+			$.post("{:U('Home/MemberHandle/onlineQuestionSubmit','','')}",
+					{feedback:feedback, e_id:e_id },//请求注销登录
+					function(data){
+						if (data.status == true) {
+							scscms_alert("提交成功！","ok",function(){
+								window.history.go(-1);
+							});//回调函数
+						}
+						else{
+							scscms_alert(data.msg,"error","",2);//定时关闭窗口
+						}
+					},'json'); 
+		});
+	});
+});
+</script>
+</body>
+</html>

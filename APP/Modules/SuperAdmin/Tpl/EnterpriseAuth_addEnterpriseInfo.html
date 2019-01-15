@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/myUniformStyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lhgcalendar/lhgcore.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lhgcalendar/lhgcalendar.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<title>企业功能权限设定</title>
+<style type="text/css">
+/*企业服务导航样式*/
+.second-service-section { margin-top:10px; width:600px; }
+.second-service { margin-left:20px; }
+.third-service-section { margin-left:50px; margin-top:10px; background:#39F; }
+.third-service-section ul { margin:0px; padding:0px; }
+.third-service-section ul li { list-stype-type:none; margin:0px; padding:0px; float:left; margin-right:20px; }
+</style>
+</head>
+<body>
+	<form id="myForm" name="myForm" class="form-horizontal uniform" method="post" action="#" style="padding:10px;background:#fafafa;border:1px solid #DDD; min-width:800px;">
+    	
+        <div class="control-group">
+            <div class="controls controls-row"><h2>添加企业信息</h2></div>
+            <div class="controls controls-row">
+                <font style="font-size:1.17em; font-weight:bold; color:highlight;">注意：带<span class="text-error">(*)</span>的为必填项</font>
+            </div>
+        </div>
+        
+        <hr />
+        
+        <div class="control-group">
+			<label class="control-label">企业编号</label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myselectedinput" id="e_id" name="e_id" placeholder="可指定企业编号" required readonly value="" />&nbsp;
+                <a id="random_e_id" class="small ui-color-button rose-red" href="javascript:void(0)">随机企业编号</a>
+            </div>
+            <div class="controls controls-row">
+               编号格式：201408201230520001，2014年8月20日，12点30分52秒，再加4位随机数。
+			</div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">
+            	账号<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mytimeinput" id="e_account" name="e_account" placeholder="请输入登录账号" required value="" /> 
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">
+				密码<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="password" class="uniform mytimeinput" id="e_password" name="e_password" placeholder="请输入登录密码" required value="" />
+                <div class="controls controls-row">
+               		<font style="color:#666;">温馨提示：标准密码格式要求为4~16位数字、字母或下划线。</font>
+            	</div>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">
+				企业名称<span class="text-error">(*)</span>：
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mytimeinput" id="e_name" name="e_name" placeholder="请输入企业名称" required value="" />
+                <div class="controls controls-row">
+               		<font style="color:#666;">温馨提示：输入企业名称方便后期管理。</font>
+            	</div>
+            </div>
+        </div>
+        
+        <div class="form-actions no-margin" style="margin-bottom:0px; background:#fafafa;">
+            <a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">一键开通</a>
+            &nbsp;&nbsp;
+            <a href="javascript:history.go(-2);">
+                <img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/images/goback.png" />
+            </a>
+        </div>
+	</form>
+
+<script type="text/javascript">
+$(function (){
+	var reg = /^\w{4,16}$/; 					//验证账户密码格式：6~16位数字、字母和下划线
+	$(".uniform").uniform(); //初始化uniform，文本框的uniform格式化
+	
+	// 生成页面事件
+	$("#myForm").on("click", "#random_e_id", function(e){
+		$("#e_id").val(getCurrentTime());
+	});
+	
+	//提交所有信息
+	$("#submitbtn").click(function(){
+		//抓取店铺信息
+		var eid = $("#e_id");
+		var eac = $("#e_account");
+		var epa = $("#e_password");
+		var ena = $("#e_name");
+
+		//判断企业编号是否填写
+		if (eid.val() == ''){
+			$.messager.alert('温馨提示', '请填写企业编号!', 'warning', function(){
+				eid.focus();							//注意聚焦和return的顺序！
+	  		});
+	  		return									//注意聚焦和return的顺序！
+		}
+		
+		//判断企业登录账号是否填写
+		if (eac.val() == ''){
+			$.messager.alert('温馨提示', '请填写企业登录账号!', 'warning', function(){
+				eac.focus();
+	  		});
+	  		return
+		}
+		
+		//判断企业登录密码是否填写
+		if (epa.val() == '' || !reg.test(epa.val())){
+			$.messager.alert('温馨提示', '请按标准格式要求填写企业登录密码!', 'warning', function(){
+				epa.focus();
+	  		});
+	  		return
+		}
+		
+		//判断企业名称是否填写
+		if (ena.val() == ''){
+			$.messager.alert('温馨提示', '请填写企业名称方便管理!', 'warning', function(){
+				ena.focus();
+	  		});
+	  		return
+		}
+		
+		$.messager.confirm('温馨提示', '确定信息无误并一键开通服务吗？', function(cf) {
+			if (cf) {
+				$.post("{:U('addAuthConfirm')}", 
+						{
+							eid : eid.val(),
+							eac : eac.val(),
+							epa : epa.val(),
+							ena : ena.val()
+						}, function(result){
+							if(result.errCode == 0){
+								//$.messager.alert('温馨提示', '添加成功!', 'info');
+								window.location.href = "{:U('enterpriseView')}";
+							}else if(result.errCode == 10001){
+								$.messager.alert('温馨提示', '该账号已存在，请更换账号重新添加!', 'warning', function(){
+									eac.focus();							//注意聚焦和return的顺序！
+						  		});
+							}else{
+								$.messager.alert('温馨提示', '添加失败，请检查网络状况!', 'error');
+							}
+						}, 'json');
+			}
+		});
+	});
+});
+function getCurrentTime() {
+	var e_id = "";
+	
+	var myDate = new Date();
+	var year = myDate.getFullYear();    //获取完整的年份(4位,1970-????)
+	e_id += year;
+	
+	var month = myDate.getMonth();       //获取当前月份(0-11,0代表1月)
+	if (month < 9) {
+		e_id += "0" + ( month + 1 );
+	} else {
+		e_id += ( month + 1 );
+	}
+	
+	var date = myDate.getDate();        //获取当前日(1-31)
+	if (date < 10) {
+		e_id += "0" + date;
+	} else {
+		e_id += date;
+	}
+	
+	var hour = myDate.getHours();       //获取当前小时数(0-23)
+	if (hour < 10) {
+		e_id += "0" + hour;
+	} else {
+		e_id += hour;
+	}
+	
+	var minutes = myDate.getMinutes();     //获取当前分钟数(0-59)
+	if (minutes < 10) {
+		e_id += "0" + minutes;
+	} else {
+		e_id += minutes;
+	}
+	
+	var seconds = myDate.getSeconds();     //获取当前秒数(0-59)
+	if (seconds < 10) {
+		e_id += "0" + seconds;
+	} else {
+		e_id += seconds;
+	}
+	
+	var milli = myDate.getMilliseconds();    //获取当前毫秒数(0-999)
+	if (milli < 10) {
+		e_id += "000" + milli;
+	} else if (milli > 10 && milli < 100) {
+		e_id += "00" + milli;
+	} else if (milli > 100 && milli < 1000) {
+		e_id += "0" + milli;
+	}
+	
+	return e_id;        //获取日期与时间
+}
+</script>
+</body>
+</html>

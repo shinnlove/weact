@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/MobileCommonStyle.min.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>安全码校验</title>
+</head>
+
+<body style="background:#efefef">
+	<div id="wrap" class="wrap">
+    	<div class="head">{$einfo.brand}</div>
+        <div class="content">
+        
+        	<div class="main">
+        	    <form id="verifyPwdform" name="verifyPwdform" action='{:U("Home/GuestHandle/customerVerifyPwd","","")}' method="post">
+                	<input id="customer_id" name="customer_id" value="{$customer_id}" type="hidden" />
+                    <input id="e_id" name="e_id" value="{$e_id}" type="hidden" />
+                    <div class="p_mod o_address">
+                        <h2 class="p_mod_title">安全验证</h2>
+                        <div id="city">
+                            <ul>
+                                <li>
+                                	<font color="red">温馨提示：验证邮件已发送到你注册时的邮箱，请输入邮件中的验证码进行验证，仅本次有效：</font>
+                                </li>
+                                <li>
+                                	<strong>账号：</strong>
+                                    <input type="text" placeholder="请输入您的账号" id="account" name="account" readonly="readonly" value="{$account}" style="width:130px;" />
+                                </li>
+                                <li>
+                                	<strong>安全码：</strong>
+                                    <input type="text" placeholder="请输入安全码" id="userVerifyData" name="userVerifyData" value="" style="width:80px;" />
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="o_btn clearfix">
+                        <input type="button" id="verifyPwdBtn" name="verifyPwdBtn" class="o_btn_submit ts1" value="下一步" style="margin-bottom:10px;" />
+                    </div>
+                </form>
+			</div>
+            <div class="bottom">
+            	<div class="weActName">微信公众名称：{$einfo.e_name}</div>
+                <div class="weActNumber">微信号：{$einfo.wechat_account}</div>
+                <div class="weActProducer">Powered by <a href="#">WeAct</a></div>
+                <div class="weact-deco"></div>
+            </div>
+        </div><!--content-->
+        {:W('Footer', array('e_id' => $e_id))}<!--footer-->
+    </div><!--wrap-->
+
+<script type="text/javascript">
+$('#verifyPwdBtn').click(function(){
+	var userVerifyData = $('#userVerifyData').val().trim();
+	
+	if(userVerifyData == ''){
+		scscms_alert("请填写发送到您邮箱中的安全码！","warn",function(){
+			$('#userVerifyData').focus();
+		});
+		return false;
+	}else {
+		$('#verifyPwdform').submit();
+	}	
+});
+</script>
+</body>
+</html>

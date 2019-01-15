@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" /><!-- 魔幻表单 -->
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" /><!-- 控制easyUI每一行按钮等样式 -->
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/select2.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script><!-- 魔幻表单必须js -->
+<script type="text/javascript" src="__PUBLIC__/lhgcalendar/lhgcore.min.js"></script><!-- 日历核心js -->
+<script type="text/javascript" src="__PUBLIC__/lhgcalendar/lhgcalendar.min.js"></script><!-- 日历核心js -->
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type='text/javascript' src="__PUBLIC__/js/plugins/select2/select2.min.js"></script>
+<title>快递设置</title>
+</head>
+
+<body>
+	<form name="orderDetail" class="form-horizontal uniform" method="post" action="">
+		<div class="control-group">
+         	<div class="controls controls-row"><h2>发货详情</h2></div>
+         	<div class="controls controls-row">
+				<font style="font-weight:bold; color:#666;">说明：</font><font style="color:highlight; line-height:22px;">此处设置快递信息</font><br />
+			</div>
+     	</div>
+     
+     	<hr />
+     
+     	<input type="hidden" id="o-id" name="o-id" value="{$expinfo.order_id}" /><!-- 隐藏框：订单的id编号 -->
+     	<input type="hidden" id="exp-id" name="exp-id" value="{$expinfo.express_id}" /><!-- 隐藏框：快递信息主键编号 -->
+     	<input type="hidden" id="read_only" name="read_only" value="{$readonly}"/><!-- 获得页面传的参数 -->
+     	<input type="hidden" id="readonlyfee" name="readonlyfee" value="{$readonlyfee}"/><!-- 获得页面传的参数 -->
+     
+     	<div class="control-group">
+			<label class="control-label">订单编号<span class="text-error">(*)</span>:</label>
+          	<div class="controls controls-row">
+              	<input type="text" class="uniform mybriefinput" id="exp-void" name="exp-void" placeholder="请输入订单编号" value="{$expinfo.visual_number}" required readonly />
+          	</div>
+      	</div>
+      	<div class="control-group" id="exp-company">
+      		<label class="control-label">物流公司<span class="text-error">(*)</span>:</label>
+          	<div class="controls controls-row" style="padding-top:2px;">
+          		<!--让搜索下拉框对齐到标签，此div必须加上style="padding-top:2px;"-->
+          		<div class="span7" style="margin-left:0px; width:210px;">
+              		<!--span7标签在bootstrap2.2里有一个margin-left:20px，这里去掉，并且规定搜索下拉框长度为230px最好看-->
+                  	<select name="select" id="search-select" style="width: 100%; display: none;">
+	                  	<option value="-1">请选择物流公司</option>
+	                  	<option value="CNEMS" >中国邮政EMS</option>
+						<option value="CNST" >申通快递</option>
+						<option value="CNTT" >天天快递</option>
+						<option value="CNYT" >圆通速递</option>
+						<option value="CNSF" >顺丰速运</option>
+						<option value="CNYD" >韵达快递</option>
+						<option value="CNZT" >中通速递</option>
+						<option value="CNLB" >龙邦物流</option>
+						<option value="CNZJS" >宅急送</option>
+						<option value="CNQY" >全一快递</option>
+						<option value="CNHT" >汇通速递</option>
+						<option value="CNMH" >民航快递</option>
+						<option value="CNYF" >亚风速递</option>
+						<option value="CNKJ" >快捷速递</option>
+						<option value="DDS" >DDS快递</option>
+						<option value="CNHY" >华宇物流</option>
+						<option value="CNZY" >中铁快运</option>
+						<option value="FEDEX" >FedEx</option>
+						<option value="UPS" >UPS</option>
+						<option value="DHL" >DHL</option>
+						<option value="OTHER" >其它</option>
+		            </select>
+              	</div>
+          	</div>
+         	<input type="hidden" id="current-company" name="current-company" value="{$expinfo.express_company}" /><!--存档当前所选物流公司-->
+     	</div>
+     	<div class="control-group">
+			<label class="control-label">快递单号<span class="text-error">(*)</span>:</label>
+          	<div class="controls controls-row">
+              	<input type="text" class="uniform mybriefinput" id="exp-number" name="exp-number" placeholder="请输入快递单号" value="{$expinfo.express_number}" required />
+          	</div>
+	    </div>
+        <div class="control-group">
+			<label class="control-label">快递费(元)<span class="text-error">(*)</span>:</label>
+          	<div class="controls controls-row" id="no-mode" style="dispaly:none;">
+              	<input type="text" class="uniform mybriefinput" id="exp-fee" name="exp-fee" placeholder="请输入快递费用，默认0表示免邮" value="{$expinfo.express_fee}" required />&nbsp;
+          	</div>
+      	</div>
+      
+      	<hr />
+      	
+      	<div class="control-group">
+			<label class="control-label">收货人名<span class="text-error">(*)</span>:</label>
+          	<div class="controls controls-row">
+              	<input type="text" class="uniform" id="rec-name" name="rec-name" placeholder="请输入收货人名" value="{$expinfo.receive_person}" required />
+              	<!-- <a id="updatebtn" class="small ui-color-button blue" style="float:right;" onclick="changeReceiveInfo()">修改收货人信息</a> -->
+          	</div>
+      	</div>
+      	<div class="control-group">
+			<label class="control-label">手机号码<span class="text-error">(*)</span>:</label>
+          	<div class="controls controls-row">
+              	<input type="text" class="uniform" id="rec-tel" name="rec-tel" placeholder="请输入收货人手机号码" value="{$expinfo.receive_tel}" required />
+          	</div>
+      	</div>
+      	<div class="control-group" id="receiveAddr">
+			<label class="control-label"> 收货地址<span class="text-error">(*)</span>:</label>
+          	<div class="controls controls-row">
+              	<input type="text" class="uniform myaddressinput" id="rec-addr" name="rec-addr" placeholder="请输入收货人地址" value="{$expinfo.receive_address}" required />
+          	</div>
+      	</div>
+		
+      	<hr />
+      	<div class="control-group">
+			<label class="control-label">发货地址<span class="text-error">(*)</span>:</label>
+          	<div class="controls controls-row">
+              	<input type="text" class="uniform myaddressinput" id="exp-addr" name="exp-addr" placeholder="请输入发货地址" value="{$expinfo.send_address}" required />
+          	</div>
+      	</div>
+      	<div class="control-group">
+			<label class="control-label">发货时间<span class="text-error">(*)</span>:</label>
+          	<div class="controls controls-row">
+              	<input type="text" class="uniform mybriefinput" id="send-time" name="send-time" placeholder="单击选择发货日期" value="{$expinfo.deliver_time}" required />&nbsp;&nbsp;注：选择发货日期后，可以编辑发货时间
+          	</div>
+      	</div>
+      	<div class="control-group">
+          	<label class="control-label">快递备注</label> 
+          	<div class="controls controls-row">
+              	<textarea id="exp-remark" name="exp-remark" class="uniform mytextarea" placeholder="可在此输入快递备注信息" >{$expinfo.remark}</textarea>
+          	</div>
+      	</div>
+      	
+      	<hr />
+                    
+        <div class="handle-action">
+	     	<a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">提交</a>&nbsp;&nbsp;
+	        <a id="resetbtn" class="large ui-color-button blue" href="javascript:void(0)">返回</a>
+	        <!-- <a href="javascript:history.go(-1);">
+	            <img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/images/goback.png" />
+	        </a> -->
+	    </div>
+	</form>
+
+<script type="text/javascript">
+var orderid = "{$expinfo.order_id}";
+var ordernum = "{$expinfo.visual_number}";
+var expid = "{$expinfo.express_id}";
+var expnum = "{$expinfo.express_number}";
+var expcom = "{$expinfo.express_company}";
+var expfee = "{$expinfo.express_fee}";
+var recname = "{$expinfo.receive_person}";
+var rectel = "{$expinfo.receive_tel}";
+var recaddr = "{$expinfo.receive_address}";
+var sendaddr = "{$expinfo.send_address}";
+var sendtime = "{$expinfo.deliver_time}";
+var expremark = "{$expinfo.remark}";
+
+//抓取快递编辑信息,全局变量
+var eo = $("#o-id");
+var ev = $("#exp-void");										//读取订单可视化编号
+var ei = $("#exp-id");
+var en = $("#exp-number");										//读取快递编号
+var cc = $("#current-company");									//读取快递公司
+var ss = $("#search-select");
+var st = $("#send-time");										//读取发货时间
+var ef = $("#exp-fee");											//读取快递费
+var ea = $("#exp-addr");										//读取快递邮寄地址
+var rn = $("#rec-name");
+var rt = $("#rec-tel");
+var ra = $("#rec-addr");
+var er = $("#exp-remark");										//读取快递快递备注
+var eflag = 0;// 快递编辑标志,默认添加新快递 
+var readonly = $("#read_only");
+var readonlyfee = $("#readonlyfee").val();
+
+//页面初始化函数
+$(function (){
+	$(".uniform").uniform();						//uniform表单初始化
+	$("#search-select").select2();					//带搜索的选择框初始化
+	
+	if(readonly.val()){
+		//$("input")
+		$("input").prop("readonly", true);
+		$("textarea").prop("readonly", true);
+		$("#submitbtn").hide();
+		$("#search-select").attr("disabled", true);
+		
+	}
+	
+	if(readonlyfee){
+		$('#exp-fee').attr('readonly','readonly');
+		$('#rec-name').attr('readonly','readonly');
+		$('#rec-tel').attr('readonly','readonly');
+		$('#rec-addr').attr('readonly','readonly');
+	}
+	
+	/*活动日期的日历呼出*/
+	J(function(){
+		J('#send-time').calendar({ format:'yyyy-MM-dd HH:mm:ss' });
+	});
+	
+	//初始化物流公司下拉选择框
+	ss.val(cc.val());
+	ss.change();
+
+	//物流公司类别更改事件
+	ss.change(function(){
+		cc.val($(this).val());				    //获取option选中的大类的value，并写入input里
+	});
+	
+	//提交按钮
+	$("#submitbtn").click(function(){
+		//判断是否已选择物流公司
+		if(cc.val()=='-1' || cc.val()=='' || cc.val()==null){
+			$.messager.alert('温馨提示', '请选择物流公司!','warning', function(){
+				cc.focus();												//注意聚焦和return的顺序！
+			});
+			return;
+		}
+		//判断快递信息是否正确输入
+		if(!en.val()){
+			$.messager.alert('温馨提示', '请输入快递单号!','warning', function(){
+				en.focus();												//注意聚焦和return的顺序！
+			});
+			return;
+		}
+		//判断邮费是否正确输入
+		if(!ef.val()){
+			$.messager.alert('温馨提示', '请输入快递费','warning', function(){
+				ef.focus();												//注意聚焦和return的顺序！
+			});
+			return;
+		}else if(isNaN(ef.val()) || ef.val()<0){
+			$.messager.alert('温馨提示', '请输入大于或等于0的数字金额，0表示免邮','warning', function(){
+				ef.focus();												//注意聚焦和return的顺序！
+			});
+			return;
+		}
+			
+		//判断收货人信息是否正确输入
+		if(!rn.val()){
+			$.messager.alert('温馨提示', '请输入收货人姓名','warning', function(){
+				rn.focus();												//注意聚焦和return的顺序！
+			});
+			return;
+		}	
+		if(!rt.val()){
+			$.messager.alert('温馨提示', '请输入收货人手机号码','warning', function(){
+				rt.focus();												//注意聚焦和return的顺序！
+			});
+			return;
+		}else if(!isTel(rt.val())){
+			$.messager.alert('温馨提示', '请填写正确的电话号码格式!', 'warning', function(){
+				rt.focus();
+	  		});
+			return
+		}
+	
+		if(!ra.val()){
+			$.messager.alert('温馨提示', '请输入收货人联系地址','warning', function(){
+				ra.focus();												//注意聚焦和return的顺序！
+			});
+			return;
+		}
+		//判断发货信息是否正确输入
+		if(!ea.val()){
+			$.messager.alert('温馨提示', '请输入发货地址','warning', function(){
+				ea.focus();												//注意聚焦和return的顺序！
+			});
+			return;
+		}
+		if(!st.val()){
+			$.messager.alert('温馨提示', '请输入发货时间','warning', function(){
+				st.focus();												//注意聚焦和return的顺序！
+			});
+			return;
+		}
+		
+		//判断是添加新的快递或编辑已有快递信息
+		if(expid != '' && expid != null && expid != 'undefined'){
+			eflag = 1;
+		}
+		var param = {
+			eo:eo.val(), ei:ei.val(), ev:ev.val(), en:en.val(), cc:cc.val(), ef:ef.val(), rn:rn.val(), rt:rt.val(), ra:ra.val(), ea:ea.val(), st:st.val(), er:er.val(), eflag:eflag
+		}
+		
+		$.post("{:U('Admin/OrderManageRequest/deliverConfirm','','')}", param, function(result){
+			if(result.errCode == 0){
+				window.location.href = "{:U('Admin/OrderManage/orderView')}";
+				
+			}else{
+				$.messager.alert('温馨提示', '保存失败!'+result.errMsg, 'warning', function(){
+					return;
+				});
+			}
+		}, 'json');
+	});
+	
+	$("#resetbtn").click(function(){
+		history.go(-1);
+	});
+	
+});	
+
+//判断联系方式是否为正确的手机号码/电话号码格式
+function isTel(str){
+    var reg=/^([0-9]|[\-])+$/g ;
+    if(str.length<7 || str.length>18){
+     return false;
+    }
+    else{
+      return reg.exec(str);
+    }
+}
+
+</script>    
+</body>
+</html>

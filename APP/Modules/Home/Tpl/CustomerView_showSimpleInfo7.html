@@ -1,0 +1,276 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<link rel="stylesheet" type="text/css" href= "__PUBLIC__/css/animate.css" />
+<link rel="stylesheet" type="text/css" href= "__PUBLIC__/css/expo2.css" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src= "__PUBLIC__/js/jquery.touchSwipe.min.js"></script>
+<script type="text/javascript">
+$(function() {
+	$(".wg").click(function() {
+		$.post('#', {},
+				function(msg) {
+					$(".layout-box").fadeIn();
+					$(".wg-layout").fadeIn();
+				})
+	});
+	$("#bm").click(function() {
+		var RealName = $("#RealName").val();
+		var Mobile = $("#Mobile").val();
+		var Sex = $(".xingbie label input[type='radio']:checked").val();
+		if (RealName == "") {
+			alert("请输入您的姓名");
+			return false;
+		}
+		if (Mobile.length <= 0) {
+			alert("请输入您的手机号码");
+			return false;
+		} else {
+			var reg = /^(13[0-9]|15[0-9]|18[0-9])\d{8}$/;
+			if (!reg.exec(Mobile)) {
+				alert("手机号码格式不对");
+				return false;
+			}
+		}
+		alert("报名成功!");
+		window.location.href="http://www.we-act.cn/weact/index.php/Home/Index/index/e_id/201405291912250003";
+		/*$.post('#', {'RealName': RealName, 'Mobile': Mobile, 'Sex': Sex},
+			function(msg) {
+				if (msg) {
+					$(".layout-box").fadeIn();
+					$(".bm-layout").fadeIn();
+				}
+				else {
+					alert("报名失败");
+				}
+			})*/
+	});
+});
+
+$(function() {
+	$(".bg:eq(0)").show();
+	var size = $(".bg").size();
+	$(".main").height($(window).height());
+	$('body').swipe({
+		swipeLeft: function(event, direction, distance, duration, fingerCount) {
+			var i = $(".bg:visible").index();
+			if (i + 1 < size) {
+				$(".bg").eq(i + 1).show().siblings().hide();
+				$(".swiper-pagination-switch").eq(i + 1).addClass("swiper-active-switch").siblings().removeClass("swiper-active-switch");
+			}
+			if (i == size - 2) {
+				$(".left_right .right").hide();
+			}
+			$(".left_right .left").show();
+			if ($(".bg1").is(":visible")) {
+				$(".left_right .left").css("background-image", "url(__PUBLIC__/images/left1.png)");
+				$(".left_right .right").css("background-image", "url(__PUBLIC__/images/right1.png)");
+			} else {
+				$(".left_right .left").css("background-image", "url(__PUBLIC__/images/left.png)");
+				$(".left_right .right").css("background-image", "url(__PUBLIC__/images/right.png)");
+			}
+		},
+		swipeRight: function(event, direction, distance, duration, fingerCount) {
+			var i = $(".bg:visible").index();
+			if (i != 0) {
+				$(".bg").eq(i - 1).show().siblings().hide();
+				$(".swiper-pagination-switch").eq(i - 1).addClass("swiper-active-switch").siblings().removeClass("swiper-active-switch");
+			};
+			if (i == 1) {
+				$(".left_right .left").hide();
+			}
+			$(".left_right .right").show();
+			if ($(".bg1").is(":visible")) {
+				$(".left_right .left").css("background-image", "url(__PUBLIC__/images/left1.png)");
+				$(".left_right .right").css("background-image", "url(__PUBLIC__/images/right1.png)");
+			} else {
+				$(".left_right .left").css("background-image", "url(__PUBLIC__/images/left.png)");
+				$(".left_right .right").css("background-image", "url(__PUBLIC__/images/right.png)");
+			}
+		}
+	});
+	$(".left_right .left").click(function() {
+		var i = $(".bg:visible").index();
+		if (i == 1) {
+			$(".left_right .left").hide();
+		}
+		if (i != 0) {
+			$(".bg").eq(i - 1).show().siblings().hide();
+			$(".swiper-pagination-switch").eq(i - 1).addClass("swiper-active-switch").siblings().removeClass("swiper-active-switch");
+		};
+		$(".left_right .right").show();
+		if ($(".bg1").is(":visible")) {
+			$(".left_right .left").css("background-image", "url(__PUBLIC__/images/left1.png)");
+			$(".left_right .right").css("background-image", "url(__PUBLIC__/images/right1.png)");
+		} else {
+			$(".left_right .left").css("background-image", "url(__PUBLIC__/images/left.png)");
+			$(".left_right .right").css("background-image", "url(__PUBLIC__/images/right.png)");
+		}
+	});
+	$(".left_right .right").click(function() {
+		var i = $(".bg:visible").index();
+		if (i + 1 < size) {
+			$(".bg").eq(i + 1).show().siblings().hide();
+			$(".swiper-pagination-switch").eq(i + 1).addClass("swiper-active-switch").siblings().removeClass("swiper-active-switch");
+		}
+		if (i == size - 2) {
+			$(".left_right .right").hide();
+		}
+		$(".left_right .left").show();
+		if ($(".bg1").is(":visible")) {
+			$(".left_right .left").css("background-image", "url(__PUBLIC__/images/left1.png)");
+			$(".left_right .right").css("background-image", "url(__PUBLIC__/images/right1.png)");
+		} else {
+			$(".left_right .left").css("background-image", "url(__PUBLIC__/images/left.png)");
+			$(".left_right .right").css("background-image", "url(__PUBLIC__/images/right.png)");
+		}
+	});
+	$('.gz').swipe({
+		click: function(event, direction, distance, duration, fingerCount) {
+			$(".layout-box").fadeIn();
+			$(".gz-layout").fadeIn();
+		}
+	});
+	$('.ceng').swipe({
+		click: function(event, direction, distance, duration, fingerCount) {
+			$(".ceng").fadeOut();
+			$(".layout-box").fadeOut();
+		}
+	});
+	$(".gz").click(function() {
+		$(".layout-box").fadeIn();
+		$(".gz-layout").fadeIn();
+	});
+	$(".gz-layout a").click(function() {
+		$(".gz-layout").fadeOut();
+		$(".layout-box").fadeOut();
+	});
+	$(".wg").click(function() {
+		$(".layout-box").fadeIn();
+		$(".wg-layout").fadeIn();
+	});
+	$(".wg-layout .icon").click(function() {
+		$(".wg-layout").fadeOut();
+		$(".ceng").fadeIn();
+	});
+	$(".wg-layout .closs").click(function() {
+		$(".wg-layout").fadeOut();
+		$(".layout-box").fadeOut();
+	});
+	$(".bm1").click(function() {
+		$('.bm-box').fadeIn();
+		$(".layout-box").fadeOut();
+	});
+	$(".return").click(function() {
+		$('.bm-box').fadeOut();
+	});
+	$(".bm-box2 .icon").click(function() {
+		$(".bm-layout").fadeOut();
+		$(".ceng").fadeIn();
+	});
+});
+</script>
+<style type="text/css">
+.bg1{background: url(__PUBLIC__/images/invite2.jpg) center center;background-size: 100% 100%;}
+.bg2{background: url(__PUBLIC__/images/invite4.jpg) center center;background-size: 100% 100%;}
+.bg3{background: url(__PUBLIC__/images/invite6.jpg) center center;background-size: 100% 100%;}
+.bg4{background: url(__PUBLIC__/images/invite5.jpg) center center;background-size: 100% 100%;}
+</style>
+<title>时尚展板2</title>
+</head>
+
+<body>
+	<div class="main">
+		<div class="bg bg1">
+        	<div class="hx-box">
+            	<img class="part2" src= "__PUBLIC__/images/part2.png">
+                <div class="pg3-tit  animated bounceIn "><img src= "__PUBLIC__/images/g5g6.png"></div>
+                <!--<div class="pg3-logo  animated fadeInLeft"><img src= "images/logo.png"></div>左侧飞入-->
+                <div class="gl animated-second fadeIn"><img src= "__PUBLIC__/images/invite7_w2.png"></div>
+                <!--<div class="pg3-tit2  animated bounceInDown"><img src= "images/tell.gif"></div>底部弹簧-->
+            </div>
+		</div>
+        <div class="bg bg2">
+        	<img class="part" src= "__PUBLIC__/images/part.png">
+            <div class="hx-box">
+                <img class="part2" src= "__PUBLIC__/images/part2.png">
+                <div class="pg-tit1 animated fadeInLeft"><img src= "__PUBLIC__/images/g5g6.png"></div>
+                <div class="pg-tit2 animated-second bounceInDown"><img src= "__PUBLIC__/images/invite7_w1.png"></div>
+            </div>
+        </div>
+        <div class="bg bg3">
+        	<img class="part" src= "__PUBLIC__/images/part.png">
+            <div class="hx-box">
+                <img class="part2" src= "__PUBLIC__/images/part2.png">
+                <div class="pg-tit1 animated fadeInRight"><img src= "__PUBLIC__/images/g5g6.png"></div>
+                <div class="pg-tit2 animated-second bounceInDown"><img src= "__PUBLIC__/images/invite7_w2.png"></div>
+            </div>
+        </div>
+        <div class="bg bg4">
+        	<div class="hx-box">
+                <img class="part2" src= "__PUBLIC__/images/part2.png">
+                <div class="pg4-tit animated bounceInDown"><img src= "__PUBLIC__/images/invite5_w1.png"></div>
+                <div class="btn animated fadeInDown">
+                	<a href="javascript:;" class="bm1">我要参与发布会！</a>
+                    <a href="javascript:;" class="wg">围观也有惊喜哦！</a>
+                </div>
+                <div class="gz animated fadeInUp">
+                	<img src= "__PUBLIC__/images/pg4-tit.gif">
+                    <div class="guanfang">时装发布会展时间：7月26日至8月20日<br/>本活动最终解释权归活动主办方所有</div>
+                </div>
+            </div>
+        </div>
+    </div><!--main结束div-->
+	<div class="layout-box">
+		<div class="wg-layout">
+            <div class="wg-box">
+                <h3>您是第<span>4096</span>围观群众</h3>
+                <p>分享本活动链接至你的朋友圈，并截图回复到“G5G6”（服务号）微信平台，就有机会获得海威置业赠送的价值<strong>238元的牛仔裤一条。</strong></p>
+                <a href="javascript:;" class="icon">赶快转发分享领取礼物吧！</a>
+                <a class="closs"></a>
+            </div>
+        </div>
+        <div class="bm-layout">
+            <div class="bm-box2">
+                <h3><span>报名成功！</span></h3>
+                <p>分享本活动链接至你的朋友圈，并截图回复到“G5G6”（服务号）微信平台，就有机会获得海威置业赠送的价值<strong>238元的牛仔裤一条。</strong></p>
+                <a href="javascript:;" class="icon">快告诉你的小伙伴一起来吧！</a>
+                <a class="closs"></a>
+            </div>
+        </div>
+        <div class="gz-layout"><a href="javascript:;" class="closs"></a></div>
+        <div class="ceng"><img src= "__PUBLIC__/images/ceng.png"></div>
+    </div>
+    <div class="bm-box" >
+        <img class="part2" src= "__PUBLIC__/images/part2.png">
+        <div class="pg4-tit animated bounceInDown"><img src= "__PUBLIC__/images/g5g6.png"></div>
+        <div class="xingbie animated fadeInDown">
+        	<span>性别</span>
+            <label><input type="radio" checked name="xb" value="1"><i class="gg"></i><span>我是帅哥</span></label>
+            <label><input type="radio" name="xb" value="0"><i class="mm"></i><span>我是美女</span></label></div>
+        <div class="inp animated fadeIn">
+        	<input placeholder="姓名" id="RealName" type="text" style="border-bottom:1px solid #e9e4e6;" ><input id="Mobile" placeholder="电话" type="tel">
+        </div>
+        <div class="btn animated bounce"> 
+        	<a href="javascript:;" class="bm2" id="bm">我要参与时装发布会！</a>
+        </div>
+
+        <a class="return" href="javascript:;"><img src= "__PUBLIC__/images/return.png"></a>
+    </div>
+    <div class="left_right">
+        <a href="javascript:;" class="left" style="display:none"></a>
+        <a href="javascript:;" class="right"></a>
+    </div>
+    <div class="pagination">
+        <span class="swiper-pagination-switch swiper-active-switch"></span>
+        <span class="swiper-pagination-switch"></span>
+        <span class="swiper-pagination-switch"></span>
+        <span class="swiper-pagination-switch"></span>
+    </div>
+</body>
+</html>

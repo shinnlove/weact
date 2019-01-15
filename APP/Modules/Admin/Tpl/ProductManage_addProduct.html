@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=7" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<title>添加商品类别</title>
+<style>
+body{margin:0 auto;padding:0}
+#content{margin:0 auto;padding:0;width:100%;height:100%;top:0;left:0;bottom:0;position:fixed;min-height:500px;background:#EAECF0;background-size:100% 100%;overflow:hidden}
+#main{margin:0 auto;margin-top:10px;padding:0;width:90%;height:96%;min-height:450px;border:1px solid #CFCFCF;border-radius:5px;box-shadow:0 2px 6px #EEE;font-family:"微软雅黑";background:#fff}
+#func{margin:0 auto;padding:0;margin-top:15px;width:90%;height:150px;border:1px solid #CCC;-moz-border-radius-bottomleft:5px;-webkit-border-bottom-left-radius:5px;-khtml-border-bottom-left-radius:5px;border-bottom-left-radius:5px;-moz-border-radius-bottomright:5px;-webkit-border-bottom-right-radius:5px;-khtml-border-bottom-right-radius:5px;border-bottom-right-radius:5px}
+#remark{margin:0 auto;padding:0;width:90%;height:38px;line-height:38px;font-size:12px;font-family:'微软雅黑';color:#F34148}
+#using_help{margin:0 auto;padding:0;margin-top:8px;width:90%;height:auto}
+.help{margin-bottom:10px;font-family:"微软雅黑";color:#3a6ea5}
+h3{text-align:center;color:#3a6ea5}
+h4{text-align:left;color:#3a6ea5;text-indent:20px}
+.product_type{text-align:left;text-indent:20px}
+.product_type input{margin-right:15px}
+.btn_submit{width:85px;height:35px}
+.product_type_name{color:#3a6ea5}
+</style>
+</head>
+<body>
+	<div id="content">
+		<div id="main">
+			<div id="using_help">
+				<h3>添加商品步骤</h3>
+				<hr style="border: 1px dashed rgba(0, 0, 0, 0.13)" />
+				<div class="help">第一步：选择商品大类确定商品类型；</div>
+				<div class="help">第二步：点击下一步按钮添加商品。</div>
+			</div>
+			<div id="func">
+				<form action="{:U('Admin/ProductManage/addProductDetail','','')}" method="post" name="myform" id="myform">
+				<div>
+					<p>
+						<h4>可选商品类别</h4>
+						<input type="hidden" id="product_id" name="product_id" value="{$product_id}" />
+					</p>
+					<p>
+						<div class="product_type">
+							<input type="radio" name="product_type" value="2" checked="checked" />
+							<font class="product_type_name">服饰</font>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+							<input type="radio" name="product_type" value="5" />
+							<font class="product_type_name">其他商品</font>
+						</div>
+					</p>
+				</div>
+				<div>
+					<input type="submit" class="btn_submit" value="下一步"/>
+				</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

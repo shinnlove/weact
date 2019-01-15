@@ -1,0 +1,320 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/tableCommonStyle.css" />
+<script type="text/javascript" src="__PUBLIC__/My97DatePicker/WdatePicker.js"></script>   
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>客户福利发放</title>
+</head>
+
+<body style="text-align:center;width:100%;margin:auto;">
+	<div class="wrapper" style="text-align:center;margin:auto;width:100%;">
+		<!-- easyUI的标题 -->   
+    	<div class="title" style="text-align:center;margin:auto;width:100%;">客户信息管理</div>
+    	<!-- easyUI的内容 --> 
+    	<div class="uitable" style="text-align:center;">
+    		<!-- easyUI的表格 -->
+    		<table id="dg" class="easyui-datagrid" title="客户信息" toolbar="#toolbar">
+			</table>
+			<!-- easyUI的工具条 -->
+			<div id="toolbar">
+        		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addCustomer()">发放优惠券</a>
+       			<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editCustomer()">编辑优惠券</a>
+        		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delCustomer()">删除优惠券</a>
+        		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="conditionFind()">查找客户优惠信息</a>
+        		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="findAll()">所有客户优惠信息</a>
+   			</div>
+    	</div>
+    </div>
+    
+    <!-- easyUI的添加对话框 -->
+    <div id="dlg" class="easyui-dialog" style="width:600px;height:400px;padding:10px 20px" closed="true" buttons="#dlg-buttons">
+        <div class="ftitle">发放优惠券信息</div>
+        <form id="fm" method="post" novalidate>
+        	<div class="fitem" style="display:none;">
+                <label>优惠券编号:</label>
+                <input name="coupn_id" readonly="true" style="width:150px;"/>
+            </div>
+            <div class="fitem">
+                <label>发放给会员等级:</label>
+                <select id="sendMember_level" name="member_level" class="easyui-combobox" required="true" style="width:150px;">
+                	<foreach name="level" item="level">
+                		<option value="{$level.level_name}">{$level.level_name}</option>
+                	</foreach>
+                </select>
+            </div>
+             <div class="fitem">
+                <label>发放优惠券编号:</label>
+                <select id="sendCoupon_id" name="coupon_id" class="easyui-combobox" required="true" style="width:150px;">
+                	<foreach name="couponid" item="couponid">
+                		<option value="{$couponid.coupon_id}">{$couponid.coupon_id}</option>
+                	</foreach>
+                </select>
+            </div>
+        </form>
+    </div>
+   
+   <div id="dlg-buttons">
+       <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-ok" onclick="saveCoupon()">确定</a>
+       <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-cancel" onclick="javascript:$('#dlg').dialog('close')">取消</a>
+   </div>
+   <!-- easyUI的添加对话框 -->
+   
+   <!-- easyUI的查询客户对话框 -->
+   <div id="search-window" class="easyui-dialog" title="查询窗口" style="width: 535px; height: 330px;" closed="true">
+        <div style="padding: 10px 10px 10px 10px;">
+            <form id="qfm" method="post">
+        
+            <!-- 调试表格区域↓ -->
+            <table width="500px" border="0" cellspacing="0" cellpadding="0" align="left">
+			  <tr>
+			    <td valign="top" bgcolor="#E1ECEE">
+			    
+			    <table width="100%" border="0" cellspacing="1" cellpadding="0" style="font-size: 12px;">
+			      
+			      <tr>
+			        <td height="20" colspan="4" bgcolor="#FFFFFF" class="Menu">基本自定义条件</td>
+			      </tr>
+				  
+				  <tr>
+			        <td bgcolor="#FFFFFF" align="center" class="style1">客户编号</td>
+			        <td bgcolor="#FFFFFF" class="style1">
+			            <input id="searchCustomer_id" name="searchCustomer_id" style="width:150px;"/>
+			        </td>
+			        <td bgcolor="#FFFFFF" align="center" class="style1">客户姓名</td>
+			        <td bgcolor="#FFFFFF" class="style1">
+			            <input id="searchCustomer_name" name="searchCustomer_name" style="width:150px;"/>
+			        </td>
+			      </tr>
+				  
+			      <tr>
+			        <td bgcolor="#FFFFFF" align="center" class="style1">昵称</td>
+			        <td bgcolor="#FFFFFF" class="style1">
+			            <input id="searchNick_name" name="searchNick_name" style="width:150px;">
+			        </td>
+			        <td bgcolor="#FFFFFF" align="center" class="style1">性别</td>
+			        <td bgcolor="#FFFFFF" >
+			            <select id="searchSex" name="searchSex" class="easyui-combobox" style="width:154px;">
+			            	<option value="男">男</option>
+			            	<option value="女">女</option>
+			            </select>
+			        </td>
+			      </tr>				
+			      <tr>
+			      	<td bgcolor="#FFFFFF" align="center" class="style1">客户等级</td>
+			        <td bgcolor="#FFFFFF" class="style1">
+			            <input id="searchLevel" name="searchLevel" style="width:150px;">
+			        </td>
+			        <td bgcolor="#FFFFFF" align="center" class="style1">优惠券编号</td>
+			        <td bgcolor="#FFFFFF" class="style1">
+			            <input id="searchCoupon_id" name="searchCoupon_id" style="width:150px;">
+			        </td>
+			      </tr>		
+			      <tr>
+			        <td height="20" colspan="4" bgcolor="#FFFFFF" class="Menu">区间自定义条件</td>
+			      </tr>
+			      
+			      <tr>
+			        <td bgcolor="#FFFFFF" align="center" class="style1">获得时间(起)</td>
+			        <td bgcolor="#FFFFFF" class="style1">
+			            <input id="searchGetStart" name="searchGetStart" class="Wdate" onClick="WdatePicker()" style="width:150px;"/>
+			        </td>
+			        <td bgcolor="#FFFFFF" align="center" class="style1">获得时间(止)</td>
+			        <td bgcolor="#FFFFFF" class="style1">
+			            <input id="searchGetEnd" name="searchGetEnd" class="Wdate" onClick="WdatePicker()" style="width:150px;"/>
+			        </td>
+			      </tr>			       
+			      
+			    </table>
+            <!-- 调试表格区域 ↑-->
+            </form>
+        </div>
+        <div style="text-align: center; padding: 5px; background:#FFF;">
+            <a href="javascript:void(0)" id="btn-search" class="easyui-linkbutton" iconCls="icon-ok" onclick="SearchOK()">确定</a>
+            <a href="javascript:void(0)" id="btn-search-cancel" class="easyui-linkbutton" iconCls="icon-cancel" onclick="closeSearchWindow()">取消</a>
+        </div>
+    </div>
+    <!-- easyUI的查询客户对话框 -->
+
+<script type="text/javascript">
+$(function(){
+	$('#dg').datagrid({
+		url:"{:U('Admin/Welfare/read','','')}",
+		singleSelect:true,
+		collapsible:true,
+		method:'post',
+		pagination:true,
+        rownumbers:true,
+	    columns:[[
+	        {field:'customer_id',title:'客户编号'},
+	        {field:'customer_name',title:'客户姓名'},
+	        {field:'nick_name',title:'昵称'},
+	        {field:'sex',title:'性别'},
+	        {field:'level_name',title:'客户等级'},
+	        {field:'coupon_id',title:'优惠券编号'},
+	        {field:'get_time',title:'获得时间'},
+	        {field:'is_used',title:'是否使用'},
+	    ]],
+	    view: detailview,
+	    detailFormatter: function(rowIndex, rowData){
+	    	var Remark = rowData.remark==null ? '':rowData.remark;
+	        return '<table>'+
+	        		'<tr>'+
+	                '<td rowspan=2 style="border:0;height:50px;width:50px"></td>' +
+	                '<td style="border:0">' +
+                		'<p>描述:</p><p>'+ Remark + '</p>' +
+                	'</td>' +
+	                '</tr></table>';
+		}
+	});
+});	
+</script>
+<script type="text/javascript">
+var url;
+
+function addCustomer() {
+	$('#dlg').dialog('open').dialog('setTitle', '添加客户');
+	$('#fm').form('clear');
+}
+
+function editCustomer() {
+	var row = $('#dg').datagrid('getSelected');
+	if (row) {
+		$('#dlg').dialog('open').dialog('setTitle', '编辑客户');
+		$('#fm').form('load', row);
+		url = "{:U('Admin/Customer/save','','')}";
+	} else {
+		$.messager.alert('温馨提示', '请选中一个客户进行编辑!', 'warning');
+		//Msgshow('请选中一个客户进行编辑!');
+		//Msgslide('请选中一个客户进行编辑!');
+		//Msgfade('请选中一个客户进行编辑!');
+	}
+}
+
+function saveCoupon() {
+	var member_level = $("#sendMember_level").combobox('getValue');
+	var coupon_id = $("#sendCoupon_id").combobox('getValue');
+	$.post("{:U('Admin/Welfare/save','','')}", {
+		member_level: member_level,
+		coupon_id: coupon_id
+	}, function(data) {
+		if (data.status == 0) {
+			alert("您的优惠券数量不足!");
+			return false;
+		} else if (data.status == 2) {
+			alert("操作失败!");
+			$('#account').focus();
+			return false;
+		} else if (data.status == 1) {
+			alert("发放购物券成功!");
+			$('#dlg').dialog('close');
+		}
+	});
+
+}
+
+function delCustomer() {
+	var row = $('#dg').datagrid('getSelected');
+	if (row) {
+		$.messager.confirm('温馨提示', '确定要删除该客户吗?信息将不可被恢复!', function(r) {
+			if (r) {
+				$.post("{:U('Admin/Customer/del','','')}", {
+					customer_id: row.customer_id
+				}, function(result) {
+					if (result.success) {
+						$('#dg').datagrid('reload');
+					} else {
+						$.messager.show({
+							title: 'Error',
+							msg: result.errorMsg
+						});
+					}
+				}, 'json');
+			}
+		});
+	} else {
+		$.messager.alert('温馨提示', '请选中要删除的客户!', 'warning');
+	}
+}
+
+function conditionFind() {
+	$('#search-window').dialog('open').dialog('setTitle', '查找客户');
+	$('#qfm').form('clear');
+	$('#searchSex').combobox('setValue', '不区分性别');
+}
+
+function findAll() {
+	$("#dg").datagrid({
+		url: "{:U('Admin/Welfare/read','','')}"
+	});
+}
+
+function closeSearchWindow() {
+	$('#search-window').dialog('close');
+}
+
+function SearchOK() {
+	$('#search-window').dialog('close');
+	//普通查询参数
+	var customer_id = $("#searchCustomer_id").val().trim();
+	var customer_name = $("#searchCustomer_name").val().trim();
+	var nick_name = $("#searchNick_name").val().trim();
+	//var sex = $("#searchSex").val().trim();
+	var sex = $('#searchSex').combobox('getValue');
+	var member_level = $("#searchLevel").val().trim();
+	var coupon_id = $("#searchCoupon_id").val().trim();
+
+	//区间查询参数
+	var getStart = $("#searchGetStart").val().trim();
+	var getEnd = $("#searchGetEnd").val().trim();
+	//传递查询参数并获得数据
+	$("#dg").datagrid({
+		url: "{:U('Admin/Welfare/conditionQuery','','')}",
+		queryParams: {
+			customer_id: customer_id,
+			customer_name: customer_name,
+			nick_name: nick_name,
+			sex: sex,
+			member_level: member_level,
+			coupon_id: coupon_id,
+			getStart: getStart,
+			getEnd: getEnd
+		}
+	});
+}
+//其他jq样式
+
+function Msgshow(msg) {
+	$.messager.show({
+		title: '提示',
+		msg: msg,
+		showType: 'show'
+	});
+}
+
+function Msgslide(msg) {
+	$.messager.show({
+		title: '提示',
+		msg: msg,
+		timeout: 3000,
+		showType: 'slide'
+	});
+}
+
+function Msgfade(msg) {
+	$.messager.show({
+		title: '提示',
+		msg: msg,
+		timeout: 3000,
+		showType: 'fade'
+	});
+}
+</script>
+</body>
+</html>

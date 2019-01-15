@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/colorBtnMyUniform.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactbrand.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<title>分发布置商品</title>
+</head>
+
+<body>
+	<div class="widget">
+        
+		<div class="widget-content">
+			<div class="padd">
+            
+            	<form name="myform" class="form-horizontal uniform" method="post" action="">
+					<div class="control-group">
+			            <div class="controls controls-row"><h2>分配商品到分店</h2></div>
+			            <div class="controls controls-row">
+				        	<font class="second-title">说明：</font><font class="second-content">勾中分店代表允许其销售该商品，新勾中的分店库存初始化与总店相同，请及时修改！</font><br />
+							<font class="second-title">商品名称：</font><font class="second-content">{$pinfo.product_name}</font><br />
+						</div>
+			        </div>
+					
+					<hr />
+					
+					<input type="hidden" name="product_id" value="{$pid}" /><!-- 分拨的商品编号 -->
+					
+			        <div class="control-group">
+			        	<div class="controls controls-row">
+			        		<input type="checkbox" name="checkall" class="uniform checkall" />全选
+			        	</div>
+			        </div>
+			        
+			        <hr />
+			        
+			        <div class="control-group">
+						<div class="controls controls-row single-subbranch-list">
+							<ul>
+								<foreach name="subbranchlist" item="sl">
+									<li data-sid="{$sl.subbranch_id}" data-original="{$sl.current_sell}"><input type="checkbox" name="subbranch-check" id="{$sl.subbranch_id}" class="uniform subbranch-check" value="{$sl.subbranch_id}">{$sl.subbranch_name}（{$sl.current_storage}件）</li>
+								</foreach>
+							</ul>
+				        </div>
+				    </div>
+					
+					<hr />
+                    
+                    <div class="handle-action">
+			            <a id="submitbtn" class="large ui-color-button light-green" href="javascript:void(0)">提交</a>
+			            &nbsp;&nbsp;
+			            <a id="resetbtn" class="large ui-color-button blue" href="javascript:void(0)">重置</a>
+			            <a href="javascript:history.go(-1);">
+			                <img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/images/goback.png" />
+			            </a>
+			        </div>
+				</form>
+            
+			</div><!--包裹form的div class="padd"的结束div-->
+
+		</div><!--widget-head结束div-->
+	</div><!--widget结束div-->
+	
+<script type="text/javascript">
+// 页面初始化函数
+$(function(){
+	$(".uniform").uniform(); // uniform初始化
+	
+	// 默认子项全部不勾中
+	var subchecklist = $(".subbranch-list").find('input[name="subbranch-check"]'); // 所有子项checkbox
+	subchecklist.prop("checked", false); // 所有子项也不勾中
+	subchecklist.parent().removeClass("checked");
+	// 初始化分配了库存的店铺checkbox选中
+	$(".subbranch-list ul li").each(function(){
+		var _t = $(this); // li里对象
+		if (_t.attr("data-original") == "1") {
+			// 选中了的话
+			_t.children().find("input[name='subbranch-check']").prop("checked", true); // 如果本来是勾中的
+			_t.children().find("input[name='subbranch-check']").parent().addClass("checked"); // 勾中
+		}
+	});
+	// 最后根据子项检查全局checkbox
+	if (subchecklist.not("input:checked").length == 0) {
+		$(".checkall").prop("checked", true); 	// 如果所有商品都勾中了，全选
+		$(".checkall").parent().addClass("checked");
+	} else {
+		$(".checkall").prop("checked", false); 	// 还有商品没勾中，就不全选
+		$(".checkall").parent().removeClass("checked");
+	}
+	
+	// 生成checkbox的DOM结构事件
+	$(".widget").on("click", ".checkall", function(){
+		// 全选勾选框点击触发事件
+		var thisStoreAllSelect = $(".subbranch-list").find('input[name="subbranch-check"]'); // 找到最近一个店铺section区域里边所有的checkProduct勾选框
+		if ($(this).prop("checked")) {
+			thisStoreAllSelect.prop("checked", true); // 如果全选是勾中的，则所有商品全部勾中
+			thisStoreAllSelect.parent().addClass("checked");
+		} else {
+			thisStoreAllSelect.prop("checked", false); // 如果全选是取消的，则所有商品取消勾中
+			thisStoreAllSelect.parent().removeClass("checked");
+		}
+	}).on("click", ".subbranch-check", function(){
+		// 具体某个店铺勾选框触发事件（单个分店勾选是否引起全选）
+		if ($(this).closest(".subbranch-list").find('input[name="subbranch-check"]').not("input:checked").length == 0) {
+			$(".checkall").prop("checked", true); 	// 如果所有商品都勾中了，全选
+			$(".checkall").parent().addClass("checked");
+		} else {
+			$(".checkall").prop("checked", false); 	// 还有商品没勾中，就不全选
+			$(".checkall").parent().removeClass("checked");
+		}
+	}).on("click", "#submitbtn", function(){
+		var btnObj = $(this); // 按钮点击事件
+		$.messager.confirm('温馨提示', '确认门店勾选无误并提交？', function(cf) {
+			if (cf) { 
+				// 点击提交按钮
+				var checkedlist = [];
+				$(".subbranch-list").find('input[name="subbranch-check"]').each(function(){
+					if ($(this).prop("checked")) {
+						checkedlist.push($(this).closest("li").data('sid')); // 压栈勾中的店铺
+					}
+				});
+				// 准备提交参数
+				var params = {
+						pid : $("input[name='product_id']").val(),
+						sidlist : checkedlist.join()
+				}
+				// 请求后台变更信息，如果成功，跳转商品列表
+				MLoading.show("提交中，请稍后..."); // 增加等待友好度体验
+				btnObj.attr('disabled',true); // 冻结按钮防止重复点
+				$.post("{:U('Admin/SubbranchProductRequest/handleDistributor', '', '')}", params, function(result){
+					MLoading.hide(); // 得到响应取消等待框
+					btnObj.removeAttr('disabled'); // 恢复按钮
+					if (result.errCode == 0) {
+						$.messager.alert('温馨提示', '提交商品分拨分店执行成功!', 'info', function() {
+							setTimeout(function(){
+								window.location.href = "{:U('Admin/ProductManage/productView', '', '')}"; // 回跳商品列表页面
+							},500);
+						});
+						return false;
+					} else {
+						$.messager.alert('温馨提示', '提交商品库存分拨分店失败!' + result.errMsg, 'error', function() {
+							return false;
+						});
+					}
+				}, "json");
+			}
+		});
+	}).on("click", "#resetbtn", function(){
+		// 点击重置按钮
+		$.messager.confirm('温馨提示', '确认放弃本次编辑内容并复原？', function(cf) {
+			if (cf) { 
+				window.history.go(-1);
+			}
+		});
+	});
+});
+</script>
+</body>
+</html>

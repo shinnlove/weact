@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactAdminStyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>谁能一站到底</title>
+</head>
+
+<body class="easyui-layout" fit="true">
+	
+	<div class="easyui-tabs" data-options="region:'center',border:false">
+		
+		<div data-options="region:'center',title:'开设活动一览',border:false"><!-- easyUI的TAB菜单分页1；自定义设置分页标题title -->
+		    <table id="psadg" class="easyui-datagrid" title="所有一站到底活动" toolbar="#psatoolbar" data-options="region:'center'"></table>
+			<!-- easyUI的工具条 -->
+			<div id="psatoolbar">
+	        	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addWhoStand()">添加新活动</a>
+	       		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-edit" plain="true" onclick="editWhoStand()">编辑活动</a>
+	        	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delWhoStand()">终止活动</a>
+	        	<!-- <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="examinePrize()">中奖情况</a> -->
+	        	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="findAll()">所有活动</a>
+				<a href="javascript:location.reload();" class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
+				<a href="javascript:history.go(-1);" class="easyui-linkbutton" iconCls="icon-back" plain="true">后退</a>
+				<span class="searchbox" style="float:right;margin-top: 5px;margin-right:30px;height: 25px;text-align: center;">
+					<select class="conditionselect" id="pa_search_condition" name="pa_search_condition">
+						<option value="plugin_activity_title" selected="selected">活动名称</option>
+						<option value="plugin_activity_brief">活动简介</option>
+						<option value="keyword">关键字</option>
+					</select>
+					<input id="pa_search_content" name="pa_search_content" type="text" class="searchbox-text mysearchbox" />
+					<span id="search_pa_btn" class="searchbox-button searchbox-button-hover mysearchspan"></span>
+				</span>
+	   		</div>
+		</div><!-- easyUI的TAB菜单分页1结束div -->
+		
+		<!-- <div data-options="region:'center',title:'今日中奖客户',border:false">easyUI的TAB菜单分页2；自定义设置分页标题title
+		    <table id="activedg" class="easyui-datagrid" title="今日线上中奖客户" toolbar="#activetoolbar" data-options="region:'center'"></table>
+			easyUI的工具条
+			<div id="activetoolbar">
+	        	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="activeConditionFind()">查找活跃客户</a>
+	        	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="activeFindAll()">所有活跃客户</a>
+	   		</div>
+		</div>easyUI的TAB菜单分页2结束div -->
+		
+    </div><!-- easyUI的TAB菜单容器结束div -->
+
+<script type="text/javascript">
+var psadg = $("#psadg");
+$(function() {
+	psadg.datagrid({
+		url : "{:U('Admin/PluginManage/getCurrentWS','','')}",
+		singleSelect : true,
+		collapsible : true,
+		method : 'post',
+		fitColumns : true,
+		fit : true,
+		pagination : true,					//是否开启分页
+		pageSize: 10,						//默认初始化每页几行
+        pageList: [5,10,20,50],				//可供选择的一页几行列表
+		rownumbers : true,					//开启行编号
+		idField : 'plugin_activity_id',		//绑定主键字段
+		columns : [ [ 						//定义表格字段：field→数据库字段；title→表头显示中文字段
+					{ field : 'plugin_activity_id', title : 'plugin_activity_id', width : 100, hidden:true },	//主键字段不显示
+					/* { field : 'ck', checkbox:'true', width : 100 }, 用不用checkbox以后再决定，先注释*/
+					{ field : 'plugin_activity_title', title : '活动名称', sortable:true, width : 150 }, 
+					{ field : 'plugin_activity_brief', title : '活动简介', sortable:true, width : 200 },
+					{ field : 'participation', title : '参与人数规模', sortable:true, width : 100 }, 
+					/* { field : 'total_times', title : '抽奖次数', sortable:true, width : 80 }, */ 
+					{ field : 'add_activity_time', title : '添加活动日期', sortable:true, width : 120 }, 
+					{ field : 'plugin_activity_startdate', title : '活动开始日期', sortable:true, width : 120 }, 
+					{ field : 'plugin_activity_enddate', title : '活动结束日期', sortable:true, width : 120 }, 
+					{ field : 'keyword', title : '活动关键字', sortable:true, width : 100 },
+					{ field : 'is_del', title : '活动状态', sortable:true, width : 100, formatter: formatterstatus }
+				] ],
+		view : detailview,
+		detailFormatter : function(rowIndex, rowData) {
+			return '<div id="pluginactivity_' + rowIndex + '" style="padding:5px 10px;background:#efefef;"></div>';
+		},
+		onExpandRow: function(rowIndex, rowData){
+			$.post('{:U("Admin/PluginManage/getDetailWS","","")}',
+					{ cpaid : rowData.plugin_activity_id },
+					function(data){
+						
+						if(data){
+						
+							var detailinfo = '<table>'
+								+ '<tr>'
+								+ 	'<td style="border:0">'
+								+		'<p style="font-weight:bold;"> 活动描述：</p>'
+								+		'<p style="text-indent:24px;">'+ rowData.plugin_activity_detail +'</p>'
+								+	'</td>'
+								+ '</tr>'
+								+ '<tr>'
+								+ 	'<td style="border:0">'
+								+ 		'<p style="font-weight:bold;">奖项设定:</p>'
+								
+							for(var i=0 ; i<data.length; i++){
+								detailinfo = detailinfo	
+								+ 		'<p style="text-indent:24px;">'+ data[i].prize_name +':'+ data[i].prize_content +'。&nbsp;&nbsp;&nbsp;&nbsp;奖品数目：'+ data[i].prize_amount +'</p>'
+							}
+								
+							detailinfo = detailinfo
+								+ 	'</td>'
+								+ '</tr>'
+								+'</table>';
+								
+							$('#pluginactivity_'+rowIndex).html(detailinfo);
+						
+						}else{
+							
+							var detailinfoempty = '<table>'
+								+ '<tr>'
+								+ 	'<td style="border:0">'
+								+		'<p style="font-weight:bold;"> 还没有任何题目信息，请速编辑活动添加！</p>'
+								+	'</td>'
+								+ '</tr>'
+								+'</table>';
+								
+							$('#pluginactivity_'+rowIndex).html(detailinfoempty);
+							
+						}
+						
+					},'json');
+
+	    }
+	});
+});
+$(function(){
+	$('#search_pa_btn').click(function(){
+		var contentobj = $('#pa_search_content');
+		var searchcondition = $('#pa_search_condition').val().trim();
+		var searchcontent = contentobj.val();
+		if(searchcontent.trim() == "" || searchcontent == null){
+			$.messager.alert('温馨提示', '搜索内容不能为空！','warning', function(){
+				contentobj.focus();
+	  		});
+			return						//注意聚焦和return的顺序！
+		}
+		psadg.datagrid({
+    		url:"{:U('Admin/PluginManage/searchWhoStand','','')}",
+    		queryParams:{ 
+    			searchcondition:searchcondition,
+    			searchcontent:searchcontent
+    		}
+    	},'load');
+	});
+});
+
+function formatterstatus(val, row){
+	if(row.is_del == 1){
+		return "<span class='red' style='color:#F20;'>活动已经结束。</span>";
+	}else{
+		return "<span class='green' style='color:#138c13;'>活动进行中...</span>";
+	}
+}
+
+//新增活动函数（先要判断是否有进行中的活动，有的话，必须终止一个才能添加一个新的）
+function addWhoStand(){
+	$.post('{:U("Admin/PluginManage/checkCurrentWS","","")}',
+			{ checkstatus : 'true' },
+			function(data){
+				if(data.status == "0"){
+					window.location.href = "{:U('Admin/PluginManage/addWhoStand','','')}";
+				}else{
+					$.messager.alert('温馨提示', '有正在进行中的活动，不可同时进行两个相同的活动！如果想添加新活动，请终止现有的活动！','warning', function(){
+						
+			  		});
+					return
+				}
+			},'json');
+}
+
+//编辑活动函数
+function editWhoStand(){
+	var row = psadg.datagrid('getSelected');
+	if (!row) {
+		$.messager.alert('温馨提示','请选择一个活动！','warning');	
+	}else{
+		if(row.is_del == 1){
+			$.messager.alert('温馨提示','无法编辑过期的活动！','warning');
+			return
+		}else{
+			window.location.href = "{:U('Admin/PluginManage/addWhoStand','','')}?plugin_activity_id=" + row.plugin_activity_id;//注意传参不要有空格!
+		}
+	}
+}
+//终止活动函数
+function delWhoStand(){
+	var rows = psadg.datagrid('getSelections');
+	var rowdata = [];
+	if (rows.length == 0) {
+		$.messager.alert('温馨提示','请选择要终止的活动！','warning');				
+	}else{
+		$.messager.confirm('温馨提示','确定终止选中的活动？',function(cf){
+			if(cf){
+				$.post('{:U("Admin/PluginManage/delWS","","")}',
+						{ cpaid : rows[0].plugin_activity_id },
+						function(data){
+							if(data.status == '1'){
+								$.messager.alert('温馨提示', '终止活动成功！', 'info', function(){
+									window.location.reload();
+								})
+							}else{
+								$.messager.alert('温馨提示','终止活动失败！活动已经过期！','error');
+							}
+						},'json');
+			}
+		});	
+	}
+}
+//查找所有活动函数
+function findAll(){
+	psadg.datagrid({ url: '{:U("Admin/PluginManage/getCurrentWS","","")}' });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactAdminStyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>刮刮卡中奖一览</title>
+</head>
+
+<body class="easyui-layout" fit="true">
+	<div data-options="region:'center',title:'趣味刮刮卡活动中奖信息',border:false">
+		<table id="prizeResult" class="easyui-datagrid" title="当前查看： {$cpa.plugin_activity_title}， 起止日期： {$cpa.plugin_activity_startdate} 至 {$cpa.plugin_activity_enddate}。" toolbar="#prtoolbar" data-options="region:'center'"></table>
+		<div id="prtoolbar">
+        	<!-- <a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" onclick="addPrizeInfo()">添加中奖纪录</a> -->
+        	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-remove" plain="true" onclick="delPrizeInfo()">删除中奖记录</a>
+        	<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="findAll()">所有中奖记录</a>
+			<a href="javascript:location.reload();" class="easyui-linkbutton" iconCls="icon-reload" plain="true">刷新</a>
+			<a href="javascript:history.go(-1);" class="easyui-linkbutton" iconCls="icon-back" plain="true">后退</a>
+			<span class="searchbox" style="float:right;margin-top: 5px;margin-right:30px;height: 25px;text-align: center;">
+				<select class="conditionselect" id="pa_search_condition" name="pa_search_condition">
+					<option value="plugin_activity_title" selected="selected">所中奖项</option>
+					<option value="plugin_activity_brief">顾客姓名</option>
+					<option value="keyword">联系电话</option>
+				</select>
+				<input id="pa_search_content" name="pa_search_content" type="text" class="searchbox-text mysearchbox" />
+				<span id="search_pa_btn" class="searchbox-button searchbox-button-hover mysearchspan"></span>
+			</span>
+   		</div>
+	</div>
+
+<script type="text/javascript">
+$(function() {
+	pr = $('#prizeResult').datagrid({
+		url : "{:U('Admin/PluginManage/currentPrizeInfo')}",
+		queryParams: {
+			paid: '{$paid}'		//额外请求参数：查看中奖详情的活动编号
+		},
+		method : 'post',
+		collapsible : true,
+		fitColumns : true,
+		fit : true,
+		singleSelect : true,
+		pagination : true,					//是否开启分页
+		pageSize: 10,						//默认初始化每页几行
+        pageList: [5,10,20,50],				//可供选择的一页几行列表
+		rownumbers : true,
+		idField : 'getprize_id',
+		striped : true,
+		columns : [ [
+		             { field : 'getprize_id', title : '中奖编号', sortable : true, width : 120, hidden:true },
+		             { field : 'plugin_activity_id', title : '活动编号', sortable : true, width : 120, hidden:true },
+		             { field : 'plugin_prize_id', title : '奖品编号', sortable : true, width : 120, hidden:true },
+		             { field : 'getprize_time', title : '获奖时间', sortable : true, width : 120, },
+		             { field : 'sncode', title : '奖品sn码', sortable : true, width : 150 },
+		             { field : 'prize_name', title : '奖品名称', sortable : true, width : 80 },
+		             { field : 'prize_content', title : '奖品内容', sortable : true, width : 150 },
+		             { field : 'customer_id', title : '客户编号', sortable : true, width : 120 },
+		             { field : 'customer_name', title : '客户姓名', sortable : true, width : 90 },
+		             { field : 'contact_number', title : '联系电话', sortable : true, width : 100 },
+		             { field : 'send_status', title : '奖品发放情况', width : 120, formatter : sendPrizeStatus },
+		             { field : 'get_status', title : '用户领奖情况', sortable : true, width : 100, formatter : getPrizeStatus }
+		          ] ]
+	});
+});
+
+//客户领奖情况
+function getPrizeStatus(val,row){
+   	if(row.get_status == 1){
+   		return "<span class='red' style='color:#F20;'>已领取</span>";
+   	}else if(row.get_status == 0){
+   		return "<span class='orange' style='color:#3babbf;'>未领取</span>";
+   	}
+}
+
+//商户确认发放给客户奖品及状态
+function sendPrizeStatus(val,row){
+   	if(row.send_status == 1){
+   		return "<span class='green' style='color:#16c022;'>奖品已发放</span>";
+   	}else if(row.send_status == 0){
+   		return '<a href="javascript:;" onclick="sendPrizeConfirm(\''+row.getprize_id+'\')"><font color="orange" style="color:#3babbf">确认发放</font></a>';//特别注意这个转义字符，调用字符串用单撇号，但是要转义！
+   	}
+}
+
+//商户确认发放奖品调用函数sendPrizeConfirm
+function sendPrizeConfirm(gpid){
+	$.messager.confirm('温馨提示', '是否确定发放奖品？', function(result){
+		if(result == true){
+			$.post('{:U("Admin/PluginManage/sendPrizeConfirm","","")}',
+					{ gpid : gpid },
+					function(data){
+						if(data.status==1){
+							$.messager.alert("温馨提示", "奖品发放成功！","info");
+							window.location.reload();
+						}else{
+							$.messager.alert("温馨提示", "奖品发放失败！"+data.msg,"error");
+						}
+					},'json');
+		}
+	});
+}
+
+//删除当前中奖纪录
+function delPrizeInfo(){
+	var row = $('#prizeResult').datagrid('getSelected');
+	if (!row) {
+		$.messager.alert('温馨提示','请选择要删除的中奖纪录！','warning');	
+	}else{
+		$.messager.confirm('温馨提示', '是否确认删除当前中奖纪录？如果是真实中奖纪录，建议与客户沟通后再删除！', function(result){
+			if(result == true){
+				$.post('{:U("Admin/PluginManage/delPrizeConfirm","","")}',
+						{ gpid : row.getprize_id },
+						function(data){
+							if(data.status==1){
+								$.messager.alert("温馨提示", "删除中奖纪录成功！","info");
+								window.location.reload();
+							}else{
+								$.messager.alert("温馨提示", "删除中奖纪录失败！"+data.msg,"error");
+							}
+						},'json');
+			}
+		});
+	}
+}
+</script>
+</body>
+</html>

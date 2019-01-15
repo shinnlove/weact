@@ -1,0 +1,228 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap2.2.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/uniform/themes/default/css/uniform.default.css"  media="screen" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/myUniformStyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/uniform/jquery.uniform.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lhgcalendar/lhgcore.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/lhgcalendar/lhgcalendar.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/myUniformCalendar.js"></script>
+<!-- 请千万不要使用easyUI的jQuery.min.js，与jquery-1.9.1和uniform.js冲突，请避免jQuery.min.js和uniform.js一起使用，尽量分开!!! -->
+<title>谁能一站到底活动</title>
+</head>
+
+<body>
+    <form id="myForm" name="myForm" class="form-horizontal uniform" action="" method="post" style="background:#fafafa;border:1px solid #DDD;min-width:800px;" enctype="multipart/form-data">
+        <input type="hidden" id="editflag" name="editflag" value="{$editflag}" />
+        <input type="hidden" id="activity_id" name="activity_id" value="{$epainfo[0].plugin_activity_id}" />
+        <div class="control-group" style="margin-top:20px;">
+            <div class="controls controls-row">编辑谁能一站到底活动开始内容</div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">
+ 				关键词
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myinput" id="keyword" name="keyword" placeholder="请输入活动关键字" required="required" value="谁能一站到底" />
+            </div>
+            <div class="controls controls-row">只能写一个关键词，用户输入此关键词将会触发此活动。</div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">
+				活动标题
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform myinput" id="activity_title" name="activity_title" placeholder="请输入活动名称" required="required" value="谁能一站到底" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">活动背景图片</label><span class="text-error">(*)</span>
+            <div class="controls">
+                <input type="text" class="uniform myinput" id="activity_backgroundimage" name="activity_startimage" value="http://www.we-act.cn/weact/plugin/luckywheel/activity-lottery-start.jpg" />
+                <br>
+				<div class="btn">
+                    <span>添加附件:</span>
+                    <input type="file" name="picture[]" class="input-text uniform">
+                </div>
+				<div class="activity_img" style="margin-top:10px;">
+                	<img src="__PUBLIC__/images/luckywheel/activity-lottery-start.jpg" id="startdisplay" name="startdisplay" style="width:100px;" />
+                </div>                                       
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">活动简介</label><span class="text-error">(*)</span>
+            <div class="controls controls-row">
+                <textarea id="activity_brief" name="activity_brief" class="uniform mytextarea" placeholder="" value="{$epainfo[0].plugin_activity_brief}"></textarea>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">
+            	活动开始时间<span class="text-error">(*)</span>
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mytimeinput" id="startdate" name="startdate" placeholder="请选择活动开始时间" required="required" value="{$epainfo[0].plugin_activity_startdate}" /> 
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">
+				活动结束时间<span class="text-error">(*)</span>
+            </label>
+            <div class="controls controls-row">
+                <input type="text" class="uniform mytimeinput" id="enddate" name="enddate" placeholder="请选择活动结束时间" required="required" value="{$epainfo[0].plugin_activity_enddate}" />
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <label class="control-label">活动详情<span class="text-error">(*)</span></label>
+            <div class="controls controls-row">
+                <textarea id="activity_detail" name="activity_detail" class="uniform mytextarea" placeholder="">{$epainfo[0].plugin_activity_detail}</textarea>
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <div class="controls controls-row">
+                <div class="checker" id="uniform-moren_yes">
+                	<span><input type="checkbox" class="uniform" id="focus_alert" name="focus_alert" /></span>
+                </div>关注后即弹出本活动
+            </div>
+        </div>
+		
+	<!-- 	<div style="margin-left: 430px;">
+			<a id="btnclear" href="javascript:void(0)"
+				onclick="clearContainer()" class="easyui-linkbutton"
+				style="float: none; font-size: 15px;">清空</a> <a id="btnnext"
+				href="javascript:void(0)" class="easyui-linkbutton"
+				style="float: none; font-size: 15px;" onclick="next()">下一步</a>
+		</div> -->
+        <div class="form-actions no-margin" style="margin-bottom:0px;">
+            <a id="btnclear" class="large colorbutton blue" href="javascript:void(0)">清空</a>
+            &nbsp;&nbsp;
+            <a id="btnnext" class="large colorbutton blue" href="javascript:void(0)">下一步</a>
+            <a href="javascript:history.go(-1);">
+                <img style="width:50px; float:right;" alt="返回" src="__PUBLIC__/images/goback.png">
+            </a>
+        </div>
+	</form>
+
+<script type="text/javascript">
+$(function(){
+	var editflag = $("#editflag").val();							//该页面加载时是否编辑的标记
+	if(editflag=='0'){
+		$("#myForm").attr("action", "{:U('Admin/PluginManage/addWhoStandConfirm','','')}");	//设置添加活动的提交路径
+		//如果是添加活动信息，则要把默认设置填入表单中，给客户贴心默认设置，省去工作量
+
+		var cur_pat = '一站到底，勇往直前';						//活动标题
+		$("#activity_title").val(cur_pat);							//设置活动标题
+
+		var cur_pad = '亲，请点击进入一站到底活动页面，祝您好运哦！';	//活动说明
+		$("#activity_detail").val(cur_pad);							//设置活动标题
+
+		var cur_as = 'http://www.we-act.cn/weact/APP/Tpl/Admin/Public/images/luckywheel/activity-lucky-wheel-start.jpg';				
+		//活动开始图片路径
+		$("#activity_startimage").val(cur_as);						//设置活动开始图片路径
+
+		
+		/* var cur_aet = '幸运大转盘活动已经结束了';						//活动结束标题
+		$("#activity_endtitle").val(cur_aet);						//设置活动结束标题
+		
+		var cur_aein = '亲，活动已经结束，请继续关注我们的后续活动哦。';	//活动结束说明
+		$("#activity_endinfo").val(cur_aein);						//设置活动结束说明 */
+		
+		var cur_key = '一站到底';									//活动关键字
+		$("#keyword").val(cur_key);									//设置活动关键字
+		
+	}else{
+		$("#myForm").attr("action", "{:U('Admin/PluginManage/editWhoStandConfirm','','')}");	//设置编辑活动的提交路径
+	}
+});
+/*下一步按钮 */
+$(function(){
+	$("#btnnext").click(function(){
+		//验证表单是否完整
+	  	//var key =  $("#keyword");				//活动关键字
+	  	//var at =  $("#activity_title");			//活动标题
+	  	var abi = $("#activity_backgroundimage");    //活动背景图片
+	  	var ab = $("#activity_brief");           //活动简介
+	  	var sd =  $("#startdate");				//活动开始日期
+	  	var ed =  $("#enddate");				//活动结束日期
+	  	var ad =  $("#activity_detail");		//活动详情
+	  	var url = "{:U('Admin/PluginManage/addActivity','','')}";
+	  	
+	  	if(abi.val()==""){
+	  		$.messager.alert('温馨提示', '请添加活动背景图片！','warning', function(){
+	  			abi.focus();						//注意聚焦和return的顺序！
+	  		});
+	  		return								//注意聚焦和return的顺序！
+	  	}else if(ab.val()==""){
+	  		$.messager.alert('温馨提示', '请输入活动简介！','warning', function(){
+	  			ab.focus();						//注意聚焦和return的顺序！
+	  		});
+	  		return								//注意聚焦和return的顺序！
+	  	}else if(sd.val()==""){
+	  		$.messager.alert('温馨提示', '请选择活动开始日期！','warning', function(){
+	  			sd.focus();						//注意聚焦和return的顺序！
+	  		});
+	  		return								//注意聚焦和return的顺序！
+	  	}
+	  	else if(ed.val()==""){
+	  		$.messager.alert('温馨提示', '请选择活动结束日期！','warning', function(){
+	  			ed.focus();						//注意聚焦和return的顺序！
+	  		});
+	  		return								//注意聚焦和return的顺序！
+	  	}else if(ad.val()==""){
+	  		$.messager.alert('温馨提示', '请输入活动详情！','warning', function(){
+	  			ad.focus();						//注意聚焦和return的顺序！
+	  		});
+	  		return								//注意聚焦和return的顺序！
+	  	}else if(ed.val()<sd.val()){
+	  		$.messager.alert('温馨提示', '活动结束日期不得早于开始日期！','warning', function(){
+	  			ed.focus();						//注意聚焦和return的顺序！
+	  		});
+	  		return								//注意聚焦和return的顺序！
+	  	}else{
+	  		$.post(url,{
+	    		  abi:abi.val(),
+	    		  //activityTitle:at.val(),
+	    		  activityBrief:ab.val(),
+	    		  activityDescription:ad.val(),
+	    		  startDate:sd.val(),
+	    		  endDate:ed.val()
+	    		  },function(data){
+	    		  //alert(data);
+	    		  if(data.status==1){
+	    			  window.location="{:U('Admin/PluginManage/addQuestionList','','')}?question_activity_id="+data.question_activity_id;
+	    		  }else{
+	    			  //$('#btnnext').linkbutton('enable');
+	    			  alert("error,添加失败");
+	    		  }
+	    	  },'json');
+		} 
+	});
+});
+/*表单重置按钮*/
+$(function(){
+	$("#btnclear").click(function(){
+		$("#keyword").val('');				//活动关键字
+	  	$("#activity_title").val('');			//活动标题
+	  	$("#activity_backgroundimage").val('');  //活动背景图片
+	  	$("#activity_brief").val('');           //活动简介
+	  	$("#startdate").val('');				//活动开始日期
+	  	$("#enddate").val('');				//活动结束日期
+	  	$("#activity_detail").val('');		//活动结束详情
+	});
+});
+</script>
+</body>
+</html>

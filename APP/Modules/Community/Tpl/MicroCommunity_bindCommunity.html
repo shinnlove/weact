@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head time='1418198533'>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+<meta name="format-detection" content="telephone=no"/>
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="description" content="" />
+<meta name="keywords" content="" />
+<link rel="shortcut icon" href="" />
+<title>微社区</title>
+<script type="text/javascript">
+    window.g_module = [];
+    var STATIC_DOMAIN = '__PUBLIC__',
+        ARS_TIME = '',
+        IMG_LOADING = 'data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==';
+    
+    var g_tsBase = new Date(),g_ts = {};
+    var PathUtil = {
+        getCPath: function() {
+        	return STATIC_DOMAIN + '/js/';
+        }
+    };
+    
+    g_ts.css_start=new Date();
+    var pageName = '';
+</script>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/comm.css" />
+<!--debug-->
+<script type="text/javascript">
+    var sId = 0,
+        tId = 0,
+        uId = '105339320',
+        isNullNick = '0' | false,
+        isManager = 0,
+        authUrl = '',
+        siteLogo = '',
+        CSRFToken = "dc60d1b9",
+        debug = '' | false,
+        DOMAIN = 'http://m.wsq.qq.com/',
+        _speedMark = new Date(),
+        isWX = '' | false,
+        isMQ = '' | false,
+        isAppBar = '' | false,
+        isQQBrowser = '' | false,
+        isWeixinLink = '' | false,
+		newMsgCount = '0',
+        isFriendSite = '0',
+        enabledSmiley = '';
+    
+    window.addEventListener("DOMContentLoaded", function() {g_ts.domready = new Date();});
+    window.addEventListener("load", function() {g_ts.domload = new Date();});
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('hideToolbar');
+        WeixinJSBridge.call('showOptionMenu');
+    });
+</script>
+</head>
+
+<body class="pb">
+<div class="warp">
+    <div class="infobox" style="padding-top: 30%;min-height: 300px;">
+        <i class="iconPrompt cf cFont db"></i>
+        <p>对不起，请指定要访问的微社区<span style="display: none;">&nbsp;&nbsp;[30422]</span></p>
+    </div>
+</div>
+<script id="tmpl_sideBar" type="text/html">
+<div class="sideBar" style="display:none;">
+    <div class="searchContent evtSearchWrap">
+        <div class="sInputIn br">
+            <i class="searchInco cf pa db"></i>
+            <div class="f12 sInput2" style="line-height: 20px">搜索</div>
+        </div>
+    </div>
+    <div class="sideBarCon" id="sideBarCon">
+        <h3 class="sideTit f14 fn c2">话题筛选</h3>
+        <ul style="position: relative;">
+            <li class="filter<%if (!filterType) {%> on<%}%>"><a class="<%if (!filterType) {%>iconSucc cf s_succ db<%} else {%>c9<%}%>" href="javascript:;">全部</a></li>
+            <li class="filter<%if (filterType == 'hot') {%> on<%}%>" labelId="hot"><a class="<%if (filterType == 'hot') {%>iconSucc cf s_succ db<%} else {%>c9<%}%>" href="javascript:;">热门</a></li>
+            <li class="filter<%if (filterType == 'showPic') {%> on<%}%>" labelId="showPic"><a class="<%if (filterType == 'showPic') {%>iconSucc cf s_succ db<%} else {%>c9<%}%>" href="javascript:;">晒图</a></li>
+        </ul>
+        <div class="loading pd10" id="customTagWait">
+            <div class="loadicon">
+                <span class="blockG" id="rotateG_01"></span>
+                <span class="blockG" id="rotateG_02"></span>
+                <span class="blockG" id="rotateG_03"></span>
+                <span class="blockG" id="rotateG_04"></span>
+                <span class="blockG" id="rotateG_05"></span>
+                <span class="blockG" id="rotateG_06"></span>
+                <span class="blockG" id="rotateG_07"></span>
+                <span class="blockG" id="rotateG_08"></span>
+            </div>
+            正在加载...
+        </div>
+        <div class="customTag" id="customTag">
+        </div>
+        <ul class="sidePerMan">
+            <li id="sideProfile"><a href="javascript:;" class="iconPrfile  f16 c9 cf"><i class="db numP" id="sideMsgNum"<%if (newMsgCount < 1) {%> style="display:none;"<%}%>><%if (newMsgCount < 100) {%><%=newMsgCount%><%}else{%>99+<%}%></i>个人主页</a></li>
+            <li id="sideUnfollow" sid="<%=sId%>"<%if (isLiked != 1) {%> style="display:none;"<%}%>><a href="javascript:;" class="iconExit f16 c9 cf">退出社区</a></li>
+        </ul>
+    </div>
+</div>
+</script>
+<script id="tmpl_customTag" type="text/html">
+<div>
+<% for (var i in labelList) { %>
+    <a href="javascript:;" class="f12 filter<%if (filterType == labelList[i].labelId) {%> on<%}%>" labelId="<%=labelList[i].labelId%>"><%=labelList[i].labelName%></a>
+<%}%>
+</div>
+</script>
+<!-- <div class="topBar">
+    <div class="topBarCon pr">
+        <a href="javascript:;" class="qBackBtn" id="goback"><i class="upBtn cf db"></i>返回</a>
+        <h2 class="qTitle">微社区</h2>
+        <a href="javascript:;" id="mqOption" isSite="2" class="moreC qMore db"><i class="iconPrfile f18 c2 cf"></i><i class="db numP" id="navMsgNum" style="display:none;"></i></a>
+	</div>
+</div> -->
+<div class="bottomBar">
+    <div class="bottomBarCon pr">
+        <a href="javascript:;" class="backBtn" id="goback"><i class="iconAnswer cf back db"></i></a><!-- 如果少了back，方向就会反 -->
+		<a href="javascript:;" id="mqOption" isSite="1" class="moreC qMore db"><i class="iconPrfile f18 c2 cf" style="color:#769CDC"></i><i class="db numP" id="navMsgNum" style="display:none;"></i></a>
+	</div>
+</div>
+<script type="text/javascript">
+var isForceReload = '0',
+    isLiked = '0',
+    inviteUrl = '0';
+//g_module.push('module/topBar');
+g_module.push('module/navBar');
+</script>
+<script type="text/javascript">
+var jumpURL = '';
+var showLogin = 0;
+g_module.push('module/showMessage');
+</script>
+        <div onclick="location.href='#'" class="copyRight ht">微社区，精彩在你身边</div>
+    <script type="application/javascript">g_ts.body_view = new Date();</script>
+<script id="tmpl_pageTip" type="text/html">
+
+<div class="tipInfo" id="showShare">
+    <p class="tipBor"><%=msg || '请点击右上角图标分享'%><span class="arrLeft"></span></p>
+</div>
+
+</script>
+
+<script src="__PUBLIC__/js/qqapi.js"></script>
+<script type="text/javascript">
+var shareUrl = 'http://m.wsq.qq.com/my/sites?_wv=1&source=custom',
+shareTitle = '分享自#微社区#',
+shareDesc = '微社区是基于手机QQ的移动侧的兴趣交流平台。在这里，发现活跃有趣的社区，寻找志同道合的朋友，参与热门的话题讨论。',
+shareImgUrl = 'http://dzqun.gtimg.cn/quan/images/shareLogo.png';
+    g_module.push('module/common', 'module/share');
+</script>
+<script type="application/javascript">
+var url = '__PUBLIC__/js/seajs-0.1.5.js';
+var node = document.createElement('script');node.onload = function(){g_ts.seajs = new Date();};node.src = url;document.body.appendChild(node);
+if (window.statConf) {
+    setTimeout(function() {
+        window.seajs && seajs.use('lib/stat', function(_a) {
+            _a.init();
+        });
+    }, 2000);
+}
+</script>
+</body>
+</html>

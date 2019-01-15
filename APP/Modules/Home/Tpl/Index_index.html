@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/MobileCommonStyle.min.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/indexModifyStyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/iscroll.js"></script><!--以上为滑动插件形成效果的js-->
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>{$einfo.brand}</title>
+</head>
+
+<body style="background:#000;">
+    <div class="wrap">
+    	<div class="head">{$einfo.brand}</div>
+    	<div class="slider">
+        	<div class="banner">
+                <div id="wrapper">
+                    <div id="scroller">
+                        <ul id="thelist">
+                        <foreach name="pageinfo.sliders" item="pisl">
+                            <li><a href="{$pisl.target_url}" ><img src="{$pisl.image_path}" alt="" /></a></li>
+                         </foreach>
+                        </ul>
+                    </div>
+                </div>
+                <div id="nav">
+                    <div id="prev" onclick="myScroll.scrollToPage('prev', 0,400,3);return false">&larr; prev</div>
+                        <ul id="indicator">            
+                            <li class="active">1</li>
+                            <li>2</li>
+                            <li>3</li>
+                        </ul>
+                    <div id="next" onclick="myScroll.scrollToPage('next', 0);return false">next &rarr;</div>
+                </div>
+            </div><!--banner-->
+        </div><!--slider-->
+
+        <div class="navBody" style="margin-bottom:35px;">
+            <for start="0" end="3" step="1" name="i">
+	            <div class="layer" style="background: -webkit-gradient(linear, 0 0, 0 100%, from(#565650), to(#1e1e18));">
+					<ul>
+						<li class="normal_li">
+	                    	<a href="{$pageinfo [navigation] [$i * 3] [url]}">
+	                        	<div class="navBoxNew">
+	                                <div class="menutitle">{$pageinfo [navigation] [$i * 3] [nav_name]}</div>
+	                                <div class="menuimg"><img src="{$pageinfo [navigation] [$i * 3] [nav_image_path]}" width="25" height="25" alt="" /></div>
+	                            </div>
+	                        </a>
+	                    </li>
+	                    <li class="normal_li">
+	                    	<a href="{$pageinfo [navigation] [$i * 3 + 1] [url]}">
+	                        	<div class="navBoxNew">
+	                                <div class="menutitle">{$pageinfo [navigation] [$i * 3 + 1] [nav_name]}</div>
+	                                <div class="menuimg"><img src="{$pageinfo [navigation] [$i * 3 + 1] [nav_image_path]}" width="25" height="25" alt="" /></div>
+	                            </div>
+	                        </a>
+	                    </li>
+	                    <li class="right_li">
+	                    	<a href="{$pageinfo [navigation] [$i * 3 + 2] [url]}">
+	                        	<div class="navBoxNew">
+	                                <div class="menutitle">{$pageinfo [navigation] [$i * 3 + 2] [nav_name]}</div>
+	                                <div class="menuimg"><img src="{$pageinfo [navigation] [$i * 3 + 2] [nav_image_path]}" width="25" height="25" alt="" /></div>
+	                            </div>
+	                        </a>
+	                    </li>
+	                </ul>
+				</div>
+			</for>
+        </div><!--navBody-->
+        {:W('Footer', array('e_id' => $e_id))}<!--footer-->
+    </div><!--wrap-->
+
+<!--以下为滑动插件形成效果的js-->
+<script type="text/javascript">
+var myScroll;
+function loaded() {
+	myScroll = new iScroll('wrapper', {
+		snap: true,
+		momentum: false,
+		hScrollbar: false,
+		onScrollEnd: function () {
+			document.querySelector('#indicator > li.active').className = '';
+			document.querySelector('#indicator > li:nth-child(' + (this.currPageX+1) + ')').className = 'active';
+		}
+	}); 
+}
+document.addEventListener('DOMContentLoaded', loaded, false);
+</script>
+<script type="text/javascript">
+var count = document.getElementById("thelist").getElementsByTagName("img").length;	
+for(i=0;i<count;i++){
+	document.getElementById("thelist").getElementsByTagName("img").item(i).style.cssText = " width:"+document.body.clientWidth+"px";
+}
+document.getElementById("scroller").style.cssText = " width:"+document.body.clientWidth*count+"px";
+setInterval(function(){
+	myScroll.scrollToPage('next', 0,400,count);
+},3500 );
+window.onresize = function(){
+	for(i=0;i<count;i++){
+		document.getElementById("thelist").getElementsByTagName("img").item(i).style.cssText = " width:"+document.body.clientWidth+"px";
+	}
+	document.getElementById("scroller").style.cssText = " width:"+document.body.clientWidth*count+"px";
+} 
+</script>
+<script type="text/javascript">
+var e_id = '{$einfo.e_id}';				//要分享的商家编号
+//分享的信息
+var shareData = {
+	appid: "{$pageinfo [shareinfo] [appid]}", // 分享的商家编号
+    img_url: "{$pageinfo [shareinfo] [img_url]}", // 分享的图片
+    img_width: "160", // 宽度
+    img_height: "160", // 高度
+    title: "{$pageinfo [shareinfo] [title]}", // 分享的标题
+    desc: "{$pageinfo [shareinfo] [desc]}", // 分享的描述
+    link: "{$pageinfo [shareinfo] [link]}", // 分享的超链接
+    fakeid : "{$openid}",																		//分享用户的id
+    callback:function(result){
+    	if(result != 'send_app_msg:cancel' && result != 'share_timeline:cancel' && result != 'share_weibo:cancel' && result != 'share_fb:cancel'){
+    		$.post("{:U('Home/MobileCommon/shareRecord','','')}",
+    				{ e_id : e_id, link : shareData.link, openid : shareData.fakeid },			//分享的时候传3个参数：1、商家编号；2、链接地址（区分授权和不授权两种）；3、分享的微信号（只有开启授权登录才有）
+    				function(data){
+    					if(data.status == 1){
+    						scscms_alert("谢谢您的分享!", "ok", "", 2);//定时关闭窗口
+    					}else{
+    						scscms_alert("服务器繁忙，请稍后再试!"+data.msg, "warning", "", 2);//定时关闭窗口
+    					}
+    				},
+    				'json');
+    	}else{
+    		scscms_alert("下次记得分享噢!", "ok", "", 2);//定时关闭窗口
+    	}
+    }	/*分享后的回调函数，发送给朋友的类型分为send_app_msg:confirm或send_app_msg:cancel；对应发送给朋友、分享到朋友圈、分享到腾讯微博、分享到facebook都有4种类型*/
+};
+</script>
+</body>
+</html>

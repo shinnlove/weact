@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<title>测试分发商品</title>
+</head>
+<body>
+	测试分发商品
+	<button name="distribute-btn" id="distribute-btn">分发</button>
+
+<script>
+var pid = '{$pid}', sidlist = '{$sidlist}', distributorURL = "{:U('Admin/DistributeProduct/handleDistributor', '', '')}";
+$(function(){
+	$("#distribute-btn").click(function(){
+		var params = {
+				pid : pid,
+				sidlist : sidlist
+		}
+		$.post(distributorURL, params, function(result){
+			// 处理
+			alert(result.errCode+result.errMsg);
+		},'json');
+	});
+});
+</script>
+</body>
+</html>

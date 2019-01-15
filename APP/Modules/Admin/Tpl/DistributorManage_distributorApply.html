@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/default/easyui.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jquery-easyui-1.3.5/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weactAdminStyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-1.9.1.min.js"></script>
+<!-- <script type="text/javascript" src="__PUBLIC__/js/template-native.js"></script> -->
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/extension/datagridview/datagrid-detailview.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jquery-easyui-1.3.5/locale/easyui-lang-zh_CN.js"></script>
+<title>分销商申请管理</title>
+</head>
+
+<body class="easyui-layout" fit="true">
+	<div data-options="region:'center',border:false">
+		<table id="dg" title="分销商申请信息  " toolbar="#toolbar"></table>
+	</div>
+	
+	<!-- easyUI的工具条 -->
+	<div id="toolbar" >
+		<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-reload" plain="true" onclick="newDisApply();">新提交申请</a>
+		<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-search" plain="true" onclick="allDisApply();">所有申请</a>
+		<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-redo" plain="true" onclick="disFromShelf('on');">批量审核通过</a> 
+		<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-undo" plain="true" onclick="disFromShelf('off');">批量取消资格</a>
+		<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-save" plain="true" onclick="exportDistributorApply();">导出申请记录</a>
+		<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-reload" plain="true" onclick="allDisApply()">刷新</a>
+		<span class="searchbox">
+			<select id="search_condition" name="search_condition">
+				<option value="customer_name" selected="selected">客户姓名</option>
+				<option value="account">客户编号</option>
+				<option value="contact_number">联系电话</option>
+				<option value="email">邮箱</option>
+				<option value="nick_name">客户昵称</option>
+			</select>
+			<input id="search_content" name="search_content" type="text" class="searchbox-text mysearchbox" placeholder="可选择一个条件查询" />
+			<span class="searchbox-button searchbox-button-hover"></span>
+		</span>
+		<span class="searchbox">
+			<select id="category_search" name="category_search">
+				<option value="-1" selected="selected">全部</option>
+				<option value="1" selected="selected">已审核</option>
+				<option value="0" selected="selected">未审核</option>
+			</select>
+		</span>
+		<span class="remind-condition">状态筛选：</span>
+	</div>
+	
+
+<script type="text/javascript">
+var dg = $("#dg"); // 全局变量table easyUI
+$(function() {
+	// easyui初始化
+	$('#dg').datagrid({
+		url: "{:U('Admin/DistributorManage/getAllDistributorApply', '', '')}",
+		singleSelect: false,
+		collapsible: true,
+		method: 'post',
+		fitColumns: true,
+		fit: true,
+		pagination: true,
+		pageSize: 10,
+		pageList: [5, 10, 15],
+		rownumbers: true,
+		idField: 'apply_id',
+		columns: [[
+				{ field: 'apply_id', title: '分类编号', width: 100, hidden: true }, 
+				{ field: 'ck', checkbox: 'true', width: 60 }, 
+				{ field: 'customer_name', title: '客户姓名', width: 100, align:'left', sortable: true }, 
+				{ field: 'account', title: '客户账号', width: 100, align:'left', sortable: true }, 
+				{ field: 'contact_number', title: '联系电话', width: 100, align:'left', sortable: true }, 
+				{ field: 'email', title: '邮箱', width: 150, align:'left', sortable: true }, 
+				{ field: 'sex', title: '性别', width: 60, align:'left', sortable: true }, 
+				{ field: 'customer_address', title: '客户地址', width: 100, align:'left', sortable: true }, 
+				{ field: 'nick_name', title: '客户昵称', width: 100, align:'left', sortable: true }, 
+				{ field: 'apply_time', title : '申请时间', width : 160, align : 'center', sortable: false,formatter:applytimeInit }, 
+				{ field: 'is_read', title: '是否查看', width: 120, align:'center', sortable: true ,hidden: true}, 
+				{ field: 'is_approve', title: '是否批准', width: 120, align:'center', sortable: false,formatter:isApproveInit }, 
+				{ field: 'approve_time', title: '被批准的时间', width: 160, align:'center', sortable: true,formatter:ApproveTimeInit }, 
+				{ field: 'unauthorize_time', title: '资格被取消的时间', width: 160, align:'center', sortable: true,formatter:unauthorizeTimeInit }, 
+			 ]],
+		view: detailview,
+		detailFormatter: function(index, row) {
+			return '<div class="ddv" id="' + row.apply_id + '">' + '</div>';
+		},
+		onExpandRow: function(index, row){
+			$.post('{:U("Admin/DistributorApplyManage/getDistributorChainInfo", "", "")}',
+					{ pid : row.apply_id },
+					function(result){
+						if(result.errCode == 0){
+							var storageinfo = template( 'storageinfotpl', result.data ); // artTemplate渲染模板引擎
+							if (storageinfo == '{Template Error}') {
+								storageinfo = ''; // 如果渲染失败，则detailinfo置空
+								$.messager.alert('温馨提示', '网络繁忙，该功能未完善！', 'error'); // 提示用户出错了
+	                        }
+							$('#'+row.apply_id).html(storageinfo); // 写入展开详情中
+							$('#dg').datagrid("fixDetailRowHeight", index); // 该行的详情框高度自适应（非常重要，以前没处理好）
+						} else {
+							$.messager.alert('温馨提示', '网络繁忙，该功能未完善！', 'error');
+						}
+					},'json');	//post
+            $('#dg').datagrid('fixDetailRowHeight', index);
+	    }	// onExpandRow
+	}); //end easyui
+
+
+	
+	// 按审核状态分类搜索 
+	$('#category_search').change(function() {
+		var searchcondition = 'is_approve';
+		var searchcontent = $('#category_search').val(); // 要搜索的导航名称
+		$("#dg").datagrid({
+			url: "{:U('Admin/DistributorApplyManage/searchDistributorApply', '', '')}",
+			queryParams: {
+				searchcondition: searchcondition,
+				searchcontent: searchcontent
+			}
+		}, 'load');
+		clearSelect(); // 清空潜在选择项
+	});
+	
+	// 指定条件查询，进行分销商申请搜索
+	$('.searchbox-button').click(function() {
+		var searchcondition = $('#search_condition').val().trim(); // 获取搜索条件
+		var searchcontent = $('#search_content').val(); // 获取搜索内容
+		if (searchcontent.trim() == "" || searchcontent == "undefined") {
+			$.messager.alert('温馨提示', '请输入搜索内容！', 'warning');
+			return
+		}
+		$("#dg").datagrid({
+			url: "{:U('Admin/DistributorApplyManage/searchDistributorApply', '', '')}",
+			queryParams: {
+				searchcondition: searchcondition,
+				searchcontent: searchcontent
+			}
+		}, 'load');
+		clearSelect(); // 清空潜在选择项
+	});
+});
+
+/*-------------easyUI初始化部分函数--------------*/
+
+// 初始化申请时间
+function applytimeInit(val, row){
+	return "<span class='green' style='color:#39b868;'>" + row.apply_time + "</span>";
+}
+
+//初始化是否已读状态
+function isreadInit(val, row){
+	if(row.is_read==0){
+		return "<span class='greey' style='color:#666;'>未查看</span>";
+	} else {
+		return "<span class='green' style='color:#39b868;'>已查看</span>";
+	}
+}
+
+//初始化是否审核通过状态
+function isApproveInit(val, row){
+	if(row.is_approve==0){
+		return "<span class='grey' style='color:#666;'>未审批</span>";
+	} else {
+		return "<span class='green' style='color:#39b868;'>已审批</span>";
+	}
+}
+
+//初始化审核通过时间
+function ApproveTimeInit(val, row){
+	if(row.approve_time==-1){
+		return "<span class='grey' style='color:#666;'>/</span>";
+	}
+	else{
+		return "<span class='green' style='color:#39b868;'>" + row.approve_time + "</span>";
+	}
+	
+}
+
+//初始化资格取消时间
+function unauthorizeTimeInit(val, row){
+	if(row.unauthorize_time==-1){
+		return "<span class='grey' style='color:#666;'>/</span>";
+	}
+	else{
+		return "<span class='green' style='color:#39b868;'>" + row.unauthorize_time + "</span>";
+	}
+}
+
+
+
+/*-----------easyUI功能按钮区------------*/  
+
+// 共用警示函数：有些调用后不使用此函数可能会存在隐藏错误
+function clearSelect() {
+	dg.datagrid("clearSelections"); // 清楚所有选中的行
+}
+
+
+//查看新提交的分销商申请
+function newDisApply(){
+	dg.datagrid({
+		url:"{:U('Admin/DistributorApplyManage/searchDistributorApply', '', '')}",
+		queryParams:{ 
+			searchcondition:'is_read',
+			searchcontent:0
+		}
+	},'load');
+	clearSelect(); // 默认未选取任何一行记录
+}
+
+//查看所有分销商申请信息操作,相当于是执行了一次右边下拉框的选择全部的操作
+function allDisApply() {
+	var searchcondition = 'is_approve';
+	var searchcontent = -1;
+	$("#dg").datagrid({
+		url: "{:U('Admin/DistributorApplyManage/searchDistributorApply', '', '')}",
+		queryParams: {
+			searchcondition: searchcondition,
+			searchcontent: searchcontent
+		}
+	}, 'load');
+	clearSelect(); // 清空潜在选择项
+}
+// 分销商申请批量审核/取消资格函数，形参type是on代表分销商申请批准、是off代表分销商申请未批准
+function disFromShelf(type) {
+	var rows = $("#dg").datagrid('getSelections');
+	var rowdata = []; // 要批准或不批准的分销商数组
+	if (rows.length == 0) {
+		$.messager.alert('温馨提示', '至少需要选择一个分销商申请！', 'warning');
+	} else if (rows.length >= 10) {
+		$.messager.alert('温馨提示', '一次最多选择10个分销商批准/不批准！', 'warning');
+	} else {
+		var flag = 0; // 所选分销商申请通过验证的标记（要批准的分销商申请不能包含已批准、要取消批准的申请不能包含已取消批准的申请）
+		for (var i = 0; i < rows.length; i++) {
+			if (type == "on") {
+				if (rows[i].is_approve != 0) {
+					flag = 1;
+					break;
+				} else {
+					rowdata.push(rows[i].apply_id);  
+				}
+			}else if (type == "off") {
+				if (rows[i].is_approve == 0) {
+					flag = 1;
+					break;
+				} else {
+					rowdata.push(rows[i].apply_id);
+				}
+			}
+		}
+		if (flag == 0) {
+			MLoading.show("提交中..."); // 增加等待
+			$.post('{:U("Admin/DistributorApplyManage/distributorApplyFromShelf", "", "")}', {
+				rowdata: rowdata.join(','),
+				type: type
+			}, function(result) {
+				MLoading.hide(); // 友好撤销等待
+				if (result.errCode == 0) {
+					$.messager.alert('温馨提示', '操作成功！', 'info');
+					dg.datagrid('reload'); // 无刷新重载页面数据
+					clearSelect(); // 清空可能潜在选择的分销商申请
+				} else {
+					$.messager.alert('温馨提示', '操作失败！'+result.errMsg, 'warning');
+				}
+			});
+		} else {
+			if (type == "on") {
+				$.messager.alert('温馨提示', '审核通过操作只能选择取消资格的分销商申请！', 'warning');
+			}else if (type == "off") {
+				$.messager.alert('温馨提示', '取消资格操作只能选择审核通过的分销商申请！', 'warning');
+			}
+		}
+	}
+}
+
+//导出excel数据
+function exportDistributorApply() {
+	$.messager.confirm('温馨提示', '确定要导出所有分销商申请数据吗?', function(result){
+		if(result) {
+			window.location.href = "{:U('Admin/DistributorApplyManage/exportDistributorApply', '', '')}";
+		}
+	});
+}
+</script>
+</body>
+</html>

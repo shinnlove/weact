@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/guideappstyle.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/template-native.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>商品库存信息</title>
+</head>
+
+<body>
+	<!-- 下拉等待刷新效果层 begin -->
+	<div class="loading f14" id="refreshWait" style="display:none;">
+	    <div class="loadicon">
+	        <span class="blockG" id="rotateG_01"></span>
+	        <span class="blockG" id="rotateG_02"></span>
+	        <span class="blockG" id="rotateG_03"></span>
+	        <span class="blockG" id="rotateG_04"></span>
+	        <span class="blockG" id="rotateG_05"></span>
+	        <span class="blockG" id="rotateG_06"></span>
+	        <span class="blockG" id="rotateG_07"></span>
+	        <span class="blockG" id="rotateG_08"></span>
+	    </div>
+	    正在加载...
+	</div>
+	<!-- 下拉等待刷新效果层 end -->
+	
+	<div class="wrap">
+		
+		<!-- 搜索框 begin -->
+    	<div class="search-bar">
+        	<div class="search-section1">
+            	<img class="pro-search-btn" src="__PUBLIC__/images/order-search.jpg" alt="" />
+        		<input type="text" name="search-input" class="search-info" placeholder="输入内容进行搜索" value="" />
+            </div>
+            <div class="search-section2">
+            	<a href="javascript:;" class="pro-search-btn">商品搜索</a>
+            </div>
+        </div>
+        <!-- 搜索框 end -->
+        
+        <!-- 商品种类排序页卡 begin -->
+        <div class="category-search">
+        	<ul>
+            	<li data-tid="1">
+                    <span class="category-name">上新</span>
+                    <span class="sort-type sort-none"></span>
+                </li>
+                <li data-tid="2">
+                    <span class="category-name">热销</span>
+                    <span class="sort-type sort-none"></span>
+                </li>
+                <li data-tid="3">
+                    <span class="category-name">人气</span>
+                    <span class="sort-type sort-none"></span>
+                </li>
+                <li data-tid="4">
+                    <span class="category-name">价格</span>
+                    <span class="sort-type sort-none"></span>
+                </li>
+                <li data-tid="5">
+                    <span class="category-name">分类</span>
+					<span class="sort-type sort-none"></span>
+                </li>
+            </ul>
+            <div class="clear"></div>
+        </div>
+        <!-- 商品种类排序页卡 end -->
+        
+        <!-- 商品信息区域 begin -->
+        <div class="product-list">
+        	<ul>
+        		<div class="infobox">
+           			<i class="iconSuccess cf cFont db"></i>
+           			<p>正在努力加载...</p>
+       			</div>
+            </ul>
+        </div>
+        <!-- 商品信息区域 end -->
+        
+    </div>
+    
+    <div class="deco"></div>
+    <!-- 上推瀑布流刷新下一页效果层与现实全部信息层 begin -->
+    <div class="loading f14" id="loadNext" style="display:none;">
+        <div class="loadicon">
+            <span class="blockG" id="rotateG_01"></span>
+            <span class="blockG" id="rotateG_02"></span>
+            <span class="blockG" id="rotateG_03"></span>
+            <span class="blockG" id="rotateG_04"></span>
+            <span class="blockG" id="rotateG_05"></span>
+            <span class="blockG" id="rotateG_06"></span>
+            <span class="blockG" id="rotateG_07"></span>
+            <span class="blockG" id="rotateG_08"></span>
+        </div>
+	正在加载...
+    </div>
+	<div id='loadNextPos'></div>
+   	<div class="loading" id="showAll" style="display:none;">已显示全部<br />下拉顶部刷新</div>
+    
+<!-- 商品信息js模板 begin -->
+<script type="text/html" id="proinfotpl">
+<% for(var i in productinfo) { %>
+	<li data-pid="<%=productinfo[i].product_id%>">
+		<div class="product-one">
+			<div class="pro-img"><img src="<%=productinfo[i].micro_path%>" alt="" width="100" height="100" /></div>
+			<div class="product-info">
+				<div class="product-name"><%=productinfo[i].product_name%></div>
+				<div class="product-number">
+					<span class="info-label">商品编号：</span>
+					<span class="info-content"><%=productinfo[i].product_number%></span>
+				</div>
+				<div class="storage-amount">
+					<span class="info-label">库存量：</span>
+					<span class="info-content"><%=productinfo[i].total_storage_left%></span>
+				</div>
+				<% if (productinfo[i].original_price != 0) { %>
+				<div class="product-price">
+					<span class="info-label">市场价：</span>
+					<span class="info-content price-del">¥ <%=productinfo[i].original_price%> 元</span>
+				</div>
+				<div class="promote-price">
+					<span class="info-label price-discount">促销价：</span>
+					<span class="info-content price-discount">¥ <%=productinfo[i].current_price%> 元</span>
+				</div>
+				<% } else { %>
+				<div class="product-price">
+					<span class="info-label">市场价：</span>
+					<span class="info-content price-discount">¥ <%=productinfo[i].current_price%> 元</span>
+				</div>
+				<% } %>
+			</div>
+			<div class="clear"></div>
+		</div>
+		<div class="product-handle">
+			<div class="handle-btn"><span class="weixin-share" onClick="window.wst.wechatshare('<%=productinfo[i].product_name%>', '<%=productinfo[i].macro_path%>', '<%=productinfo[i].link_url%>')"></span></div>
+			<div class="handle-btn"><span class="pro-link" onClick="window.wst.copyurl('<%=productinfo[i].link_url%>')"></span></div>
+			<div class="handle-btn"><span class="pro-handle" onClick="window.wst.shopcollection('<%=productinfo[i].product_id%>','<%=productinfo[i].sid%>','<%=productinfo[i].product_name%>','<%=productinfo[i].link_url%>','<%=productinfo[i].macro_path%>','<%=productinfo[i].product_number%>','<%=productinfo[i].total_storage_left%>','<%=productinfo[i].original_price%>','<%=productinfo[i].current_price%>')"></span></div>
+		</div>
+	</li>
+<% } %>
+</script>
+<!-- 商品信息js模板 end -->
+
+<!-- 页面ready 函数及绑定事件 begin -->
+<script type="text/javascript">
+//定义页面变量
+var eid = "{$eid}", // 商家编号
+	sid = "{$sid}", // 分店编号
+	gid = "{$gid}", // 导购编号
+	jsonData = '{$productlistjson}', // 页面的json数据
+	hasMoreData = true, // 本js模块全局变量：后续是否还有数据
+	isLoadingData = false, // 本js模块全局变量：本模块正在请求数据标记
+	nextStart = 0, // 页面默认下一次请求开始的数据位置
+	queryType = 0, // 默认0是自由排序，1、上新；2、热销；3、人气；4、价格；5、分类。
+	querySort = 0, // 默认0是降序排序，默认1是升序排序
+	requestProductListURL = "{:U('GuideApp/OnlineProduct/requestOnlineProductStorage', '', '')}"; // 分页请求商品信息地址
+
+// 页面初始化函数
+$(document).ready(function() {
+	// 第一次直出渲染商品模板
+	var productlistinfo = $.parseJSON(window.jsonData); // 解析页面的json数据（不管是带了反斜杠，还是没有反斜杠，都可以解析json数据）
+	var tmpl = template('proinfotpl', productlistinfo.data); // 利用json数据渲染art模板引擎，返回渲染后的htmlDOM结构与数据
+	var proListObj = $('.product-list ul'); // 抓取class为product-list的ul，定义为proListObj对象
+	if (tmpl == '{Template Error}') {
+		proListObj.html('好像出了点问题，请联系管理员');		// 如果渲染模板出错，更换样式
+	} else {
+		proListObj.html(tmpl);						// 渲染成功就把模板渲染的信息写入
+	}
+	window.nextStart = productlistinfo.nextStart;
+	
+	// 排序页卡点中事件
+    $(".wrap").on("click", ".category-search ul li", function(e) {
+		e.stopPropagation();
+		var liobj = $(this); // 抓取当前点击的li对象
+		var sortobj = liobj.children(".sort-type"); // 抓取被点击的排序对象
+		window.queryType = liobj.attr("data-tid"); // 获取点中的搜索页卡：1、上新；2、热销；3、人气；4、价格；5、分类。
+		if(sortobj.hasClass("sort-none")) {
+			// 如果点中的是新类别排序，默认撤销其他类别排序，同时本类别排序变成down
+			liobj.siblings().children(".sort-type").removeClass("sort-up").removeClass("sort-down").addClass("sort-none"); // 撤销其他节点的
+			sortobj.removeClass("sort-none").addClass("sort-down"); // 默认第一下点中向下排序
+			// to do query by down sort ...
+			// 这种情况queryType看点中的排序页卡，querySort为0降序查询
+			window.querySort = 0; // 降序排序
+			getProductList("pull", 0); // 查询
+		} else {
+			// 如果点中的是原来已排序的类别
+			if (sortobj.hasClass("sort-down")) {
+				// 如果原来是向下排序，则把箭头向上排序
+				sortobj.removeClass("sort-down").addClass("sort-up");
+				// to do query by up sort ...
+				// 这种情况queryType看点中的排序页卡，querySort为1升序查询
+				window.querySort = 1; // 降序排序
+				getProductList("pull", 0); // 查询
+			} else {
+				// 如果原来是向上，则把箭头向下排序
+				sortobj.removeClass("sort-up").addClass("sort-down");
+				// to do query by down sort ...
+				// 这种情况queryType看点中的排序页卡，querySort为0降序查询
+				window.querySort = 0; // 降序排序
+				getProductList("pull", 0); // 查询
+			}
+		}
+	}).on("click", ".pro-search-btn", function(e){
+		e.stopPropagation(); // 阻止事件传播
+		var searchstring = $(".search-info").val().trim(); // 获取搜索框内容
+		if (searchstring == "") {
+			// 如果没有输入搜索内容点击商品搜索，直接提醒并返回
+			scscms_alert("请输入搜索内容！", "warn", "", 2);//定时关闭窗口
+			$(".search-info").focus();
+			return false;
+		}
+		getProductList("pull", 0); // 查询
+	}).on("click", ".product-one", function(e){
+		// 点击商品预览
+		e.stopPropagation(); // 阻止事件传播
+		var _t = $(this); // 获取当前点击对象
+		var pid = _t.parent().data('pid'); // 获取所点击的商品id编号
+		window.location.href = "{:U('WeMall/QRCode/product', array('sid' => $sid), '')}?pid="+pid; // 跳转商品列表
+	});
+	
+	// 安卓4.0版本灵敏度兼容
+    var level = /Android 4.0/.test(window.navigator.userAgent) ? -10 : -100;
+    if (/MQQBrowser/.test(window.navigator.userAgent)) {
+        level = -10; // QQ浏览器灵敏度兼容
+    } 
+    
+    var loadingObj = $('#loadNext'); // 底部正在加载
+    var loadingPos = $('#loadNextPos'); // 紧挨着上边div的div对象
+    
+    // 触摸整个$(window)对象！！！ 2015/03/17 21:15:00注，这里不能绑定body或子元素
+    var x, y , endX, endY, offsetY, loadingAction;
+    $(window).on('touchstart', function(e) {
+        x = endX = e.originalEvent.touches[0].pageX;
+        y = endY = e.originalEvent.touches[0].pageY;
+    }).on('touchmove', function(e) {
+        endX = e.originalEvent.touches[0].pageX;
+        endY = e.originalEvent.touches[0].pageY;
+        offsetY = endY - y;
+		
+        // 向下拉手势刷新
+        if (offsetY > 10 && !isLoadingData && document.body.scrollTop <= 1) {
+            isLoadingData = true;
+            $('#refreshWait').stop(true, true).show();
+            getProductList('pull', 0);			// 由本模块内的init方法来调用getOrderList方法下拉刷新
+        }
+    });
+    
+	// 向上推（到底部才加载）
+	$(window).scroll(function() {
+		var scrollh = document.body.scrollHeight; // 网页正文全文高
+		var clienth = document.documentElement.clientHeight; // 网页可见区域高度
+		var scrollt = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop; // 网页被卷去的高
+		var limitheight = 20; // 触碰屏幕的距离底部
+		if (scrollt + clienth + limitheight >= scrollh && !isLoadingData && hasMoreData) {
+			isLoadingData = true;
+            $('#loadNext').stop(true, true).slideDown('fast');
+            getProductList('drag');
+		}
+		scrollPosition = $(window).scrollTop();
+	});
+	
+});
+	
+// 分页请求商品列表函数
+function getProductList(action, nextStart) {
+	
+	var start = 0; // 定义起始页为0
+	if (typeof nextStart == 'undefined') {
+		start = window.nextStart; // 如果没有定义nextStart下一页数据，就用window.nextStart这个值
+	} 
+	
+	isLoadingData = true; // 模块设置为正在请求数据
+	
+	// 基本URL地址
+	var url = requestProductListURL + "?eid=" + eid + "&sid=" + sid + "&gid=" + gid + "&nextStart=" + start; // 分页请求数据的地址
+	
+	// 默认就是queryType == 0的情况，现在不等于0，就要带上类别参数
+	if (window.queryType != 0) {
+		url += "&querytype=" + window.queryType; // 带上查询类型
+	}
+	// 默认是降序排序
+	if (window.querySort != 0) {
+		url += "&querysort=" + window.querySort; // 带上排序
+	}
+	// 如果有搜索内容，一并传入搜索参数
+	var searchcontent = $(".search-info").val().trim(); // 获取搜索框内容
+	if (searchcontent != "") {
+		url += "&querycontent=" + searchcontent; // 带上搜索内容
+	}
+	
+	// 开始定义本次操作方法options，然后交给ajax或ajaxForm执行
+	var opts = {
+		// 发送前执行：
+		'beforeSend': function() {
+			switch (action) {
+			case 'pull':
+				// 如果是下拉刷新操作，默认不出现加载狂（因为有提示部分）
+				$('#showAll').hide(); // 默认已显示全部的div隐藏
+				break;
+			case 'drag':
+				// 如果是上推操作
+				MLoading.show('加载中');
+				break;
+			default:
+				MLoading.show('加载中');
+				break;
+			}
+			hasMoreData = true; // 模块开始请求新数据的标记置为true
+		},
+		// 完成后执行：
+		'complete': function() {
+			$('#waitForLoad').hide(); // 等待加载div隐藏
+			$('#refreshWait').slideUp(); // 顶部正在加载div下滑
+			$('#loadNext').slideUp(); // 底部正在加载div也下滑
+		},
+		// 被响应后执行：
+		'success': function(re) {
+			var status = parseInt(re.errCode); // 将服务器返回错误码转整
+			if (status !== 0) {
+				isLoadingData = false; // 模块不在请求数据中
+				return false; // errCode不为0，有错误码，表示请求数据失败
+			}
+
+			var proListObj = $('.product-list ul'); // 抓取class为product-list的ul，定义为proListObj对象
+
+			if (action == 'pull') {
+				// 如果加载数据的动作是下拉，则有新微博可能已经更新，需要清空原来的
+				// 先把内容清空，否则主题已经存在就不渲染模板
+				proListObj.html('');
+				var tmpl = template('proinfotpl', re.data); // 使用re的data数据渲染art模板引擎得到渲染后的html结构
+				proListObj.html(tmpl); // 写入新html数据
+				$('.deco').show();
+			} else {
+				var tmpl = template('proinfotpl', re.data); // 使用新数据渲染art模板引擎
+				if (tmpl == '{Template Error}') {
+					tmpl = ''; // 如果渲染失败，则html置空
+				}
+				$('.infobox').hide(); // 隐藏正在努力加载div
+				proListObj.append(tmpl); // 在文档尾追加新html数据
+				// 如果返回的json数据的data字段的threadList字段里无数据，就不再加载任何数据
+				if (re.data.productinfo.length == 0) {
+					hasMoreData = false; // 模块不在加载数据中
+					$('#loadNext').stop(true, true).hide(); // 正在加载停止，并隐藏（关于stop(true, true)的解释请见项目收藏夹）
+					$('#showAll').show(); // 出现已经显示全部数据的div
+					$('.deco').hide();
+				}
+			}
+			window.nextStart = nextStart = re.nextStart; // 将下一页数据给到nextStart，同时给到window.nextStart
+			
+			// 至此，一次pull或者drag操作所有DOM元素与结构、特效变更结束
+			isLoadingData = false; // 本模块正在loading数据的状态变为false
+			$('#refreshWait').hide(); // 隐藏刷新等待提示框
+		},
+		// 请求url错误或未响应时执行：
+		error: function() {
+			isLoadingData = false; // 本模块正在loading数据的状态变为false
+		}
+	};
+	// 所有事情ajax的操作opts都定义完了，才开始调用global.js中定义的DIC的ajax方法静态请求数据
+	ajaxRequest(url, '', opts);
+}
+</script>
+<!-- 页面ready 函数及绑定事件 end -->
+
+<!-- ajax通信协议 begin -->
+<script>
+function ajaxRequest(url, data, opts) {
+	var opts = opts || {};
+	var loadingTimer = '';
+	url = url.indexOf('?') === -1 ? url + '?' : url + '&';
+	url = url.replace(/\&resType\=[^\&]+/g, '') + 'resType=json';
+	url = url.replace(/\&isAjax\=1/g, '') + '&isAjax=1';
+  
+	var ajaxOpts = {
+		url: url,
+		data: data,
+		cache: opts.cache || false,			// false不缓存请求
+		processData: opts.isUpload,
+		contentType: opts.isUpload ? false : 'application/x-www-form-urlencoded',
+		type: data ? 'POST' : 'GET',		//如果没有data数据，就是get；如果有data数据就是post
+		dataType: opts.dataType || 'json',	//opts中没有指定dataType就默认使用json
+		timeout: opts.timeout || 30000,
+		jsonp: opts.dataType === 'jsonp' ? 'callback' : null,
+		jsonpCallback: opts.dataType === 'jsonp' ? opts.success : null,
+		beforeSend: function(XHR, option) {
+			if (opts.requestIndex) {
+				if (opts.requestMode == 'block') {
+					if (jQuery.ajax._requestCache[opts.requestIndex]) {
+						return false;
+					}
+				} else if (opts.requestMode == 'abort') {
+					if (jQuery.ajax._requestCache[opts.requestIndex]) {
+						jQuery.ajax._requestCache[opts.requestIndex].abort();
+					}
+				}
+			}
+
+			var result = true;
+			if (typeof opts.beforeSend == 'function') {
+				result = opts.beforeSend(XHR, option);
+			}
+
+          if (result) {
+              jQuery.ajax._requestCache[opts.requestIndex] = XHR;
+              if (!opts.noShowLoading) {
+                  loadingTimer = setTimeout(function() {
+                      jQuery.DIC.showLoading();
+                  }, 100);
+              }
+          }
+
+          return result;
+      },
+      // 整个请求完整之后的回调
+      complete: function(XHR, status) {
+          /* if (jQuery.ajax._requestCache[opts.requestIndex]) {
+              jQuery.ajax._requestCache[opts.requestIndex] = null;
+          } */
+          if (typeof opts.complete == 'function') {
+              opts.complete(XHR, status);
+          }
+      },
+      // 请求成功回调
+      success: function(result, textStatus, c) {
+          clearTimeout(loadingTimer);
+          MLoading.hide();
+
+          if (result == null && !opts.noMsg) {
+              //jQuery.DIC.dialog({content:'您的网络有些问题，请稍后再试 [code:1]', autoClose:true});
+          }
+
+          if (typeof result !== 'object') {
+              result = jQuery.parseJSON(result);
+          }
+
+          if (typeof opts.success == 'function') {
+              opts.success(result, textStatus, opts);
+          }
+
+          if (result.errCode == 0) {
+              if (!opts.noMsg) {
+                  //jQuery.DIC.dialog({content:result.message, icon:'success', autoClose:true});
+              }
+
+              if (!opts.noJump && result.jumpURL) {
+                  var locationTime = result.locationTime || 2000;
+                  //jQuery.DIC.reload(result.jumpURL, locationTime);
+              }
+          } else if (result.errCode) {
+              if (!opts.noMsg) {
+                  var msg = result.message + '<span style="display:none;">' + result.errCode + '</span>';
+                  //jQuery.DIC.dialog({content:msg, autoClose:true});
+              }
+          } else {
+              if (!opts.noMsg) {
+                  //jQuery.DIC.dialog({content:'数据解析失败，请稍后再试 [code:2]', autoClose:true});
+              }
+          }
+      },
+      // 出错的调用
+      error: function(XHR, info, errorThrown) {
+          clearTimeout(loadingTimer);
+          //jQuery.DIC.showLoading('none');
+
+          if (XHR.readyState == 0 || XHR.status == 0) {
+              if (!opts.noMsg) {
+                  var msg = '您的网络有些问题，请稍后再试[code:4]';
+                  //jQuery.DIC.dialog({content: msg, autoClose:true});
+              }
+          } else if (info != 'abort' && !opts.noMsg) {
+              if (!opts.noMsg) {
+                  var msg = '';
+                  switch (info) {
+                      case 'timeout':
+                          msg = '对不起，请求服务器网络超时';
+                          break;
+                      case 'error':
+                          msg = '网络出现异常，请求服务器错误';
+                          break;
+                      case 'parsererror':
+                          msg = '网络出现异常，服务器返回错误';
+                          break;
+                      case 'notmodified':
+                      default:
+                          msg = '您的网络有些问题，请稍后再试[code:3]';
+                  }
+                  //jQuery.DIC.dialog({content: msg, autoClose:true});
+              }
+          }
+          if (typeof opts.error == 'function') {
+              opts.error();
+          }
+      }
+  };
+  jQuery.ajax(ajaxOpts);
+  
+  return false;
+}
+</script>
+<!-- ajax通信协议 end -->
+</body>
+</html>

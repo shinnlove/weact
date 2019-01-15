@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+<link media="screen and (min-width:1023px)" rel="stylesheet" type="text/css" href="__PUBLIC__/css/page_mp_style.css"/>
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<title>{$dinfo.title}</title>
+</head> 
+
+<body id="activity-detail">
+	<div class="rich_media">
+		<div class="rich_media_inner">
+            <h2 class="rich_media_title" id="activity-name"> {$dinfo.title} </h2>
+            <div class="rich_media_meta_list" style="margin-bottom:10px; font-style:normal;">
+                <em id="post-date" class="rich_media_meta text"> {$dinfo.add_time} </em>
+                <em class="rich_media_meta text"> {$dinfo.author} </em>
+            </div>
+            <div id="page-content" style="margin-bottom:10px;">
+                <div id="img-content">
+                    <div class="rich_media_thumb" id="media">
+                        <img class="cover" src="{$dinfo.cover_image}" />
+                    </div>
+                    <div class="rich_media_content" id="js_content">
+                        {$dinfo.main_content}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="original-url">
+                <div class="down-url"><a href="{$dinfo.original_url}" class="read-original" style="padding:3px;display:inline-block; border-radius:5px; border:1px solid #DDD; font-size:14px; text-decoration:none; color:#666;">原文链接</a></div>
+            </div>
+            <div class="orginal-deco" style="height:10px;"></div>
+        </div>
+    </div>
+    
+<script type="text/javascript">
+$(function(){
+	
+	$("#js_content p").find("img").css("width","100%");
+	$("#media .cover").css("width","100%");
+	
+	// 阅读原文链接点击
+	$(".read-original").click(function(){
+		
+	});
+});
+</script>
+</body>
+</html>

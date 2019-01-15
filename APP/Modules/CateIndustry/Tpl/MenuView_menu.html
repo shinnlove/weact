@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+<meta name="format-detection" content="telephone=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/template1/css/wei_canyin_v1.8.4.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/template1/css/wei_dialog_v1.2.1.css" />
+<script type="text/javascript" src="__PUBLIC__/template1/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/template1/js/wei_webapp_v2_common_v1.9.4.js"></script>
+<script type="text/javascript" src="__PUBLIC__/template1/js/wei_dialog_v2.2.3.js"></script>
+<title>{$einfo.e_name} {$navinfo.nav_name}</title>
+<style type="text/css">
+/**
+        解决右边背景总是为灰色的bug
+    */
+#page_allMenu section article, #pInfo {
+	min-height: 100%;
+}
+</style>
+</head>
+
+<body id="page_allMenu">
+	<div class="center">
+		<nav id='navBar'>
+			<dl>
+				<!--dt>循环打印分类</dt-->
+				<foreach name="navlist" item="nl">
+					<dd categoryId="{$nl.nav_id}">
+						{$nl.nav_name}<span></span>
+					</dd>
+				</foreach>
+			</dl>
+		</nav>
+		<section id="infoSection">
+			<article>
+				<!--div class="h2">每个分类的菜</div-->
+				<div id="pInfo">
+					<p>正在努力加载...</p>
+				</div>
+			</article>
+		</section>
+		<footer class="footFix footLeft">
+			<button class="btn_change">
+				我的餐车<!-- 暂时先不表示，否则更新数量的时候还要进行更新 <span class="num">{$ordernum}</span> -->
+			</button>
+		</footer>
+	</div>
+    
+<script type="text/javascript">
+	var SPECIAL_PRICE_VIP = '1';		//定义页面常量：VIP才享有的特价菜品标记是1
+	var SPECIAL_PRICE_YES = '2';		//定义页面常量：活动特价菜品标记是2
+	var HOT_START = '0';				//定义页面常量：人气菜品标记是2
+	var CUSTOMER_ISVIP = '{$ismember}';	//页面变量：当前顾客是否是会员，'1'代表是会员
+	// 姐姐建议会员和非会员都显示两个价格，只是在结算订单的时候不同价，只好在会员价格显示上取消CUSTOMER_ISVIP的判断了
+	
+	//设置高度函数
+	function setHeight() {
+		var cHeight;
+		cHeight = document.documentElement.clientHeight;				//抓取手机客户端高度（并非整个页面高度）
+		cHeight = cHeight + "px";										//加上后边像素
+		document.getElementById("navBar").style.height = cHeight;		//设置左列菜品分类栏navBar的高度为当前手机屏幕高度
+		document.getElementById("infoSection").style.height = cHeight;	//设置右列菜品列表栏infoSection的高度为当前手机屏幕高度
+	}
+	
+	//切换菜品类别函数
+	function doSelect() {
+		var dds = _qAll('#navBar dd');									//抓取到navBar中的dd（每一个菜品的分类）并放入数组中，dds是菜品数组
+		var aa = 0, bb;
+		var article = _q("#infoSection article");						//抓取到菜品详情里边的article标签
+		//为每个菜品栏目生成点击事件
+		_forEach(dds, function(ele, idx, dds) {
+			dds[idx].onclick = function() {
+				_q('.active').className = null;
+				this.className = "active";								//分类菜单激活
+
+				var div = document.getElementById("pInfo");				//直接抓取pInfo这个div
+				div.innerHTML = '';										//将里面所有的菜品一下子清空
+
+				var params = {
+					'categoryId' : this.getAttribute('categoryId'),		//当前对象的attribute的categoryId属性
+					'openid' : '{$openid}',								//当前用户的微信号，特别注意：必须要发送到后台!
+					'e_id' : '{$e_id}'									//一定要发送e_id
+				};
+				
+				//点击菜品栏目时，重新获取菜品post地址
+				$.post("{:U('CateIndustry/MenuView/getCategory')}", params, function(result){
+					var dishList = result['data'];						//菜品列表
+					var categoryId = result['categoryId'];				//菜品分类
+
+					var str = '';
+					var rnd = Math.random();
+					//穷举菜品列表中每一个菜（key）
+					for (key in dishList) {
+						var dish = dishList[key];						//获得当前穷举的菜
+						
+						if (dish.dIsSpecial == SPECIAL_PRICE_YES) {
+							//如果特价，处理特价效果
+							var priceHtml = "<em class='sale'><b>特价</b>"
+									+ dish['dSpecialPrice'] + "元/" + dish['dUnitName'] + "<br/><del>" 
+									+ dish['dPrice'] + "元/" + dish['dUnitName'] + "</del></em>";
+						} else if (dish.dIsSpecial == SPECIAL_PRICE_VIP) {
+							//如果是会员特价，处理会员特价效果，注意特价和会员特价只会显示一个
+							var priceHtml = "<em><b class='vip'>会员</b>"
+									+ dish['dSpecialPrice'] + "元/" + dish['dUnitName'] + "<br/><del>"
+									+ dish['dPrice'] + "元/" + dish['dUnitName'] + "</del></em>";
+						} else {
+							var priceHtml = "<em>" + dish['dPrice'] + "元/" + dish['dUnitName'] + "</em>";
+						}
+						//如果是人气，加上span标签，css中有backgroud人气图片做背景，这里更改没人气是0,1~5代表人气热度
+						if (dish.dIsHot > HOT_START) {
+							var hotHtml = '<span></span>';
+						} else {
+							var hotHtml = '';
+						}
+						//如果有人点过，加上点单记录
+						if (dish['dSubCount']) {
+							var dSubCountHtml = dish['dSubCount'] + '人点过';
+						} else {
+							var dSubCountHtml = '欢迎点选';
+						}
+						//拼接dd上的attribute信息
+						var attrList = " dUnitName='" + dish['dUnitName'] + "' dSubCount='" + dish['dSubCount']
+								+ "' dishid='" + dish['dishid'] + "' dName='" + dish['dName']
+								+ "' dTaste='" + dish['dTaste'] + "' dDescribe='" + dish['dDescribe']
+								+ "' dPrice='" + dish['dPrice'] + "' dIsHot='" + dish['dIsHot']
+								+ "' dSpecialPrice='" + dish['dSpecialPrice'] + "' dIsSpecial='" + dish['dIsSpecial'] + "' ";
+						//拼接最终dl里的内容
+						str += "<dl shopInfo='"+dish['allShopInfo']+"' "+attrList+"'>" 
+								+ "<dt><h3>" + dish['dName'] + "</h3></dt>"
+								+"<dd><a href='javascript:void(0)' class='dataIn'>"
+								+"<img src='" + dish['dPicture'] + "?rnd=" + rnd + "' alt='' title='' />"
+								+"<span title='" + dish['dPictureBig'] + "?rnd=" + rnd + "' style='display:none;'></span>"
+								+ hotHtml + "</a></dd>"
+								+"<dd>" + priceHtml + "</dd><dd class='dpNum'>" + dSubCountHtml + "</dd>"
+								+"<dd class='btn'><button class='minus'><strong></strong></button><i>" + dish['o2uNum']
+								+ "</i><button class='add'><strong></strong></button><em class='fixBig fake'></em></dd></dl>";
+					}
+
+					if (_q('.active').getAttribute('categoryId') == categoryId) {
+						div.innerHTML = str;						//拼接完html后替换内部所有的菜品
+						_q('#infoSection').scrollTop = 0;			//滚动到顶部
+						doSelectBtn();								//为新增加的html结构绑定菜品加减按钮事件
+						showPicInfo();								//为新增加的html结构绑定显示菜品图片信息事件
+					}
+				}, 'json');
+			}
+		});
+	}
+
+	//选择菜品按钮样式
+	function doSelectBtn() {
+		var btn = _qAll("article dl .btn");							//抓取当前菜品分类的每一条菜里的加减数量按钮，存到按钮数组里
+		var btnIndex = 0, btnLength = btn.length;					//定个游标从0开始，到按钮数组结束，循环
+
+		// countDish();
+		for (btnIndex; btnIndex < btnLength; btnIndex++) {
+			//btn里有4个孩子，第一个是减按钮，第二个是当前点菜数量，第三个是加按钮，第四个是显示大数字（用不着）
+			//定义三个变量：countNumText是当前点菜数量值，btnAdd是加按钮对象，btnMin是键按钮对象
+			var countNumText = parseInt(btn[btnIndex].children[1].innerHTML), btnAdd = btn[btnIndex].children[2], btnMin = btn[btnIndex].children[0];
+			
+			//调用按钮隐藏判断，如果countNumText小于0，btnShowHide函数会将其隐藏掉，否则用inline-block样式显示它
+			btnShowHide(countNumText, btn[btnIndex], false);
+			
+			var iTimeout, iInterval, originalNum, beforeRemoveDish = false, beforeAddDish = false, needRemoveNotify = false; //是否需要删除最后一盘点餐的时候弹框提醒
+			
+			//添加按钮点击增加开始前，添加监听事件（点下去+按钮前处理）
+			btnAdd.addEventListener(_movestartEvt, function() {
+				var _self = this;														//抓取自身DOM
+				originalNum = parseInt(_self.parentNode.children[1].innerHTML, 10);		//点击前点菜数量，指定所有浏览器解析成10进制
+				countNumText = originalNum + 1;											//点击后数量加1
+				var shopInfo = _self.parentNode.parentNode.getAttribute('shopInfo');	//尝试获取分店信息
+				
+				//如果这次+是点第一盆菜
+				if (countNumText == 1) {
+					if (shopInfo) {
+						_self.parentNode.children[1].innerHTML = 0;						//有分店信息，先别急着加
+						beforeAddDish = true;											//要加菜的动作标记置为真
+						return;															//暂且返回
+					} else {
+						_self.parentNode.children[1].innerHTML = 1;						//没有分店的话，直接加菜好了
+						btnShowHide(1, _self.parentNode);								//调用后必然显示-按钮
+					}
+				} else {
+					_self.parentNode.children[1].innerHTML = countNumText;				//如果不是第一道菜，而是大于等于2盘
+					btnShowHide(countNumText, _self.parentNode);
+					iTimeout = setTimeout(function() {
+						// console.log(_self);
+						iInterval = setInterval(function() {
+							countNumText++;
+							_self.parentNode.children[1].innerHTML = countNumText;
+	
+							// 2道以上菜，点击增加会变化大数字
+							_removeClass( _self.parentNode.children[3], 'fake');
+							_self.parentNode.children[3].innerHTML = countNumText;
+						}, 100)
+					}, 1000)
+				}
+			})
+			
+			btnAdd.addEventListener(_moveendEvt, function() {
+				clearTimeout(iTimeout);
+				clearInterval(iInterval);
+				hideBigFont();
+
+				var _self = this;
+				var countNumText = parseInt(_self.parentNode.children[1].innerHTML, 10);
+				var dishid = _self.parentNode.parentNode.getAttribute('dishid');
+				var shopInfo = _self.parentNode.parentNode.getAttribute('shopInfo');
+
+				if (beforeAddDish) {
+					setTimeout(function() {
+						MDialog.confirm('', shopInfo, null, '确定', function() {
+							_self.parentNode.children[1].innerHTML = 1;
+							btnShowHide(1, _self.parentNode);
+							ajaxDishReset(dishid, 1, function() { }, function() {
+								_self.parentNode.children[1].innerHTML = originalNum;
+								btnShowHide(originalNum, _self.parentNode);
+							});
+						}, null, '取消', function() { }, null, null, true, true);
+					}, 500);
+					beforeAddDish = false;
+				} else {
+					ajaxDishReset(dishid, countNumText, function() { }, function() {
+						_self.parentNode.children[1].innerHTML = originalNum;
+						btnShowHide(originalNum, _self.parentNode);
+					});
+				}
+			})
+			//减少按钮按下去事件监听
+			btnMin.addEventListener(_movestartEvt, function() {
+				var _self = this;
+				originalNum = parseInt(_self.parentNode.children[1].innerHTML, 10);
+				countNumText = originalNum - 1;
+
+				if (countNumText <= 0) {
+					_self.parentNode.children[1].innerHTML = 1;							//最后一盆菜，点-按钮要提示框是否真的删除
+					beforeRemoveDish = true;											//要取消这盘菜的动作标记置为真
+					return;
+				} else {
+					_self.parentNode.children[1].innerHTML = countNumText;
+					iTimeout = setTimeout(function() {
+						iInterval = setInterval( function() {
+							countNumText--;
+							if (countNumText <= 0) {
+								clearInterval(iInterval);
+								_self.parentNode.children[1].innerHTML = 1;
+								beforeRemoveDish = true;
+								return;
+							} else {
+								_self.parentNode.children[1].innerHTML = countNumText;
+								btnShowHide(countNumText, _self.parentNode);
+							}
+
+							// 字体放大显示
+							_removeClass(_self.parentNode.children[3], 'fake');
+							_self.parentNode.children[3].innerHTML = countNumText
+						}, 100)
+					}, 1000)
+				}
+			})
+			//减少按钮按下去结束事件监听
+			btnMin.addEventListener(_moveendEvt, function() {
+				clearTimeout(iTimeout);			//停止时钟
+				clearInterval(iInterval);		//停止特效
+				hideBigFont();					//隐藏大字体
+
+				var _self = this;
+				var countNumText = parseInt(_self.parentNode.children[1].innerHTML, 10);
+				var dishid = _self.parentNode.parentNode.getAttribute('dishid');			//抓到菜品的编号
+				var dName = _self.parentNode.parentNode.getAttribute('dName');				//抓到菜品的名称
+				//如果是真的删除最后一盘菜的动作
+				if (beforeRemoveDish) {
+					//在菜单页面needRemoveNotify是false，在我的菜单页面needRemoveNotify是true！
+					if (needRemoveNotify) {
+						setTimeout(function() {
+							//弹框询问
+							MDialog.confirm('', '是否删除' + dName + '？', null, '确定', function() {
+								_self.parentNode.children[1].innerHTML = 0;
+								btnShowHide(0, _self.parentNode);
+								ajaxDishRemove(dishid, function() { }, function() {
+									_self.parentNode.children[1].innerHTML = originalNum;
+									btnShowHide(originalNum, _self.parentNode);
+								});
+							}, null, '取消', function() {
+								_self.parentNode.children[1].innerHTML = originalNum;
+								btnShowHide(originalNum, _self.parentNode);
+							}, null, null, true, true);
+						}, 500);
+						beforeRemoveDish = false;
+					} else {
+						_self.parentNode.children[1].innerHTML = 0;
+						btnShowHide(0, _self.parentNode);
+						ajaxDishRemove(dishid, function() { }, function() {
+							_self.parentNode.children[1].innerHTML = originalNum;
+							btnShowHide(originalNum, _self.parentNode);
+						});
+						beforeRemoveDish = false;
+					}
+				} else {
+					ajaxDishReset(dishid, countNumText, function() { }, function() {
+						_self.parentNode.children[1].innerHTML = originalNum;				//失败的时候数量依然回撤
+						btnShowHide(originalNum, _self.parentNode);							//按钮状态复原
+					});
+				}
+			}) // btnMin.addEventListener
+		} // for
+		
+		//重新设置菜品的数量，服务器端静态ajax同步，实际上调用的时候，successCallback函数是空的，反而是errorCallback函数里有很多事情要做
+		function ajaxDishReset(dishid, o2uNum, successCallback, errorCallback) {
+			//重设菜品的数量，发送4个参数：菜品、目前的菜品数量、哪个用户和哪个企业
+			var params = {
+				'dishid' : dishid,
+				'o2uNum' : o2uNum,
+				'openid' : '{$openid}',
+				'e_id' : '{$e_id}'
+			};
+			//重设菜品数量地址
+			$.post("{:U('CateIndustry/MenuView/updateCateNumber')}", params, function(result){
+				if (result['code'] != 0) {
+					errorCallback();
+					alert(result['message']);
+					return;
+				} else {
+					successCallback();
+				}
+			}, 'json');
+		} // ajaxDishReset
+		
+		//移除菜品，服务器端静态ajax同步，实际上调用的时候，第二个成功回调函数也是空的，反而是错误回调函数会执行事件
+		function ajaxDishRemove(dishid, successCallback, errorCallback) {
+			//移除一盘菜，发送3个参数：菜品名字、哪个人，哪个企业
+			var params = {
+				'dishid' : dishid,
+				'openid' : '{$openid}',
+				'e_id' : '{$e_id}'
+			};
+			//移除菜品post地址
+			$.post("{:U('CateIndustry/MenuView/removeCateOrder')}", params, function(result){
+				if (result['code'] != 0) {
+					errorCallback();
+					alert(result['message']);
+					return;
+				} else {
+					successCallback();
+				}
+			}, 'json');
+		} // ajaxDishRemove
+	} // doSelectBtn
+	
+	//点菜大字（在原来的字上边，大、灰）
+	function hideBigFont() {
+		var _arr = _qAll(".fixBig");						//抓取所有class为fixBig的对象
+		_forEach(_arr, function(ele, idx, _arr) {
+			_addClass(ele, 'fake');							//每一个对象都添加上fake（不显示）
+		})
+	}
+	//显示隐藏点菜加减按钮
+	function btnShowHide(num, btns, isCountDish) {
+		if (isCountDish !== false) {
+			countDish();									//只有给出true的时候才去计算当前分类的点菜数量，如果给2个参数或者第三个参数是false，都不统计
+		}
+		if (num <= 0) {
+			btns.children[0].style.display = "none";
+			btns.children[1].style.display = "none";
+		} else {
+			btns.children[0].style.display = "inline-block";
+			btns.children[1].style.display = "inline-block";
+		};
+	}
+	
+	//计算某个菜品分类点餐的盘数
+	function countDish() {
+		var countTotle = 0, countdish;
+		var dishNum = _qAll("#page_allMenu section article dl .btn i");					//抓取每一条菜品中的<i>标签
+		_forEach(dishNum, function(ele, idx, dishNum) {
+			countdish = parseInt(ele.innerHTML);										//抓取当前枚举对象<i>里的数量（转整）
+			if (countdish > 0) {
+				countTotle++;
+			}
+		});
+		
+		if (countTotle != 0) {
+			_q("#page_allMenu nav dl dd.active span").innerHTML = countTotle;			//把点过的菜品总数写入span标签中
+			_q("#page_allMenu nav dl dd.active span").style.display = 'block';			//让span标签显示
+		} else {
+			_q("#page_allMenu nav dl dd.active span").style.display = 'none';			//当前分类没点菜就不要显示span
+		}
+	}
+
+	//点击促发弹层事件函数
+	function showPicInfo() {
+		var links = _qAll(".dataIn"), i = 0;
+		for (i; i < links.length; i++) {
+			//links中每个元素点击后生成一个事件对象
+			links[i].onclick = function(event) {
+				event.stopPropagation();				//阻止DOM事件冒泡
+
+				// dl
+				var parentDl = this.parentNode.parentNode;
+
+				var childImg = this.childNodes[0];
+				var bigImg = this.childNodes[1];
+				if (childImg.nodeType == 3) {
+					childImg = this.childNodes[1];
+				}
+				popPic(bigImg.title, parentDl.getAttribute('dname'),
+				parentDl.getAttribute('dprice') + '元/' + parentDl.getAttribute('dunitName'),
+				parentDl.getAttribute('dIsSpecial'),
+				parentDl.getAttribute('dSpecialPrice') + '元/' + parentDl.getAttribute('dunitName'),
+				parentDl.getAttribute('dsubCount'), parentDl.getAttribute('dtaste'), 
+				parentDl.getAttribute('ddescribe'), parentDl.getAttribute('dishot'));
+			}
+		}
+	}
+	
+	//调用自定义弹层函数，目前给出9个参数，后台可再自行扩展参数
+	function popPic(imgUrl, title, price, isSpecial, specialPrice, people, teast, assess, isHot) {
+		var _title = title, _price = price, _people = people, _teast = teast, _assess = assess;			//形参给内部临时变量赋值
+		//对人气产品的处理
+		var hotHtml = '';
+		if (isHot > HOT_START) {
+			hotHtml = '<b></b>';
+		}
+		_tmpHtml = "<div class='content'>" + hotHtml + "<img src='"+imgUrl+"' alt='' title=''><h2>" + _title;
+		//对特价产品的处理
+		if (isSpecial == SPECIAL_PRICE_YES || (isSpecial == SPECIAL_PRICE_VIP)) {
+			_tmpHtml += "<i>" + specialPrice + "</i><del>" + _price + "</del>";
+		} else {
+			_tmpHtml += "<i>" + _price + "</i>";
+		}
+		//对被点次数的处理
+		if (_people) {
+			_tmpHtml += "<span>" + _people + "人点过</span>";
+		}
+		_tmpHtml += "</h2>";
+		//对口味的处理
+		if (_teast) {
+			_tmpHtml += "<h3>口味：" + _teast + "</h3>";
+		}
+
+		if (_assess) {
+			_tmpHtml += "<p>" + _assess + "</p>";
+		}
+		//调用自定义弹层对整个拼接完的html进行弹出处理
+		_tmpHtml += '</div>';
+		MDialog.popupCustom(_tmpHtml, true, function() { }, true);
+	}
+
+	// 页面初始化的时候，获取各个分类被选中菜品的数量
+	function getDishNumOfCategory() {
+		var params = {
+			'openid' : '{$openid}',
+			'nav_id' : '{$nav_id}',
+			'e_id' : '{$e_id}'
+		};
+		//初始化各分类点菜数量的Ajax查询地址
+		$.post("{:U('CateIndustry/MenuView/getCategoryOrder')}", params, function(result){
+			for ( var i in result['orderNumber']) {
+				var val = result['orderNumber'][i];
+				if (val > 0) {
+					_q('[categoryId="' + i + '"] span').innerHTML = val;
+					_q('[categoryId="' + i + '"] span').style.display = 'block';
+				} else {
+					_q('[categoryId="' + i + '"] span').style.display = 'none';
+				}
+			}
+		}, 'json');
+	}
+	
+	/*加载页面时候执行*/
+	_onPageLoaded(function() {
+		setHeight();				//设定窗体高度
+		doSelect();					//选中某分类菜品
+		doSelectBtn();				//生成按钮点击事件
+		showPicInfo();				//生成点击促发弹层事件
+		//如果是苹果手机
+		if (_isIOS) {
+			_q("#page_allMenu section article").style.overflowY = "scroll";
+			_q("#page_allMenu section article").style.minHeight = "85%";
+			_q("#page_allMenu section article").style.marginBottom = "15px";
+		}
+		getDishNumOfCategory();		//获取各个分类被选中菜品的数量（初始化页面的时候执行一次查询）
+		//自己加的初始化
+		$('#navBar dl dd:eq(0)').addClass('active').trigger('click');		//默认触发点击选中第一个菜品
+		$('.btn_change').click(function(){
+			location.href="{:U('CateIndustry/CateCart/myCateCart', array(e_id => $e_id), 'shtml')}";
+		});
+	})
+	//特别注意：不要使用$(window).resize(function(){ setHeight();});会出现3个滚动条！
+	//页面旋转的时候重新设置高度
+	window.addEventListener('orientationchange', function() {
+		setHeight();
+	})
+</script>
+</body>
+</html>

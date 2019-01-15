@@ -1,0 +1,205 @@
+<!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/weact.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/artTemplate.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/location.js"></script>
+<title>添加收货地址</title>
+</head>
+
+<body>
+	<div class="lay_header" style="height: 45px">
+        <div class="lay_toptab mod_tab" id="lay_head">
+            <div class="tab_item go_back" onclick="window.history.go(-1);">
+                <i class="qb_icon icon_goback"></i>
+            </div>
+            <a class="tab_item" href='{:U("Home/Index/index", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_home"></i></a>
+            <a class="tab_item" href='{:U("Home/MemberHandle/customerCenter", array("e_id"=>$e_id), "")}'><i class="qb_icon icon_icenter"></i></a>
+            <a class="tab_item" href='{:U("Home/Cart/shoppingCart", array("e_id"=>$e_id), "")}'>
+            	<i class="qb_icon icon_cart"></i>
+                <i class="qb_icon icon_number_bubble qb_none" id="cartNum">0</i>
+            </a>
+        </div>
+    </div><!-- lay_header结束div -->
+	
+    <input type="hidden" id="isUpdate" name="isUpdate" value="-1" />
+    <input type="hidden" id="oprTip" name="oprTip" value="0" />
+    <input type="hidden" id="provId" name="provId" value="-1" />
+    
+    <div class="lay_page page_address_add" id="page_address_add">
+        <div class="lay_page_wrap">
+            <div class="qb_gap qb_pt10">
+
+                <div class="qb_mb10 qb_flex">
+                    <input name="name" type="text" id="name" class="mod_input flex_box" placeholder="收件人姓名" value="" />
+                </div>
+                <div class="qb_mb10 mod_color_strong qb_fs_s qb_none" id="name_msg"></div>
+                <div>
+                    <span class="mod_select qb_mr10 qb_mb10" id="sprovince" data-url="#">
+						<select id="province" class="sel rProvince"></select>
+                    </span>
+                    <span class="mod_select qb_mr10" id="scity" data-url="#">
+                    	<select id="city" class="sel rCity"></select>
+                    </span>
+                    <span class='mod_select qb_mb10'>
+                    	<select id="region" class="sel"></select>
+                    </span>
+                </div>
+                <div class="qb_mb10 mod_color_strong qb_fs_s qb_none" id="region_msg"></div>
+                <div class="qb_mb10 qb_flex">
+                    <input name="mobile" type="text" id="mobile" placeholder="联系电话" class="mod_input flex_box" value="" />
+                </div>
+                <div class="qb_mb10 mod_color_strong qb_fs_s qb_none" id="mobile_msg"></div>
+                <div class="qb_mb10 qb_flex">
+                    <input name="address" type="text" id="address" class="mod_input flex_box" placeholder="详细地址" value="" />
+                </div>
+                <div class="qb_mb10 mod_color_strong qb_fs_s qb_none" id="address_msg"></div>
+                <div class="qb_mb10">
+                     <a id="save_addr" class="mod_btn btn_em btn_block" href="javascript:void(0)">保存收货地址</a>  
+                </div>
+            </div>
+        </div>
+    </div>
+    
+	<div class="lay_footer qb_tac qb_fs_s mod_mb15">
+        <div class="fn_quicklinks">
+			<a class="mod_color_weak" href='{:U("Home/Index/index",array("e_id"=>$e_id),"")}'>商户首页</a>
+			<for start="0" end="3" step="1">
+				<span class="mod_color_comment">|</span>
+				<a class="mod_color_weak" href="{$pageinfo [navigation] [foot] [$i] [url]}">{$pageinfo [navigation] [foot] [$i] [nav_name]}</a>
+			</for>
+		</div>
+        <div class="fn_copyright">
+            <div class="mod_color_comment fn_copyright_agreement ui-fz-x-small ui-ta-c"><a href="#">Powered By WeAct</a></div>
+            <div class="mod_color_comment fn_copyright_text">Copyright &copy; 2014 WeAct.<br/>All Rights Reserved. </div>
+            <div class="mod_color_comment fn_copyright_text">微动公司 版权所有</div>
+        </div>
+    </div><!-- lay_footer结束div -->
+    
+<script type="text/javascript">
+var e_id = "{$e_id}", 			// 商家编号
+	frompage = "{$frompage}"; 	// 本页面上一个页面的位置
+	
+$(function(){
+	
+	// 初始化省市地区选择框（使用location.js）
+	var loc = new Location();
+	var title = ['省份', '地级市', '市、县、区'];
+	Zepto.each(title, function(k, v) {
+		title[k] = '<option value="">' + v + '</option>';
+	});
+	$('#province').append(title[0]);
+	$('#city').append(title[1]);
+	$('#region').append(title[2]);
+	
+	loc.fillOption('province', '0');
+	
+	// 省份选择变动
+	$('#province').change(function() {
+		$('#city').empty();
+		$('#city').append(title[1]);
+		loc.fillOption('city', '0,' + $('#province').val());
+		$('#city').change()
+	});
+	// 城市选择变动
+	$('#city').change(function() {
+		$('#region').empty();
+		$('#region').append(title[2]);
+		loc.fillOption('region', '0,' + $('#province').val() + ',' + $('#city').val());
+	});
+	$('#region').change(function() {}); // 乡镇选择变更（暂时好像没有什么事情要做）
+	
+	$("#save_addr").click(function(){
+		// Step0：验证用户地址有没有选择
+		var province = $("#province").val();
+		var city = $("#city").val();
+		var region = $("#region").val();
+		if(province == "-1" || province == "") {
+			scscms_alert("请选择省！", "warn", "", 1);
+			return false;
+		}
+		if(city == "-1" || city == "") {
+			scscms_alert("请选择市！", "warn", "", 1);
+			return false;
+		}
+		if(region == "-1" || region == "") {
+			scscms_alert("请选择地区！", "warn", "", 1);
+			return false;
+		}
+		// Step1：获取用户填写信息并验证是否为空
+		var name = $("#name").val().trim(); // 获取收货人姓名
+		var address = $("#address").val().trim(); // 获取收货人地址
+		var mobile = $("#mobile").val().trim(); // 获取收货人电话
+		if(name == "") {
+			scscms_alert("请填写收货人姓名！", "warn", "", 1);
+			$("#name").focus(); // 聚焦
+			return false;
+		}
+		if(address == "") {
+			scscms_alert("请填写收货人地址！", "warn", "", 1);
+			$("#address").focus(); // 聚焦
+			return false;
+		}
+		if(mobile == "") {
+			scscms_alert("请填写收货人电话！", "warn", "", 1);
+			$("#mobile").focus(); // 聚焦
+			return false;
+		}
+		// Step2：验证收货电话是否是手机号（严谨一点）
+		var telreg = /1((3[0123456789])|(4[0123456789])|(5[0123456789])|(7[0123456789])|(8[0123456789]))\d{8}/; // 目前全区段手机号
+		if(! telreg.test( mobile ) ) {	
+			scscms_alert("请填写正确的手机号！", "warn", "", 1);
+			$("#mobile").focus(); // 聚焦
+			return false;
+		}
+		// Step3：通过验证后构造参数准备提交
+		var param = {
+				name : name,
+				province : $("#province option:selected").text(),
+				city : $("#city option:selected").text(),
+				region : $("#region option:selected").text(),
+				address : address,
+				mobile : mobile,
+				e_id : e_id
+		}; // 提交信息
+		MLoading.show('保存中...'); // 体验度等待
+		$.post("{:U('Home/MemberHandle/addDeliConfirm', '', '')}", param, function(result){
+			MLoading.hide(); // 得到响应关闭等待框
+			if(result.errCode == 0) {
+				scscms_alert("保存成功！", "ok", "", 1); //定时关闭窗口
+				setTimeout(function(){
+					if (frompage == "order") {
+						// 从订单来的新增地址，直接返回订单
+						var receiveAddressInfo = {
+								receivePerson : param.name,
+								receiveCellphone : param.mobile,
+								receiveAddress : param.province+param.city+param.region+param.address,
+						}
+						sessionStorage.receiveInfo = JSON.stringify(receiveAddressInfo); // 存入sessionStorage
+						sessionStorage.deliveryId = result.data.delivery_id; // 保存deliveryinfo编号
+						location.href = "{:U('Home/Order/preOrder', array(e_id => $e_id), '')}"; // 1秒后返回订单
+					} else {
+						location.href = "{:U('Home/MemberHandle/deliveryManage', array(e_id => $e_id), '')}"; // 1秒后友好跳转
+					}
+				},1000);
+			} else {
+				scscms_alert("保存失败！"+result.errMsg, "error", "", 3); //定时关闭窗口
+			}
+		}, "json" );
+	});
+});
+</script>
+</body>
+</html>

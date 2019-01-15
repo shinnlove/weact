@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="initial-scale=1, width=device-width, maximum-scale=1, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-touch-fullscreen" content="yes" />
+<meta name="full-screen" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="format-detection" content="address=no" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/zepto.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/template-native.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/commonUtil.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/location.js"></script>
+<title>收货人地址</title>
+<style>
+.ma-box { top: 20%; }
+.btn { margin-bottom: 5px; }
+</style>
+</head>
+
+<body>
+	<section class="addrEdit-list">
+		<dl>
+			<dt>收货人姓名</dt>
+			<dd>
+				<div class="input-box">
+					<input name="" type="text" class="mid rName" placeholder="姓名" />
+				</div>
+			</dd>
+		</dl>
+		<dl>
+			<dt>联系方式</dt>
+			<dd>
+				<div class="input-box">
+					<input name="" type="tel" class="mid rMobile" placeholder="请填写联系方式" />
+				</div>
+			</dd>
+		</dl>
+		<dl>
+			<dt>省份</dt>
+			<dd>
+				<div class="regiona1 with-go-right">
+					<select id="loc_province" class="sel rProvince"></select>
+				</div>
+			</dd>
+		</dl>
+		<dl>
+			<dt>地级市</dt>
+			<dd>
+				<div class="regiona1 with-go-right">
+					<select id="loc_city" class="sel rCity"></select>
+				</div>
+			</dd>
+		</dl>
+		<dl>
+			<dt>区/县</dt>
+			<dd>
+				<div class="regiona1 rDistrict with-go-right">
+					<select id="loc_town" class="sel"></select>
+				</div>
+			</dd>
+		</dl>
+		<dl>
+			<dt>详细地址</dt>
+			<dd>
+				<div class="pr10">
+					<textarea name="" class="addrDetail" placeholder="请填写街道详细地址"></textarea>
+				</div>
+			</dd>
+		</dl>
+	</section>
+	
+	<a id="submit" class="btn btn-red center">保存</a>
+	<a id="giveup" class="btn center mt10">取消</a>
+	<a id="remove" class="btn center mt10">删除</a>
+	
+	<input type="hidden" id="noTalking" />
+	
+<script type="text/javascript">
+var eid = "{$eid}", 					// 商家编号
+	sid = "{$sid}", 					// 分店编号
+	frompage = "{$frompage}", 			// 本页面上一个页面的位置
+	curpage = "{:U('WeMall/CustomerCenter/addDelivery', array('sid' => $sid), '')}", // 当前位置
+	loginurl = "{:U('WeMall/GuestMall/login', array('sid' => $sid), '')}"; // 登录地址
+
+// 页面初始化函数
+$(function(){
+	
+	// 初始化省市地区选择框（使用location.js）
+	var loc = new Location();
+	var title = ['省份', '地级市', '市、县、区'];
+	Zepto.each(title, function(k, v) {
+		title[k] = '<option value="">' + v + '</option>';
+	});
+	$('#loc_province').append(title[0]);
+	$('#loc_city').append(title[1]);
+	$('#loc_town').append(title[2]);
+	
+	loc.fillOption('loc_province', '0');
+	
+	// 省份选择变动
+	$('#loc_province').change(function() {
+		$('#loc_city').empty();
+		$('#loc_city').append(title[1]);
+		loc.fillOption('loc_city', '0,' + $('#loc_province').val());
+		$('#loc_city').change()
+	});
+	// 城市选择变动
+	$('#loc_city').change(function() {
+		$('#loc_town').empty();
+		$('#loc_town').append(title[2]);
+		loc.fillOption('loc_town', '0,' + $('#loc_province').val() + ',' + $('#loc_city').val());
+	});
+	$('#loc_town').change(function() {}); // 乡镇选择变更（暂时好像没有什么事情要做）
+	
+	// 初始化地址信息（如果sessionStorage中有地址信息）
+	var addr = ""; // 地址信息变量object
+	if (sessionStorage.receiveAddressJson) {
+		// 如果跳转过来sessionStorage中有地址信息，说明是编辑的
+		addr = JSON.parse(sessionStorage.receiveAddressJson);
+		$(".rName").val(addr.personName); // 收货人姓名
+		$(".rMobile").val(addr.mobile); // 收货人联系电话
+		$(".addrDetail").val(addr.detail); // 地址详细信息
+		$("#remove").data("id", addr.id); // 将deliveryinfo的编号直接写入删除按钮里，如果要删除直接获取id
+		
+		// 初始化地址里的省份
+		$(".rProvince option").each(function() {
+			if ($(this).text() === addr.province) {
+				$(this).prop("selected", true);
+				$('#loc_province').change()
+				return;
+			}
+		});
+		// 初始化地址里的城市
+		$(".rCity option").each(function() {
+			if ($(this).text() === addr.city) {
+				$(this).prop("selected", true);
+				$('#loc_city').change()
+				return;
+			}
+		});
+		// 初始化地址里的地区
+		$(".rDistrict option").each(function() {
+			if ($(this).text() === addr.district) {
+				$(this).prop("selected", true);
+				return;
+			}
+		});
+	} else {
+		// sessionStorage没有变量，说明是新增的，则隐藏删除按钮
+		$("#remove").hide();
+	}
+	
+	// 提交编辑按钮
+	$("#submit").on("click", function() {
+		var full = true, // 默认信息完备是true
+			params = {
+				sid : sid, // 分店编号
+				personName: $.trim($(".rName").val()),
+				country: "中国",
+				province: $(".rProvince option:selected").text(),
+				city: $(".rCity option:selected").text(),
+				district: $(".rDistrict option:selected").text(),
+				detail: $.trim($(".addrDetail").val()),
+				mobile: $.trim($(".rMobile").val())
+			}/* ,
+			addressCheck = {
+				personName: $.trim($(".rName").val()),
+				province: $(".rProvince").val(),
+				city: $(".rCity").val(),
+				district: $(".rDistrict").val(),
+				detail: $.trim($(".addrDetail").val()),
+				mobile: $.trim($(".rMobile").val())
+			} */
+		// addressData是准备提交的信息，就比addressCheck多了个country中国
+		for (var item in params) {
+			if (params[item] == "") {
+				full = false; // 有一个没有填写，就算作信息不完备
+			}
+		}
+		if (full) {
+			if (sessionStorage.receiveAddressJson) { 
+				//有sessionStorage说明为修改（提交到修改地址）
+				// Zepto的ajax用法
+				/* Zepto.ajax({
+					type: "post",
+					url: "updateCustomerAddress.json",
+					dataType: "json",
+					data: $.extend(addressData, {
+						id: addr.id
+					}),
+					success: function(data) {
+						updateAddress(data);
+					}
+				}); */
+				params.id = addr.id; // 更新需要补充主键信息
+				$.post("{:U('WeMall/CustomerRequest/editDeliveryInfo', '', '')}", params, function(result){
+					if (result.errCode == 0) {
+						updateAddress(result.data); // 执行更新地址信息函数
+					} else if (result.errCode == 20001) {
+						window.location.href = loginurl+"?from="+curpage;
+						return false;
+					} else {
+						mobileAlert(result.errMsg); // 弹出错误信息
+						return false;
+					}
+				},"json");
+			} else {
+				// 没有sessionStorage说明为新增
+				$.post("{:U('WeMall/CustomerRequest/addDeliveryInfo', '', '')}", params, function(result){
+					if (result.errCode == 0) {
+						updateAddress(result.data); // 执行更新地址信息函数
+					} else if (result.errCode == 20001) {
+						window.location.href = loginurl+"?from="+curpage;
+						return false;
+					} else {
+						mobileAlert(result.errMsg); // 弹出错误信息
+						return false;
+					}
+				},"json");
+			}
+		} else {
+			// 信息监测补完整
+			mobileAlert("请填写完整信息");
+			return false;
+		}
+	});
+	
+	// 取消地址编辑按钮
+	$("#giveup").on("click", function() {
+		if (confirm("确认不保存退出？")) {
+			history.go(-1);
+		}
+	});
+	
+	// 删除地址按钮
+	$("#remove").on("click", function() {
+		if (confirm("确认删除该地址？")) {
+			var params = {
+					sid : sid,
+					id : $(this).data("id") // 获取要删除的deliveryinfo编号
+			}
+			$.post("{:U('WeMall/CustomerRequest/deleteDeliveryInfo', '', '')}", params, function(result){
+				if (result.errCode == 0) {
+					if (frompage == "order") {
+						location.href = "{:U('WeMall/Order/preOrder', array('sid' => $sid), '')}"; // 回跳订单页面
+					} else {
+						location.href = "{:U('WeMall/CustomerCenter/deliveryManage', array('sid' => $sid), '')}?from="+frompage; // 回跳地址管理页面
+					}
+				} else if (result.errCode == 20001) {
+					window.location.href = loginurl+"?from="+curpage;
+					return false;
+				} else {
+					mobileAlert(result.errMsg); // 弹出错误信息
+					return false;
+				}
+			},"json");
+		}
+	});
+	
+});
+
+// 更新sessionStorage地址，并且回跳
+function updateAddress(data) {
+	if (frompage == "order") {
+		sessionStorage.receiveAddress = '<div class="item">' + data.province + data.city + data.district + '</div>\
+          <div class="item">' + data.detail + '</div>\
+          <div class="item">' + data.personName + '&nbsp;&nbsp;' + data.mobile + '</div>';
+		sessionStorage.receiveAddressId = data.id; // 存到sessionStorage中
+		location.href = "{:U('WeMall/Order/preOrder', array('sid' => $sid), '')}"; // 回跳订单页面
+	} else {
+		location.href = "{:U('WeMall/CustomerCenter/deliveryManage', array('sid' => $sid), '')}?from="+frompage; // 回跳地址管理页面
+	}
+}
+</script>
+</body>
+</html>

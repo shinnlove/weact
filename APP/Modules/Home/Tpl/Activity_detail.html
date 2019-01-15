@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="format-detection" content="telephone=no">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/news2_3.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/MobileCommonStyle.min.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/ProductShowStyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>详情</title>
+<style type="text/css">
+.activity {
+	background: url('__PUBLIC__/images/activityenroll/activitybkg2.jpg') no-repeat;
+	background-size: 100% 100%;
+}
+.proContent { margin-bottom:10px; }
+.page-bizinfo { padding: 0px 9px 0 10px; }
+.showpic img { border-radius:6px; }
+.text{ margin-top:10px; margin-bottom:10px; }
+.wishperson{ margin-top:5px;  }
+.otherperson { font-weight:bold; }
+.wishcontent { text-indent:24px; }
+.contentTitle{ height:25px;  }
+.opci { opacity:0.88 }
+.ranBox ul li a,.ranBox ul li a:hover { text-decoration:none; }
+.liked {
+	display: block;
+	float: right;
+	width: 90px;
+	height: 30px;
+	background: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#DDD), to(#666));
+	line-height: 30px;
+	margin: 5px 10px 0px 0px;
+	color: white;
+	text-align: center;
+	border-radius: 5px;
+	font-size: 12px;
+	font-family: "宋体", Arial, sans-serif;
+}
+</style>
+</head>
+
+<body class="activity">
+	<div class="wrap">
+        <div id="mcover" onclick="document.getElementById('mcover').style.display='';">
+            <img src="__PUBLIC__/images/guide.png">
+        </div>
+        <div class="proContent">
+            <div class="p_mod">
+                <!--商品详情描述-->
+                <h2 class="p_mod_title">TA的爱情宣言</h2>
+                <div class="DesContent">
+                    <div class="page-bizinfo">
+                        <div class="header" style="position: relative;">
+                            <h1 id="activity-name" style="font-size:16px;">来自<font class="person">{$dinfo.name}</font>：</h1>
+                            <span id="post-date">{$dinfo.add_time}</span>
+                            <span class="commentNum">
+                                点赞次数：<i class="likenum" style="font-size:14px; font-style:normal; font-weight:bold;">{$likenum}</i> 次
+                            </span>
+                        </div>
+                        <div class="showpic">
+                            <img src="{$dinfo.photo_path}" alt="" />
+                        </div>
+                        <div class="text" id="content" data-wid="{$dinfo.enroll_id}">
+                            <span style="font-family:Microsoft YaHei;font-size:14px;">
+                                <strong>Says：{$dinfo.wish}</strong>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <!--DesContent-->
+                <div class="p_buy clearfix">
+                    <a href="javascript:;" class="p_btn_collection likebtn"><span class="ts1">为TA点赞</span></a>
+                    <a href="javascript:;" class="p_btn_kefu"><span class="ts1">一爱倾“诚”</span></a>
+                </div>
+            </div><!--详情描述结束-->
+            
+            <div class="p_mod opci">
+                <!--您还可能喜欢的推荐-->
+                <h2 class="p_mod_title">情侣们也在宣言...</h2>
+                <div class="ranBox">
+                    <ul>
+                    	<foreach name="samewishlist" item="sw">
+                    		<li>
+	                            <a href="{:U('Home/Activity/detail', array(e_id => $e_id), '')}?wid={$sw.enroll_id}">
+	                                <div class="ranLayer">
+	                                    <div class="ranImage" style="overflow:hidden;">
+	                                        <img src="{$sw.photo_path}" width="60px" alt="" />
+	                                    </div>
+	                                    <div class="ranContent">
+	                                        <div class="contentTitle wishperson"><font class="otherperson">{$sw.name}</font>：</div>
+	                                        <div class="contentTitle wishcontent">{$sw.wish}</div>
+	                                    </div>
+	                                    <div class="clearLayer"></div>
+	                                </div>
+	                            </a>
+	                        </li>
+                    	</foreach>
+                    </ul>
+                </div>
+                <!--ranBox结束-->
+                <div class="clear"></div><!--这一层clear非常重要！！！如果拿掉，会导致更多推荐的下撑-->
+            </div>
+            <!--您还可能喜欢的推荐div的结束-->
+            <div class="clear"></div>
+            <!--清理浮动层-->
+            <div id="mess_share">
+                <div id="share_1">
+                    <button class="button2" onclick="document.getElementById('mcover').style.display='block';">
+                        <img src="__PUBLIC__/images/icon_msg.png">
+                        &nbsp;<font style="font-size:12px;">爱卿快来相助</font>
+                    </button>
+                </div>
+                <div id="share_2">
+                    <button class="button2" onclick="document.getElementById('mcover').style.display='block';">
+                        <img src="__PUBLIC__/images/icon_friends.png">
+                        &nbsp;<font style="font-size:12px;">亲友团齐上阵</font>
+                    </button>
+                </div>
+                <div class="clear clr"></div>
+            </div>
+    	</div><!--proContent-->
+    </div><!--wrap-->
+
+<script type="text/javascript">
+var e_id = "{$e_id}",
+	openid = "{$openid}",
+	samenumber = {$samenumber},
+	isliked = "{$selfliked}";
+//分享的信息
+var shareData = {
+	appid: "{$pageinfo [shareinfo] [appid]}", // 分享的商家编号
+    img_url: "{$pageinfo [shareinfo] [img_url]}", // 分享的图片
+    img_width: "160", // 宽度
+    img_height: "160", // 高度
+    title: "{$pageinfo [shareinfo] [title]}", // 分享的标题
+    desc: "{$pageinfo [shareinfo] [desc]}", // 分享的描述
+    link: "{$pageinfo [shareinfo] [link]}", // 分享的超链接
+    fakeid : "{$openid}",																		//分享用户的id
+    callback:function(result){
+    	if(result != 'send_app_msg:cancel' && result != 'share_timeline:cancel' && result != 'share_weibo:cancel' && result != 'share_fb:cancel'){
+    		$.post("{:U('Home/MobileCommon/shareRecord','','')}",
+    				{ e_id : e_id, link : shareData.link, openid : shareData.fakeid },			//分享的时候传3个参数：1、商家编号；2、链接地址（区分授权和不授权两种）；3、分享的微信号（只有开启授权登录才有）
+    				function(data){
+    					if(data.status == 1){
+    						scscms_alert("谢谢您的分享!", "ok", "", 2);//定时关闭窗口
+    					}else{
+    						scscms_alert("服务器繁忙，请稍后再试!"+data.msg, "warning", "", 2);//定时关闭窗口
+    					}
+    				},
+    				'json');
+    	}else{
+    		scscms_alert("下次记得分享噢!", "ok", "", 2);//定时关闭窗口
+    	}
+    }	/*分享后的回调函数，发送给朋友的类型分为send_app_msg:confirm或send_app_msg:cancel；对应发送给朋友、分享到朋友圈、分享到腾讯微博、分享到facebook都有4种类型*/
+};
+$(function(){
+	var likeBtn = $(".likebtn");
+	// 初始化点赞按钮
+	if(isliked == "1") {
+		likeBtn.removeClass("p_btn_collection").addClass("liked");
+		likeBtn.html('已点赞');
+	} else if(isliked == "0" || isliked == "" || isliked == null || isliked == "undefind") {
+		likeBtn.addClass("p_btn_collection").removeClass("liked");
+		likeBtn.html('为TA点赞');
+	}
+	
+	// 初始化随机推送
+	if(samenumber == 0 || samenumber == "undefined" || samenumber == null) {
+		$(".opci").addClass("hide");
+	} else {
+		$(".opci").removeClass("hide");
+	}
+	
+	// 点赞
+	$(".likebtn").click(function(){
+		var objBtn = $(this);
+		if(objBtn.hasClass("liked")) {
+			return;
+		}
+		var params = {
+				wid : $("#content").attr("data-wid"),
+				openid : openid,
+				e_id : e_id
+		}
+		$.post("{:U('Home/Activity/likeConfirm', '', '')}", params, function(result){
+			if (result.errCode == 0) {
+				$(".likenum").html(result.data.likenumber); // 更新点赞数量
+				objBtn.removeClass("p_btn_collection").addClass("liked");
+				objBtn.html('已点赞');
+				scscms_alert("点赞成功，明天还可以点噢！随手为其他情侣点赞，或来参加活动吧！", "ok", "", 3);//定时关闭窗口
+			}else {
+				scscms_alert("点赞失败，"+result.errMsg, "warn", "", 2);//定时关闭窗口
+				objBtn.removeClass("p_btn_collection").addClass("liked");
+				objBtn.html('已点赞');
+			}
+		}, "json");
+	});
+	
+	// 参加活动
+	$(".p_btn_kefu").click(function(){
+		window.location.href = "{:U('Home/Activity/expo', array(e_id=>$e_id), '')}";
+	});
+});
+</script>
+</body>
+</html>

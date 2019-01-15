@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/MobileCommonStyle.min.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/uiloadmsg.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery-2.1.3.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/loadmsgshare.js"></script>
+<title>详情维护</title>
+</head>
+
+<body style="background:#efefef;">
+    <div class="wrap">
+    	<div class="content">
+		
+            <div id="ui-header">
+                <div class="fixed">
+                    <h1 class="ui-title" id="popmenu">{$currentnav.nav_name}</h1>
+                    <li class="ui-btn-left_pre" onclick="javascript:history.go(-1);"></li>
+                    <li class="ui-btn-right" onclick="javascript:location.reload();"></li>
+                </div>
+            </div>
+            <div id="overlay"></div>
+            <div id="win">
+	            <ul class="dropdown">
+	            	<li onclick="goHomeClick();"><span>首页</span></li>
+	            	<foreach name="pageinfo.navigation" item="pinav">
+	                	<li onclick="dourl('{$pinav.url}')"><span>{$pinav.nav_name}</span></li>
+	                </foreach>
+	                <div class="clr"></div>
+	            </ul>
+	        </div><!-- win结束div -->
+
+        	<div class="navContent">
+
+    			<div class="contentMain">
+	                <div class="infoTitle">{$simpleinfo.title}</div>
+	                <a href="#">
+	                    <div class="infoMenu">                     
+	                        <div class="squarelogo"><img src="{$einfo [e_square_logo]}" width="50" height="50" alt=""/></div>
+                            <div class="shopName">
+                                <div class="bandName">{$einfo.e_name}</div>
+	                            <div class="weixinNumber">微信号:{$einfo.wechat_account}</div>
+                            </div>
+                            <div class="gotoShop">&gt;</div>
+	                    </div>
+	                </a>
+	                <div class="infoBody">
+	                	<p>你访问的页面，可能正在维护中！</p>
+	                </div>
+	                <div class="bottom">
+		            	<div class="weActName">微信公众名称：{$einfo.e_name}</div>
+		                <div class="weActNumber">微信号：{$einfo.wechat_account}</div>
+		                <div class="weActProducer">Powered by <a href="#">WeAct</a></div>
+		                <div class="weact-deco"></div>
+		            </div>
+	            </div>
+            </div><!--navContent结束div-->
+
+        </div><!--content结束div-->
+        {:W('Footer', array('e_id' => $e_id))}<!--footer-->
+    </div><!--wrap结束div-->
+    
+<script type="text/javascript">
+//分享的信息
+var shareData = {
+	appid: "{$einfo.appid}",		//分享的商家编号
+    img_url: "{$shareimg}",				//分享的图片
+    img_width: "160",					//宽度
+    img_height: "160",					//高度
+    title: "{$sharetitle}",				//主页分享的标题
+    desc: "{$sharedesc}",				//主页分享的描述
+    link: "{:U('Home/CustomerView/showEmptyInfo',array('e_id' => $e_id, 'nav_id' => $nav_id, 'Type' => $Type, 'nav_type' => $nav_type), 'shtml', 0, true)}",						//分享的超链接（特别注意：分享出去的链接也是经过授权的！）
+    fakeid : "{$openid}",																		//分享用户的id
+    callback:function(result){
+    	if(result != 'send_app_msg:cancel' && result != 'share_timeline:cancel' && result != 'share_weibo' && result != 'share_fb'){
+    		scscms_alert("谢谢您的分享!", "ok", "", 2);//定时关闭窗口
+    	}else{
+    		scscms_alert("下次记得分享噢!", "ok", "", 2);//定时关闭窗口
+    	}
+    }	/*分享后的回调函数，发送给朋友的类型分为send_app_msg:confirm或send_app_msg:cancel；对应发送给朋友、分享到朋友圈、分享到腾讯微博、分享到facebook都有4种类型*/
+};
+
+$(function(){
+	var oWin = $('#win');
+	var oLay = $('#overlay');
+	var oBtn = $('#popmenu');
+	var oClose = $('#close');
+	oBtn.click(function (){
+		oLay.css("display","block");
+		oWin.css("display","block");
+	});
+	oLay.click(function (){
+		oLay.css("display","none");
+		oWin.css("display","none");
+	});
+});
+
+function dourl(url){
+	location.href= ''+url+'';
+}
+
+function goHomeClick(){
+	location.href='{:U("Home/Index/index", array("e_id" => $e_id), "")}';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/popdialog.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/myuploadstyle.css" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/mloading.css" />
+<title>上传页面</title>
+<style type="text/css">
+
+</style>
+</head>
+
+<body>
+	温馨提示：您最多可以上传9张，现在还可以上传<span class="upload-remain">9</span>张
+	<div class="wrap upload-wrap">
+		<form name="my-upload">
+			<div class="control-group">
+				<div class="controls controls-row">
+		           	<input type="hidden" id="CSRFtoken" name="CSRFtoken" value="123456"><!-- 图片防注入提交 -->
+					<div class="webUploaderWrap ui-sortable">
+		       			<div class="webuploader-container" id="previewUpload">
+		       				<div class="webuploader-pick">点击上传</div>
+		       				<input class="webuploader-file" type="file" name="file" accept="image/*">
+		       			</div>
+		   			</div>
+				</div>
+			</div>
+		</form>
+		<!-- <input type="button" name="showLoading" value="弹出loading组件" > -->
+	</div>
+
+<script>
+window.g_module = []; 							// 当前页 required module lists
+g_module.push("module/uploadPage"); 			// require uploadPage module
+var appsrc = "__PUBLIC__/js/seajs-3.3.0.js?v=1.0.1", 	// apppath
+	node = document.createElement('script');node.src = appsrc;document.body.appendChild(node); // 加载app
+</script>
+</body>
+</html>

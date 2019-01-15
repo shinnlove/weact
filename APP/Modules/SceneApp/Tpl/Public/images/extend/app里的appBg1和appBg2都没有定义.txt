@@ -1,0 +1,1 @@
+app.css里的appBg1和appBg2都没有定义
