@@ -1,0 +1,57 @@
+Element.prototype.show=function(){this.style.display="block";};
+Element.prototype.hide=function(){this.style.display="none";};
+Element.prototype.center=function(top){
+   this.style.left=(_system._scroll().x+_system._zero(_system._client().bw-this.offsetWidth)/2)+"px";
+   this.style.top=(top?top:(_system._scroll().y+_system._zero(_system._client().bh-this.offsetHeight)/2))+"px";
+};
+var _system={
+   _client:function(){
+      return {w:document.documentElement.scrollWidth,h:document.documentElement.scrollHeight,bw:document.documentElement.clientWidth,bh:document.documentElement.clientHeight};
+   },
+   _scroll:function(){
+      return {x:document.documentElement.scrollLeft?document.documentElement.scrollLeft:document.body.scrollLeft,y:document.documentElement.scrollTop?document.documentElement.scrollTop:document.body.scrollTop};
+   },
+   _cover:function(show){
+      if(show){
+	     document.getElementById("cover").show();
+	     document.getElementById("cover").style.width=(this._client().bw>this._client().w?this._client().bw:this._client().w)+"px";
+	     document.getElementById("cover").style.height=(this._client().bh>this._client().h?this._client().bh:this._client().h)+"px";
+	  }else{
+	     document.getElementById("cover").hide();
+	  }
+   },
+   _loading:function(text){
+      if(text){
+         this._cover(true);
+         document.getElementById("loading").show();
+		 document.getElementById("loading_text").innerHTML=text;
+		 document.getElementById("loading").center();
+		 window.onresize=function(){_system._cover(true);document.getElementById("loading").center();};
+	  }else{
+         this._cover(false);
+         document.getElementById("loading").hide();
+		 window.onresize=null;
+	  }
+   },
+   _toast:function(text,fun){
+      document.getElementById("toast").show();
+      document.getElementById("toast").innerHTML=text;
+      document.getElementById("toast").center();
+      setTimeout(function(){
+	     document.getElementById("toast").hide();
+		 if(fun){(fun)();}
+      },3*1000);
+   },
+   _guide:function(click){
+      this._cover(true);
+      document.getElementById("guide").show();
+	  document.getElementById("guide").style.top=(_system._scroll().y+5)+"px";
+      window.onresize=function(){_system._cover(true);document.getElementById("guide").style.top=(_system._scroll().y+5)+"px";};
+	  if(click){document.getElementById("cover").onclick=function(){
+         _system._cover();
+         document.getElementById("guide").hide();
+		 document.getElementById("cover").onclick=null;
+		 window.onresize=null;
+	  };}
+   },
+};
