@@ -104,7 +104,7 @@ class MobileFastBuyRequestAction extends MobileGuestRequestAction {
 		$selfget_name = I ( 'receivePersonName' ); 	// 到店自提的姓名
 		$selfget_mobile = I ( 'receiveMobile' ); 	// 到店自提人手机
 		$specialremark = I ( 'specialMark' ); 		// 订单的特殊备注
-		$shoppingcartlist = stripslashes ( &$_REQUEST ['shoppingListJson'] ); // 提交订单的购物车信息（这里是字符串json格式）
+		$shoppingcartlist = stripslashes ( $_REQUEST ['shoppingListJson'] ); // 提交订单的购物车信息（这里是字符串json格式）
 		$orderproductlist = json_decode ( $shoppingcartlist, true );
 		
 		// 对参数进行检验（不满足就打回去）

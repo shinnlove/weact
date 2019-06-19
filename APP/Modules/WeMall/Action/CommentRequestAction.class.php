@@ -11,8 +11,8 @@ class CommentRequestAction extends LoginRequestAction {
 	 */
 	public function guideProductConfirm() {
 		$order_id = I ( 'oid', '' ); 					// 接收订单编号
-		$gslist = stripslashes ( &$_POST ['gslist'] ); 	// 接收导购评价信息
-		$pslist = stripslashes ( &$_POST ['pslist'] ); 	// 接收商品评价信息
+		$gslist = stripslashes ( $_POST ['gslist'] ); 	// 接收导购评价信息
+		$pslist = stripslashes ( $_POST ['pslist'] ); 	// 接收商品评价信息
 		
 		$guidescorelist = json_decode ( $gslist, true );
 		$productscorelist = json_decode ( $pslist, true );

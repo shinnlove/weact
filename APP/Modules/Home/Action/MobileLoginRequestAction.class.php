@@ -11,7 +11,7 @@ class MobileLoginRequestAction extends MobileGuestRequestAction {
 	 */
 	public function _initialize() {
 		parent::_initialize(); // 调用父类的初始化函数
-		
+
 		// 检测登录状态
 		if (! isset ( $_SESSION ['currentcustomer'] )) {
 			$this->ajaxresult ['errCode'] = 20001; // 未登录

@@ -88,7 +88,7 @@ class SimpleInfoRequestAction extends PCRequestLoginAction {
 		// 请求输入
 		$id_key = I ( $this->cl_simple_info_id );
 		$data [$this->cl_title] = I ( $this->cl_title );
-		$data [$this->cl_html_content] = stripslashes ( &$_REQUEST [$this->cl_html_content] );
+		$data [$this->cl_html_content] = stripslashes ( $_REQUEST [$this->cl_html_content] );
 		
 		$result = false;
 		$db_table = M ( $this->table_name );

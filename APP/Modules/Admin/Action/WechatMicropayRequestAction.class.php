@@ -48,7 +48,7 @@ class WechatMicropayRequestAction extends PCRequestLoginAction {
 		$receive_person = I ( 'person' ); // 收货人姓名
 		$receive_tel = I ( 'tel' ); // 收货人电话
 		$authcode = I ( 'authcode' ); // 刷卡条码
-		$orderjson = stripslashes ( &$_REQUEST ['orderlist'] ); // 接收提交订单的商品信息（这里是字符串json格式）
+		$orderjson = stripslashes ( $_REQUEST ['orderlist'] ); // 接收提交订单的商品信息（这里是字符串json格式）
 		$orderlist = json_decode ( $orderjson, true );
 		
 		// 解包商品参数
