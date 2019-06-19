@@ -166,7 +166,7 @@ class ActivityAction extends MobileGuestAction {
 					'name' => I ( 'username' ),
 					'tel' => I ( 'tel' ),
 					//'qq' => I ( 'qq' ),
-					'wish' => &$_REQUEST ['wish'],
+					'wish' => $_REQUEST ['wish'],
 					'photo_path' => $this->uploadEnrollImage (),
 					'add_time' => time ()
 			);

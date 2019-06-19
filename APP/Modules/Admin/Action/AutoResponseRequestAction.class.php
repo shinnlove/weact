@@ -63,7 +63,7 @@ class AutoResponseRequestAction extends PCRequestLoginAction {
 		$confirm = array (
 				'type' => I ( 'type' ), 													// 接收首次关注提交的类型
 				'news' => I ( 'news' ), 													// 接收首次关注提交的图文编号（可能是图文类型，也可能不是）
-				'text' => stripslashes ( &$_POST ['text'] )  								// 进行不转义的接收，并且使用stripslashes去掉斜杠
+				'text' => stripslashes ( $_POST ['text'] )  								// 进行不转义的接收，并且使用stripslashes去掉斜杠
 		);
 	
 		/* --------------------Step1：对msgtext或msgnews表进行操作----------------------- */
@@ -221,7 +221,7 @@ class AutoResponseRequestAction extends PCRequestLoginAction {
 		
 		// 回复内容特殊性单独接收
 		if ($restype == 'text' || $restype == 'link'){
-			$resinfo = stripslashes ( &$_POST ['res'] ); // 回复文本或链接需要转义（怕html格式）
+			$resinfo = stripslashes ( $_POST ['res'] ); // 回复文本或链接需要转义（怕html格式）
 			$responsefunction .= "text"; // 回复文本
 		} else {
 			$resinfo = I ( 'res' ); // 回复内容：图片、声音或视频路径，或图文编号
@@ -371,7 +371,7 @@ class AutoResponseRequestAction extends PCRequestLoginAction {
 		
 		// 回复内容特殊性单独接收
 		if ($restype == 'text' || $restype == 'link'){
-			$resinfo = stripslashes ( &$_POST ['res'] ); // 回复文本或链接需要转义（怕html格式）
+			$resinfo = stripslashes ( $_POST ['res'] ); // 回复文本或链接需要转义（怕html格式）
 			$responsefunction .= "text"; // 回复文本
 		} else {
 			$resinfo = I ( 'res' ); // 回复内容：图片、声音或视频路径，或图文编号

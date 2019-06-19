@@ -58,7 +58,7 @@ class CateManageRequestAction extends PCRequestLoginAction {
 				'add_time' => time (),
 				'is_new' => I('checked'),
 				'off_shelf' => 1, 										// 新添加商品默认处于下架状态
-				'description' => stripslashes ( &$_REQUEST ['des'] ) 	// &$_REQUEST转义的接收，再用stripcslashes删除多余的转义斜杠
+				'description' => stripslashes ( $_REQUEST ['des'] ) 	// &$_REQUEST转义的接收，再用stripcslashes删除多余的转义斜杠
 		);
 		$res1 = M ( 'cate' )->add ($catedata);
 	
@@ -104,7 +104,7 @@ class CateManageRequestAction extends PCRequestLoginAction {
 				'hot_level' => I ( 'chl' ),
 				'latest_modify' => time (),
 				'is_new' => I('checked'),
-				'description' => stripslashes ( &$_REQUEST ['des'] )	// &$_REQUEST转义的接收，再用stripcslashes删除多余的转义斜杠
+				'description' => stripslashes ( $_REQUEST ['des'] )	// &$_REQUEST转义的接收，再用stripcslashes删除多余的转义斜杠
 		);
 	
 		$ecmap = array(

@@ -2,7 +2,7 @@
 class ExcelAction extends Action {
 	public function index() {
 		// 导出Excel表格
-		$data = stripslashes ( &$_GET ['data'] );
+		$data = stripslashes ( $_GET ['data'] );
 		$decodedata = json_decode ( $data, true );
 		// p($decodedata);die;
 		$data = $decodedata ['rows'];

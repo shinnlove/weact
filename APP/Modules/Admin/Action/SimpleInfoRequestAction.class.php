@@ -117,7 +117,7 @@ class SimpleInfoRequestAction extends PCRequestLoginAction {
 		$data [$this->cl_eid] = $_SESSION ['curEnterprise'] ['e_id'];
 		$data [$this->cl_nav_id] = $_REQUEST [$this->cl_nav_id];
 		$data [$this->cl_title] = $_REQUEST [$this->cl_title];
-		$data [$this->cl_html_content] = stripslashes ( &$_REQUEST [$this->cl_html_content] );
+		$data [$this->cl_html_content] = stripslashes ( $_REQUEST [$this->cl_html_content] );
 		
 		$result = $db_table->add ( $data );
 		if ($result) {

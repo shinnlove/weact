@@ -191,7 +191,7 @@ class MemberInfoRequestAction extends PCRequestLoginAction {
 	 * 用户提交特权内容post处理函数。
 	 */
 	public function privilegeConfirm(){
-		$info = unescape(&$_POST['info']);									//接收信息，I()里面用name值传递，接收的数据经过escape函数处理，取值时要加符号&，再用unescape还原数据
+		$info = unescape($_POST['info']);									//接收信息，I()里面用name值传递，接收的数据经过escape函数处理，取值时要加符号&，再用unescape还原数据
 		$memberinfo = array(
 				'e_id' => $_SESSION ['curEnterprise'] ['e_id'],
 				'is_del' => 0

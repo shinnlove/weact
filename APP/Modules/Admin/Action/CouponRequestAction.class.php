@@ -354,8 +354,8 @@ class CouponRequestAction extends PCRequestLoginAction {
 	 */
 	public function addCouponConfirm(){
 		//p(I());die;
-		$stepfirstarray = json_decode ( stripslashes ( &$_POST ['stepfirst'] ), true );
-		$stepsecondarray = json_decode ( stripslashes ( &$_POST ['stepsecond'] ), true );
+		$stepfirstarray = json_decode ( stripslashes ( $_POST ['stepfirst'] ), true );
+		$stepsecondarray = json_decode ( stripslashes ( $_POST ['stepsecond'] ), true );
 		//p($stepfirstarray);p($stepsecondarray);die;
 		$coupondata = array (
 				'coupon_id' => md5 ( uniqid ( rand (), true ) ),

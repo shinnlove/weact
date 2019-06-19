@@ -39,7 +39,7 @@ class ActivityRequestAction extends PCRequestLoginAction {
 				'e_id' => $current_enterprise ['e_id'],
 				'activity_name' => I ( 'activity_name' ),
 				'activity_type' => I ( 'activity_type' ),
-				'activity_description' => &$_POST [ 'activity_description' ],
+				'activity_description' => $_POST [ 'activity_description' ],
 				'start_time' => I ( 'start_time' ),
 				'end_time' => I ( 'end_time' ),
 				'add_time' => date ( 'Y-m-d H:i:s' ),

@@ -146,7 +146,7 @@ class MaterialManageRequestAction extends PCRequestLoginAction {
 				$this->cc_author => $author, 							// 图文作者
 				$this->cc_cover => $coverurl, 							// 该图文封面
 				$this->cc_order => -1, 									// 单图文封面图片直接是-1
-				$this->cc_content => stripslashes ( &$_POST ['main_content'] ), // 注意转义接收图文消息图片
+				$this->cc_content => stripslashes ( $_POST ['main_content'] ), // 注意转义接收图文消息图片
 				$this->cc_original => $originalurl, 					// 原文链接
 		);
 		// 处理外链
@@ -200,7 +200,7 @@ class MaterialManageRequestAction extends PCRequestLoginAction {
 			$editinfo [$this->cc_title] = $title;
 			$editinfo [$this->cc_cover] = $coverurl;
 			$editinfo [$this->cc_summary] = $summary;
-			$editinfo [$this->cc_content] = stripslashes ( &$_POST ['main_content'] );
+			$editinfo [$this->cc_content] = stripslashes ( $_POST ['main_content'] );
 			$editinfo [$this->cc_original] = $originalurl; // 原文链接
 			$infourl = "http://www.we-act.cn/weact/Home/News/info/did/" . $editinfo [$this->cc_md_id];
 			if ($chainurl != "") {
@@ -272,7 +272,7 @@ class MaterialManageRequestAction extends PCRequestLoginAction {
 				'errMsg' => "网络繁忙，请稍后再试。"
 		);
 	
-		$mulnewsinfo = json_decode ( stripslashes ( &$_POST ['jsonData'] ), true ); // 转义接收post后，删除斜杠，再用json_decode解码，直接获得多图文数组
+		$mulnewsinfo = json_decode ( stripslashes ( $_POST ['jsonData'] ), true ); // 转义接收post后，删除斜杠，再用json_decode解码，直接获得多图文数组
 	
 		// 在此处理这个多图文二维数组
 		$author = $_SESSION ['curEnterprise'] ['e_name']; 	// 图文作者
@@ -357,7 +357,7 @@ class MaterialManageRequestAction extends PCRequestLoginAction {
 				'errMsg' => "网络繁忙，请稍后再试。"
 		);
 	
-		$editmulnewsinfo = json_decode ( stripslashes ( &$_POST ['jsonData'] ), true );				//转义接收post后，删除斜杠，再用json_decode解码，直接获得多图文数组
+		$editmulnewsinfo = json_decode ( stripslashes ( $_POST ['jsonData'] ), true );				//转义接收post后，删除斜杠，再用json_decode解码，直接获得多图文数组
 	
 		//定义三种队列：1、$addQueue新增队列；2、$updateQueue更新队列；3、delQueue删除队列。
 		$addQueue = array ();

@@ -21,7 +21,7 @@ class ExchangeOrderAction extends MobileLoginAction {
 		//$this->ajaxresult ['errMsg'] = "ok";
 		//$this->ajaxReturn ( $this->ajaxresult ); // 返回给前端ajax信息
 		
-		$shoppinglist = stripslashes ( &$_REQUEST ['shoppingListJson'] );
+		$shoppinglist = stripslashes ( $_REQUEST ['shoppingListJson'] );
 		$orderproductlist = json_decode ( $shoppinglist, true );
 		//p(I());p($orderproductlist);die;
 		
@@ -53,7 +53,7 @@ class ExchangeOrderAction extends MobileLoginAction {
 		 * $expressfee = I('expressfee',0);										// 快递费用,当前暂定0块钱，目前积分商城都是包邮的
 		 * $pay_indeed = I ( 'payment',0 ); 									// 用户实际支付的价格(订单加邮费的价格)
 		 * $pay_method = I ( 'payType', 2 ); 									// 支付类型默认是2，（微信支付）
-		 * $shoppingcartlist = stripslashes ( &$_REQUEST ['shoppingListJson'] ); 	// 提交订单的购物车信息（这里是字符串json格式）
+		 * $shoppingcartlist = stripslashes ( $_REQUEST ['shoppingListJson'] ); 	// 提交订单的购物车信息（这里是字符串json格式）
 		 * $orderproductlist = json_decode ( $shoppingcartlist, true );
 		 * 
 		 */
