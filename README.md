@@ -1,2 +1,3 @@
 # weact
-O2O、B2B2C、P2P商城
+
+O2O、S2B2C、B2B2C、P2P新零售商城。
