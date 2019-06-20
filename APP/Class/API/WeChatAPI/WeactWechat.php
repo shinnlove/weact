@@ -873,10 +873,11 @@ class WeactWechat {
 		if (! empty ( $kf_account )) {
 			$this->send ['customservice'] ['kf_account'] = $kf_account; // 如果客服账号不空，则添加客服账号
 		}
-		
+
 		/* 发送 */
 		$sendjson = jsencode ( $this->send ); // 压缩要发送的数据包，采用无转义字符方式压缩
 		$url = self::SEND_CUSTOMER_SERVICE_MESSAGE . "?access_token=" . $this->getToken (); // 拼接发送信息API的URL请求地址
+
 		$httpresult = http ( $url, $sendjson, 'POST', $this->header, true );	// 调用Common公有的http()函数发送给微信服务器
 		$sendresult = $this->parseJson ( $httpresult ); // 解析发送客服消息结果
 		

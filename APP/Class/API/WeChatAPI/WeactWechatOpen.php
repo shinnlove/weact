@@ -543,13 +543,13 @@ class WeactWechatOpen {
 			$authorizerinfo = M ( 'authorizerinfo' )->where ( $authorizertokenmap )->find (); // 在微动本地查询授权者信息
 			if ($authorizerinfo && ! empty ( $authorizerinfo ['authorizer_refresh_token'] )) {
 				// 存在这样的授权者信息，并且authorizer_refresh_token（唯一）也是正确存在的
-				
+
 				$tokenavailable = false; 		// 默认token不可用
 				if (! empty ( $authorizerinfo ['authorizer_access_token'] ) && (time () - $authorizerinfo ['authorizer_access_token_time'] < 7000)) {
 					$tokenavailable = true; 	// 如果token不空，并且在可用时间内，则这个token可用
 					$authorizer_access_token = $authorizerinfo ['authorizer_access_token']; // 给到这个token
 				}
-				
+
 				// 如果authorizer_access_token不可用，则重新换取一次authorizer_access_token
 				if (! $tokenavailable) {
 					$component_appid = $authorizerinfo ['authorized_component_appid']; 				// 取出该授权者授权给了哪个component

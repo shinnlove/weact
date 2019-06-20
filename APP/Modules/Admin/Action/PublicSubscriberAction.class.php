@@ -278,7 +278,7 @@ class PublicSubscriberAction extends PCViewLoginAction {
 				'name' => I ( 'name' ), // 接收菜单的名称
 				'type' => I ( 'type' ), // 接收菜单的响应类型
 				'news' => I ( 'news' ), // 接收响应图文消息的编号（如果有）
-				'text' => stripslashes ( &$_POST ['text'] )  // 接收响应文本或链接（如果有），并采用转义与删除斜杠的接收方法
+				'text' => stripslashes ( $_POST ['text'] )  // 接收响应文本或链接（如果有），并采用转义与删除斜杠的接收方法
 		);
 	
 		// Step2：查找到要编辑的菜单信息
@@ -459,7 +459,7 @@ class PublicSubscriberAction extends PCViewLoginAction {
 				'errMsg' => "网络繁忙，请稍后再试！"
 		);
 		// Step1：将页面提交过来的菜单格式化成级联形式
-		$menutree = stripslashes ( &$_REQUEST ['treeData'] ); // 接收前台页面传来的新菜单信息
+		$menutree = stripslashes ( $_REQUEST ['treeData'] ); // 接收前台页面传来的新菜单信息
 		$pagetreedata = json_decode ( $menutree, true ); // json解码得到树的二维数组，此数组是级联形式
 		$pageremotemenu = $this->disassembleJsonMenu ( $pagetreedata ); // 拆解json_decode后的二维级联数组，结果数组是数据库查询出来的形式
 		$newcascademenu = $this->formatCascadeMenu ( $pageremotemenu ); // 格式化成同步所需的级联菜单形式
