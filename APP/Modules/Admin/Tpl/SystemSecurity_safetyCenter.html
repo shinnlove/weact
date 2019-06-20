@@ -61,7 +61,7 @@
             &nbsp;&nbsp;
             <a id="cancelbtn" class="large ui-color-button blue" href="javascript:history.go(-1);">取消</a>
             <a href="javascript:history.go(-1);">
-                <img style="width:50px; float:right;" alt="返回" src="/weact/APP/Modules/Admin/Tpl/Public/images/goback.png" />
+                <img style="width:50px; float:right;" alt="返回" src="/APP/Modules/Admin/Tpl/Public/images/goback.png" />
             </a>
         </div> 
 	</form>
@@ -113,10 +113,10 @@ $(function(){
 								}, function(result){
 										if(result.errCode == 0){
 											$.messager.alert('温馨提示', '密码修改成功,请重新登录微动平台！', 'info',function(){
-												$.post("/weact/Admin/Index/logout",null,function(data){
+												$.post("/Admin/Index/logout",null,function(data){
 													//退出登录
 													if(data.status==1){
-														window.location.href='/weact/Admin/Index/Index.shtml';
+														window.location.href='/Admin/Index/Index.shtml';
 													}
 												});
 											});

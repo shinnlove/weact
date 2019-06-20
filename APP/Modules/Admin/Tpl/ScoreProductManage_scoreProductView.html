@@ -411,7 +411,7 @@ function isPositiveNum(s){
 //修改商品信息
 function editPro(proid,protype) {
 	clearSelect();
-	window.location.href = "/weact/Admin/ProductManage/editProductDetail?product_id=" + proid + "&product_type=" + protype; // 跳转编辑商品页面
+	window.location.href = "/Admin/ProductManage/editProductDetail?product_id=" + proid + "&product_type=" + protype; // 跳转编辑商品页面
 }
 
 var _is_open;	//定义全局变量，判断用户是否原来的值和修改后的值是否相等
@@ -481,7 +481,7 @@ function editStorageConfirm(member_level) {
 		return;
 	}
 	MLoading.show("提交中..."); // 增加等待友好度体验
-	$.post('/weact/Admin/ScoreProductManageRequest/changeProductExchangeRule', {
+	$.post('/Admin/ScoreProductManageRequest/changeProductExchangeRule', {
 		rule_id: rule_id,
 		is_use : is_open,
 		score_amount : score_amount
