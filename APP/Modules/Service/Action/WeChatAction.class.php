@@ -781,9 +781,9 @@ class WeChatAction extends Action {
 		);
 		$cmtable = M ( 'customizedmenu' );
 		$cmresult = $cmtable->where ( $cmmap )->order ( 'level asc, sibling_order asc' )->select (); // 先父后子，顺序从小到大
-		
+
 		$menudata = $this->assembleDBMenu ( $cmresult, true ); // 组装成微信需要的菜单格式（自带格式化级联菜单）
-		
+
 		$this->weixin = new WeactWechat ( $einfo ); // 实例化微动微信接口类
 		$setresult = $this->weixin->setMenu ( $menudata );
 		return $setresult; // 返回组装完毕的菜单数组信息 
