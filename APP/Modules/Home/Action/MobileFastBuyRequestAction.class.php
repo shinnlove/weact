@@ -396,7 +396,7 @@ class MobileFastBuyRequestAction extends MobileGuestRequestAction {
 //				'receive_tel' => $orderMainData ['receive_tel'],
 //				'receive_address' => $orderMainData ['receive_address'],
 //		);
-//		$url = $domain . "/weact/Home/Order/myOrder/e_id/" . $this->einfo ['e_id']; // 在云总店商城下单则跳转云总店商城的订单中心（2015/08/25 23:59:25）
+//		$url = $domain . "/Home/Order/myOrder/e_id/" . $this->einfo ['e_id']; // 在云总店商城下单则跳转云总店商城的订单中心（2015/08/25 23:59:25）
 //		// 策略模式发送下单微信模板消息
 //		$ordernotify = new OrderNotify ( $tpldata, $url, $fontcolor ); // 下单通知
 //		$msgwechater = new MsgToWechater ( $ordernotify ); // 上下文类对象

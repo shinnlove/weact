@@ -186,7 +186,7 @@ class WeActUnifiedOrder extends WeActSafePayHelper {
 	 * 特别注意：据说支付地址和消息回调地址不能在同一个目录下，否则收不到消息！！！
 	 * @var String $CONST_NOTIFY_URL
 	 */
-	protected $CONST_NOTIFY_URL = "/weact/Home/WeChatPayCallback/notifyurl/e_id/";
+	protected $CONST_NOTIFY_URL = "/Home/WeChatPayCallback/notifyurl/e_id/";
 	
 	/**
 	 * 微信统一下单类构造函数。

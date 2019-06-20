@@ -70,7 +70,7 @@
 		if($regLogin || $regRegister) {
 			if($regLogin) {
 				$regLoginURL = substr($refererURL, $regStart, $regLogin - $regStart + 13);			// 客户登录页面地址
-				$loginURL = 'weact/Home/GuestHandle/customerLogin';			// 登录页面
+				$loginURL = 'Home/GuestHandle/customerLogin';			// 登录页面
 				if($regLoginURL == $loginURL) {
 					$refererURL = '';											// 如果是在登录页面或者注册页面，一律跳到会员中心（置空由前台判断）
 				}

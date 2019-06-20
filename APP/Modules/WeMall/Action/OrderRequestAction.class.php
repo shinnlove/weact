@@ -395,7 +395,7 @@ class OrderRequestAction extends LoginRequestAction {
 				'receive_tel' => $orderMainData ['receive_tel'],
 				'receive_address' => $orderMainData ['receive_address'],
 		);
-		$url = $domain . "/weact/WeMall/Order/myOrder/sid/" . $this->sid; // 在微猫商城下单则跳转微猫商城的订单中心（2015/08/25 23:59:25）
+		$url = $domain . "/WeMall/Order/myOrder/sid/" . $this->sid; // 在微猫商城下单则跳转微猫商城的订单中心（2015/08/25 23:59:25）
 		// 策略模式发送下单微信模板消息
 		$ordernotify = new OrderNotify ( $tpldata, $url, $fontcolor ); // 下单通知
 		$msgwechater = new MsgToWechater ( $ordernotify ); // 上下文类对象

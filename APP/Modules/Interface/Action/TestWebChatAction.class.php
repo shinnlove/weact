@@ -62,7 +62,7 @@ class TestWebChatAction extends Action {
 	 * 接口：请求查询导购信息接口，该接口为GET类型接口。
 	 */
 	public function getGuideInfo() {
-		$url = "http://localhost/weact/Interface/WebChatGuide/guideInfo";
+		$url = "http://localhost/Interface/WebChatGuide/guideInfo";
 		$params = array (
 				'access_token' => $this->generateToken (), // 网页聊天窗的接口token
 				'gid' => 'g10001' // 要请求的导购信息

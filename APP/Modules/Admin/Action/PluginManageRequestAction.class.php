@@ -163,8 +163,8 @@ class PluginManageRequestAction extends PCRequestLoginAction {
 				$this-> error ( '上传文件异常，请与系统管理员联系！' );
 			}
 		}else{											//两幅都没有自定义活动开始图片上传，则用系统默认的图片
-			$data['activity_startimage'] = '/weact/APP/Tpl/Admin/Public/images/luckywheel/activity-lucky-wheel-start.jpg';
-			$data['activity_endimage'] = '/weact/APP/Tpl/Admin/Public/images/luckywheel/activity-lucky-wheel-end.jpg';
+			$data['activity_startimage'] = '/APP/Tpl/Admin/Public/images/luckywheel/activity-lucky-wheel-start.jpg';
+			$data['activity_endimage'] = '/APP/Tpl/Admin/Public/images/luckywheel/activity-lucky-wheel-end.jpg';
 			if($patable->save ( $data ))$this->redirect ( 'Admin/PluginManage/luckyWheel' );
 			else{
 				$this->error ( '添加活动失败！' );
