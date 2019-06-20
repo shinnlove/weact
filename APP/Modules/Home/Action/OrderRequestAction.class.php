@@ -340,28 +340,28 @@ class OrderRequestAction extends MobileLoginRequestAction {
 		$this->ajaxresult ['data'] ['oid'] = $orderMainData ['order_id']; // 附上提交的订单编号
 		
 		// Step6：发送微信模板消息通知
-		$domain = C ( 'DOMAIN' ); 	// 提取域名
-		$fontcolor = "#DA70D6"; 	// 下单是淡紫色的字体颜色
-		$tpldata = array (
-				'visual_number' => $orderMainData ['visual_number'],
-				'total_price' => $orderMainData ['total_price'] . "元",
-				'receive_person' => $orderMainData ['receive_person'],
-				'receive_tel' => $orderMainData ['receive_tel'],
-				'receive_address' => $orderMainData ['receive_address'],
-		);
-		$url = $domain . "/weact/Home/Order/myOrder/e_id/" . $this->einfo ['e_id']; // 在云总店商城下单则跳转云总店商城的订单中心（2015/08/25 23:59:25）
-		// 策略模式发送下单微信模板消息
-		$ordernotify = new OrderNotify ( $tpldata, $url, $fontcolor ); // 下单通知
-		$msgwechater = new MsgToWechater ( $ordernotify ); // 上下文类对象
-		$sendresult = $msgwechater->sendMsgToWechater ( $this->einfo, $openid ); // 发送模板消息
-		
-		// Step7：发送短信通知
-		$type = 'ORDER';
-		$telNum = $orderMainData ['receive_tel'];
-		$ename = $this->einfo ['e_name'];
-		$orderNumber = $orderMainData ['visual_number'];
-		$mobileMsg = new mobileMessage();
-		$sendresult = $mobileMsg->sendMsgNotify ( $telNum, $type, $ename, $orderNumber ); // 发送消息
+//		$domain = C ( 'DOMAIN' ); 	// 提取域名
+//		$fontcolor = "#DA70D6"; 	// 下单是淡紫色的字体颜色
+//		$tpldata = array (
+//				'visual_number' => $orderMainData ['visual_number'],
+//				'total_price' => $orderMainData ['total_price'] . "元",
+//				'receive_person' => $orderMainData ['receive_person'],
+//				'receive_tel' => $orderMainData ['receive_tel'],
+//				'receive_address' => $orderMainData ['receive_address'],
+//		);
+//		$url = $domain . "/weact/Home/Order/myOrder/e_id/" . $this->einfo ['e_id']; // 在云总店商城下单则跳转云总店商城的订单中心（2015/08/25 23:59:25）
+//		// 策略模式发送下单微信模板消息
+//		$ordernotify = new OrderNotify ( $tpldata, $url, $fontcolor ); // 下单通知
+//		$msgwechater = new MsgToWechater ( $ordernotify ); // 上下文类对象
+//		$tpl_msg_result = $msgwechater->sendMsgToWechater ( $this->einfo, $openid ); // 发送模板消息
+//
+//		// Step7：发送短信通知
+//		$type = 'ORDER';
+//		$telNum = $orderMainData ['receive_tel'];
+//		$ename = $this->einfo ['e_name'];
+//		$orderNumber = $orderMainData ['visual_number'];
+//		$mobileMsg = new mobileMessage();
+//		$mobile_msg_result = $mobileMsg->sendMsgNotify ( $telNum, $type, $ename, $orderNumber ); // 发送消息
 		
 		$this->ajaxReturn( $this->ajaxresult );
 	}
