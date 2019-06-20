@@ -273,7 +273,7 @@ $(function(){
     
     $("#title").val(oldmulnews[0].title);
     $("#imgArea").show().find("#img").attr("src", oldmulnews[0].cover_image);	//所上传的图片在编辑区的预览块显示预览，#imgArea是编辑区预览图片的
-    var infourl = "http://www.we-act.cn/weact/Home/News/info/did/"+oldmulnews[0].msgnewsdetail_id;
+    var infourl = "http://www.we-act.cn/Home/News/info/did/"+oldmulnews[0].msgnewsdetail_id;
 	if(oldmulnews[0].link_url != "") {
 		$("#chain").val(oldmulnews[0].link_url); // 不空且不是默认链接，才写入外链
 		if (oldmulnews[0].link_url != infourl) {
