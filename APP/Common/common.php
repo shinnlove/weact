@@ -477,9 +477,11 @@
 			$project_name = C ( 'PROJECT_NAME' );
 			if (! strstr ( $originalpath, $project_name )) {
 				if ($realpath) {
-					$finalpath = C ( 'SITE_URL' ). $project_name . $finalpath;	//没找到项目名称，拼接全路径+项目名称
+					//$finalpath = C ( 'SITE_URL' ). $project_name . $finalpath;	//没找到项目名称，拼接全路径+项目名称
+                    $finalpath = C ( 'DOMAIN' ).$finalpath;
 				} else {
-					$finalpath = '/' . $project_name . $finalpath;				//没找到项目名称，拼接项目名称
+					//$finalpath = '/' . $project_name . $finalpath;				//没找到项目名称，拼接项目名称
+                    $finalpath = $finalpath;
 				}
 			} else {
 				if ($realpath) $finalpath = C ( 'DOMAIN' ) . $finalpath;			//已经找到项目名称，拼接全路径（$finalpath里已经包含了/weact，有斜杠）
