@@ -184,7 +184,7 @@ class WechatAuthorize {
 			$error = "授权失败，微信平台授权系统繁忙，请稍后再试。"; 									// 友善提示微信授权接口的错误
 			return $error;
 		}
-		$this->updateRecordAuth ( $recvinfo ['state'], $grantinfo );					// 补充记录微信用户的授权行为
+		$this->updateRecordAuth ( $state, $grantinfo );					// 补充记录微信用户的授权行为
 		
 		$openid = $grantinfo ['openid']; 												// 取出微信用户openid
 		
@@ -218,7 +218,7 @@ class WechatAuthorize {
 		// 如果系统需要，记录一笔用户登录的日志
 		$this->loginRecord ( $einfo ['e_id'], $userinfo ['weactuserinfo'] ['customer_id'] ); // 登录系统日志
 		
-		header ( 'Location:' . $reauthinfo ['redirect_uri'] );							// 跳转授权之前正确的地址
+		header ( 'Location:' . $reauthinfo ['redirect_uri'] . '?authorize_id=' . $state );							// 跳转授权之前正确的地址
 	}
 	
 }
