@@ -25,13 +25,13 @@ class WeactWechat {
 	 * 微动平台微信token中控系统请求地址。
 	 * @var String WECHAT_TOKEN_CENTRAL_SYSTEM
 	 */
-	const WECHAT_TOKEN_CENTRAL_SYSTEM = "http://www.we-act.cn/weact/Interface/ExportWeChat/getWeChatToken";
+	const WECHAT_TOKEN_CENTRAL_SYSTEM = "http://www.we-act.cn/Interface/ExportWeChat/getWeChatToken";
 	
 	/**
 	 * 微动平台全网发布token地址
 	 * @var String OPEN_TOKEN_CENTRAL_SYSTEM
 	 */
-	const OPEN_TOKEN_CENTRAL_SYSTEM = "http://www.we-act.cn/weact/Interface/ExportWeChat/getOpenToken";
+	const OPEN_TOKEN_CENTRAL_SYSTEM = "http://www.we-act.cn/Interface/ExportWeChat/getOpenToken";
 	
 	/**
 	 * 微信平台服务器地址列表。
