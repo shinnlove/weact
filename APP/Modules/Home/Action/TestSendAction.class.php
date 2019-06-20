@@ -82,7 +82,7 @@ class TestSendAction extends GuestCommonAction {
 								"thumb_media_id" => $cover_media,
 								"author" => "G5G6",
 								"title" => "恭喜您成功获取年终礼券 50元，请点击查看详情。",
-								"content_source_url" => "http://www.we-act.cn/weact/Home/MemberHandle/customerCoupon/e_id/201405291912250003",
+								"content_source_url" => "http://www.we-act.cn/Home/MemberHandle/customerCoupon/e_id/201405291912250003",
 								"content" => $html_content,
 								"digest" => $digest,
 								"show_cover_pic" => "1" 

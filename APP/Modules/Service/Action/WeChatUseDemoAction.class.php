@@ -171,7 +171,7 @@ class WeChatUseDemoAction extends Action {
 	public function sendTemplateMessage1() {
 		$openid = "oeovpty2ScWq6YXxuMG0hY5qHOGA"; // 设置模板消息发送给的客户
 		$template_id = "FZImOTdE5lRkknlI3zv_e5WTNr0fLcJNXXwV47ZRzFg"; // 设置要使用的企业模板消息
-		$linkurl = "http://www.we-act.cn/weact/WeMall/Store/storeIndex/sid/070b107fd7ecae417e7a2266ebd7bc9c"; // 设置模板消息跳转URL
+		$linkurl = "http://www.we-act.cn/WeMall/Store/storeIndex/sid/070b107fd7ecae417e7a2266ebd7bc9c"; // 设置模板消息跳转URL
 		// 设置模板消息
 		$tpldata = array (
 				'first' => array (

@@ -869,7 +869,7 @@ class WeChatAPIAction extends Action {
 				
 				$downloadresult ['errCode'] = 0; 
 				$downloadresult ['errMsg'] = "ok";
-				$downloadresult ['mediapath'] = "http://www.we-act.cn/weact" . substr ( $mediaabsolutepath, 1 ); // 附加上自己服务器的多媒体文件路径
+				$downloadresult ['mediapath'] = "http://www.we-act.cn" . substr ( $mediaabsolutepath, 1 ); // 附加上自己服务器的多媒体文件路径
 				
 				// 如果多媒体是图片，为了方便APP手机显示，再生成一大一小缩略图，小图出现在手机聊天界面，点击后可以预览，像微信一样可下载原图
 				if ($mediatype == "image") {

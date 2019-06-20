@@ -122,7 +122,7 @@ class ActivityAction extends MobileGuestAction {
 		$shareinfo ['img_url'] = assemblepath( $shareinfo ['img_url'], true ); // 分享的必须是绝对路径
 		$shareinfo ['desc'] = $shareinfo ['description'];
 		$shareinfo ['appid'] = $this->einfo ['appid'];
-		$shareinfo ['link'] = 'http://www.we-act.cn/weact/Home/Activity/expo/e_id/201412021712300012';
+		$shareinfo ['link'] = 'http://www.we-act.cn/Home/Activity/expo/e_id/201412021712300012';
 		return $shareinfo;
 	}
 	

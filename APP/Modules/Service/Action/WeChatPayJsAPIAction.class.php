@@ -14,7 +14,7 @@ class WeChatPayJsAPIAction extends Action {
 	 * =======【JSAPI路径设置】==============获取access_token过程中的跳转uri，通过跳转将code传入jsapi支付页面=====================
 	 * @var string $CONST_JS_API_CALL_URL 原生js回调微信获得code的地址
 	 */
-	var $CONST_JS_API_CALL_URL = 'http://www.we-act.cn/weact/APP/Class/API/WeChatPayV3/demo/js_api_call.php';
+	var $CONST_JS_API_CALL_URL = 'http://www.we-act.cn/APP/Class/API/WeChatPayV3/demo/js_api_call.php';
 	
 	/**
 	 * =======【JSAPI成功后NOTIFY路径设置】==============支付成功后微信通知地址=====================

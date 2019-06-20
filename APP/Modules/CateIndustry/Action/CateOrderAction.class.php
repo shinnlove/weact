@@ -221,7 +221,7 @@ class CateOrderAction extends MobileLoginAction {
 		if($readyinfo) {
 			$params = array(
 					'wcpid' => $readyinfo,
-					'redirecturi' => 'http://www.we-act.cn/weact/CateIndustry/CateOrder/historyOrder/e_id/' . $this->einfo ['e_id'] . '/checkwxpay/1/wxpayoid/' . $ajaxinfo ['order_id']
+					'redirecturi' => 'http://www.we-act.cn/CateIndustry/CateOrder/historyOrder/e_id/' . $this->einfo ['e_id'] . '/checkwxpay/1/wxpayoid/' . $ajaxinfo ['order_id']
 			);
 			$resultdata = array(
 					'errCode' => 0,

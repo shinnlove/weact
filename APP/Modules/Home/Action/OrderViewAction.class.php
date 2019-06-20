@@ -253,7 +253,7 @@ class OrderViewAction extends MobileLoginAction {
 		if ($readyinfo) {
 			$params = array(
 					'wcpid' => $readyinfo,
-					'redirecturi' => 'http://www.we-act.cn/weact/Home/Order/myOrder/e_id/' . $this->einfo ['e_id'] . '/checkwxpay/1/wxpayoid/' . $ajaxinfo ['order_id']
+					'redirecturi' => 'http://www.we-act.cn/Home/Order/myOrder/e_id/' . $this->einfo ['e_id'] . '/checkwxpay/1/wxpayoid/' . $ajaxinfo ['order_id']
 			);
 			$resultdata = array(
 					'errCode' => 0,

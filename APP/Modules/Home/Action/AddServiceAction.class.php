@@ -337,7 +337,7 @@ class AddServiceAction extends Action {
 			if ($detaillist [$i] ['title'] == "欢迎扫码选我做导购") {
 				$detaillist [$i] ['link_url'] = $detaillist [$i] ['original_url'];
 			} else {
-				$detaillist [$i] ['link_url'] = "http://www.we-act.cn/weact/Home/News/info/did/" . $detaillist [$i] ['msgnewsdetail_id']; // 取出图文主键编号生成跳转链接
+				$detaillist [$i] ['link_url'] = "http://www.we-act.cn/Home/News/info/did/" . $detaillist [$i] ['msgnewsdetail_id']; // 取出图文主键编号生成跳转链接
 				
 			}
 			$totalhandle += $detailtable->save ( $detaillist [$i] );

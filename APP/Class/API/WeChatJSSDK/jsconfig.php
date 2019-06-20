@@ -10,7 +10,7 @@ class JSSDK {
 	 * 微动平台微信jsapiticket中控系统请求地址。
 	 * @var String WECHAT_TOKEN_CENTRAL_SYSTEM
 	 */
-	const WECHAT_JSAPITICKET_CENTRAL_SYSTEM = "http://www.we-act.cn/weact/Interface/ExportWeChat/jsAPITicket";
+	const WECHAT_JSAPITICKET_CENTRAL_SYSTEM = "http://www.we-act.cn/Interface/ExportWeChat/jsAPITicket";
 	
 	/**
 	 * 企业编号e_id

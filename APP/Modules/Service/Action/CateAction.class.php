@@ -778,7 +778,7 @@ class CateAction extends Action {
 				$tipinfo [] = array (
 						"title" => '您的订单已经被接收!',
 						"description" => "您的订单已经被接收，请选择支付方式。详情请点击查看。",
-						"picurl" => 'http://www.we-act.cn/weact/Updata/images/201412021712300012/cardstyle/547df4192143c.jpg',
+						"picurl" => 'http://www.we-act.cn/Updata/images/201412021712300012/cardstyle/547df4192143c.jpg',
 						"url" => 'http://www.we-act.cn/weact/CateIndustry/CateOrder/orderInfo/e_id/201412021712300012/nav_id/cate00010'
 				);
 				import( 'Class.API.WeChatAPI.ThinkWechat', APP_PATH, '.php' );

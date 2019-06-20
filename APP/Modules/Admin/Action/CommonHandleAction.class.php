@@ -355,7 +355,7 @@ class CommonHandleAction extends Action {
 	 */
 	public function qrCodeDemo () {
 		$e_id = "201406261550250006"; // 准备商家编号
-		$url = "http://www.we-act.cn/weact/Home/ProductView/productShow/e_id/201406261550250006/nav_id/wehome0001/product_id/whp00006.shtml"; // 要写入的二维码地址
+		$url = "http://www.we-act.cn/Home/ProductView/productShow/e_id/201406261550250006/nav_id/wehome0001/product_id/whp00006.shtml"; // 要写入的二维码地址
 		$usetype = "product"; // 二维码用途，可指定product,customer,guide,subbranch,nativepay等多种
 		$saveqrpath = "./Updata/images/" . $e_id . "/dimensioncode/productcode/wehome0001/whp00006/"; // 保存路径按导航、商品编号来存放，必须以./相对路径开头
 		$saveqrname = ""; // 是否指定二维码文件名，默认空就用md5生成文件名

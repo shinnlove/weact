@@ -152,7 +152,7 @@ class MaterialManageRequestAction extends PCRequestLoginAction {
 		// 处理外链
 		if (empty ( $chainurl )) {
 			// 如果外链为空，代表不需要外链，直接用图文的详情地址代替
-			$mndmap [$this->cc_url] = "http://www.we-act.cn/weact/Home/News/info/did/" . $mndmap [$this->cc_md_id]; // 图文详情地址
+			$mndmap [$this->cc_url] = "http://www.we-act.cn/Home/News/info/did/" . $mndmap [$this->cc_md_id]; // 图文详情地址
 		} else {
 			// 外链不空用外链地址
 			$mndmap [$this->cc_url] = $chainurl;

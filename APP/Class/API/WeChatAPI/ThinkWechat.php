@@ -78,7 +78,7 @@ class ThinkWechat {
 	 * @return string $access_token 企业的token信息
 	 */
 	private function getToken() {
-		$url = 'http://www.we-act.cn/weact/Interface/ExportWeChat/getWeChatToken';	//请求获取accesstoken的url
+		$url = 'http://www.we-act.cn/Interface/ExportWeChat/getWeChatToken';	//请求获取accesstoken的url
 		$params = array ();									//定义$params参数数组
 		$params ['e_id'] = $this->e_id;						//商家编号
 		$httpstr = http ( $url, $params );					//使用http方法（不知道是否为自定义，估计跟易班获取差不多）获取服务器返回数据$httpstr

@@ -483,7 +483,7 @@ class TestInterfaceAction extends Action {
 	 */
 	public function sendGroupMsg() {
 		$CONST_NORMAL_TEST = 1; // 是否正常测试
-		$url = "http://www.we-act.cn/weact/Interface/AppMessage/sendGroupMsg?access_token=" . $this->generateToken ();
+		$url = "http://www.we-act.cn/Interface/AppMessage/sendGroupMsg?access_token=" . $this->generateToken ();
 		$params = array (
 				'msg_type' => 0, // 消息类型包括文本、图片、语音，默认0代表文本消息，1代表图片，2代表声音
 				'eid' => '201406261550250006', // 商家编号

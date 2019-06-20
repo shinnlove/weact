@@ -5,7 +5,7 @@
  * CreateTime：2014/10/28 23:50:36。
  */
 class WeChatAuthorizeAction extends Action {
-	var $currentURL = 'http://www.we-act.cn/weact/WeMall/WeChatAuthorize/wechatAuthCallback'; // 本类的静态变量，微信授权回调地址
+	var $currentURL = 'http://www.we-act.cn/WeMall/WeChatAuthorize/wechatAuthCallback'; // 本类的静态变量，微信授权回调地址
 	
 	/**
 	 * 微信授权认证函数。

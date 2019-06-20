@@ -47,7 +47,7 @@ class Weather {
 		$weatherArray [] = array ( 
 				"Title" => $weather ['currentCity'] . "天气预报",
 				"Description" => "详情请点击查看",
-				"PicUrl" => "http://www.we-act.cn/weact/APP/Modules/Admin/Tpl/Public/images/platformimage/weatherpic.jpg", // 注意这个路径是死的
+				"PicUrl" => "http://www.we-act.cn/APP/Modules/Admin/Tpl/Public/images/platformimage/weatherpic.jpg", // 注意这个路径是死的
 				"Url" => "http://mobile.weather.com.cn/" 
 		);
 		// 再给第1条副图文赋值，依次显示pm2.5,感冒情况和运动的适宜情况

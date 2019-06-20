@@ -72,7 +72,7 @@ return array(
 		//'AUTHORIZE_OPEN' => true,								//false默认本地网页授权关闭，true默认本地网页授权开启，具体是否开启还要看商家是否开启
 		'AUTHORIZE_OPEN' => false,								//false默认本地网页授权关闭，true默认本地网页授权开启，具体是否开启还要看商家是否开启
 
-        'WECHAT_AUTHORIZE_REDIRECT' => 'http://www.we-act.cn/weact/Home/WeChatAuthorize/wechatAuthCallback',
+        'WECHAT_AUTHORIZE_REDIRECT' => 'http://www.we-act.cn/Home/WeChatAuthorize/wechatAuthCallback',
 
 );
 ?>

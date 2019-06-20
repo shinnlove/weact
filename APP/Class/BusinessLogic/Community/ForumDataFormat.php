@@ -216,7 +216,7 @@ class ForumDataFormat {
 	 * 分享微社区。
 	 */
 	private function shareCommunity($e_id = '') {
-		$shareURL = 'http://www.we-act.cn/weact/Community/MicroCommunity/myCommunity/e_id/' . $e_id;
+		$shareURL = 'http://www.we-act.cn/Community/MicroCommunity/myCommunity/e_id/' . $e_id;
 		return $shareURL;
 	}
 	

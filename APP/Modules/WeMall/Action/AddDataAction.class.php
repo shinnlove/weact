@@ -134,7 +134,7 @@ class AddDataAction extends Action {
 		// 初始化配置变量
 		$productview = M ( 'product_image' ); // 实例化商品视图
 		$e_id = "201405291912250003"; // 准备商家编号
-		$baseurl = "http://www.we-act.cn/weact/WeMall/QRCode/product/pid/"; // 要写入的二维码地址
+		$baseurl = "http://www.we-act.cn/WeMall/QRCode/product/pid/"; // 要写入的二维码地址
 		$createsum = 0; // 本次总添加二维码数量
 		
 		// 查询商品列表

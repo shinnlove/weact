@@ -34,7 +34,7 @@ class Nearby {
 		$queryArray [] = array (
 				"Title" => $final,
 				"Description" => "详情请点击查看",
-				"PicUrl" => "http://www.we-act.cn/weact/APP/Modules/Admin/Tpl/Public/images/platformimage/locationnearby.jpg", // 注意这个路径是写死的
+				"PicUrl" => "http://www.we-act.cn/APP/Modules/Admin/Tpl/Public/images/platformimage/locationnearby.jpg", // 注意这个路径是写死的
 				"Url" => "http://map.baidu.com/?latlng=" . $location . "&title=我的位置&content&autoOpen=true&l" 
 		);
 		

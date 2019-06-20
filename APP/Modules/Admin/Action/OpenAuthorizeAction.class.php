@@ -16,7 +16,7 @@ class OpenAuthorizeAction extends PCViewLoginAction {
 		// 依次获得$ticket和$componentAccessToken
 		$component_appid = $wechat->getCurrentComponentAppId ();
 		$preauthcode = $wechat->generatePreAuthCode ();
-		$redirect_uri = "http://www.we-act.cn/weact/Admin/OpenAuthorize/authorizeCheck";
+		$redirect_uri = "http://www.we-act.cn/Admin/OpenAuthorize/authorizeCheck";
 		// 拼接授权地址
 		$this->authurl = 'https://mp.weixin.qq.com/cgi-bin/componentloginpage?component_appid=' . $component_appid . '&pre_auth_code=' . $preauthcode . '&redirect_uri=' . $redirect_uri;
 		$this->display ();

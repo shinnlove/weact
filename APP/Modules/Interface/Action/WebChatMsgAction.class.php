@@ -127,7 +127,7 @@ class WebChatMsgAction extends WebChatPostAction {
 			if ($this->params ['msg_type'] == 1 || $this->params ['msg_type'] == 2) {
 				// 如果该消息为图片或声音类型，必须再存储多媒体路径
 				$mediapath = $this->params ['mediapath']; // 三方发来的多媒体路径（微动服务器端的多媒体）
-				$newmsginfo ['media_path'] = str_replace ( "http://www.we-act.cn/weact", "", $mediapath ); // 剪切绝对的多媒体路径成相对路径，补充消息的media_path
+				$newmsginfo ['media_path'] = str_replace ( "http://www.we-act.cn", "", $mediapath ); // 剪切绝对的多媒体路径成相对路径，补充消息的media_path
 			}
 			
 			$addchatmsgresult = $msginfotable->add ( $newmsginfo ); // 添加导购顾客聊天具体内容

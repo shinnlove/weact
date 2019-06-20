@@ -357,7 +357,7 @@ class GuideManageRequestAction extends PCRequestLoginAction {
 					'msgnews_id' => $msgnewsmain ['msgnews_id'], // 主表主键
 					'title' => "欢迎扫码选我做导购",
 					'author' => $ename, // 企业名称
-					'cover_image' => "http://www.we-act.cn/weact/APP/Modules/Admin/Tpl/Public/images/platformimage/guidenewsimg.jpg",
+					'cover_image' => "http://www.we-act.cn/APP/Modules/Admin/Tpl/Public/images/platformimage/guidenewsimg.jpg",
 					'main_content' => "欢迎扫描" . $ename . "导购二维码名片，已经为您匹配该导购。稍后您将收到导购的专属服务，请等待接入......",
 					'link_url' => "http://www.we-act.cn/weact/WeMall/Store/storeList/sid/" . $guideinfo ['subbranch_id'], // 扫码跳转链接逛店铺（进入的是店铺列表，带上哪个导购的分店参数都一样）
 					'detail_order' => -1 // 单图文直接是封面图文

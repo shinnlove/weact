@@ -167,7 +167,7 @@ class CascadeNavigation {
 				$checkstring = strstr ( $ctempurl, $weactheader ); 	// 检测域名是否存在
 				if (! empty ( $checkstring ) ) {
 					// 如果是微动，检测是否访问云总店，如果是总店才去检测是否有e_id
-					$homegroupheader = "http://www.we-act.cn/weact/Home/"; // 云总店分组的URL前缀
+					$homegroupheader = "http://www.we-act.cn/Home/"; // 云总店分组的URL前缀
 					$visithome = strstr ( $ctempurl, $homegroupheader ); // 检测是否访问云总店
 					// 处理结果
 					if (! empty ( $visithome )) {

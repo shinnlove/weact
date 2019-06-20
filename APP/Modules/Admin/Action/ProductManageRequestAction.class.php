@@ -517,7 +517,7 @@ class ProductManageRequestAction extends PCRequestLoginAction {
 	
 		// 顺带再生成一张商品的二维码图片，一并插入数据库
 		$e_id = $_SESSION ['curEnterprise'] ['e_id']; // 准备商家编号
-		$url = "http://www.we-act.cn/weact/Home/ProductView/productShow/e_id/" . $e_id . "/nav_id/" . $productinfo ['nav_id'] . "/product_id/" . $productinfo ['product_id']; // 要写入的二维码地址
+		$url = "http://www.we-act.cn/Home/ProductView/productShow/e_id/" . $e_id . "/nav_id/" . $productinfo ['nav_id'] . "/product_id/" . $productinfo ['product_id']; // 要写入的二维码地址
 		$usetype = "product"; // 二维码用途，可指定product,customer,guide,subbranch,nativepay等多种
 		$saveqrpath = "./Updata/images/" . $e_id . "/dimensioncode/productcode/" . $productinfo ['nav_id'] . "/" . $productinfo ['product_id'] . "/"; // 保存路径按导航、商品编号来存放，必须以./相对路径开头
 		$saveqrname = $productinfo ['product_id']; // 是否指定二维码文件名，默认空就用md5生成文件名

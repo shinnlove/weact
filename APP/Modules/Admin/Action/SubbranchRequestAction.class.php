@@ -284,7 +284,7 @@ class SubbranchRequestAction extends PCRequestLoginAction {
 					'msgnews_id' => $msgnewsmain ['msgnews_id'], 										// 主表主键
 					'title' => $submsgmap['msg_description'],
 					'author' => $ename, 																// 企业名称
-					'cover_image' => "http://www.we-act.cn/weact/APP/Modules/Admin/Tpl/Public/images/platformimage/shopQR.png",
+					'cover_image' => "http://www.we-act.cn/APP/Modules/Admin/Tpl/Public/images/platformimage/shopQR.png",
 					'main_content' => "欢迎扫描" . $ename . "店铺二维码，点击进入...",
 					'link_url' => "http://www.we-act.cn/weact/WeMall/Store/storeList/sid/" . $sub_id, 	// 扫码跳转链接逛店铺
 					'detail_order' => -1																// 单图文直接是封面图文
