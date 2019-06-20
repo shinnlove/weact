@@ -21,6 +21,7 @@ class WeChatUseDemoAction extends Action {
 	/**
 	 * 固定测试用的顾客编号，默认是微动♥詩人灬Õ的openid账号
 	 * @var string $CONST_TEST_OPENID 测试用的顾客编号
+     * oeovptyse9q34gLAyen2OIrlAIUQ
 	 */
 	var $CONST_TEST_OPENID = "oeovpty2ScWq6YXxuMG0hY5qHOGA";
 	
