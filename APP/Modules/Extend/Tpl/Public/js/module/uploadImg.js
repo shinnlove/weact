@@ -10,7 +10,7 @@ define('module/uploadImg', ['module/jpegMeta', 'module/imageCompresser'], functi
 	
 	module.exports = {
 		
-		uploadURL : "/weact/Extend/ImageUpload/uploadHandle", // 模块上传图片需要提交到的服务端地址
+		uploadURL : "/Extend/ImageUpload/uploadHandle", // 模块上传图片需要提交到的服务端地址
 		
 		singleUploadMaxSize : 1024*1024*8.5, // 单张上传图片最大尺寸，这里允许略微超过一点点（文件头）
 		

@@ -390,7 +390,7 @@ class OrderRequestAction extends MobileLoginRequestAction {
 				$domain = C ( 'DOMAIN' ); // 读取服务器域名配置
 				$params = array (
 						'wcpid' => $readyinfo,
-						'redirecturi' => $domain . "/weact/Home/Order/myOrder/e_id/" . $this->einfo ['e_id'] . "/checkwxpay/1/wxpayoid/" . $ajaxinfo ['order_id'] 
+						'redirecturi' => $domain . "/Home/Order/myOrder/e_id/" . $this->einfo ['e_id'] . "/checkwxpay/1/wxpayoid/" . $ajaxinfo ['order_id']
 				);
 				$this->ajaxresult ['data'] = $params;
 			} else {

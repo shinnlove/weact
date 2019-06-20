@@ -44,37 +44,37 @@ template.helper('handleLongAddress', function (address, format) {
 });
 // 店铺主页URL地址
 template.helper('shopIndexURL', function(sid) {
-	var url = "/weact/WeMall/Store/storeIndex/sid/" + sid;
+	var url = "/WeMall/Store/storeIndex/sid/" + sid;
 	return url;
 });
 // 生成商品列表的URL地址
 template.helper('productListURL', function(navinfo) {
-	var url = "/weact/WeMall/Product/productList/sid/" + window.sid + "/nid/" + navinfo.nav_id;
+	var url = "/WeMall/Product/productList/sid/" + window.sid + "/nid/" + navinfo.nav_id;
 	return url;
 });
 // 生成商品详情的URL地址（特别注意：不同店铺收藏的商品所属分店不一样，所以不能用window.sid：2015/05/20改）
 template.helper('productDetailURL', function(detailinfo) {
-	var url = "/weact/WeMall/Product/productDetail/sid/" + detailinfo.subbranch_id + "/pid/" + detailinfo.product_id;
+	var url = "/WeMall/Product/productDetail/sid/" + detailinfo.subbranch_id + "/pid/" + detailinfo.product_id;
 	return url;
 });
 // 生成导购评价的URL地址
 template.helper('guideCommentURL', function(gid) {
-	var url = "/weact/WeMall/Guide/guideComment/sid/" + window.sid + "/gid/" + gid;
+	var url = "/WeMall/Guide/guideComment/sid/" + window.sid + "/gid/" + gid;
 	return url;
 });
 // 生成订单详情的URL地址
 template.helper('orderInfoURL', function(oid){
-	var url = "/weact/WeMall/Order/orderInfo/sid/" + window.sid + "/oid/" + oid;
+	var url = "/WeMall/Order/orderInfo/sid/" + window.sid + "/oid/" + oid;
 	return url;
 });
 // 优惠券跳转预订单页面的URL地址
 template.helper('couponPreOrder', function(customercouponinfo){
-	var url = "/weact/WeMall/Order/preOrder/sid/" + window.sid;
+	var url = "/WeMall/Order/preOrder/sid/" + window.sid;
 	return url;
 });
 // 跳转优惠券详情页面
 template.helper('couponInfo', function(customercouponinfo){
-	var url = "/weact/WeMall/Coupon/couponInfo/sid/" + window.sid + "/cid/" + customercouponinfo.coupon_id;
+	var url = "/WeMall/Coupon/couponInfo/sid/" + window.sid + "/cid/" + customercouponinfo.coupon_id;
 	return url;
 });
 

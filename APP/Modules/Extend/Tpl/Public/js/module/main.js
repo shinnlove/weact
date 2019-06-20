@@ -60,7 +60,7 @@ define('module/main', ['lib/artTemplate'], function(require, exports, module) {
 			});
 			
 			// sixth: ajax request and template render
-			var url = '/weact/APP/Modules/Extend/Tpl/getStudents.php';
+			var url = '/APP/Modules/Extend/Tpl/getStudents.php';
 			var param = {
 				classId:123456
 			}

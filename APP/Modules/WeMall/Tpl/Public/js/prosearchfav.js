@@ -1,4 +1,4 @@
-var baseurl = "/weact/WeMall/CustomerRequest",
+var baseurl = "/WeMall/CustomerRequest",
 	checkCollectedURL = baseurl+"/checkCollected", // 检测某商品是否收藏URL
 	addCollectionURL = baseurl+"/addCollection", // 增加收藏URL
 	deleteCollectionURL = baseurl+"/deleteCollection"; // 删除收藏URL
